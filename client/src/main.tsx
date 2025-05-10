@@ -6,6 +6,6 @@ import Home from "./pages/Home.tsx"
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <Home></Home>
+    <Home/>
   </StrictMode>,
 )
