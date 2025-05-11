@@ -16,7 +16,7 @@ export default function Home(){
             const newGame = <Game name={input.value}/>;
             setGames(prevGames => [...prevGames, newGame]);
         }
-        setIsOpen(false)
+        handleCloseTextModal()
 
     }
     console.log(games)
