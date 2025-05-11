@@ -1,10 +1,10 @@
 export default abstract class Collection<T>{
-    private _collection: T[] = [];
+    private _items: T[] = [];
     get collection(){
-        return this._collection
+        return this._items
     }
     set collection(value){
-        this._collection = value;
+        this._items = value;
     }
 
     private _name: string = "";
@@ -16,18 +16,18 @@ export default abstract class Collection<T>{
     }
 
     get(index: number){
-        this._collection[index];
+        this._items[index];
     }
 
     add(item: T){
-        this._collection.push(item);
+        this._items.push(item);
     }
 
     delete(index: number){
-        this._collection.splice(index, 1);
+        this._items.splice(index, 1);
     }
 
     pop(){
-        this._collection.pop();
+        this._items.pop();
     }
 }
