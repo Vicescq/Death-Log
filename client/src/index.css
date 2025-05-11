@@ -6,7 +6,12 @@
   font-family: "Rubik";
 }
 
-*{
-  margin: 0;
-  padding: 0;
-}
+
+
+@layer base {
+      * {
+        margin: 0;
+        padding: 0;
+
+      }
+    }
