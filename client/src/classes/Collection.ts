@@ -1,9 +1,9 @@
 export default abstract class Collection<T>{
     private _items: T[] = [];
-    get collection(){
+    get items(){
         return this._items
     }
-    set collection(value){
+    set items(value){
         this._items = value;
     }
 

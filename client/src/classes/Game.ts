@@ -6,6 +6,6 @@ export default class Game extends Collection<Profile>{
     constructor(name: string, profiles: Profile[]){
         super();
         this.name = name;
-        this.collection = profiles;
+        this.items = profiles;
     }
 }

@@ -6,6 +6,6 @@ export default class Subject extends Collection<Death>{
     constructor(name: string, deaths: Death[]){
         super();
         this.name = name;
-        this.collection = deaths;
+        this.items = deaths;
     }
 }
