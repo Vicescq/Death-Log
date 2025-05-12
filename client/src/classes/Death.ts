@@ -1,5 +1,3 @@
-import type Collection from "./Collection";
-
 export default class Death{
     private _date: Date | null;
     get date(){
@@ -17,7 +15,7 @@ export default class Death{
         this._note = value;
     }
 
-    private _tags: Collection<string>;
+    private _tags: string[];
     get tags(){
         return this._tags;
     }
@@ -25,7 +23,7 @@ export default class Death{
         this._tags = value;
     }
 
-    constructor(date: Date, note: string, tags: Collection<string>){
+    constructor(date: Date, note: string, tags: string[]){
         this._date = date;
         this._note = note;
         this._tags = tags;

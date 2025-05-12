@@ -14,20 +14,4 @@ export default abstract class Collection<T>{
     set name(value){
         this._name = value;
     }
-
-    get(index: number){
-        this._items[index];
-    }
-
-    add(item: T){
-        this._items.push(item);
-    }
-
-    delete(index: number){
-        this._items.splice(index, 1);
-    }
-
-    pop(){
-        this._items.pop();
-    }
 }

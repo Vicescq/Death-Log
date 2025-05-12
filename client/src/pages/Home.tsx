@@ -1,67 +1,50 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Game from "../classes/Game";
+import Card from "../components/Card";
+import UtilityCard from "../components/UtilityCard";
+import StateLogger from "../classes/StateLogger";
 
-export default function Home(){
+export default function Home() {
 
     // add init for games for persistence
 
     const [games, setGames] = useState<Game[]>([]);
-    const [isOpen, setIsOpen] = useState(false);
+    const [addGameText, setAddGameText] = useState("");
+    const [delGameText, setDelGameText] = useState("");
 
-    function handleCloseTextModal(){
-        const input = document.getElementById("addGameModalInput") as HTMLInputElement;
-        input.value = "";
-        setIsOpen(false);
-    }
-
-    function handleConfirmTextModal(){
-        const input = document.getElementById("addGameModalInput") as HTMLInputElement;
-        if (input.value){
-            const newGame = new Game(input.value, []);
-            setGames(prevGames => [...prevGames, newGame]);
+    function handleAddGameBtn() {
+        if (addGameText != "") {
+            const newGame = new Game(addGameText, []);
+            setGames((prevGames) => [...prevGames, newGame]);
         }
-        handleCloseTextModal()
-
     }
 
-    console.log(games)
+    function handelDelGameBtn() {
+        if (delGameText != "") {
+            setGames((prevGames) => prevGames.filter(
+                (_, index) => index !== Number(delGameText)
+            ));
+        }
+    }
+
+    useEffect(() => {
+        const stateLogger = new StateLogger(games);
+        localStorage.setItem("state", JSON.stringify(stateLogger.stateLog))
+
+    }, [games])
+
     return (
 
         <div className="flex items-center justify-center gap-2 m-8">
-            <button onClick={() => setIsOpen(true)} type="button" className="rounded-lg border p-3 cursor-pointer"> Add game </button>
-            <button type="button" className="rounded-lg border p-3 cursor-pointer"> Delete game </button>
-            <AddGameModal isOpen={isOpen} onClose={() => handleCloseTextModal()} onConfirm={() => handleConfirmTextModal()}/>
-            {games.map((game, index) => (
-                <GameCard 
-                key={index}
-                name={game.name}
-                />
-            ))}
+            <UtilityCard addOrDelStr="Add game" handleBtn={handleAddGameBtn} handleTextChange={(event) => setAddGameText(event.target.value)} />
+            <UtilityCard addOrDelStr="Delete game" handleBtn={handelDelGameBtn} handleTextChange={(event) => setDelGameText(event.target.value)} />
+            {
+                games.map(
+                    (game, index) => (<Card key={index} name={game.name} />)
+                )
+            }
         </div>
     )
 }
 
-function AddGameModal({isOpen, onClose, onConfirm}: {isOpen: boolean, onClose: () => void, onConfirm: () => void}){
-    return(
-        <div className={`${isOpen ? "flex" : "hidden"} justify-center items-center fixed left-0 top-0 bg-black/50  w-screen h-screen`}>
-            <div className="bg-white rounded-2xl p-4 text-black flex flex-col gap-1">
-                <button onClick={onClose} className="border-2 rounded-2xl p-1">Close</button>
-                <button onClick={onConfirm} className="border-2 rounded-2xl p-1">Confirm</button>
-                <input type="text" id="addGameModalInput" className="border-2 focus:outline-none"/>
-            </div>
-        </div>
-    )
-}
-
-function DeleteGameModal({isOpen}: {isOpen: boolean}){
-    <div className={`${isOpen ? "flex" : "hidden"} justify-center items-center fixed left-0 top-0 bg-black/50  w-screen h-screen`}>
-        abc
-    </div>
-}
-
-function GameCard({name}: {name: string}){
-    return(
-        <div className="rounded-lg border p-3 cursor-pointer">{name}</div>
-    )
-}
 
