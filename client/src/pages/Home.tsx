@@ -5,12 +5,13 @@ import UtilityCard from "../components/UtilityCard";
 import StateLogger from "../classes/StateLogger";
 import GameProfiles from "./GameProfiles";
 import Container from "../components/Container";
+import { useGamesContext } from "../context";
 
 export default function Home() {
 
     // add init for games for persistence
 
-    const [games, setGames] = useState<Game[]>([]);
+    const [games, setGames] = useGamesContext();
     const [addGameText, setAddGameText] = useState("");
     const [delGameText, setDelGameText] = useState("");
 
@@ -23,6 +24,7 @@ export default function Home() {
 
     function handelDelGameBtn() {
         if (delGameText != "") {
+
             setGames((prevGames) => prevGames.filter(
                 (_, index) => index !== Number(delGameText)
             ));
@@ -34,7 +36,7 @@ export default function Home() {
     //     // localStorage.setItem("state", JSON.stringify(stateLogger.stateLog))
 
     // }, [games])
-    
+
     return (
 
         <div className="flex items-center justify-center gap-2 m-8">
