@@ -1,6 +1,5 @@
 import { NavLink, useLocation } from "react-router"
 import type Collection from "../classes/Collection"
-import type Game from "../classes/Game"
 
 export default function Card<T>({ objContext }: { objContext: Collection<T> }) {
   

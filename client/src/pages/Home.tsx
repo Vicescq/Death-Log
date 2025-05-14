@@ -29,15 +29,12 @@ export default function Home() {
         }
     }
 
-
-
     // useEffect(() => {
     //     const stateLogger = new StateLogger(games);
     //     // localStorage.setItem("state", JSON.stringify(stateLogger.stateLog))
 
     // }, [games])
     
-
     return (
 
         <div className="flex items-center justify-center gap-2 m-8">
