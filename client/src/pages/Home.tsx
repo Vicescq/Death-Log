@@ -3,6 +3,8 @@ import Game from "../classes/Game";
 import Card from "../components/Card";
 import UtilityCard from "../components/UtilityCard";
 import StateLogger from "../classes/StateLogger";
+import GameProfiles from "./GameProfiles";
+import Container from "../components/Container";
 
 export default function Home() {
 
@@ -27,11 +29,14 @@ export default function Home() {
         }
     }
 
-    useEffect(() => {
-        const stateLogger = new StateLogger(games);
-        localStorage.setItem("state", JSON.stringify(stateLogger.stateLog))
 
-    }, [games])
+
+    // useEffect(() => {
+    //     const stateLogger = new StateLogger(games);
+    //     // localStorage.setItem("state", JSON.stringify(stateLogger.stateLog))
+
+    // }, [games])
+    
 
     return (
 
@@ -40,7 +45,7 @@ export default function Home() {
             <UtilityCard addOrDelStr="Delete game" handleBtn={handelDelGameBtn} handleTextChange={(event) => setDelGameText(event.target.value)} />
             {
                 games.map(
-                    (game, index) => (<Card key={index} name={game.name} />)
+                    (game, index) => (<Card key={index} objContext={game} />)
                 )
             }
         </div>
