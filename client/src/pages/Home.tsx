@@ -26,7 +26,7 @@ export default function Home() {
                 (_, index) => index !== Number(delGameText)
             ));
         }
-        localStorage.setItem("x", JSON.stringify(games))
+        
     }
 
     // useEffect(() => {
@@ -40,6 +40,7 @@ export default function Home() {
     return (
 
         <div className="flex items-center justify-center gap-2 m-8">
+            Home
             <UtilityCard addOrDelStr="Add game" handleBtn={handleAddGameBtn} handleTextChange={(event) => setAddGameText(event.target.value)} />
             <UtilityCard addOrDelStr="Delete game" handleBtn={handelDelGameBtn} handleTextChange={(event) => setDelGameText(event.target.value)} />
             {

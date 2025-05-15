@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import Card, { type IndicesType } from "../components/Card";
 import UtilityCard from "../components/UtilityCard";
-import { useGamesContext } from "../context";
+import { updateGamesContext, useGamesContext } from "../context";
 import { useLocation } from "react-router";
-import { updateGameContext } from "../utils";
+
 import Subject from "../classes/Subject";
 
 export default function ProfilePage() {
@@ -12,14 +12,14 @@ export default function ProfilePage() {
     const [games, setGames] = useGamesContext();
     const [addSubjectText, setaddSubjectText] = useState("");
     const [delSubjectText, setdelSubjectText] = useState("");
-
+    
     function handleAddSubjectBtn() {
         if (addSubjectText != "") {
             const currProfile = games[gameIndex].items[profileIndex];
             const newSubject = new Subject(addSubjectText, []);
             currProfile.items.push(newSubject);
             const currGame = games[gameIndex]
-            const newArr = updateGameContext(games, currGame, gameIndex);
+            const newArr = updateGamesContext(games, currGame, gameIndex);
             setGames((prevGames) => newArr);
         }
     }
@@ -34,6 +34,7 @@ export default function ProfilePage() {
     useEffect(() => (console.log("PROFILE PAGE:", games)), [games])
     return (
         <div className="flex items-center justify-center gap-2 m-8">
+            ProfilePage
             <UtilityCard addOrDelStr="Add game" handleBtn={handleAddSubjectBtn} handleTextChange={(event) => setaddSubjectText(event.target.value)} />
             <UtilityCard addOrDelStr="Delete game" handleBtn={handelDelSubjectBtn} handleTextChange={(event) => setdelSubjectText(event.target.value)} />
             {
