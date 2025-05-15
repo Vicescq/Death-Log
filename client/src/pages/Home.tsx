@@ -2,9 +2,6 @@ import { useEffect, useState } from "react";
 import Game from "../classes/Game";
 import Card from "../components/Card";
 import UtilityCard from "../components/UtilityCard";
-import StateLogger from "../classes/StateLogger";
-import GameProfiles from "./GameProfiles";
-import Container from "../components/Container";
 import { useGamesContext } from "../context";
 
 export default function Home() {
@@ -29,7 +26,7 @@ export default function Home() {
                 (_, index) => index !== Number(delGameText)
             ));
         }
-        // localStorage.setItem("x", JSON.stringify(games))
+        localStorage.setItem("x", JSON.stringify(games))
     }
 
     // useEffect(() => {
@@ -39,6 +36,7 @@ export default function Home() {
     // }, [games])
     useEffect(() => (console.log("HOME:", games)), [games])
     
+
     return (
 
         <div className="flex items-center justify-center gap-2 m-8">
@@ -46,7 +44,7 @@ export default function Home() {
             <UtilityCard addOrDelStr="Delete game" handleBtn={handelDelGameBtn} handleTextChange={(event) => setDelGameText(event.target.value)} />
             {
                 games.map(
-                    (game, index) => (<Card key={index} objContext={game} index={index}/>)
+                    (game, index) => (<Card key={index} objContext={game} indices={{gameIndex: index, profileIndex: -1, subjectIndex: -1}}/>)
                 )
             }
         </div>

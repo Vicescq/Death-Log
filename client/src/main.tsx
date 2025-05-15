@@ -5,12 +5,13 @@ import "./index.css";
 import Home from "./pages/Home.tsx";
 import GameProfiles from "./pages/GameProfiles.tsx";
 import { GamesContextWrapper } from "./context.tsx";
+import ProfilePage from "./pages/ProfilePage.tsx";
 
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
-      <GamesContextWrapper children={<AppRoutes/>}/>
+      <GamesContextWrapper children={<AppRoutes />} />
     </BrowserRouter>
   </StrictMode>
 );
@@ -19,7 +20,8 @@ function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
-      <Route path="/:nameContext" element={<GameProfiles />} />
+      <Route path="/:gameName" element={<GameProfiles />} />
+      <Route path="/:gameName/:profileName/" element={<ProfilePage />} />
     </Routes>
   )
 }
