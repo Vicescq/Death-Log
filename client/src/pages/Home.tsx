@@ -29,6 +29,7 @@ export default function Home() {
                 (_, index) => index !== Number(delGameText)
             ));
         }
+        // localStorage.setItem("x", JSON.stringify(games))
     }
 
     // useEffect(() => {
@@ -36,7 +37,8 @@ export default function Home() {
     //     // localStorage.setItem("state", JSON.stringify(stateLogger.stateLog))
 
     // }, [games])
-
+    useEffect(() => (console.log("HOME:", games)), [games])
+    
     return (
 
         <div className="flex items-center justify-center gap-2 m-8">
@@ -44,7 +46,7 @@ export default function Home() {
             <UtilityCard addOrDelStr="Delete game" handleBtn={handelDelGameBtn} handleTextChange={(event) => setDelGameText(event.target.value)} />
             {
                 games.map(
-                    (game, index) => (<Card key={index} objContext={game} />)
+                    (game, index) => (<Card key={index} objContext={game} index={index}/>)
                 )
             }
         </div>
