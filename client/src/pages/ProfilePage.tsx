@@ -15,7 +15,7 @@ export default function ProfilePage() {
     const [currentCardPathParamsObj] = useSearchParams()
     const gi = Number(currentCardPathParamsObj.get("gi")!)
     const pi = Number(currentCardPathParamsObj.get("pi")!)
-    
+
     function handleAddSubjectBtn() {
         if (addSubjectText != "") {
             const currProfile = games[gi].items[pi];
@@ -37,14 +37,16 @@ export default function ProfilePage() {
     }
     useEffect(() => (console.log("PROFILE PAGE:", games)), [games])
     return (
-        <div className="flex items-center justify-center gap-2 m-8">
+        <>
             ProfilePage
             <UtilityCard addOrDelStr="Add game" handleBtn={handleAddSubjectBtn} handleTextChange={(event) => setaddSubjectText(event.target.value)} />
-            
+
             {
                 games[gi].items[pi].items.map((subject, index) => (<Card key={index} objContext={subject} index={index} />))
             }
-            
-        </div>
+        </>
+
+
+
     )
 }

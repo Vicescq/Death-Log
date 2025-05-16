@@ -7,7 +7,7 @@ import ContextManager from "../classes/ContextManager";
 import { useSearchParams } from "react-router";
 
 export default function GameProfiles() {
-    
+
     const [games, setGames] = useGamesContext();
     const [addProfileText, setaddProfileText] = useState("");
     const [delProfileText, setdelProfileText] = useState("");
@@ -16,7 +16,7 @@ export default function GameProfiles() {
 
     function handleAddProfileBtn() {
         if (addProfileText != "") {
-            
+
             const currGame = games[gi]
             const newProfile = new Profile(addProfileText, []);
             currGame.items.push(newProfile);
@@ -38,16 +38,17 @@ export default function GameProfiles() {
 
 
     return (
-        <div className="flex items-center justify-center gap-2 m-8">
+        <>
             GameProfiles
             <UtilityCard addOrDelStr="Add game" handleBtn={handleAddProfileBtn} handleTextChange={(event) => setaddProfileText(event.target.value)} />
-            
             {
                 games[gi].items.map(
                     (profile, index) => (<Card key={index} objContext={profile} index={index} />)
                 )
             }
-        </div>
+        </>
+
+
     )
 
 

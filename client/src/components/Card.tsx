@@ -1,7 +1,5 @@
-import { NavLink, useLocation, useSearchParams } from "react-router"
+import { NavLink, useSearchParams } from "react-router"
 import type Collection from "../classes/Collection"
-import Game from "../classes/Game"
-import Profile from "../classes/Profile";
 import { useGamesContext } from "../context";
 import ContextManager from "../classes/ContextManager";
 
@@ -11,7 +9,7 @@ import ContextManager from "../classes/ContextManager";
 export default function Card<T>({ objContext, index }: { objContext: Collection<T>, index: number}) {
     const [games, setGames] = useGamesContext();
     const strPath = ContextManager.createCardPath(objContext, useSearchParams()[0], index, games)
-
+    
 
     return (
         <>

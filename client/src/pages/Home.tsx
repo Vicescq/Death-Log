@@ -33,10 +33,9 @@ export default function Home() {
 
     useEffect(() => (console.log("HOME:", games)), [games])
 
-
     return (
 
-        <div className="flex items-center justify-center gap-2 m-8">
+        <>
             Home
             <UtilityCard addOrDelStr="Add game" handleBtn={handleAddGameBtn} handleTextChange={(event) => setAddGameText(event.target.value)} />
 
@@ -45,7 +44,7 @@ export default function Home() {
                     (game, index) => (<Card key={index} objContext={game} index={index} />)
                 )
             }
-        </div>
+        </>
     )
 }
 
