@@ -1,6 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter, Routes, Route, useNavigate } from "react-router";
+import { BrowserRouter, Routes, Route, useNavigate, HashRouter } from "react-router";
 import "./index.css";
 import Home from "./pages/Home.tsx";
 import GameProfiles from "./pages/GameProfiles.tsx";
@@ -13,9 +13,9 @@ import Root from "./pages/Root.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <BrowserRouter>
+    <HashRouter>
       <GamesContextWrapper children={<AppRoutes />} />
-    </BrowserRouter>
+    </HashRouter>
   </StrictMode>
 );
 

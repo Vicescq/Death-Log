@@ -42,9 +42,13 @@ export default class ContextManager {
         }
         
         else if (objContext instanceof Profile) {
-            const gi = Number(currentCardPathParamsObj.get("gi")!)
             const sParams = "?gi=" + currentCardPathParamsObj.get("gi")! + "&pi=" + objContextIndex
-            strPath = games[gi].name + "/" + objContext.name + sParams
+            strPath = objContext.name + sParams
+        }
+
+        else{
+            const sParams = "?gi=" + currentCardPathParamsObj.get("gi")! + "&pi=" + currentCardPathParamsObj.get("pi")! + "&si=" + objContextIndex
+            strPath = sParams
         }
 
         return strPath
