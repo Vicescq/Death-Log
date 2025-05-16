@@ -10,7 +10,6 @@ export default function GameProfiles() {
 
     const [games, setGames] = useGamesContext();
     const [addProfileText, setaddProfileText] = useState("");
-    const [delProfileText, setdelProfileText] = useState("");
     const [currentCardPathParamsObj] = useSearchParams()
     const gi = Number(currentCardPathParamsObj.get("gi")!)
 

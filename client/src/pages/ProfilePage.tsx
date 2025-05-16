@@ -11,7 +11,6 @@ export default function ProfilePage() {
 
     const [games, setGames] = useGamesContext();
     const [addSubjectText, setaddSubjectText] = useState("");
-    const [delSubjectText, setdelSubjectText] = useState("");
     const [currentCardPathParamsObj] = useSearchParams()
     const gi = Number(currentCardPathParamsObj.get("gi")!)
     const pi = Number(currentCardPathParamsObj.get("pi")!)
@@ -42,7 +41,7 @@ export default function ProfilePage() {
             <UtilityCard addOrDelStr="Add game" handleBtn={handleAddSubjectBtn} handleTextChange={(event) => setaddSubjectText(event.target.value)} />
 
             {
-                games[gi].items[pi].items.map((subject, index) => (<Card key={index} objContext={subject} index={index} handleDelete={handleCardDelete}/>))
+                games[gi].items[pi].items.map((subject, index) => (<Card key={index} objContext={subject} index={index} handleDelete={handleCardDelete} />))
             }
         </>
 

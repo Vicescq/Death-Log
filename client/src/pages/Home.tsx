@@ -10,7 +10,6 @@ export default function Home() {
 
     const [games, setGames] = useGamesContext();
     const [addGameText, setAddGameText] = useState("");
-    const [delGameText, setDelGameText] = useState("");
 
     function handleAddGameBtn() {
         if (addGameText != "") {
