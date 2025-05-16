@@ -1,23 +1,26 @@
-import { useLocation } from "react-router";
-import Card, { type IndicesType } from "../components/Card";
+import Card from "../components/Card";
 import { useEffect, useState } from "react";
 import Profile from "../classes/Profile";
 import UtilityCard from "../components/UtilityCard";
-import { updateGamesContext, useGamesContext } from "../context";
+import { useGamesContext } from "../context";
+import ContextManager from "../classes/ContextManager";
+import { useSearchParams } from "react-router";
 
 export default function GameProfiles() {
-    const location = useLocation();
-    const { gameIndex } = location.state as IndicesType
+    
     const [games, setGames] = useGamesContext();
     const [addProfileText, setaddProfileText] = useState("");
     const [delProfileText, setdelProfileText] = useState("");
+    const [currentCardPathParamsObj] = useSearchParams()
+    const gi = Number(currentCardPathParamsObj.get("gi")!)
 
     function handleAddProfileBtn() {
         if (addProfileText != "") {
-            const currGame = games[gameIndex]
+            
+            const currGame = games[gi]
             const newProfile = new Profile(addProfileText, []);
             currGame.items.push(newProfile);
-            const newArr = updateGamesContext(games, currGame, gameIndex);
+            const newArr = ContextManager.getUpdatedGamesContext(games, currGame, gi)
             setGames((prevGames) => newArr);
         }
     }
@@ -38,10 +41,10 @@ export default function GameProfiles() {
         <div className="flex items-center justify-center gap-2 m-8">
             GameProfiles
             <UtilityCard addOrDelStr="Add game" handleBtn={handleAddProfileBtn} handleTextChange={(event) => setaddProfileText(event.target.value)} />
-            <UtilityCard addOrDelStr="Delete game" handleBtn={handelDelProfileBtn} handleTextChange={(event) => setdelProfileText(event.target.value)} />
+            
             {
-                games[gameIndex].items.map(
-                    (profile, index) => (<Card key={index} objContext={profile} indices={{ gameIndex: gameIndex, profileIndex: index, subjectIndex: -1 }} />)
+                games[gi].items.map(
+                    (profile, index) => (<Card key={index} objContext={profile} index={index} />)
                 )
             }
         </div>

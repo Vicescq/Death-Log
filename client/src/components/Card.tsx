@@ -1,35 +1,26 @@
-import { NavLink, useLocation } from "react-router"
+import { NavLink, useLocation, useSearchParams } from "react-router"
 import type Collection from "../classes/Collection"
 import Game from "../classes/Game"
 import Profile from "../classes/Profile";
 import { useGamesContext } from "../context";
+import ContextManager from "../classes/ContextManager";
 
 
-export type IndicesType = {
-    gameIndex: number;
-    profileIndex: number;
-    subjectIndex: number;
-}
 
-export default function Card<T>({ objContext, indices }: { objContext: Collection<T>, indices: IndicesType }) {
+
+export default function Card<T>({ objContext, index }: { objContext: Collection<T>, index: number}) {
     const [games, setGames] = useGamesContext();
-    let strPath;
-    if(objContext instanceof Game){
-        strPath = objContext.name;
-    }
-
-    if(objContext instanceof Profile){
-        strPath = games[indices.gameIndex].name + "/" + objContext.name
-    }
+    const strPath = ContextManager.createCardPath(objContext, useSearchParams()[0], index, games)
 
 
     return (
         <>
-            <NavLink to={`/${strPath}`} state={indices}>
-                <div className="flex rounded-lg border p-3 gap-2 cursor-pointer">
-                    {objContext.name}
-                </div>
-            </NavLink>
+            <div className="flex rounded-lg border p-3 gap-2 ">
+                <NavLink to={`/${strPath}`}>
+                    <span className="cursor-pointer">{objContext.name}</span>
+                </NavLink>
+                <button className="border-2 p-1 border-red-400 rounded-lg bg-red-400">del</button>
+            </div>
         </>
     )
 }

@@ -19,33 +19,30 @@ export default function Home() {
         }
     }
 
-    function handelDelGameBtn() {
-        if (delGameText != "") {
+    // function handelDelGameBtn() {
 
-            setGames((prevGames) => prevGames.filter(
-                (_, index) => index !== Number(delGameText)
-            ));
-        }
-        
-    }
 
-    // useEffect(() => {
-    //     const stateLogger = new StateLogger(games);
-    //     // localStorage.setItem("state", JSON.stringify(stateLogger.stateLog))
+    //         setGames((prevGames) => prevGames.filter(
+    //             (_, index) => index !== Number(delGameText)
+    //         ));
 
-    // }, [games])
+
+    // }
+
+
+
     useEffect(() => (console.log("HOME:", games)), [games])
-    
+
 
     return (
 
         <div className="flex items-center justify-center gap-2 m-8">
             Home
             <UtilityCard addOrDelStr="Add game" handleBtn={handleAddGameBtn} handleTextChange={(event) => setAddGameText(event.target.value)} />
-            <UtilityCard addOrDelStr="Delete game" handleBtn={handelDelGameBtn} handleTextChange={(event) => setDelGameText(event.target.value)} />
+
             {
                 games.map(
-                    (game, index) => (<Card key={index} objContext={game} indices={{gameIndex: index, profileIndex: -1, subjectIndex: -1}}/>)
+                    (game, index) => (<Card key={index} objContext={game} index={index} />)
                 )
             }
         </div>
