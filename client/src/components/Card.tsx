@@ -6,7 +6,7 @@ import ContextManager from "../classes/ContextManager";
 
 
 
-export default function Card<T>({ objContext, index }: { objContext: Collection<T>, index: number}) {
+export default function Card<T>({ objContext, index, handleDelete }: { objContext: Collection<T>, index: number, handleDelete: (delIndex: number) => void}) {
     const [games, setGames] = useGamesContext();
     const strPath = ContextManager.createCardPath(objContext, useSearchParams()[0], index, games)
     
@@ -17,7 +17,7 @@ export default function Card<T>({ objContext, index }: { objContext: Collection<
                 <NavLink to={`/${strPath}`}>
                     <span className="cursor-pointer">{objContext.name}</span>
                 </NavLink>
-                <button className="border-2 p-1 border-red-400 rounded-lg bg-red-400">del</button>
+                <button onClick={() => handleDelete(index)} className="border-2 p-1 border-red-400 rounded-lg bg-red-400">del</button>
             </div>
         </>
     )

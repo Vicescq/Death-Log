@@ -28,13 +28,13 @@ export default function ProfilePage() {
         }
     }
 
-    function handelDelSubjectBtn() {
-        // if (delProfileText != "") {
-        //     setProfiles((prevProfiles) => prevProfiles.filter(
-        //         (_, index) => index !== Number(delProfileText)
-        //     ));
-        // }
+    function handleCardDelete(targetIndex: number) {
+        const currGame = games[gi]
+        currGame.items[pi].items.splice(targetIndex, 1);
+        const newArr = ContextManager.getUpdatedGamesContext(games, currGame, gi)
+        setGames((prevGames) => newArr);
     }
+
     useEffect(() => (console.log("PROFILE PAGE:", games)), [games])
     return (
         <>
@@ -42,7 +42,7 @@ export default function ProfilePage() {
             <UtilityCard addOrDelStr="Add game" handleBtn={handleAddSubjectBtn} handleTextChange={(event) => setaddSubjectText(event.target.value)} />
 
             {
-                games[gi].items[pi].items.map((subject, index) => (<Card key={index} objContext={subject} index={index} />))
+                games[gi].items[pi].items.map((subject, index) => (<Card key={index} objContext={subject} index={index} handleDelete={handleCardDelete}/>))
             }
         </>
 

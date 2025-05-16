@@ -19,15 +19,12 @@ export default function Home() {
         }
     }
 
-    // function handelDelGameBtn() {
+    function handleCardDelete(targetIndex: number) {
 
-
-    //         setGames((prevGames) => prevGames.filter(
-    //             (_, index) => index !== Number(delGameText)
-    //         ));
-
-
-    // }
+        setGames((prevGames) => prevGames.filter(
+            (_, index) => index !== targetIndex
+        ));
+    }
 
 
 
@@ -41,7 +38,7 @@ export default function Home() {
 
             {
                 games.map(
-                    (game, index) => (<Card key={index} objContext={game} index={index} />)
+                    (game, index) => (<Card key={index} objContext={game} index={index} handleDelete={handleCardDelete} />)
                 )
             }
         </>
