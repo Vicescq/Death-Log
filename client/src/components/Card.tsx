@@ -12,35 +12,33 @@ import Death from "../classes/Death";
 export default function Card<T>({ objContext, index, handleDelete }: { objContext: Collection<T>, index: number, handleDelete: (delIndex: number) => void }) {
     const [games, setGames] = useGamesContext();
     const strPath = ContextManager.createCardPath(objContext, useSearchParams()[0], index, games)
-    const [deathDisplay, setDeathDisplay] = useState(false);
+
     const gi = Number(useSearchParams()[0].get("gi")!)
 
     let deathInfo = null;
-    if(deathDisplay && objContext instanceof Subject){
+    if(objContext instanceof Subject){
         const subjectObj = objContext as Subject 
         deathInfo = (<div>{subjectObj.count}</div>)
     }
-    function handleDeathDisplay() {
+    function handleDeathCount() {
         if (objContext instanceof Subject) {
-            setDeathDisplay((prev) => !prev);
             const currGame = games[gi];
             const subjectObj = objContext as Subject;
             subjectObj.count += 1;
-            const newGame = ContextManager.getUpdatedGamesContext(games, currGame, index); 
+            const newGame = ContextManager.getUpdatedGamesContext(games, currGame, gi); 
             setGames((prev) => newGame);
         }
     }
 
-    useEffect(() => console.log(deathDisplay), [deathDisplay]);
-
     return (
         <>
-            <div onClick={handleDeathDisplay} className="flex rounded-lg border p-3 gap-2 ">
+            <div onClick={handleDeathCount} className="flex rounded-lg border p-3 gap-2 ">
                 <NavLink to={`${strPath}`}>
                     <span className="cursor-pointer">{objContext.name}</span>
                 </NavLink>
-                <button onClick={() => handleDelete(index)} className="border-2 p-1 border-red-400 rounded-lg bg-red-400">del</button>
                 {deathInfo}
+                <button onClick={() => handleDelete(index)} className="border-2 p-1 border-red-400 rounded-lg bg-red-400">del</button>
+                
                 
             </div>
         </>
