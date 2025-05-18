@@ -9,6 +9,7 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@tsconfig/node22": "^22.0.1",
     "@types/node": "^22.15.18",
     "typescript": "^5.8.3"
   }
