@@ -1,42 +1,54 @@
+import type { ContextTypes } from "../context";
+
 type DeathType = "reset" | "fullTry"
 
-export default class Death{
-    private _date: Date | null;
-    get date(){
+export default class Death {
+    private _date: string | null;
+    get date() {
         return this._date;
     }
-    set date(value){
+    set date(value) {
         this._date = value;
     }
 
     private _note: string | null;
-    get note(){
+    get note() {
         return this._note;
     }
-    set note(value){
+    set note(value) {
         this._note = value;
     }
 
     private _tags: string[];
-    get tags(){
+    get tags() {
         return this._tags;
     }
-    set tags(value){
+    set tags(value) {
         this._tags = value;
     }
 
     private _deathType: DeathType;
-    get resets(){
+    get resets() {
         return this._deathType;
     }
-    set resets(value: DeathType){
+    set resets(value: DeathType) {
         this._deathType = value;
     }
 
-    constructor(date: Date, note: string, tags: string[], deathType: DeathType = "fullTry"){
-        this._date = date;
+    private _type: ContextTypes;
+    get type() {
+        return this._type;
+    }
+    set type(value: ContextTypes) {
+        this._type = value;
+    }
+
+    constructor(note: string | null, tags: string[], deathType: DeathType = "fullTry") {
+        const dateObj = new Date();
+        this._date = dateObj.toString();
         this._note = note;
         this._tags = tags;
         this._deathType = deathType;
+        this._type = "death";
     }
 }

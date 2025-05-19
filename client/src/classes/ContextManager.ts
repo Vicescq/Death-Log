@@ -1,6 +1,9 @@
+import type { ContextTypes } from "../context";
 import type Collection from "./Collection";
+import Death from "./Death";
 import Game from "./Game";
 import Profile from "./Profile";
+import Subject from "./Subject";
 
 export default class ContextManager {
 
@@ -40,18 +43,40 @@ export default class ContextManager {
             const sParams = "?gi=" + objContextIndex;
             strPath = objContext.name + sParams
         }
-        
+
         else if (objContext instanceof Profile) {
             const sParams = "?gi=" + currentCardPathParamsObj.get("gi")! + "&pi=" + objContextIndex
             strPath = objContext.name + sParams
         }
 
-        else{
+        else {
             const sParams = "?gi=" + currentCardPathParamsObj.get("gi")! + "&pi=" + currentCardPathParamsObj.get("pi")! + "&si=" + objContextIndex
             strPath = sParams
         }
 
         return strPath
     }
+
+    static serializeGamesContext(games: Game[]){
+        return JSON.stringify(games)
+    }
+
+    static reviveGamesContext(serializedObj: string): Game[] {
+        return JSON.parse(serializedObj, (_, value) => {
+            switch (value?._type as ContextTypes | undefined) {
+                case "game":
+                    return new Game(value._name, value._items);
+                case "profile":
+                    return new Profile(value._name, value._items);
+                case "subject":
+                    return new Subject(value._name, value._items, value._fullTries, value._resets);
+                case "death":
+                    return new Death(value._note, value._tags, value._deathType);
+                default:
+                    return value;
+            }
+        });
+    }
+
 }
 

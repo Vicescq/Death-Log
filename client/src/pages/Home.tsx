@@ -3,6 +3,7 @@ import Game from "../classes/Game";
 import Card from "../components/Card";
 import UtilityCard from "../components/UtilityCard";
 import { useGamesContext } from "../context";
+import ContextManager from "../classes/ContextManager";
 
 export default function Home() {
 
@@ -32,7 +33,6 @@ export default function Home() {
         <>
             Home
             <UtilityCard addOrDelStr="Add game" handleBtn={handleAddGameBtn} handleTextChange={(event) => setAddGameText(event.target.value)} />
-
             {
                 games.map(
                     (game, index) => (<Card key={index} objContext={game} index={index} handleDelete={handleCardDelete} />)

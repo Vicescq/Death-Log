@@ -19,11 +19,13 @@ export default class Subject extends Collection<Death> {
         this._resets = value;
     }
 
-    constructor(name: string, deaths: Death[] = []) {
+    constructor(name: string, deaths: Death[] = [], fullTries: number = 0, resets: number = 0) {
         super();
         this.name = name;
         this.items = deaths;
         this.type = "subject";
+        this._fullTries = fullTries;
+        this._resets = resets;
     }
 
     getCount() {

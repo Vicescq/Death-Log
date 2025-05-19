@@ -2,6 +2,7 @@ import { createContext, useContext, useState, type ReactNode } from "react";
 import type Game from "./classes/Game";
 
 type GamesContextType = [Game[], React.Dispatch<React.SetStateAction<Game[]>>]
+export type ContextTypes = "game" | "profile" | "subject" | "death";
 export const GamesContext = createContext<GamesContextType | undefined>(undefined);
 
 export function GamesContextWrapper({ children }: { children: ReactNode }) {

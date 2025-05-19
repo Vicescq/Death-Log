@@ -1,4 +1,4 @@
-type CollectionType = "game" | "profile" | "subject";
+import type { ContextTypes } from "../context";
 
 export default abstract class Collection<T>{
     private _items!: T[];
@@ -17,11 +17,11 @@ export default abstract class Collection<T>{
         this._name = value;
     }
 
-    private _type!: CollectionType;
+    private _type!: ContextTypes;
     get type(){
         return this._type;
     }
-    set type(value: CollectionType){
+    set type(value: ContextTypes){
         this._type = value;
     }
 }
