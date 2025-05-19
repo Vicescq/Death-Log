@@ -43,9 +43,8 @@ export default class Death {
         this._type = value;
     }
 
-    constructor(note: string | null, tags: string[], deathType: DeathType = "fullTry") {
-        const dateObj = new Date();
-        this._date = dateObj.toString();
+    constructor(note: string | null = null, tags: string[] = [], deathType: DeathType = "fullTry", date: string = new Date().toString()) {
+        this._date = date;
         this._note = note;
         this._tags = tags;
         this._deathType = deathType;

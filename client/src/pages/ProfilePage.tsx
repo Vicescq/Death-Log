@@ -18,7 +18,7 @@ export default function ProfilePage() {
     function handleAddSubjectBtn() {
         if (addSubjectText != "") {
             const currProfile = games[gi].items[pi];
-            const newSubject = new Subject(addSubjectText, []);
+            const newSubject = new Subject(addSubjectText.trim(), []);
             currProfile.items.push(newSubject);
             const currGame = games[gi]
 

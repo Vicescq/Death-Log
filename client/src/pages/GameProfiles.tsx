@@ -17,7 +17,7 @@ export default function GameProfiles() {
         if (addProfileText != "") {
 
             const currGame = games[gi]
-            const newProfile = new Profile(addProfileText, []);
+            const newProfile = new Profile(addProfileText.trim(), []);
             currGame.items.push(newProfile);
             const newArr = ContextManager.getUpdatedGamesContext(games, currGame, gi)
             setGames((prevGames) => newArr);

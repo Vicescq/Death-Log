@@ -36,12 +36,12 @@ export default class ContextManager {
         let strPath = "";
         if (objContext instanceof Game) {
             const sParams = "?gi=" + objContextIndex;
-            strPath = objContext.name + sParams
+            strPath = objContext.name.replaceAll(" ", "_") + sParams
         }
 
         else if (objContext instanceof Profile) {
             const sParams = "?gi=" + currentCardPathParamsObj.get("gi")! + "&pi=" + objContextIndex
-            strPath = objContext.name + sParams
+            strPath = objContext.name.replaceAll(" ", "_") + sParams
         }
 
         else {
@@ -58,7 +58,7 @@ export default class ContextManager {
 
     static reviveGamesContext(serializedObj: string): Game[] {
         return JSON.parse(serializedObj, (_, value) => {
-            switch (value?._type as ContextTypes | undefined) {
+            switch (value?._type as ContextTypes | undefined) { // NOTE: value?._type is needed rather than value._type bc to account for undefined/null errors where value is either undefined or null
                 case "game":
                     return new Game(value._name, value._items);
                 case "profile":
@@ -66,7 +66,7 @@ export default class ContextManager {
                 case "subject":
                     return new Subject(value._name, value._items, value._fullTries, value._resets);
                 case "death":
-                    return new Death(value._note, value._tags, value._deathType);
+                    return new Death(value._note, value._tags, value._deathType, value._date);
                 default:
                     return value;
             }

@@ -3,7 +3,6 @@ import Game from "../classes/Game";
 import Card from "../components/Card";
 import UtilityCard from "../components/UtilityCard";
 import { useGamesContext } from "../context";
-import ContextManager from "../classes/ContextManager";
 
 export default function Home() {
 
@@ -13,8 +12,9 @@ export default function Home() {
     const [addGameText, setAddGameText] = useState("");
 
     function handleAddGameBtn() {
+
         if (addGameText != "") {
-            const newGame = new Game(addGameText, []);
+            const newGame = new Game(addGameText.trim(), []);
             setGames((prevGames) => [...prevGames, newGame]);
         }
     }
@@ -25,6 +25,7 @@ export default function Home() {
             (_, index) => index !== targetIndex
         ));
     }
+    
 
     useEffect(() => (console.log("HOME:", games)), [games])
 
@@ -32,6 +33,7 @@ export default function Home() {
 
         <>
             Home
+            
             <UtilityCard addOrDelStr="Add game" handleBtn={handleAddGameBtn} handleTextChange={(event) => setAddGameText(event.target.value)} />
             {
                 games.map(
