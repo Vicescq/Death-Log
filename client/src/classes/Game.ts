@@ -3,9 +3,10 @@ import Collection from "./Collection";
 
 export default class Game extends Collection<Profile>{
     
-    constructor(name: string, profiles: Profile[]){
+    constructor(name: string, profiles: Profile[] = []){
         super();
         this.name = name;
         this.items = profiles;
+        this.type = "game";
     }
 }

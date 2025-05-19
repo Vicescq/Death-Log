@@ -3,9 +3,10 @@ import Subject from "./Subject";
 
 export default class Profile extends Collection<Subject>{
   
-    constructor(name: string, subjects: Subject[]){
+    constructor(name: string, subjects: Subject[] = []){
         super();
         this.name = name;
         this.items = subjects;
+        this.type = "profile";
     }
 }

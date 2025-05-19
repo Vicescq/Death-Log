@@ -18,13 +18,13 @@ export default function Card<T>({ objContext, index, handleDelete }: { objContex
     let deathInfo = null;
     if(objContext instanceof Subject){
         const subjectObj = objContext as Subject 
-        deathInfo = (<div>{subjectObj.count}</div>)
+        deathInfo = (<div>{subjectObj.getCount()}</div>)
     }
     function handleDeathCount() {
         if (objContext instanceof Subject) {
             const currGame = games[gi];
             const subjectObj = objContext as Subject;
-            subjectObj.count += 1;
+            subjectObj.fullTries += 1;
             const newGame = ContextManager.getUpdatedGamesContext(games, currGame, gi); 
             setGames((prev) => newGame);
         }

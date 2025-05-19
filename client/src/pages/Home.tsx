@@ -25,11 +25,6 @@ export default function Home() {
         ));
     }
 
-    // fetch("/api")
-    //     .then(res => res.json())
-    //     .then(data => console.log(data))
-        
-
     useEffect(() => (console.log("HOME:", games)), [games])
 
     return (

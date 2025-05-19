@@ -1,3 +1,5 @@
+type DeathType = "reset" | "fullTry"
+
 export default class Death{
     private _date: Date | null;
     get date(){
@@ -23,9 +25,18 @@ export default class Death{
         this._tags = value;
     }
 
-    constructor(date: Date, note: string, tags: string[]){
+    private _deathType: DeathType;
+    get resets(){
+        return this._deathType;
+    }
+    set resets(value: DeathType){
+        this._deathType = value;
+    }
+
+    constructor(date: Date, note: string, tags: string[], deathType: DeathType = "fullTry"){
         this._date = date;
         this._note = note;
         this._tags = tags;
+        this._deathType = deathType;
     }
 }
