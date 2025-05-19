@@ -6,9 +6,6 @@ import Subject from "../classes/Subject";
 import { useEffect, useState } from "react";
 import Death from "../classes/Death";
 
-
-
-
 export default function Card<T>({ objContext, index, handleDelete }: { objContext: Collection<T>, index: number, handleDelete: (delIndex: number) => void }) {
     const [games, setGames] = useGamesContext();
     const strPath = ContextManager.createCardPath(objContext, useSearchParams()[0], index, games)
@@ -16,30 +13,53 @@ export default function Card<T>({ objContext, index, handleDelete }: { objContex
     const gi = Number(useSearchParams()[0].get("gi")!)
 
     let deathInfo = null;
-    if(objContext instanceof Subject){
-        const subjectObj = objContext as Subject 
-        deathInfo = (<div>{subjectObj.getCount()}</div>)
+    if (objContext instanceof Subject) {
+        const subjectObj = objContext as Subject
+        deathInfo = (
+            <>
+                <div>{subjectObj.getCount()}</div>
+                {subjectBtns()}
+            </>
+        )
     }
-    function handleDeathCount() {
+
+    function handleDeathCount(type: string = "fulltry") {
         if (objContext instanceof Subject) {
             const currGame = games[gi];
             const subjectObj = objContext as Subject;
-            subjectObj.fullTries += 1;
-            const newGame = ContextManager.getUpdatedGamesContext(games, currGame, gi); 
+            if (type == "fulltry") {
+                subjectObj.fullTries += 1;
+            }
+            else{
+                subjectObj.resets += 1;
+            }
+
+            const newGame = ContextManager.getUpdatedGamesContext(games, currGame, gi);
             setGames((prev) => newGame);
         }
     }
 
+    function subjectBtns() {
+        return (
+            <>
+                <button onClick={() => handleDeathCount()} className="border-2 p-1 px-2 border-red-400 rounded-lg bg-red-400">+</button>
+                <button onClick={() => handleDeathCount("reset")} className="border-2 p-1 border-red-400 rounded-lg bg-red-400">~ +</button>
+            </>
+
+        )
+    }
+
     return (
         <>
-            <div onClick={handleDeathCount} className="flex rounded-lg border p-3 gap-2 ">
+            <div className="flex rounded-lg border p-3 gap-2 ">
                 <NavLink to={`${strPath}`}>
                     <span className="cursor-pointer">{objContext.name}</span>
                 </NavLink>
                 {deathInfo}
+
                 <button onClick={() => handleDelete(index)} className="border-2 p-1 border-red-400 rounded-lg bg-red-400">del</button>
-                
-                
+
+
             </div>
         </>
     )
