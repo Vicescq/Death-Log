@@ -9,11 +9,6 @@ export default class ContextManager {
 
     constructor() { }
 
-    static reconstructCollection<T extends { _name: string, _items: any[] }, U>(serializedObj: T, classConstructor: new (...props: any[]) => U): U {
-        const genericObj = Object.create(classConstructor.prototype);
-        return Object.assign(genericObj, serializedObj);
-    }
-
     static getUpdatedGamesContext(games: Game[], updatedGame: Game, updatedGameIndex: number) {
         let updatedContext;
         let slicedArrayFirst;
