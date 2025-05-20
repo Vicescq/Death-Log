@@ -2,8 +2,8 @@ import Card from "../components/Card";
 import { useEffect, useState } from "react";
 import Profile from "../classes/Profile";
 import UtilityCard from "../components/UtilityCard";
-import { useGamesContext } from "../context";
 import ContextManager from "../classes/ContextManager";
+import useGamesContext from "../hooks/useGamesContext";
 
 export default function GameProfiles({gi}: {gi: number}) {
 

@@ -1,4 +1,5 @@
-import { useGamesContext } from "../context"
+import useGamesContext from "../hooks/useGamesContext"
+
 
 export default function SubjectDeaths({gi, pi, si}: {gi: number, pi: number, si: number}){
 

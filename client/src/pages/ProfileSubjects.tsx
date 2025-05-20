@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import Card from "../components/Card";
 import UtilityCard from "../components/UtilityCard";
-import { useGamesContext } from "../context";
 
 import Subject from "../classes/Subject";
 import ContextManager from "../classes/ContextManager";
+import useGamesContext from "../hooks/useGamesContext";
 
 export default function ProfileSubjects({gi, pi}: {gi: number, pi: number}) {
 

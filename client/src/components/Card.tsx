@@ -1,9 +1,9 @@
 import { NavLink } from "react-router"
 import type Collection from "../classes/Collection"
-import { useGamesContext } from "../context";
 import ContextManager from "../classes/ContextManager";
 import Subject from "../classes/Subject";
 import Death from "../classes/Death";
+import useGamesContext from "../hooks/useGamesContext";
 
 export default function Card<T>({ objContext, index, gi, handleDelete }: { objContext: Collection<T>, index: number, gi: number, handleDelete: (delIndex: number) => void }) {
     const [games, setGames] = useGamesContext();

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Game from "../classes/Game";
 import Card from "../components/Card";
 import UtilityCard from "../components/UtilityCard";
-import { useGamesContext, useHistoryContext } from "../context";
+import useGamesContext from "../hooks/useGamesContext";
 
 export default function Home() {
 
@@ -32,7 +32,7 @@ export default function Home() {
 
         <>
             Home
-            
+
             <UtilityCard addOrDelStr="Add game" handleBtn={handleAddGameBtn} handleTextChange={(event) => setAddGameText(event.target.value)} />
             {
                 games.map(

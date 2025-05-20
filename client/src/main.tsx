@@ -4,12 +4,13 @@ import { BrowserRouter, Routes, Route, useNavigate, HashRouter, useParams } from
 import "./index.css";
 import Home from "./pages/Home.tsx";
 import GameProfiles from "./pages/GameProfiles.tsx";
-import { ContextWrapper, useGamesContext } from "./context.tsx";
+import { ContextWrapper } from "./context.tsx";
 import { ErrorBoundary } from "react-error-boundary";
 import ErrorPage, { ForceError } from "./pages/ErrorPage.tsx";
 import Root from "./pages/Root.tsx";
 import ProfileSubjects from "./pages/ProfileSubjects.tsx";
 import SubjectDeaths from "./pages/SubjectDeaths.tsx";
+import useGamesContext from "./hooks/useGamesContext.tsx";
 
 
 createRoot(document.getElementById("root")!).render(
