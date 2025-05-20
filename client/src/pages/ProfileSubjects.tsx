@@ -5,15 +5,11 @@ import { useGamesContext } from "../context";
 
 import Subject from "../classes/Subject";
 import ContextManager from "../classes/ContextManager";
-import { useSearchParams } from "react-router";
 
-export default function ProfilePage() {
+export default function ProfileSubjects({gi, pi}: {gi: number, pi: number}) {
 
     const [games, setGames] = useGamesContext();
     const [addSubjectText, setaddSubjectText] = useState("");
-    const [currentCardPathParamsObj] = useSearchParams()
-    const gi = Number(currentCardPathParamsObj.get("gi")!)
-    const pi = Number(currentCardPathParamsObj.get("pi")!)
 
     function handleAddSubjectBtn() {
         if (addSubjectText != "") {
@@ -33,15 +29,16 @@ export default function ProfilePage() {
         const newArr = ContextManager.getUpdatedGamesContext(games, currGame, gi)
         setGames((prevGames) => newArr);
     }
+    
 
     useEffect(() => (console.log("PROFILE PAGE:", games)), [games])
     return (
         <>
-            ProfilePage
+            ProfileSubjects
             <UtilityCard addOrDelStr="Add game" handleBtn={handleAddSubjectBtn} handleTextChange={(event) => setaddSubjectText(event.target.value)} />
 
             {
-                games[gi].items[pi].items.map((subject, index) => (<Card key={index} objContext={subject} index={index} handleDelete={handleCardDelete} />))
+                games[gi].items[pi].items.map((subject, index) => (<Card key={index} objContext={subject} index={index} gi={gi} handleDelete={handleCardDelete} />))
             }
         </>
 

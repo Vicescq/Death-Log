@@ -25,8 +25,6 @@ export default function Home() {
             (_, index) => index !== targetIndex
         ));
     }
-    const [history, setHistory] = useHistoryContext()
-    console.log(history)
 
     useEffect(() => (console.log("HOME:", games)), [games])
 
@@ -38,7 +36,7 @@ export default function Home() {
             <UtilityCard addOrDelStr="Add game" handleBtn={handleAddGameBtn} handleTextChange={(event) => setAddGameText(event.target.value)} />
             {
                 games.map(
-                    (game, index) => (<Card key={index} objContext={game} index={index} handleDelete={handleCardDelete} />)
+                    (game, index) => (<Card key={index} objContext={game} index={index} gi={index} handleDelete={handleCardDelete} />)
                 )
             }
         </>

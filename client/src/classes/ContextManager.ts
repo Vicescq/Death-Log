@@ -1,5 +1,4 @@
 import type { GamesStateCustomTypes } from "../context";
-import type Collection from "./Collection";
 import Death from "./Death";
 import Game from "./Game";
 import Profile from "./Profile";
@@ -32,27 +31,7 @@ export default class ContextManager {
         return updatedContext
     }
 
-    static createCardPath<T>(objContext: Collection<T>, currentCardPathParamsObj: URLSearchParams, objContextIndex: number, games: Game[]): string {
-        let strPath = "";
-        if (objContext instanceof Game) {
-            const sParams = "?gi=" + objContextIndex;
-            strPath = objContext.name.replaceAll(" ", "-") + sParams
-        }
-
-        else if (objContext instanceof Profile) {
-            const sParams = "?gi=" + currentCardPathParamsObj.get("gi")! + "&pi=" + objContextIndex
-            strPath = objContext.name.replaceAll(" ", "-") + sParams
-        }
-
-        else {
-            const sParams = "?gi=" + currentCardPathParamsObj.get("gi")! + "&pi=" + currentCardPathParamsObj.get("pi")! + "&si=" + objContextIndex
-            strPath = sParams
-        }
-
-        return strPath
-    }
-
-    static serializeGamesContext(games: Game[]){
+    static serializeGamesContext(games: Game[]) {
         return JSON.stringify(games)
     }
 
@@ -72,6 +51,4 @@ export default class ContextManager {
             }
         });
     }
-
 }
-

@@ -3,14 +3,16 @@ import type Game from "./classes/Game";
 
 type GamesContextType = [Game[], React.Dispatch<React.SetStateAction<Game[]>>];
 type HistoryContextType = [HistoryStateType, React.Dispatch<React.SetStateAction<HistoryStateType>>];
-type HistoryStateType = {
-    "undoStack": {
-        "stack": Game[],
-        "currentGameIndex": number
+
+
+export type HistoryStateType = {
+    undoStack: {
+        stack: Game[],
+        currentGameIndex: number
     },
-    "redoStack": {
-        "stack": Game[],
-        "currentGameIndex": number
+    redoStack: {
+        stack: Game[],
+        currentGameIndex: number
     }
 };
 
@@ -34,10 +36,13 @@ export function ContextWrapper({ children }: { children: ReactNode }) {
         }
     });
 
+
     return (
         <GamesContext.Provider value={[games, setGames]}>
             <HistoryContext.Provider value={[history, setHistory]}>
+
                 {children}
+
             </HistoryContext.Provider>
         </GamesContext.Provider>
     )

@@ -1,16 +1,14 @@
-import { NavLink, useSearchParams } from "react-router"
+import { NavLink } from "react-router"
 import type Collection from "../classes/Collection"
 import { useGamesContext } from "../context";
 import ContextManager from "../classes/ContextManager";
 import Subject from "../classes/Subject";
-import { useEffect, useState } from "react";
 import Death from "../classes/Death";
 
-export default function Card<T>({ objContext, index, handleDelete }: { objContext: Collection<T>, index: number, handleDelete: (delIndex: number) => void }) {
+export default function Card<T>({ objContext, index, gi, handleDelete }: { objContext: Collection<T>, index: number, gi: number, handleDelete: (delIndex: number) => void }) {
     const [games, setGames] = useGamesContext();
-    const strPath = ContextManager.createCardPath(objContext, useSearchParams()[0], index, games)
+    let strPath = objContext.getSlug();
 
-    const gi = Number(useSearchParams()[0].get("gi")!)
 
     let deathInfo = null;
     if (objContext instanceof Subject) {
@@ -30,7 +28,7 @@ export default function Card<T>({ objContext, index, handleDelete }: { objContex
             if (type == "fulltry") {
                 subjectObj.items.push(new Death())
             }
-            else{
+            else {
                 subjectObj.items.push(new Death())
             }
 
