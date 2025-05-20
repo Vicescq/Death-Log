@@ -1,4 +1,4 @@
-import type { ContextTypes } from "../context";
+import type { GamesStateCustomTypes } from "../context";
 import type Collection from "./Collection";
 import Death from "./Death";
 import Game from "./Game";
@@ -58,13 +58,13 @@ export default class ContextManager {
 
     static reviveGamesContext(serializedObj: string): Game[] {
         return JSON.parse(serializedObj, (_, value) => {
-            switch (value?._type as ContextTypes | undefined) { // NOTE: value?._type is needed rather than value._type bc to account for undefined/null errors where value is either undefined or null
+            switch (value?._type as GamesStateCustomTypes | undefined) { // NOTE: value?._type is needed rather than value._type bc to account for undefined/null errors where value is either undefined or null
                 case "game":
                     return new Game(value._name, value._items);
                 case "profile":
                     return new Profile(value._name, value._items);
                 case "subject":
-                    return new Subject(value._name, value._items, value._fullTries, value._resets);
+                    return new Subject(value._name, value._items);
                 case "death":
                     return new Death(value._note, value._tags, value._deathType, value._date);
                 default:

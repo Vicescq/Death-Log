@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Game from "../classes/Game";
 import Card from "../components/Card";
 import UtilityCard from "../components/UtilityCard";
-import { useGamesContext } from "../context";
+import { useGamesContext, useHistoryContext } from "../context";
 
 export default function Home() {
 
@@ -25,7 +25,8 @@ export default function Home() {
             (_, index) => index !== targetIndex
         ));
     }
-    
+    const [history, setHistory] = useHistoryContext()
+    console.log(history)
 
     useEffect(() => (console.log("HOME:", games)), [games])
 

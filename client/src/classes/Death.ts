@@ -1,4 +1,4 @@
-import type { ContextTypes } from "../context";
+import type { GamesStateCustomTypes } from "../context";
 
 type DeathType = "reset" | "fullTry"
 
@@ -28,18 +28,18 @@ export default class Death {
     }
 
     private _deathType: DeathType;
-    get resets() {
+    get deathType() {
         return this._deathType;
     }
-    set resets(value: DeathType) {
+    set deathType(value: DeathType) {
         this._deathType = value;
     }
 
-    private _type: ContextTypes;
+    private _type: GamesStateCustomTypes;
     get type() {
         return this._type;
     }
-    set type(value: ContextTypes) {
+    set type(value: GamesStateCustomTypes) {
         this._type = value;
     }
 

@@ -1,4 +1,4 @@
-import type { ContextTypes } from "../context";
+import type { GamesStateCustomTypes } from "../context";
 
 export default abstract class Collection<T>{
     private _items!: T[];
@@ -17,11 +17,11 @@ export default abstract class Collection<T>{
         this._name = value;
     }
 
-    private _type!: ContextTypes;
+    private _type!: GamesStateCustomTypes;
     get type(){
         return this._type;
     }
-    set type(value: ContextTypes){
+    set type(value: GamesStateCustomTypes){
         this._type = value;
     }
 }
