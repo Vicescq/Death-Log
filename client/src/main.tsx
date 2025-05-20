@@ -6,7 +6,7 @@ import Home from "./pages/Home.tsx";
 import GameProfiles from "./pages/GameProfiles.tsx";
 import { ContextWrapper, useGamesContext } from "./context.tsx";
 import { ErrorBoundary } from "react-error-boundary";
-import ErrorPage from "./pages/ErrorPage.tsx";
+import ErrorPage, { ForceError } from "./pages/ErrorPage.tsx";
 import Root from "./pages/Root.tsx";
 import ProfileSubjects from "./pages/ProfileSubjects.tsx";
 import SubjectDeaths from "./pages/SubjectDeaths.tsx";
@@ -27,9 +27,10 @@ function AppRoutes() {
       <Routes>
         <Route path="/" element={<Root />}>
           <Route index element={<Home />} />
-          <Route path=":gameName" element={<URLMapper />} />
-          <Route path=":gameName/:profileName" element={<URLMapper />} />
-          <Route path=":gameName/:profileName/:subjectName" element={<URLMapper />} />
+          <Route path=":gameName" element={<URLMapper/>} />
+          <Route path=":gameName/:profileName" element={<URLMapper/>} />
+          <Route path=":gameName/:profileName/:subjectName" element={<URLMapper/>} />
+          <Route path=":gameName/:profileName/:subjectName/*" element={<ForceError msg={"URL NOT FOUND!"}/>} />
         </Route>
       </Routes>
     </ErrorBoundary>
@@ -38,22 +39,35 @@ function AppRoutes() {
 
 function URLMapper() {
   let component;
-  let params = useParams();
-  const [games, _] = useGamesContext();
+  const params = useParams();
+  const [games] = useGamesContext();
   const paramsArray = [params.gameName, params.profileName, params.subjectName];
   const indices: number[] = [];
 
+  function negativeOneCheckWrapper(returnValue: number){
+    if(returnValue != -1){
+      return returnValue
+    }
+    else{
+      throw Error("URL Not found!")
+    }
+  }
+
   for (let i = 0; i < paramsArray.length; i++) {
     if (paramsArray[i] != undefined) {
+      let indexLoc;
       switch (i) {
         case 0:
-          indices.push(games.findIndex((game) => game.getSlug() == paramsArray[i] ? true : false));
+          indexLoc = games.findIndex((game) => game.getSlug() == paramsArray[i])
+          indices.push(negativeOneCheckWrapper(indexLoc));
           break;
         case 1:
-          indices.push(games[indices[0]].items.findIndex((profile) => profile.getSlug() == paramsArray[i] ? true : false));
+          indexLoc = games[indices[0]].items.findIndex((profile) => profile.getSlug() == paramsArray[i])
+          indices.push(negativeOneCheckWrapper(indexLoc));
           break;
         case 2:
-          indices.push(games[indices[0]].items[indices[1]].items.findIndex((subject) => subject.getSlug() == paramsArray[i] ? true : false));
+          indexLoc = games[indices[0]].items[indices[1]].items.findIndex((subject) => subject.getSlug() == paramsArray[i])
+          indices.push(negativeOneCheckWrapper(indexLoc));
           break;
       }
     }
