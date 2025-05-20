@@ -36,12 +36,12 @@ export default class ContextManager {
         let strPath = "";
         if (objContext instanceof Game) {
             const sParams = "?gi=" + objContextIndex;
-            strPath = objContext.name.replaceAll(" ", "_") + sParams
+            strPath = objContext.name.replaceAll(" ", "-") + sParams
         }
 
         else if (objContext instanceof Profile) {
             const sParams = "?gi=" + currentCardPathParamsObj.get("gi")! + "&pi=" + objContextIndex
-            strPath = objContext.name.replaceAll(" ", "_") + sParams
+            strPath = objContext.name.replaceAll(" ", "-") + sParams
         }
 
         else {

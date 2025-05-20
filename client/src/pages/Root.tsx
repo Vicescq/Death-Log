@@ -8,7 +8,7 @@ export default function Root() {
     function load() {
         const bool = confirm("LOAD PREVIOUS STATE")
         if (bool) {
-            const newGames = ContextManager.reviveGamesContext(localStorage.getItem("y")!);
+            const newGames = ContextManager.reviveGamesContext(localStorage.getItem("main")!);
             setGames(newGames);
         }
 
@@ -17,7 +17,7 @@ export default function Root() {
     function save() {
         const bool = confirm("SAVE CURRENT STATE")
         if (bool) {
-            localStorage.setItem("y", JSON.stringify(games))
+            localStorage.setItem("main", JSON.stringify(games))
         }
     }
 
