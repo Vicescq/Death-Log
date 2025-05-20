@@ -28,11 +28,9 @@ export default function Card<T>({ objContext, index, handleDelete }: { objContex
             const currGame = games[gi];
             const subjectObj = objContext as Subject;
             if (type == "fulltry") {
-                subjectObj.fullTries += 1;
                 subjectObj.items.push(new Death())
             }
             else{
-                subjectObj.resets += 1;
                 subjectObj.items.push(new Death())
             }
 
