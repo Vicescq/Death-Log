@@ -4,10 +4,11 @@ import ContextManager from "../classes/ContextManager";
 import Subject from "../classes/Subject";
 import Death from "../classes/Death";
 import useGamesContext from "../hooks/useGamesContext";
+import useConsoleLogOnStateChange from "../hooks/useConsoleLogOnStateChange";
 
 export default function Card<T>({ objContext, index, gi, handleDelete }: { objContext: Collection<T>, index: number, gi: number, handleDelete: (delIndex: number) => void }) {
     const [games, setGames] = useGamesContext();
-    let strPath = objContext.getSlug();
+    let strPath = objContext.path;
 
 
     let deathInfo = null;
@@ -46,11 +47,11 @@ export default function Card<T>({ objContext, index, gi, handleDelete }: { objCo
 
         )
     }
-
+    useConsoleLogOnStateChange(null, strPath);
     return (
         <>
             <div className="flex rounded-lg border p-3 gap-2 ">
-                <NavLink to={`${strPath}`}>
+                <NavLink to={`/${strPath}`}>
                     <span className="cursor-pointer">{objContext.name}</span>
                 </NavLink>
                 {deathInfo}

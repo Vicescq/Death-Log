@@ -1,38 +1,41 @@
-import { useEffect, useState } from "react";
+import { useRef, useState } from "react";
 import Game from "../classes/Game";
 import Card from "../components/Card";
 import UtilityCard from "../components/UtilityCard";
 import useGamesContext from "../hooks/useGamesContext";
+import useURLMapContext from "../hooks/useURLMapContext";
+import useConsoleLogOnStateChange from "../hooks/useConsoleLogOnStateChange";
+import useUpdatedURLMap from "../hooks/useUpdatedURLMap";
 
 export default function Home() {
-
-    // add init for games for persistence
-
+    
+    const [urlMap, setURLMap] = useURLMapContext();
     const [games, setGames] = useGamesContext();
     const [addGameText, setAddGameText] = useState("");
+    const addedGameRef = useRef<Game | null>(null);
 
     function handleAddGameBtn() {
-
         if (addGameText != "") {
-            const newGame = new Game(addGameText.trim(), []);
+            const newGame = new Game(addGameText.trim(), [], addGameText.trim().replaceAll(" ", "-"));
             setGames((prevGames) => [...prevGames, newGame]);
+            addedGameRef.current = newGame
         }
     }
 
     function handleCardDelete(targetIndex: number) {
-
         setGames((prevGames) => prevGames.filter(
             (_, index) => index !== targetIndex
         ));
     }
 
-    useEffect(() => (console.log("HOME:", games)), [games])
-
+    useUpdatedURLMap(games, addedGameRef, urlMap, setURLMap)
+    useConsoleLogOnStateChange(games, "HOME:", games);
+    useConsoleLogOnStateChange(urlMap, "URL MAP:", urlMap);
+    
     return (
 
         <>
             Home
-
             <UtilityCard addOrDelStr="Add game" handleBtn={handleAddGameBtn} handleTextChange={(event) => setAddGameText(event.target.value)} />
             {
                 games.map(

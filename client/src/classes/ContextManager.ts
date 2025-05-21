@@ -1,8 +1,12 @@
-import type { GamesStateCustomTypes } from "../context";
+import type { URLMapContextType, URLMapStateType } from "../context";
+import type Collection from "./Collection";
 import Death from "./Death";
 import Game from "./Game";
 import Profile from "./Profile";
 import Subject from "./Subject";
+import type TreeNode from "./TreeNode";
+import type { TreeNodeParentType, TreeNodeType } from "./TreeNode";
+export type GamesStateCustomTypes = "game" | "profile" | "subject" | "death";
 
 export default class ContextManager {
 
@@ -36,14 +40,14 @@ export default class ContextManager {
     }
 
     static reviveGamesContext(serializedObj: string): Game[] {
-        return JSON.parse(serializedObj, (_, value) => {
-            switch (value?._type as GamesStateCustomTypes | undefined) { // NOTE: value?._type is needed rather than value._type bc to account for undefined/null errors where value is either undefined or null
+        return JSON.parse(serializedObj, (index, value) => {
+            switch (value?._type) { // NOTE: value?._type is needed rather than value._type bc to account for undefined/null errors where value is either undefined or null
                 case "game":
-                    return new Game(value._name, value._items);
+                    return new Game(value._name, value._items, value._path, value._indices);
                 case "profile":
-                    return new Profile(value._name, value._items);
+                    return new Profile(value._name, value._items, value._path, value._indices);
                 case "subject":
-                    return new Subject(value._name, value._items);
+                    return new Subject(value._name, value._items, value._path, value._indices);
                 case "death":
                     return new Death(value._note, value._tags, value._deathType, value._date);
                 default:

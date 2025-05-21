@@ -3,6 +3,8 @@ import type Game from "./classes/Game";
 
 type GamesContextType = [Game[], React.Dispatch<React.SetStateAction<Game[]>>];
 type HistoryContextType = [HistoryStateType, React.Dispatch<React.SetStateAction<HistoryStateType>>];
+export type URLMapContextType = [URLMapStateType, React.Dispatch<React.SetStateAction<URLMapStateType>>]
+
 export type HistoryStateType = {
     undo: {
         index: number,
@@ -13,11 +15,16 @@ export type HistoryStateType = {
         stack: Game[]
     }
 }
-
-export type GamesStateCustomTypes = "game" | "profile" | "subject" | "death";
+export type URLMapStateValueType = {
+    gameID: string,
+    profileID: string,
+    subjectID: string
+}
+export type URLMapStateType = Map<string, URLMapStateValueType>;
 
 export const GamesContext = createContext<GamesContextType | undefined>(undefined);
 export const HistoryContext = createContext<HistoryContextType | undefined>(undefined);
+export const URLMapContext = createContext<URLMapContextType | undefined>(undefined);
 
 export function ContextWrapper({ children }: { children: ReactNode }) {
     // 2 conditions before here, if persistent data exists init, deserialize and then init as state, otherwise init state as []
@@ -32,12 +39,15 @@ export function ContextWrapper({ children }: { children: ReactNode }) {
             index: -1,
             stack: []
         }
-    })
+    });
+    const [urlMap, setURLMap] = useState<URLMapStateType>(new Map());
 
     return (
         <GamesContext.Provider value={[games, setGames]}>
             <HistoryContext.Provider value={[history, setHistory]}>
-                {children}
+                <URLMapContext.Provider value={[urlMap, setURLMap]}>
+                    {children}
+                </URLMapContext.Provider>
             </HistoryContext.Provider>
         </GamesContext.Provider>
     )

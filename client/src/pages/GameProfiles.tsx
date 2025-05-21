@@ -1,22 +1,28 @@
 import Card from "../components/Card";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Profile from "../classes/Profile";
 import UtilityCard from "../components/UtilityCard";
 import ContextManager from "../classes/ContextManager";
 import useGamesContext from "../hooks/useGamesContext";
+import useURLMapContext from "../hooks/useURLMapContext";
+import useConsoleLogOnStateChange from "../hooks/useConsoleLogOnStateChange";
+import useUpdatedURLMap from "../hooks/useUpdatedURLMap";
 
-export default function GameProfiles({gi}: {gi: number}) {
-
+export default function GameProfiles({ gameID }: { gameID: string }) {
+    const [urlMap, setURLMap] = useURLMapContext();
     const [games, setGames] = useGamesContext();
     const [addProfileText, setaddProfileText] = useState("");
-
-
+    const newProfileRef = useRef<Profile | null>(null);
+    
+    const gi = games.findIndex((game) => game.id == gameID)
 
     function handleAddProfileBtn() {
         if (addProfileText != "") {
 
             const currGame = games[gi]
-            const newProfile = new Profile(addProfileText.trim(), []);
+            const path = currGame.path + "/" + addProfileText.trim().replaceAll(" ", "-");
+            const newProfile = new Profile(addProfileText.trim(), [], path);
+            newProfileRef.current = newProfile;
             currGame.items.push(newProfile);
             const newArr = ContextManager.getUpdatedGamesContext(games, currGame, gi)
             setGames((prevGames) => newArr);
@@ -30,7 +36,8 @@ export default function GameProfiles({gi}: {gi: number}) {
         setGames((prevGames) => newArr);
     }
 
-    useEffect(() => (console.log("GAME PROFILES:", games)), [games])
+    useUpdatedURLMap(games, newProfileRef, urlMap, setURLMap, gameID);
+    useConsoleLogOnStateChange(games, "GAME PROFILES:", games);
 
     return (
         <>

@@ -3,7 +3,6 @@ import ContextManager from "../classes/ContextManager";
 import useGamesContext from "../hooks/useGamesContext";
 import useHistoryContext from "../hooks/useHistoryContext";
 
-
 export default function Root() {
     const [games, setGames] = useGamesContext();
     const [history, setHistory] = useHistoryContext()
@@ -23,6 +22,7 @@ export default function Root() {
             localStorage.setItem("main", JSON.stringify(games))
         }
     }
+
 
     return (
         <>
