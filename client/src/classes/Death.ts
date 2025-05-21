@@ -1,8 +1,20 @@
-import type { GamesStateCustomTypes } from "../context";
+import TreeNode from "./TreeNode";
+import { v4 as uuid4 } from "uuid";
 
 type DeathType = "reset" | "fullTry"
 
-export default class Death {
+export default class Death extends TreeNode {
+
+    constructor(note: string | null = null, tags: string[] = [], deathType: DeathType = "fullTry", date: string = new Date().toString()) {
+        super();
+        this._date = date;
+        this._note = note;
+        this._tags = tags;
+        this._deathType = deathType;
+        this.type = "death";
+        this.name = "";
+    }
+
     private _date: string | null;
     get date() {
         return this._date;
@@ -33,21 +45,5 @@ export default class Death {
     }
     set deathType(value: DeathType) {
         this._deathType = value;
-    }
-
-    private _type: GamesStateCustomTypes;
-    get type() {
-        return this._type;
-    }
-    set type(value: GamesStateCustomTypes) {
-        this._type = value;
-    }
-
-    constructor(note: string | null = null, tags: string[] = [], deathType: DeathType = "fullTry", date: string = new Date().toString()) {
-        this._date = date;
-        this._note = note;
-        this._tags = tags;
-        this._deathType = deathType;
-        this._type = "death";
     }
 }
