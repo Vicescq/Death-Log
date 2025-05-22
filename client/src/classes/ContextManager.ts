@@ -12,12 +12,12 @@ export default class ContextManager {
 
     constructor() { }
 
-    static updateGamesContext(games: GamesContextType[0], setGames: GamesContextType[1], upsertedGame: Game, targetedGI: number, strategy: updateGamesContextStrategy) {
+    static updateGamesContext(games: GamesContextType[0], setGames: GamesContextType[1], upsertedGame: Game, targetedGI: number, strategy: updateGamesContextStrategy, nodeToBeDeleted: TreeNode | null = null) {
         let newGamesState: Game[];
         let slicedArrayFirst;
         let slicedArraySecond;
 
-        if (strategy == "add") {
+        if (strategy == "add" || nodeToBeDeleted?.type != "game") {
             if (targetedGI == 0) {
                 slicedArraySecond = games.slice(1);
                 newGamesState = [upsertedGame, ...slicedArraySecond];
@@ -33,10 +33,10 @@ export default class ContextManager {
                 slicedArraySecond = games.slice(targetedGI + 1, games.length);
                 newGamesState = [...slicedArrayFirst, upsertedGame, ...slicedArraySecond];
             }
-
         }
 
         else {
+
             if (targetedGI == 0) {
                 slicedArraySecond = games.slice(1);
                 newGamesState = [...slicedArraySecond];
@@ -83,7 +83,7 @@ export default class ContextManager {
             case "subject":
                 rootNode.items[pi!].items.splice(si!, 1);
         }
-        ContextManager.updateGamesContext(games, setGames, rootNode, targetedGI, "delete");
+        ContextManager.updateGamesContext(games, setGames, rootNode, targetedGI, "delete", node);
     }
 
     static serializeGames(games: Game[]) {

@@ -1,5 +1,4 @@
 import Card from "../components/Card";
-import { useState } from "react";
 import AddItemCard from "../components/AddItemCard";
 import useGamesContext from "../hooks/useGamesContext";
 import useURLMapContext from "../hooks/useURLMapContext";
@@ -14,12 +13,15 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
     const gi = games.findIndex((game) => game.id == gameID)
 
     function onAdd(inputText: string) {
-        const newProfile = new Profile(inputText.trim(), [], games[gi].path + "/" + inputText.trim().replaceAll(" ", "/"))
-        ContextManager.addNode(games, setGames, games[gi], newProfile, gi);
-        ContextManager.addNewURLMapping(newProfile, urlMap, setURLMap, gameID)
+        if(inputText != ""){
+            const newProfile = new Profile(inputText.trim(), [], games[gi].path + "/" + inputText.trim().replaceAll(" ", "/"))
+            ContextManager.addNode(games, setGames, games[gi], newProfile, gi);
+            ContextManager.addNewURLMapping(newProfile, urlMap, setURLMap, gameID)
+        }
     }
 
-    function onDelete() {
+    function onDelete(node: Profile) {
+        ContextManager.deleteNode(games, setGames, games[gi], node, gi);
     }
 
     useConsoleLogOnStateChange(games, "GAME PROFILES:", games);
@@ -30,7 +32,7 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
             <AddItemCard itemType="profile" onAdd={onAdd} />
             {
                 games[gi].items.map(
-                    (profile, index) => (<Card key={index} objContext={profile} onDel={onDelete}/>)
+                    (profile, index) => (<Card key={index} objContext={profile} onDelete={() => onDelete(profile)}/>)
                 )
             }
         </>

@@ -4,7 +4,7 @@ import Subject from "../classes/Subject";
 import Death from "../classes/Death";
 import type TreeNode from "../classes/TreeNode";
 
-export default function Card({ objContext, onDel }: { objContext: TreeNode, onDel: () => void }) {
+export default function Card({ objContext, onDelete: onDel }: { objContext: TreeNode, onDelete: () => void }) {
 
     let strPath = objContext.path;
 
