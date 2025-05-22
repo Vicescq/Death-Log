@@ -7,6 +7,8 @@ import ContextManager from "../classes/ContextManager";
 import useGamesContext from "../hooks/useGamesContext";
 import useURLMapContext from "../hooks/useURLMapContext";
 import useConsoleLogOnStateChange from "../hooks/useConsoleLogOnStateChange";
+import type { DeathType } from "../classes/Death";
+import Death from "../classes/Death";
 
 export default function ProfileSubjects({ gameID, profileID }: { gameID: string, profileID: string }) {
 
@@ -25,11 +27,22 @@ export default function ProfileSubjects({ gameID, profileID }: { gameID: string,
         }
     }
 
-    function handleCardDelete(targetIndex: number) {
-        const currGame = games[gi]
-        currGame.items[pi].items.splice(targetIndex, 1);
-        const newArr = ContextManager.updateGamesContext(games, currGame, gi)
-        setGames((prevGames) => newArr);
+    function onDelete(node: Subject) {
+            ContextManager.deleteNode(games, setGames, games[gi], node, gi, pi);
+            ContextManager.deleteURLMapping(urlMap, setURLMap, node);
+        }
+
+    function onDeath(type: DeathType, subject: Subject) {
+        let newDeath: Death;
+        if (type == "fullTry") {
+            newDeath = new Death()
+            subject.items.push(newDeath)
+        }
+        else {
+            newDeath = new Death(null, [], "reset")
+            subject.items.push(newDeath);
+        }
+        ContextManager.addNode(games, setGames, games[gi], newDeath, gi, pi);
     }
 
     useConsoleLogOnStateChange(games, "PROFILE PAGE:", games);
@@ -38,13 +51,9 @@ export default function ProfileSubjects({ gameID, profileID }: { gameID: string,
         <>
             ProfileSubjects
             <AddItemCard onAdd={onAdd} itemType="profile"/>
-
             {
-                games[gi].items[pi].items.map((subject, index) => (<Card key={index} objContext={subject} onDelete={() => handleCardDelete} />))
+                games[gi].items[pi].items.map((subject, index) => (<Card key={index} objContext={subject} onDelete={() => onDelete(subject)} onDeath={(type) => onDeath(type, subject)} />))
             }
         </>
-
-
-
     )
 }

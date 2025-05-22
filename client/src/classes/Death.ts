@@ -1,7 +1,7 @@
 import TreeNode from "./TreeNode";
 import { v4 as uuid4 } from "uuid";
 
-type DeathType = "reset" | "fullTry"
+export type DeathType = "reset" | "fullTry"
 
 export default class Death extends TreeNode {
 

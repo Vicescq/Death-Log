@@ -33,7 +33,7 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
             <AddItemCard itemType="profile" onAdd={onAdd} />
             {
                 games[gi].items.map(
-                    (profile, index) => (<Card key={index} objContext={profile} onDelete={() => onDelete(profile)}/>)
+                    (profile, index) => (<Card key={index} objContext={profile} onDelete={() => onDelete(profile)} onDeath={null}/>)
                 )
             }
         </>
