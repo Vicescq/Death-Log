@@ -12,7 +12,7 @@ export default function Root() {
     function load() {
         const bool = confirm("LOAD PREVIOUS STATE")
         if (bool) {
-            const newGames = ContextManager.deserializeGamesContext(localStorage.getItem("main")!);
+            const newGames = ContextManager.deserializeGames(localStorage.getItem("main")!);
             setGames(newGames);
             ContextManager.buildURLMapContextOnLoad(newGames, urlMap, setURLMap);
         }

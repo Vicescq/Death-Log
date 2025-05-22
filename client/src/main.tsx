@@ -76,7 +76,6 @@ export default function URLToComponentMapper() {
       ids.push(urlMapStateValue.gameID!);
       ids.push(urlMapStateValue.profileID!);
       ids.push(urlMapStateValue.subjectID!);
-      console.log("ids: ", ids)
   }
 
   switch (ids.length) {

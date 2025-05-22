@@ -1,8 +1,8 @@
 import { createContext, useState, type ReactNode } from "react";
 import type Game from "./classes/Game";
 
-type GamesContextType = [Game[], React.Dispatch<React.SetStateAction<Game[]>>];
-type HistoryContextType = [HistoryStateType, React.Dispatch<React.SetStateAction<HistoryStateType>>];
+export type GamesContextType = [Game[], React.Dispatch<React.SetStateAction<Game[]>>];
+export type HistoryContextType = [HistoryStateType, React.Dispatch<React.SetStateAction<HistoryStateType>>];
 export type URLMapContextType = [URLMapStateType, React.Dispatch<React.SetStateAction<URLMapStateType>>]
 
 export type HistoryStateType = {

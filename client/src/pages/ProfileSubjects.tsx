@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Card from "../components/Card";
-import UtilityCard from "../components/UtilityCard";
+import AddItemCard from "../components/AddItemCard";
 
 import Subject from "../classes/Subject";
 import ContextManager from "../classes/ContextManager";
@@ -22,12 +22,10 @@ export default function ProfileSubjects({ gameID, profileID }: { gameID: string,
             const currProfile = games[gi].items[pi];
             const path = currProfile.path + "/" + addSubjectText.trim().replaceAll(" ", "-");
             const newSubject = new Subject(addSubjectText.trim(), [], path);
-            ContextManager.updateURLMapContext(newSubject, urlMap, setURLMap, gameID, profileID);
+            ContextManager.addNewURLMapping(newSubject, urlMap, setURLMap, gameID, profileID);
             currProfile.items.push(newSubject);
             const currGame = games[gi]
-
-            const newArr = ContextManager.updateGamesContext(games, currGame, gi)
-            setGames(newArr);
+            ContextManager.updateGamesContext(games, setGames, currGame, gi)
         }
     }
 
@@ -43,7 +41,7 @@ export default function ProfileSubjects({ gameID, profileID }: { gameID: string,
     return (
         <>
             ProfileSubjects
-            <UtilityCard addOrDelStr="Add game" handleBtn={handleAddSubjectBtn} handleTextChange={(event) => setaddSubjectText(event.target.value)} />
+            <AddItemCard addOrDelStr="Add game" handleBtn={handleAddSubjectBtn} handleTextChange={(event) => setaddSubjectText(event.target.value)} />
 
             {
                 games[gi].items[pi].items.map((subject, index) => (<Card key={index} objContext={subject} index={index} gi={gi} handleDelete={handleCardDelete} />))

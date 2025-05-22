@@ -1,4 +1,4 @@
-import type { URLMapContextType, URLMapStateType, URLMapStateValueType } from "../context";
+import type { GamesContextType, URLMapContextType, URLMapStateType, URLMapStateValueType } from "../context";
 import Death from "./Death";
 import Game from "./Game";
 import Profile from "./Profile";
@@ -6,38 +6,92 @@ import Subject from "./Subject";
 import type TreeNode from "./TreeNode";
 export type GamesStateCustomTypes = "game" | "profile" | "subject" | "death";
 
+type updateGamesContextStrategy = "add" | "delete";
+
 export default class ContextManager {
 
     constructor() { }
 
-    static updateGamesContext(games: Game[], updatedGame: Game, updatedGameIndex: number) {
-        let updatedContext;
+    static updateGamesContext(games: GamesContextType[0], setGames: GamesContextType[1], upsertedGame: Game, targetedGI: number, strategy: updateGamesContextStrategy) {
+        let newGamesState: Game[];
         let slicedArrayFirst;
         let slicedArraySecond;
-        if (updatedGameIndex == 0) {
-            slicedArraySecond = games.slice(1);
-            updatedContext = [updatedGame, ...slicedArraySecond];
-        }
 
-        else if (updatedGameIndex == games.length - 1) {
-            slicedArrayFirst = games.slice(0, updatedGameIndex);
-            updatedContext = [...slicedArrayFirst, updatedGame];
+        if (strategy == "add") {
+            if (targetedGI == 0) {
+                slicedArraySecond = games.slice(1);
+                newGamesState = [upsertedGame, ...slicedArraySecond];
+            }
+
+            else if (targetedGI == games.length - 1) {
+                slicedArrayFirst = games.slice(0, targetedGI);
+                newGamesState = [...slicedArrayFirst, upsertedGame];
+            }
+
+            else {
+                slicedArrayFirst = games.slice(0, targetedGI);
+                slicedArraySecond = games.slice(targetedGI + 1, games.length);
+                newGamesState = [...slicedArrayFirst, upsertedGame, ...slicedArraySecond];
+            }
+
         }
 
         else {
-            slicedArrayFirst = games.slice(0, updatedGameIndex);
-            slicedArraySecond = games.slice(updatedGameIndex + 1, games.length);
-            updatedContext = [...slicedArrayFirst, updatedGame, ...slicedArraySecond];
+            if (targetedGI == 0) {
+                slicedArraySecond = games.slice(1);
+                newGamesState = [...slicedArraySecond];
+            }
+
+            else if (targetedGI == games.length - 1) {
+                slicedArrayFirst = games.slice(0, targetedGI);
+                newGamesState = [...slicedArrayFirst];
+            }
+
+            else {
+                slicedArrayFirst = games.slice(0, targetedGI);
+                slicedArraySecond = games.slice(targetedGI + 1, games.length);
+                newGamesState = [...slicedArrayFirst, ...slicedArraySecond];
+            }
         }
 
-        return updatedContext
+        setGames(newGamesState);
     }
 
-    static serializeGamesContext(games: Game[]) {
+    static addNode(games: GamesContextType[0], setGames: GamesContextType[1], rootNode: Game, node: TreeNode, targetedGI: number, pi: number | null = null) {
+        // indices param start from profile not from game since we already have rootNode (Game) acess 
+        switch (node.type) {
+            case "game":
+                break;
+            case "profile":
+                const profile = node as Profile;
+                rootNode.items.push(profile);
+                break;
+            case "subject":
+                const subject = node as Subject;
+                rootNode.items[pi!].items.push(subject);
+        }
+        ContextManager.updateGamesContext(games, setGames, rootNode, targetedGI, "add");
+    }
+
+    static deleteNode(games: GamesContextType[0], setGames: GamesContextType[1], rootNode: Game, node: TreeNode, targetedGI: number, pi: number | null = null, si: number | null = null) {
+        switch (node.type) {
+            case "game":
+                break;
+            case "profile":
+                rootNode.items.splice(pi!, 1);
+                break;
+            case "subject":
+                rootNode.items[pi!].items.splice(si!, 1);
+        }
+        ContextManager.updateGamesContext(games, setGames, rootNode, targetedGI, "delete");
+    }
+
+    static serializeGames(games: Game[]) {
         return JSON.stringify(games)
     }
 
-    static deserializeGamesContext(serializedObj: string): Game[] {
+
+    static deserializeGames(serializedObj: string): Game[] {
         return JSON.parse(serializedObj, (_, value) => {
             switch (value?._type) { // NOTE: value?._type is needed rather than value._type bc to account for undefined/null errors where value is either undefined or null
                 case "game":
@@ -54,7 +108,7 @@ export default class ContextManager {
         });
     }
 
-    static updateURLMapContext(objContext: TreeNode, urlMap: URLMapContextType[0], setURLMap: URLMapContextType[1], ...parentIDS: string[]) {
+    static addNewURLMapping(objContext: TreeNode, urlMap: URLMapContextType[0], setURLMap: URLMapContextType[1], ...parentIDS: string[]) {
         const deepCopyURLMap: URLMapStateType = new Map();
         urlMap.forEach((value, key) => {
             deepCopyURLMap.set(key, value);
@@ -88,6 +142,15 @@ export default class ContextManager {
 
         deepCopyURLMap.set(objContext.path, urlMapValue);
         setURLMap(deepCopyURLMap)
+    }
+
+    static delURLMapping(urlMap: URLMapContextType[0], setURLMap: URLMapContextType[1], pathKey: string) {
+        const deepCopyURLMap: URLMapStateType = new Map();
+        urlMap.forEach((value, key) => {
+            deepCopyURLMap.set(key, value);
+        });
+        deepCopyURLMap.delete(pathKey);
+        setURLMap(deepCopyURLMap);
     }
 
     static buildURLMapContextOnLoad(games: Game[], urlMap: URLMapContextType[0], setURLMap: URLMapContextType[1]) {
