@@ -22,6 +22,7 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 
     function onDelete(node: Profile) {
         ContextManager.deleteNode(games, setGames, games[gi], node, gi);
+        ContextManager.deleteURLMapping(urlMap, setURLMap, node);
     }
 
     useConsoleLogOnStateChange(games, "GAME PROFILES:", games);

@@ -21,6 +21,7 @@ export default function Home() {
 
     function onDelete(node: Game, targetedGI: number) {
         ContextManager.deleteNode(games, setGames, node, node, targetedGI);
+        ContextManager.deleteURLMapping(urlMap, setURLMap, node);
     }
 
     useConsoleLogOnStateChange(games, "HOME:", games);

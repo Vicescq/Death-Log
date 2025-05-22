@@ -11,21 +11,17 @@ import useConsoleLogOnStateChange from "../hooks/useConsoleLogOnStateChange";
 export default function ProfileSubjects({ gameID, profileID }: { gameID: string, profileID: string }) {
 
     const [games, setGames] = useGamesContext();
-    const [addSubjectText, setaddSubjectText] = useState("");
     const [urlMap, setURLMap] = useURLMapContext();
 
     const gi = games.findIndex((game) => game.id == gameID)
     const pi = games[gi].items.findIndex((profile) => profile.id == profileID)
 
-    function handleAddSubjectBtn() {
-        if (addSubjectText != "") {
-            const currProfile = games[gi].items[pi];
-            const path = currProfile.path + "/" + addSubjectText.trim().replaceAll(" ", "-");
-            const newSubject = new Subject(addSubjectText.trim(), [], path);
+    function onAdd(inputText: string) {
+        if (inputText != "") {
+            const path = games[gi].items[pi].path + "/" + inputText.trim().replaceAll(" ", "-");
+            const newSubject = new Subject(inputText.trim(), [], path);
+            ContextManager.addNode(games, setGames, games[gi], newSubject, gi, pi);
             ContextManager.addNewURLMapping(newSubject, urlMap, setURLMap, gameID, profileID);
-            currProfile.items.push(newSubject);
-            const currGame = games[gi]
-            ContextManager.updateGamesContext(games, setGames, currGame, gi)
         }
     }
 
@@ -41,10 +37,10 @@ export default function ProfileSubjects({ gameID, profileID }: { gameID: string,
     return (
         <>
             ProfileSubjects
-            <AddItemCard addOrDelStr="Add game" handleBtn={handleAddSubjectBtn} handleTextChange={(event) => setaddSubjectText(event.target.value)} />
+            <AddItemCard onAdd={onAdd} itemType="profile"/>
 
             {
-                games[gi].items[pi].items.map((subject, index) => (<Card key={index} objContext={subject} index={index} gi={gi} handleDelete={handleCardDelete} />))
+                games[gi].items[pi].items.map((subject, index) => (<Card key={index} objContext={subject} onDelete={() => handleCardDelete} />))
             }
         </>
 

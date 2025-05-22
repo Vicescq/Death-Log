@@ -144,12 +144,38 @@ export default class ContextManager {
         setURLMap(deepCopyURLMap)
     }
 
-    static delURLMapping(urlMap: URLMapContextType[0], setURLMap: URLMapContextType[1], pathKey: string) {
+    static deleteURLMapping(urlMap: URLMapContextType[0], setURLMap: URLMapContextType[1], node: TreeNode) {
         const deepCopyURLMap: URLMapStateType = new Map();
         urlMap.forEach((value, key) => {
             deepCopyURLMap.set(key, value);
         });
-        deepCopyURLMap.delete(pathKey);
+
+        function severSubTreeURLReferences(node: TreeNode) {
+
+            if (node.type == "subject") {
+                const subject = node as Subject;
+                deepCopyURLMap.delete(subject.path);
+                return;
+            }
+
+            else if (node.type == "profile") {
+                const profile = node as Profile
+                for (let i = 0; i < profile.items.length; i++) {
+                    severSubTreeURLReferences(profile.items[i]);
+                }
+                deepCopyURLMap.delete(profile.path);
+            }
+
+            else {
+                const game = node as Game
+                for (let i = 0; i < game.items.length; i++) {
+                    severSubTreeURLReferences(game.items[i]);
+                }
+                deepCopyURLMap.delete(game.path);
+            }
+        }
+
+        severSubTreeURLReferences(node);
         setURLMap(deepCopyURLMap);
     }
 
