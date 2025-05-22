@@ -5,10 +5,11 @@ import UtilityCard from "../components/UtilityCard";
 import useGamesContext from "../hooks/useGamesContext";
 import useURLMapContext from "../hooks/useURLMapContext";
 import useConsoleLogOnStateChange from "../hooks/useConsoleLogOnStateChange";
-import useUpdatedURLMap from "../hooks/useUpdatedURLMap";
+import useUpdateURLMap from "../hooks/useUpdateURLMap";
+import ContextManager from "../classes/ContextManager";
 
 export default function Home() {
-    
+
     const [urlMap, setURLMap] = useURLMapContext();
     const [games, setGames] = useGamesContext();
     const [addGameText, setAddGameText] = useState("");
@@ -19,6 +20,7 @@ export default function Home() {
             const newGame = new Game(addGameText.trim(), [], addGameText.trim().replaceAll(" ", "-"));
             setGames((prevGames) => [...prevGames, newGame]);
             addedGameRef.current = newGame
+            ContextManager.updateURLMapContext(newGame, urlMap, setURLMap);
         }
     }
 
@@ -28,10 +30,9 @@ export default function Home() {
         ));
     }
 
-    useUpdatedURLMap(games, addedGameRef, urlMap, setURLMap)
     useConsoleLogOnStateChange(games, "HOME:", games);
     useConsoleLogOnStateChange(urlMap, "URL MAP:", urlMap);
-    
+
     return (
 
         <>

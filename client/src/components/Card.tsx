@@ -33,7 +33,7 @@ export default function Card<T>({ objContext, index, gi, handleDelete }: { objCo
                 subjectObj.items.push(new Death())
             }
 
-            const newGame = ContextManager.getUpdatedGamesContext(games, currGame, gi);
+            const newGame = ContextManager.updateGamesContext(games, currGame, gi);
             setGames((prev) => newGame);
         }
     }
