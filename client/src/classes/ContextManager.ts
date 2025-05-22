@@ -57,8 +57,15 @@ export default class ContextManager {
         setGames(newGamesState);
     }
 
-    static addNode(games: GamesContextType[0], setGames: GamesContextType[1], rootNode: Game, node: TreeNode, targetedGI: number, pi: number | null = null) {
+    static addNode(games: GamesContextType[0], setGames: GamesContextType[1], node: TreeNode, targetedGI: number, pi: number | null = null) {
         // indices param start from profile not from game since we already have rootNode (Game) acess 
+        let rootNode: Game;
+        if (games.length == 0){
+            rootNode = node as Game;
+        }
+        else{
+            rootNode = games[targetedGI];
+        }
         switch (node.type) {
             case "game":
                 break;

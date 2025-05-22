@@ -7,7 +7,6 @@ export default function Card({ objContext, onDelete, onDeath }: { objContext: Tr
 
     let strPath = objContext.path;
 
-
     let deathInfo = null;
     if (objContext instanceof Subject) {
         const subjectObj = objContext as Subject
@@ -18,8 +17,6 @@ export default function Card({ objContext, onDelete, onDeath }: { objContext: Tr
             </>
         )
     }
-
-
 
     function subjectBtns() {
         return (

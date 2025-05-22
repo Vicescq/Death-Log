@@ -1,4 +1,3 @@
-import { useState } from "react";
 import Card from "../components/Card";
 import AddItemCard from "../components/AddItemCard";
 
@@ -22,7 +21,7 @@ export default function ProfileSubjects({ gameID, profileID }: { gameID: string,
         if (inputText != "") {
             const path = games[gi].items[pi].path + "/" + inputText.trim().replaceAll(" ", "-");
             const newSubject = new Subject(inputText.trim(), [], path);
-            ContextManager.addNode(games, setGames, games[gi], newSubject, gi, pi);
+            ContextManager.addNode(games, setGames, newSubject, gi, pi);
             ContextManager.addNewURLMapping(newSubject, urlMap, setURLMap, gameID, profileID);
         }
     }
@@ -42,7 +41,7 @@ export default function ProfileSubjects({ gameID, profileID }: { gameID: string,
             newDeath = new Death(null, [], "reset")
             subject.items.push(newDeath);
         }
-        ContextManager.addNode(games, setGames, games[gi], newDeath, gi, pi);
+        ContextManager.addNode(games, setGames, newDeath, gi, pi);
     }
 
     useConsoleLogOnStateChange(games, "PROFILE PAGE:", games);
