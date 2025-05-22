@@ -5,14 +5,14 @@ export type DeathType = "reset" | "fullTry"
 
 export default class Death extends TreeNode {
 
-    constructor(note: string | null = null, tags: string[] = [], deathType: DeathType = "fullTry", date: string = new Date().toString()) {
+    constructor(note: string | null = null, tags: string[] = [], deathType: DeathType = "fullTry", date: string = new Date().toString(), id: string = uuid4()) {
         super();
         this._date = date;
         this._note = note;
         this._tags = tags;
         this._deathType = deathType;
         this.type = "death";
-        this.name = "";
+        this.id = id;
     }
 
     private _date: string | null;

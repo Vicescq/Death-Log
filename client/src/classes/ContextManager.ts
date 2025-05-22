@@ -1,10 +1,10 @@
 import type { GamesContextType, URLMapContextType, URLMapStateType, URLMapStateValueType } from "../context";
+import type Collection from "./Collection";
 import Death from "./Death";
 import Game from "./Game";
 import Profile from "./Profile";
 import Subject from "./Subject";
 import type TreeNode from "./TreeNode";
-export type GamesStateCustomTypes = "game" | "profile" | "subject" | "death";
 
 type updateGamesContextStrategy = "add" | "delete";
 
@@ -114,7 +114,7 @@ export default class ContextManager {
         });
     }
 
-    static addNewURLMapping(objContext: TreeNode, urlMap: URLMapContextType[0], setURLMap: URLMapContextType[1], ...parentIDS: string[]) {
+    static addNewURLMapping<T>(objContext: Collection<T>, urlMap: URLMapContextType[0], setURLMap: URLMapContextType[1], ...parentIDS: string[]) {
         const deepCopyURLMap: URLMapStateType = new Map();
         urlMap.forEach((value, key) => {
             deepCopyURLMap.set(key, value);
@@ -193,14 +193,14 @@ export default class ContextManager {
         });
 
         function buildURLMap(treeNode: TreeNode, ...parentIDS: string[]) {
-            console.log(treeNode);
+
             if (treeNode.type == "death") {
                 return;
             }
 
             else if (treeNode.type == "subject") {
                 const subject = treeNode as Subject;
-                deepCopyURLMap.set(treeNode.path, {
+                deepCopyURLMap.set(subject.path, {
                     gameID: parentIDS[0],
                     profileID: parentIDS[1],
                     subjectID: treeNode.id
@@ -208,12 +208,11 @@ export default class ContextManager {
                 for (let i = 0; i < subject.items.length; i++) {
                     buildURLMap(subject.items[i])
                 }
-
             }
 
             else if (treeNode.type == "profile") {
                 const profile = treeNode as Profile;
-                deepCopyURLMap.set(treeNode.path, {
+                deepCopyURLMap.set(profile.path, {
                     gameID: parentIDS[0],
                     profileID: profile.id,
                     subjectID: ""
@@ -225,7 +224,7 @@ export default class ContextManager {
 
             else {
                 const game = treeNode as Game;
-                deepCopyURLMap.set(treeNode.path, {
+                deepCopyURLMap.set(game.path, {
                     gameID: game.id,
                     profileID: "",
                     subjectID: ""
