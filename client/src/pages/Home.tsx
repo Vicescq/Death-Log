@@ -33,7 +33,7 @@ export default function Home() {
             <AddItemCard itemType="game" onAdd={onAdd} />
             {
                 games.map(
-                    (game, index) => (<Card key={index} objContext={game} onDelete={() => onDelete(game, index)} onDeath={null}/>)
+                    (game, index) => (<Card key={index} objContext={game} onDelete={() => onDelete(game, index)} onDeath={null} onReadOnly={null}/>)
                 )
             }
         </>
