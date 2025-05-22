@@ -37,8 +37,6 @@ export default function Card({ objContext, onDelete, onDeath }: { objContext: Tr
                 {deathInfo}
 
                 <button onClick={onDelete} className="border-2 p-1 border-red-400 rounded-lg bg-red-400">del</button>
-
-
             </div>
         </>
     )

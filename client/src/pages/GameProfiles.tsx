@@ -14,7 +14,7 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 
     function onAdd(inputText: string) {
         if(inputText != ""){
-            const newProfile = new Profile(inputText.trim(), [], games[gi].path + "/" + inputText.trim().replaceAll(" ", "/"))
+            const newProfile = new Profile(inputText.trim(), [], games[gi].path + "/" + inputText.trim().replaceAll(" ", "-"))
             ContextManager.addNode(games, setGames, newProfile, gi);
             ContextManager.addNewURLMapping(newProfile, urlMap, setURLMap, gameID)
         }

@@ -13,7 +13,7 @@ export default function Home() {
 
     function onAdd(inputText: string) {
         if (inputText != ""){
-            const game = new Game(inputText.trim(), [], inputText.trim().replaceAll(" ", "/"));
+            const game = new Game(inputText.trim(), [], inputText.trim().replaceAll(" ", "-"));
             ContextManager.addNode(games, setGames, game, games.length);
             ContextManager.addNewURLMapping(game, urlMap, setURLMap);
         }

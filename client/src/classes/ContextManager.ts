@@ -60,7 +60,7 @@ export default class ContextManager {
     static addNode(games: GamesContextType[0], setGames: GamesContextType[1], node: TreeNode, targetedGI: number, pi: number | null = null) {
         // indices param start from profile not from game since we already have rootNode (Game) acess 
         let rootNode: Game;
-        if (games.length == 0){
+        if (node.type =="game"){
             rootNode = node as Game;
         }
         else{
@@ -96,7 +96,6 @@ export default class ContextManager {
     static serializeGames(games: Game[]) {
         return JSON.stringify(games)
     }
-
 
     static deserializeGames(serializedObj: string): Game[] {
         return JSON.parse(serializedObj, (_, value) => {
