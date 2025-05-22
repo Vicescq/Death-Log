@@ -5,7 +5,6 @@ import UtilityCard from "../components/UtilityCard";
 import useGamesContext from "../hooks/useGamesContext";
 import useURLMapContext from "../hooks/useURLMapContext";
 import useConsoleLogOnStateChange from "../hooks/useConsoleLogOnStateChange";
-import useUpdateURLMap from "../hooks/useUpdateURLMap";
 import ContextManager from "../classes/ContextManager";
 
 export default function Home() {
