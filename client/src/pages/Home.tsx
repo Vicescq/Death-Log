@@ -22,8 +22,6 @@ export default function Home() {
         ContextManager.deleteNode(tree, setTree, node, urlMap, setURLMap);
     }
 
-
-
     return (
         <>
             Home

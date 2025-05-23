@@ -47,7 +47,6 @@ export default class ContextManager {
                         deepCopyURLMap.delete(node.path)
                     }
                     updatedTree.delete(node.id);
-                    console.log("DELETED:", urlMap)
                     return;
                 }
 
@@ -82,10 +81,6 @@ export default class ContextManager {
         return deepCopyURLMap;
     }
 
-    static serializeGames(games: Game[]) {
-        return JSON.stringify(games)
-    }
-
     static deserializeGames(serializedObj: string): Game[] {
         return JSON.parse(serializedObj, (_, value) => {
             switch (value?._type) { // NOTE: value?._type is needed rather than value._type bc to account for undefined/null errors where value is either undefined or null
@@ -102,23 +97,5 @@ export default class ContextManager {
             }
         });
     }
-
-    static addURLMapping(node: Collection, urlMap: URLMapContextType[0], setURLMap: URLMapContextType[1]) {
-        const deepCopyURLMap = ContextManager.createDeepCopyURLMap(urlMap);
-        if (node instanceof Game) {
-            deepCopyURLMap.set(node.path, [node.id]);
-        }
-        else {
-            deepCopyURLMap.set(node.path, [...node.ancestry.slice(1), node.id]);
-        }
-        setURLMap(deepCopyURLMap);
-    }
-
-    static deleteURLMapping(collectionNode: Collection, urlMap: URLMapContextType[0], setURLMap: URLMapContextType[1], deepCopyURLMap) {
-        // const deepCopyURLMap = ContextManager.createDeepCopyURLMap(urlMap);
-        deepCopyURLMap.delete(collectionNode.path)
-        
-    }
-
-    
+ 
 }

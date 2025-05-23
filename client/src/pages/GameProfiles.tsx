@@ -24,7 +24,7 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
     }
 
     function onDelete(node: Profile) {
-        ContextManager.deleteNode(games, setGames, games[gi], node, gi);
+        ContextManager.deleteNode(tree, setTree, node, urlMap, setURLMap);
     }
 
     
@@ -36,7 +36,7 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
             {
                 tree.get(gameID)?.childIDS.map((nodeID, index) => {
                     const profile = tree.get(nodeID) as Profile;
-                    return <Card key={index} collectionNode={profile} onDelete={() => onDelete}/>
+                    return <Card key={index} collectionNode={profile} onDelete={() => onDelete(profile)}/>
                     
                 })
             }
