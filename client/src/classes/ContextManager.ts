@@ -1,4 +1,4 @@
-import type { TreeContextType, TreeStateType, URLMapContextType, } from "../context";
+import { URLMapContext, type TreeContextType, type TreeStateType, type URLMapContextType, } from "../context";
 import Collection from "./Collection";
 import Death from "./Death";
 import Game from "./Game";
@@ -83,22 +83,40 @@ export default class ContextManager {
         })
         return deepCopyURLMap;
     }
+    
+    static serializeTree(tree: TreeStateType){
+        const objLiteralFromTree = Object.fromEntries(tree);
+        return JSON.stringify(objLiteralFromTree);
+    }
 
-    static deserializeGames(serializedObj: string): Game[] {
-        return JSON.parse(serializedObj, (_, value) => {
-            switch (value?._type) { // NOTE: value?._type is needed rather than value._type bc to account for undefined/null errors where value is either undefined or null
+    static deserializeTree(serializedTree: string, setTree: TreeContextType[1], setURLMap: URLMapContextType[1]) {
+        const objLiteral = JSON.parse(serializedTree, (_, value) => {
+            switch (value?._type) {
+                case "root":
+                    return new RootNode(value._childIDS, value._date);
                 case "game":
-                    return new Game(value._name, value._items, value._path, value._indices);
+                    return new Game(value._name, value._path, value._parentID, value._childIDS, value._id, value._date);
                 case "profile":
-                    return new Profile(value._name, value._items, value._path, value._indices);
+                    return new Profile(value._name, value._path, value._parentID, value._id, value._childIDS, value._date);
                 case "subject":
-                    return new Subject(value._name, value._items, value._path, value._indices);
+                    return new Subject(value._name, value._path, value._parentID, value._notable, value._fullTries, value._resets, value._id, value._childIDS, value._date);
                 case "death":
-                    return new Death(value._note, value._tags, value._deathType, value._date);
+                    return new Death(value._parentID, value._deathType, value._note, value._tags, value._date, value._id);
                 default:
                     return value;
             }
         });
+        const tree = new Map(Object.entries(objLiteral)) as TreeStateType;
+        const urlMap = new Map() as URLMapContextType[0];
+        tree.entries().forEach((idAndNode) => {
+            const id = idAndNode[0];
+            const node = idAndNode[1];
+            if (node instanceof Collection){
+                urlMap.set(node.path, id);
+            }
+        });
+        setTree(tree);
+        setURLMap(urlMap);
     }
 
 }
