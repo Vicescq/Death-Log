@@ -2,7 +2,7 @@ import { NavLink } from "react-router"
 import Subject from "../classes/Subject";
 import type Collection from "../classes/Collection";
 
-export default function Card({ collectionNode, onDelete }: { collectionNode: Collection, onDelete: () => void}) {
+export default function Card({ collectionNode, handleDelete }: { collectionNode: Collection, handleDelete: () => void}) {
 
     
     let strPath = collectionNode.path;
@@ -36,7 +36,7 @@ export default function Card({ collectionNode, onDelete }: { collectionNode: Col
                 </NavLink>
                 {deathInfo}
 
-                <button onClick={onDelete} className="border-2 p-1 border-red-400 rounded-lg bg-red-400">del</button>
+                <button onClick={handleDelete} className="border-2 p-1 border-red-400 rounded-lg bg-red-400">del</button>
             </div>
         </>
     )

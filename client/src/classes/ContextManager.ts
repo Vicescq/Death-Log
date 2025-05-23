@@ -17,7 +17,7 @@ export default class ContextManager {
             deepCopyTree.set(node.id, node);
         }
         else {
-            const parentNode = deepCopyTree.get(node.parentID()!)!
+            const parentNode = deepCopyTree.get(node.parentID!)!
             parentNode.childIDS.push(node.id);
             deepCopyTree.set(node.id, node);
         }
@@ -59,7 +59,7 @@ export default class ContextManager {
                 deepCopyTree.delete(node.id);
             }
             
-            const parentNode = deepCopyTree.get(node.parentID()!);
+            const parentNode = deepCopyTree.get(node.parentID!);
             const targetIndex = parentNode?.childIDS.indexOf(node.id)!;
             parentNode?.childIDS.splice(targetIndex, 1);
             deleteSelfAndChild(node);

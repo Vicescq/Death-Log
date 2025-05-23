@@ -18,15 +18,6 @@ export default abstract class TreeNode {
         this._id = value;
     }
 
-    private _ancestry!: string[];
-    get ancestry() {
-        return this._ancestry;
-    }
-    set ancestry(value) {
-        this._ancestry = value;
-    }
-
-
     private _childIDS!: string[];
     get childIDS() {
         return this._childIDS;
@@ -43,10 +34,12 @@ export default abstract class TreeNode {
         this._date = value;
     }
 
-    parentID() {
-        if (this._type == "root") {
-            return "ROOT_NODE";
-        }
-        return this._ancestry[this._ancestry.length - 1];
+    private _parentID!: string | null;
+    get parentID(){
+        return this._parentID;
     }
+    set parentID(value){
+        this._parentID = value;
+    }
+
 }

@@ -8,7 +8,7 @@ export default class Subject extends Collection {
     constructor(
         name: string,
         path: string,
-        ancestry: string[],
+        parentID: string,
         notable: boolean = true,
         id: string = uuid4(),
         childIDS: string[] = [],
@@ -19,10 +19,10 @@ export default class Subject extends Collection {
         this.type = "subject";
         this.path = path;
         this.id = id;
-        this.ancestry = ancestry;
         this.childIDS = childIDS
         this.date = date;
         this._notable = notable;
+        this.parentID = parentID;
     }
 
     private _notable: boolean;

@@ -10,26 +10,26 @@ export default function Home() {
     const [tree, setTree] = useTreeContext();
     const [urlMap, setURLMap] = useURLMapContext();
 
-    function onAdd(inputText: string) {
+    function handleAdd(inputText: string) {
         if (inputText != ""){
             const path = inputText.trim().replaceAll(" ", "-");
-            const game = new Game(inputText.trim(), path, ["ROOT_NODE"]);
+            const game = new Game(inputText.trim(), path, "ROOT_NODE");
             ContextManager.addNode(tree, setTree, game, urlMap, setURLMap);
         }
     }
 
-    function onDelete(node: Game) {
+    function handleDelete(node: Game) {
         ContextManager.deleteNode(tree, setTree, node, urlMap, setURLMap);
     }
 
     return (
         <>
             Home
-            <AddItemCard itemType="game" onAdd={onAdd} />
+            <AddItemCard itemType="game" handleAdd={handleAdd} />
             {
                 tree.get("ROOT_NODE")?.childIDS.map((nodeID, index) => {
                     const game = tree.get(nodeID) as Game;
-                    return <Card key={index} collectionNode={game} onDelete={() => onDelete(game)}/>
+                    return <Card key={index} collectionNode={game} handleDelete={() => handleDelete(game)}/>
                 })
             }
         </>

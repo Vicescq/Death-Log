@@ -11,29 +11,29 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
     const [urlMap, setURLMap] = useURLMapContext();
     
 
-    function onAdd(inputText: string) {
+    function handleAdd(inputText: string) {
         if(inputText != ""){
             inputText = inputText.trim();
             const node = tree.get(gameID);
             const currentGame = node as Game;
             const path = currentGame.path + "/" + inputText
-            const profile = new Profile(inputText, path, [...currentGame.ancestry, gameID]);
+            const profile = new Profile(inputText, path, gameID);
             ContextManager.addNode(tree, setTree, profile, urlMap, setURLMap);
         }
     }
 
-    function onDelete(node: Profile) {
+    function handleDelete(node: Profile) {
         ContextManager.deleteNode(tree, setTree, node, urlMap, setURLMap);
     }
 
     return (
         <>
             GameProfiles
-            <AddItemCard itemType="profile" onAdd={onAdd} />
+            <AddItemCard itemType="profile" handleAdd={handleAdd} />
             {
                 tree.get(gameID)?.childIDS.map((nodeID, index) => {
                     const profile = tree.get(nodeID) as Profile;
-                    return <Card key={index} collectionNode={profile} onDelete={() => onDelete(profile)}/>
+                    return <Card key={index} collectionNode={profile} handleDelete={() => handleDelete(profile)}/>
                     
                 })
             }
