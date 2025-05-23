@@ -8,6 +8,7 @@ export default class Subject extends Collection {
     constructor(
         name: string,
         path: string,
+        notable: boolean = true,
         ancestry: string[],
         id: string = uuid4(),
         childIDS: string[] = [],
@@ -21,6 +22,15 @@ export default class Subject extends Collection {
         this.ancestry = ancestry;
         this.childIDS = childIDS
         this.date = date;
+        this._notable = notable;
+    }
+
+    private _notable: boolean;
+    get notable(){
+        return this._notable;
+    }
+    set notable(value){
+        this._notable = value;
     }
 
     getCount() {

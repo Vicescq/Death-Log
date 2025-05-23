@@ -22,33 +22,48 @@ export default class ContextManager {
             updatedTree.set(node.id, node);
         }
 
-        if (node instanceof Collection){
-            ContextManager.addURLMapping(node, urlMap, setURLMap);
+        if (node instanceof Collection) {
+            const deepCopyURLMap = ContextManager.createDeepCopyURLMap(urlMap);
+            if (node instanceof Game) {
+                deepCopyURLMap.set(node.path, [node.id]);
+            }
+            else {
+                deepCopyURLMap.set(node.path, [...node.ancestry.slice(1), node.id]);
+            }
+            setURLMap(deepCopyURLMap);
         }
-        
+
         setTree(updatedTree);
     }
 
-    static deleteNode(tree: TreeStateType, setTree: TreeContextType[1], node: TreeNode) {
-
+    static deleteNode(tree: TreeStateType, setTree: TreeContextType[1], node: TreeNode, urlMap: URLMapContextType[0], setURLMap: URLMapContextType[1]) {
+        const deepCopyURLMap = ContextManager.createDeepCopyURLMap(urlMap);
         if (!(node instanceof RootNode)) {
             let updatedTree = ContextManager.createDeepCopyTree(tree);
 
             function deleteDescendents(node: TreeNode) {
                 if (node.childIDS.length == 0) {
+                    if (node instanceof Collection) {
+                        deepCopyURLMap.delete(node.path)
+                    }
                     updatedTree.delete(node.id);
+                    console.log("DELETED:", urlMap)
                     return;
                 }
 
                 for (let i = 0; i < node.childIDS.length; i++) {
-                    deleteDescendents(updatedTree.get(node.childIDS[i])!)
+                    deleteDescendents(updatedTree.get(node.childIDS[i])!);
                 }
             }
             deleteDescendents(node);
             const parentNode = updatedTree.get(node.parentID()!)
             const targetIndex = parentNode?.childIDS.indexOf(node.id)!;
             parentNode?.childIDS.splice(targetIndex, 1);
+            if (node instanceof Collection) {
+                deepCopyURLMap.delete(node.path)
+            }
             updatedTree.delete(node.id);
+            setURLMap(deepCopyURLMap);
             setTree(updatedTree)
         }
     }
@@ -57,6 +72,14 @@ export default class ContextManager {
         const objLiteralFromTree = Object.fromEntries(tree);
         const objLiteralFromTreeDeepCopy = { ...objLiteralFromTree };
         return new Map(Object.entries(objLiteralFromTreeDeepCopy));
+    }
+
+    static createDeepCopyURLMap(urlMap: URLMapContextType[0]): URLMapContextType[0] {
+        const deepCopyURLMap = new Map();
+        urlMap.forEach((ids, path) => {
+            deepCopyURLMap.set(path, [...ids]);
+        })
+        return deepCopyURLMap;
     }
 
     static serializeGames(games: Game[]) {
@@ -91,18 +114,11 @@ export default class ContextManager {
         setURLMap(deepCopyURLMap);
     }
 
-    static deleteURLMapping(url: string, tree: TreeStateType, urlMap: URLMapContextType[0], setURLMap: URLMapContextType[1]) {
-        const deepCopyURLMap = ContextManager.createDeepCopyURLMap(urlMap);
-        const urlIDs = deepCopyURLMap.get(url)!;
-
-        setURLMap(deepCopyURLMap);
+    static deleteURLMapping(collectionNode: Collection, urlMap: URLMapContextType[0], setURLMap: URLMapContextType[1], deepCopyURLMap) {
+        // const deepCopyURLMap = ContextManager.createDeepCopyURLMap(urlMap);
+        deepCopyURLMap.delete(collectionNode.path)
+        
     }
 
-    static createDeepCopyURLMap(urlMap: URLMapContextType[0]): URLMapContextType[0] {
-        const deepCopyURLMap = new Map();
-        urlMap.forEach((ids, path) => {
-            deepCopyURLMap.set(path, [...ids]);
-        })
-        return deepCopyURLMap;
-    }
+    
 }

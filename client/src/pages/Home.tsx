@@ -3,7 +3,6 @@ import AddItemCard from "../components/AddItemCard";
 import ContextManager from "../classes/ContextManager";
 import Game from "../classes/Game";
 import useTreeContext from "../hooks/useTreeContext";
-import type Collection from "../classes/Collection";
 import useURLMapContext from "../hooks/useURLMapContext";
 
 export default function Home() {
@@ -20,7 +19,7 @@ export default function Home() {
     }
 
     function onDelete(node: Game) {
-        ContextManager.deleteNode(tree, setTree, node);
+        ContextManager.deleteNode(tree, setTree, node, urlMap, setURLMap);
     }
 
 
@@ -31,8 +30,8 @@ export default function Home() {
             <AddItemCard itemType="game" onAdd={onAdd} />
             {
                 tree.get("ROOT_NODE")?.childIDS.map((nodeID, index) => {
-                    const collectionNode = tree.get(nodeID)! as Collection;
-                    return <Card key={index} collectionNode={collectionNode} onDelete={() => onDelete(collectionNode)}/>
+                    const game = tree.get(nodeID) as Game;
+                    return <Card key={index} collectionNode={game} onDelete={() => onDelete(game)}/>
                 })
             }
         </>
