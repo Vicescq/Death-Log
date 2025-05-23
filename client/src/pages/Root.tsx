@@ -1,21 +1,25 @@
 import { NavLink, Outlet } from "react-router";
 import ContextManager from "../classes/ContextManager";
+import useTreeContext from "../hooks/useTreeContext";
+import useURLMapContext from "../hooks/useURLMapContext";
 
 export default function Root() {
+
+    const [tree, setTree] = useTreeContext();
+    const [urlMap, setURLMap] = useURLMapContext();
 
     function load() {
         const bool = confirm("LOAD PREVIOUS STATE")
         if (bool) {
-            const newGames = ContextManager.deserializeGames(localStorage.getItem("main")!);
-            setGames(newGames);
-            ContextManager.buildURLMapContextOnLoad(newGames, urlMap, setURLMap);
+            console.log(localStorage.getItem("main"));
+            ContextManager.deserializeGames(localStorage.getItem("main")!, setTree, setURLMap);
         }
 
     }
     function save() {
         const bool = confirm("SAVE CURRENT STATE")
         if (bool) {
-            localStorage.setItem("main", JSON.stringify(games))
+            localStorage.setItem("main", ContextManager.serializeTree(tree));
         }
     }
 

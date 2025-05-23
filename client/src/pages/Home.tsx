@@ -21,7 +21,7 @@ export default function Home() {
     function handleDelete(node: Game) {
         ContextManager.deleteNode(tree, setTree, node, urlMap, setURLMap);
     }
-
+    
     return (
         <>
             Home
