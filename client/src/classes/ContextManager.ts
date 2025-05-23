@@ -6,13 +6,14 @@ import Profile from "./Profile";
 import RootNode from "./RootNode";
 import Subject from "./Subject";
 import type TreeNode from "./TreeNode";
+import { v4 as uuid4 } from "uuid";
 
 export default class ContextManager {
 
     constructor() { }
 
     static addNode(tree: TreeStateType, setTree: TreeContextType[1], node: TreeNode, urlMap: URLMapContextType[0], setURLMap: URLMapContextType[1]) {
-        let deepCopyTree = ContextManager.createDeepCopyTree(tree);;
+        const deepCopyTree = ContextManager.createDeepCopyTree(tree);
         if (node instanceof RootNode) {
             deepCopyTree.set(node.id, node);
         }
@@ -37,7 +38,7 @@ export default class ContextManager {
             let deepCopyTree = ContextManager.createDeepCopyTree(tree);
 
             function deleteSelfAndChild(node: TreeNode) {
-                
+
                 // leaf nodes
                 if (node.childIDS.length == 0) {
                     if (node instanceof Collection) {
@@ -58,7 +59,7 @@ export default class ContextManager {
                 }
                 deepCopyTree.delete(node.id);
             }
-            
+
             const parentNode = deepCopyTree.get(node.parentID!);
             const targetIndex = parentNode?.childIDS.indexOf(node.id)!;
             parentNode?.childIDS.splice(targetIndex, 1);
