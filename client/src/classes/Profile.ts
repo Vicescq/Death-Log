@@ -1,15 +1,23 @@
 import Collection from "./Collection";
-import Subject from "./Subject";
 import { v4 as uuid4 } from "uuid";
 
-export default class Profile extends Collection<Subject>{
-  
-    constructor(name: string, subjects: Subject[] = [], path: string, id: string = uuid4()){
+export default class Profile extends Collection {
+
+    constructor(
+        name: string,
+        path: string,
+        parentID: string,
+        id: string = uuid4(),
+        childIDS: string[] = [],
+        date: string = new Date().toString(),
+    ) {
         super();
         this.name = name;
-        this.items = subjects;
         this.type = "profile";
         this.path = path;
         this.id = id;
+        this.parentID = parentID;
+        this.childIDS = childIDS
+        this.date = date;
     }
 }

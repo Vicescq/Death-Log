@@ -1,40 +1,35 @@
 import Card from "../components/Card";
 import AddItemCard from "../components/AddItemCard";
-import useGamesContext from "../hooks/useGamesContext";
-import useURLMapContext from "../hooks/useURLMapContext";
 import useConsoleLogOnStateChange from "../hooks/useConsoleLogOnStateChange";
 import ContextManager from "../classes/ContextManager";
 import Game from "../classes/Game";
+import useTreeContext from "../hooks/useTreeContext";
+import type Collection from "../classes/Collection";
 
 export default function Home() {
 
-    const [urlMap, setURLMap] = useURLMapContext();
-    const [games, setGames] = useGamesContext();
+    const [tree, setTree] = useTreeContext();
 
     function onAdd(inputText: string) {
         if (inputText != ""){
-            const game = new Game(inputText.trim(), [], inputText.trim().replaceAll(" ", "-"));
-            ContextManager.addNode(games, setGames, game, games.length);
-            ContextManager.addNewURLMapping(game, urlMap, setURLMap);
+            const game = new Game(inputText.trim(), inputText.trim().replaceAll(" ", "-"), "ROOT_NODE");
+            ContextManager.addNode(tree, setTree, game);
         }
     }
 
-    function onDelete(node: Game, targetedGI: number) {
-        ContextManager.deleteNode(games, setGames, node, node, targetedGI);
-        ContextManager.deleteURLMapping(urlMap, setURLMap, node);
+    function onDelete(node: Game) {
+        ContextManager.deleteNode(tree, setTree, node);
     }
-
-    useConsoleLogOnStateChange(games, "HOME:", games);
-    useConsoleLogOnStateChange(urlMap, "URL MAP:", urlMap);
 
     return (
         <>
             Home
             <AddItemCard itemType="game" onAdd={onAdd} />
             {
-                games.map(
-                    (game, index) => (<Card key={index} objContext={game} onDelete={() => onDelete(game, index)} onDeath={null} onReadOnly={null}/>)
-                )
+                tree.get("ROOT_NODE")?.childIDS.map((nodeID, index) => {
+                    const collectionNode = tree.get(nodeID)! as Collection;
+                    return <Card key={index} collectionNode={collectionNode} onDelete={() => onDelete(collectionNode)}/>
+                })
             }
         </>
     )

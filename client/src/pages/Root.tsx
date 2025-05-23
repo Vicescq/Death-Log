@@ -1,13 +1,7 @@
 import { NavLink, Outlet } from "react-router";
 import ContextManager from "../classes/ContextManager";
-import useGamesContext from "../hooks/useGamesContext";
-import useHistoryContext from "../hooks/useHistoryContext";
-import useURLMapContext from "../hooks/useURLMapContext";
 
 export default function Root() {
-    const [games, setGames] = useGamesContext();
-    const [history, setHistory] = useHistoryContext();
-    const [urlMap, setURLMap] = useURLMapContext();
 
     function load() {
         const bool = confirm("LOAD PREVIOUS STATE")

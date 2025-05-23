@@ -1,36 +1,50 @@
+import type { TreeStateType } from "../context";
 import Collection from "./Collection";
-import type Death from "./Death";
 import { v4 as uuid4 } from "uuid";
+import type Death from "./Death";
 
-export default class Subject extends Collection<Death> {
+export default class Subject extends Collection {
 
-    constructor(name: string, deaths: Death[] = [], path: string, id: string = uuid4()) {
+    constructor(
+        name: string,
+        path: string,
+        parentID: string,
+        id: string = uuid4(),
+        childIDS: string[] = [],
+        date: string = new Date().toString(),
+    ) {
         super();
         this.name = name;
-        this.items = deaths;
         this.type = "subject";
         this.path = path;
         this.id = id;
+        this.parentID = parentID;
+        this.childIDS = childIDS
+        this.date = date;
     }
 
     getCount() {
-        return this.items.length;
+        return this.childIDS.length;
     }
 
-    getFullTries(){
+    getFullTries(tree: TreeStateType){
         let counter = 0; 
-        for (let death of this.items){
-            if (death.deathType == "fullTry"){
+        for (let deathID of this.childIDS){
+            const node = tree.get(deathID);
+            const deathObj = node as Death
+            if (deathObj.deathType == "fullTry"){
                 counter++;
             }
         }
         return counter;
     }
 
-    getResets(){
+    getResets(tree: TreeStateType){
         let counter = 0; 
-        for (let death of this.items){
-            if (death.deathType == "reset"){
+        for (let deathID of this.childIDS){
+            const node = tree.get(deathID);
+            const deathObj = node as Death
+            if (deathObj.deathType == "reset"){
                 counter++;
             }
         }

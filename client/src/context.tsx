@@ -1,54 +1,41 @@
-import { createContext, useState, type ReactNode } from "react";
-import type Game from "./classes/Game";
+import { createContext, useEffect, useState, type ReactNode } from "react";
+import type TreeNode from "./classes/TreeNode";
+import RootNode from "./classes/RootNode";
+import ContextManager from "./classes/ContextManager";
+import useConsoleLogOnStateChange from "./hooks/useConsoleLogOnStateChange";
 
-export type GamesContextType = [Game[], React.Dispatch<React.SetStateAction<Game[]>>];
-export type HistoryContextType = [HistoryStateType, React.Dispatch<React.SetStateAction<HistoryStateType>>];
+export type TreeContextType = [TreeStateType, React.Dispatch<React.SetStateAction<TreeStateType>>];
+export type TreeStateType = Map<string, TreeNode>
+export const TreeContext = createContext<TreeContextType | undefined>(undefined);
+
 export type URLMapContextType = [URLMapStateType, React.Dispatch<React.SetStateAction<URLMapStateType>>]
-
-export type HistoryStateType = {
-    undo: {
-        index: number,
-        stack: Game[]
-    }
-    redo: {
-        index: number,
-        stack: Game[]
-    }
-}
+export type URLMapStateType = Map<string, URLMapStateValueType>;
 export type URLMapStateValueType = {
     gameID: string,
     profileID: string,
     subjectID: string
 }
-export type URLMapStateType = Map<string, URLMapStateValueType>;
-
-export const GamesContext = createContext<GamesContextType | undefined>(undefined);
-export const HistoryContext = createContext<HistoryContextType | undefined>(undefined);
 export const URLMapContext = createContext<URLMapContextType | undefined>(undefined);
 
 export function ContextWrapper({ children }: { children: ReactNode }) {
-    // 2 conditions before here, if persistent data exists init, deserialize and then init as state, otherwise init state as []
+    const [tree, setTree] = useState<TreeStateType>(new Map());
 
-    const [games, setGames] = useState<Game[]>([]);
-    const [history, setHistory] = useState<HistoryStateType>({
-        undo: {
-            index: -1,
-            stack: []
-        },
-        redo: {
-            index: -1,
-            stack: []
-        }
-    });
+
+    useEffect(() => {
+        const rootNode = new RootNode();
+        ContextManager.addNode(tree, setTree, rootNode);
+    }, [])
+
+    useConsoleLogOnStateChange(tree, "TREE: ", tree);
     const [urlMap, setURLMap] = useState<URLMapStateType>(new Map());
 
     return (
-        <GamesContext.Provider value={[games, setGames]}>
-            <HistoryContext.Provider value={[history, setHistory]}>
-                <URLMapContext.Provider value={[urlMap, setURLMap]}>
-                    {children}
-                </URLMapContext.Provider>
-            </HistoryContext.Provider>
-        </GamesContext.Provider>
+        <TreeContext.Provider value={[tree, setTree]}>
+
+
+            {children}
+
+
+        </TreeContext.Provider>
     )
 }
