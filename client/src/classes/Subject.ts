@@ -8,7 +8,7 @@ export default class Subject extends Collection {
     constructor(
         name: string,
         path: string,
-        parentID: string,
+        ancestry: string[],
         id: string = uuid4(),
         childIDS: string[] = [],
         date: string = new Date().toString(),
@@ -18,7 +18,7 @@ export default class Subject extends Collection {
         this.type = "subject";
         this.path = path;
         this.id = id;
-        this.parentID = parentID;
+        this.ancestry = ancestry;
         this.childIDS = childIDS
         this.date = date;
     }
@@ -31,7 +31,7 @@ export default class Subject extends Collection {
         let counter = 0; 
         for (let deathID of this.childIDS){
             const node = tree.get(deathID);
-            const deathObj = node as Death
+            const deathObj = node as Death;
             if (deathObj.deathType == "fullTry"){
                 counter++;
             }
@@ -43,7 +43,7 @@ export default class Subject extends Collection {
         let counter = 0; 
         for (let deathID of this.childIDS){
             const node = tree.get(deathID);
-            const deathObj = node as Death
+            const deathObj = node as Death;
             if (deathObj.deathType == "reset"){
                 counter++;
             }

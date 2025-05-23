@@ -6,7 +6,7 @@ export type DeathType = "reset" | "fullTry"
 export default class Death extends TreeNode {
 
     constructor(
-        parentID: string,
+        ancestry: string[] = [],
         note: string | null = null,
         tags: string[] = [],
         deathType: DeathType = "fullTry",
@@ -20,7 +20,7 @@ export default class Death extends TreeNode {
         this._deathType = deathType;
         this.type = "death";
         this.id = id;
-        this.parentID = parentID;
+        this.ancestry = ancestry;
         this.childIDS = [];
     }
 

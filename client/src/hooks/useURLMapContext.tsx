@@ -1,7 +1,6 @@
 import { useContext } from "react";
 import { URLMapContext } from "../context";
 
-
 export default function useURLMapContext() {
     const urlMapContext = useContext(URLMapContext);
     if (urlMapContext === undefined) {

@@ -6,7 +6,7 @@ export default class Game extends Collection {
     constructor(
         name: string, 
         path: string, 
-        parentID: string, 
+        ancestry: string[], 
         childIDS: string[] = [],
         id: string = uuid4(), 
         date: string = new Date().toString(),
@@ -15,7 +15,7 @@ export default class Game extends Collection {
         this.name = name;
         this.type = "game";
         this.path = path;
-        this.parentID = parentID;
+        this.ancestry = ancestry;
         this.childIDS = childIDS
         this.id = id;
         this.date = date;

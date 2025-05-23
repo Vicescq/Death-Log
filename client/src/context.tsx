@@ -9,17 +9,13 @@ export type TreeStateType = Map<string, TreeNode>
 export const TreeContext = createContext<TreeContextType | undefined>(undefined);
 
 export type URLMapContextType = [URLMapStateType, React.Dispatch<React.SetStateAction<URLMapStateType>>]
-export type URLMapStateType = Map<string, URLMapStateValueType>;
-export type URLMapStateValueType = {
-    gameID: string,
-    profileID: string,
-    subjectID: string
-}
+export type URLMapStateType = Map<string, string[]>;
+
 export const URLMapContext = createContext<URLMapContextType | undefined>(undefined);
 
 export function ContextWrapper({ children }: { children: ReactNode }) {
     const [tree, setTree] = useState<TreeStateType>(new Map());
-
+    const [urlMap, setURLMap] = useState<URLMapStateType>(new Map());
 
     useEffect(() => {
         const rootNode = new RootNode();
@@ -27,15 +23,14 @@ export function ContextWrapper({ children }: { children: ReactNode }) {
     }, [])
 
     useConsoleLogOnStateChange(tree, "TREE: ", tree);
-    const [urlMap, setURLMap] = useState<URLMapStateType>(new Map());
+    useConsoleLogOnStateChange(urlMap, "URL MAP: ", urlMap);
+
 
     return (
         <TreeContext.Provider value={[tree, setTree]}>
-
-
-            {children}
-
-
+            <URLMapContext.Provider value={[urlMap, setURLMap]}>
+                {children}
+            </URLMapContext.Provider>
         </TreeContext.Provider>
     )
 }

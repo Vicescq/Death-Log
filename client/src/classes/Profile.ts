@@ -6,7 +6,7 @@ export default class Profile extends Collection {
     constructor(
         name: string,
         path: string,
-        parentID: string,
+        ancestry: string[],
         id: string = uuid4(),
         childIDS: string[] = [],
         date: string = new Date().toString(),
@@ -16,7 +16,7 @@ export default class Profile extends Collection {
         this.type = "profile";
         this.path = path;
         this.id = id;
-        this.parentID = parentID;
+        this.ancestry = ancestry;
         this.childIDS = childIDS
         this.date = date;
     }

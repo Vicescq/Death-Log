@@ -7,7 +7,7 @@ export default class RootNode extends TreeNode {
     ) {
         super();
         this.id = "ROOT_NODE";
-        this.parentID = null;
+        this.ancestry = [];
         this.childIDS = childIDS;
         this.date = date;
         this.type = "root";

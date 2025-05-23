@@ -6,31 +6,32 @@ export default abstract class TreeNode {
     get type() {
         return this._type
     }
-    set type(value){
+    set type(value) {
         this._type = value;
     }
 
     private _id!: string;
-    get id(){
+    get id() {
         return this._id;
     }
-    set id(value){
+    set id(value) {
         this._id = value;
     }
 
-    private _parentID!: string | null;
-    get parentID(){
-        return this._parentID;
+    private _ancestry!: string[];
+    get ancestry() {
+        return this._ancestry;
     }
-    set parentID(value){
-        this._parentID = value;
+    set ancestry(value) {
+        this._ancestry = value;
     }
 
+
     private _childIDS!: string[];
-    get childIDS(){
+    get childIDS() {
         return this._childIDS;
     }
-    set childIDS(value){
+    set childIDS(value) {
         this._childIDS = value;
     }
 
@@ -40,5 +41,12 @@ export default abstract class TreeNode {
     }
     set date(value) {
         this._date = value;
+    }
+
+    parentID() {
+        if (this._type == "root") {
+            return "ROOT_NODE";
+        }
+        return this._ancestry[this._ancestry.length - 1];
     }
 }
