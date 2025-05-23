@@ -63,7 +63,7 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
     return (
         <>
             ProfileSubjects
-            <AddItemCard handleAdd={handleAdd} itemType="profile"/>
+            <AddItemCard handleAdd={handleAdd} itemType="subject"/>
             {
                 tree.get(profileID)?.childIDS.map((nodeID, index) => {
                     const subject = tree.get(nodeID) as Subject;

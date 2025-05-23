@@ -1,4 +1,5 @@
-import { URLMapContext, type TreeContextType, type TreeStateType, type URLMapContextType, } from "../context";
+import type { TreeContextType, TreeStateType } from "../contexts/treeContext";
+import type { URLMapContextType } from "../contexts/urlMapContext";
 import Collection from "./Collection";
 import Death from "./Death";
 import Game from "./Game";
@@ -6,7 +7,6 @@ import Profile from "./Profile";
 import RootNode from "./RootNode";
 import Subject from "./Subject";
 import type TreeNode from "./TreeNode";
-import { v4 as uuid4 } from "uuid";
 
 export default class ContextManager {
 
@@ -118,5 +118,4 @@ export default class ContextManager {
         setTree(tree);
         setURLMap(urlMap);
     }
-
 }

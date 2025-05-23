@@ -3,11 +3,11 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter, Routes, Route, useNavigate, HashRouter } from "react-router";
 import "./index.css";
 import Home from "./pages/Home.tsx";
-import { ContextWrapper } from "./context.tsx";
 import { ErrorBoundary } from "react-error-boundary";
 import ErrorPage, { ForceError } from "./pages/ErrorPage.tsx";
 import Root from "./pages/Root.tsx";
 import URLRouter from "./components/URLRouter.tsx";
+import { ContextWrapper } from "./contexts/ContextWrapper.tsx";
 
 
 createRoot(document.getElementById("root")!).render(

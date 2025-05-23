@@ -6,7 +6,7 @@ import useURLMapContext from "../hooks/useURLMapContext";
 export default function Root() {
 
     const [tree, setTree] = useTreeContext();
-    const [urlMap, setURLMap] = useURLMapContext();
+    const [_, setURLMap] = useURLMapContext();
 
     function load() {
         const bool = confirm("LOAD PREVIOUS STATE")

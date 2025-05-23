@@ -1,5 +1,6 @@
 import { useContext } from "react";
-import { URLMapContext } from "../context";
+import { URLMapContext } from "../contexts/urlMapContext";
+
 
 export default function useURLMapContext() {
     const urlMapContext = useContext(URLMapContext);

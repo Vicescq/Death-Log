@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { TreeContext } from "../context";
+import { TreeContext } from "../contexts/treeContext";
 
 export default function useTreeContext() {
     const treeContext = useContext(TreeContext);
