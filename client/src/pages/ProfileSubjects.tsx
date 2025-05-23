@@ -2,7 +2,7 @@ import Card from "../components/Card";
 import AddItemCard from "../components/AddItemCard";
 import Subject from "../classes/Subject";
 import ContextManager from "../classes/ContextManager";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useTreeContext from "../hooks/useTreeContext";
 import useURLMapContext from "../hooks/useURLMapContext";
 import type Profile from "../classes/Profile";
@@ -32,10 +32,12 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
         let death: Death;
         if (deathType == "fullTry") {
             death = new Death(subject.id);
+            subject.fullTries++;
         }
 
         else {
             death = new Death(subject.id, "reset");
+            subject.resets++;
         }
         ContextManager.addNode(tree, setTree, death, urlMap, setURLMap);
 
@@ -46,8 +48,8 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
             <>
                 <div className="flex gap-2">
                     <span className="rounded-md bg-amber-800 text-black m-auto p-1">Deaths: {subject.getCount()}</span>
-                    <span className="rounded-md bg-sky-950 text-black m-auto p-1">Full Tries: {subject.getFullTries(tree)}</span>
-                    <span className="rounded-md bg-gray-700 text-black m-auto p-1"> Resets: {subject.getResets(tree)}</span>
+                    <span className="rounded-md bg-sky-950 text-black m-auto p-1">Full Tries: {subject.fullTries}</span>
+                    <span className="rounded-md bg-gray-700 text-black m-auto p-1"> Resets: {subject.resets}</span>
                 </div>
                 <button onClick={() => handleDeathCount(subject, "fullTry")} className="border-2 p-1 px-2 border-red-400 rounded-lg bg-red-400">+</button>
                 <button onClick={() => handleDeathCount(subject, "reset")} className="border-2 p-1 border-red-400 rounded-lg bg-red-400">~ +</button>
@@ -55,10 +57,13 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
         )
     }
 
+    
+
+
     return (
         <>
             ProfileSubjects
-            <AddItemCard handleAdd={handleAdd} itemType="profile" />
+            <AddItemCard handleAdd={handleAdd} itemType="profile"/>
             {
                 tree.get(profileID)?.childIDS.map((nodeID, index) => {
                     const subject = tree.get(nodeID) as Subject;
