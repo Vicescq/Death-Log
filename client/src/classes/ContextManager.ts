@@ -12,58 +12,60 @@ export default class ContextManager {
     constructor() { }
 
     static addNode(tree: TreeStateType, setTree: TreeContextType[1], node: TreeNode, urlMap: URLMapContextType[0], setURLMap: URLMapContextType[1]) {
-        let updatedTree = ContextManager.createDeepCopyTree(tree);;
+        let deepCopyTree = ContextManager.createDeepCopyTree(tree);;
         if (node instanceof RootNode) {
-            updatedTree.set(node.id, node);
+            deepCopyTree.set(node.id, node);
         }
         else {
-            const parentNode = updatedTree.get(node.parentID()!)!
+            const parentNode = deepCopyTree.get(node.parentID()!)!
             parentNode.childIDS.push(node.id);
-            updatedTree.set(node.id, node);
+            deepCopyTree.set(node.id, node);
         }
 
         if (node instanceof Collection) {
             const deepCopyURLMap = ContextManager.createDeepCopyURLMap(urlMap);
-            if (node instanceof Game) {
-                deepCopyURLMap.set(node.path, [node.id]);
-            }
-            else {
-                deepCopyURLMap.set(node.path, [...node.ancestry.slice(1), node.id]);
-            }
+            deepCopyURLMap.set(node.path, node.id);
             setURLMap(deepCopyURLMap);
         }
 
-        setTree(updatedTree);
+        setTree(deepCopyTree);
     }
 
     static deleteNode(tree: TreeStateType, setTree: TreeContextType[1], node: TreeNode, urlMap: URLMapContextType[0], setURLMap: URLMapContextType[1]) {
         const deepCopyURLMap = ContextManager.createDeepCopyURLMap(urlMap);
         if (!(node instanceof RootNode)) {
-            let updatedTree = ContextManager.createDeepCopyTree(tree);
+            let deepCopyTree = ContextManager.createDeepCopyTree(tree);
 
-            function deleteDescendents(node: TreeNode) {
+            function deleteSelfAndChild(node: TreeNode) {
+                
+                // leaf nodes
                 if (node.childIDS.length == 0) {
                     if (node instanceof Collection) {
                         deepCopyURLMap.delete(node.path)
                     }
-                    updatedTree.delete(node.id);
+                    deepCopyTree.delete(node.id);
                     return;
                 }
 
+                // iterate every child node
                 for (let i = 0; i < node.childIDS.length; i++) {
-                    deleteDescendents(updatedTree.get(node.childIDS[i])!);
+                    deleteSelfAndChild(deepCopyTree.get(node.childIDS[i])!);
                 }
+
+                // deleting current node
+                if (node instanceof Collection) {
+                    deepCopyURLMap.delete(node.path);
+                }
+                deepCopyTree.delete(node.id);
             }
-            deleteDescendents(node);
-            const parentNode = updatedTree.get(node.parentID()!)
+            
+            const parentNode = deepCopyTree.get(node.parentID()!);
             const targetIndex = parentNode?.childIDS.indexOf(node.id)!;
             parentNode?.childIDS.splice(targetIndex, 1);
-            if (node instanceof Collection) {
-                deepCopyURLMap.delete(node.path)
-            }
-            updatedTree.delete(node.id);
+            deleteSelfAndChild(node);
+
             setURLMap(deepCopyURLMap);
-            setTree(updatedTree)
+            setTree(deepCopyTree)
         }
     }
 
@@ -75,8 +77,8 @@ export default class ContextManager {
 
     static createDeepCopyURLMap(urlMap: URLMapContextType[0]): URLMapContextType[0] {
         const deepCopyURLMap = new Map();
-        urlMap.forEach((ids, path) => {
-            deepCopyURLMap.set(path, [...ids]);
+        urlMap.forEach((id, path) => {
+            deepCopyURLMap.set(path, id);
         })
         return deepCopyURLMap;
     }
@@ -97,5 +99,5 @@ export default class ContextManager {
             }
         });
     }
- 
+
 }

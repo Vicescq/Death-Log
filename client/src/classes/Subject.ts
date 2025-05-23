@@ -8,8 +8,8 @@ export default class Subject extends Collection {
     constructor(
         name: string,
         path: string,
-        notable: boolean = true,
         ancestry: string[],
+        notable: boolean = true,
         id: string = uuid4(),
         childIDS: string[] = [],
         date: string = new Date().toString(),

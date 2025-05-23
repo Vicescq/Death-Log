@@ -9,7 +9,7 @@ export type TreeStateType = Map<string, TreeNode>
 export const TreeContext = createContext<TreeContextType | undefined>(undefined);
 
 export type URLMapContextType = [URLMapStateType, React.Dispatch<React.SetStateAction<URLMapStateType>>]
-export type URLMapStateType = Map<string, string[]>;
+export type URLMapStateType = Map<string, string>;
 
 export const URLMapContext = createContext<URLMapContextType | undefined>(undefined);
 
@@ -19,7 +19,7 @@ export function ContextWrapper({ children }: { children: ReactNode }) {
 
     useEffect(() => {
         const rootNode = new RootNode();
-        ContextManager.addNode(tree, setTree, rootNode);
+        ContextManager.addNode(tree, setTree, rootNode, urlMap, setURLMap);
     }, [])
 
     useConsoleLogOnStateChange(tree, "TREE: ", tree);

@@ -21,8 +21,8 @@ export default function Card({ collectionNode, onDelete }: { collectionNode: Col
     function subjectBtns() {
         return (
             <>
-                <button onClick={() => onDeath!("fullTry")} className="border-2 p-1 px-2 border-red-400 rounded-lg bg-red-400">+</button>
-                <button onClick={() => onDeath!("reset")} className="border-2 p-1 border-red-400 rounded-lg bg-red-400">~ +</button>
+                {/* <button onClick={() => onDeath!("fullTry")} className="border-2 p-1 px-2 border-red-400 rounded-lg bg-red-400">+</button>
+                <button onClick={() => onDeath!("reset")} className="border-2 p-1 border-red-400 rounded-lg bg-red-400">~ +</button> */}
             </>
 
         )

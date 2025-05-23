@@ -19,17 +19,17 @@ export default function URLRouter() {
         }
     }
     const path = pathArray.join("/");
-    let ids = urlMap.get(path);
+    let id = urlMap.get(path);
     
-    switch (ids?.length) {
+    switch (pathArray.length) {
       case 1:
-        component = (<GameProfiles gameID={ids[0]} />)
+        component = (<GameProfiles gameID={id!} />)
         break;
       case 2:
-        component = (<ProfileSubjects gameID={ids[0]} profileID={ids[1]} />)
+        component = (<ProfileSubjects profileID={id!} />)
         break;
       case 3:
-        component = (<SubjectDeaths gameID={ids[0]} profileID={ids[1]} subjectID={ids[2]} />)
+        component = (<SubjectDeaths subjectID={id!} />)
         break;
       default:
         component = (<ForceError msg={"URL NOT FOUND!"} />)

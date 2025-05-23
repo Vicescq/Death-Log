@@ -5,7 +5,6 @@ import Profile from "../classes/Profile";
 import useTreeContext from "../hooks/useTreeContext";
 import type Game from "../classes/Game";
 import useURLMapContext from "../hooks/useURLMapContext";
-import type Collection from "../classes/Collection";
 
 export default function GameProfiles({ gameID }: { gameID: string }) {
     const [tree, setTree] = useTreeContext();
@@ -18,7 +17,7 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
             const node = tree.get(gameID);
             const currentGame = node as Game;
             const path = currentGame.path + "/" + inputText
-            const profile = new Profile(inputText, path, ["ROOT_NODE", gameID]);
+            const profile = new Profile(inputText, path, [...currentGame.ancestry, gameID]);
             ContextManager.addNode(tree, setTree, profile, urlMap, setURLMap);
         }
     }
@@ -26,8 +25,6 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
     function onDelete(node: Profile) {
         ContextManager.deleteNode(tree, setTree, node, urlMap, setURLMap);
     }
-
-    
 
     return (
         <>
