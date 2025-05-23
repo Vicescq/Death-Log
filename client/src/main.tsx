@@ -7,7 +7,6 @@ import { ContextWrapper } from "./context.tsx";
 import { ErrorBoundary } from "react-error-boundary";
 import ErrorPage, { ForceError } from "./pages/ErrorPage.tsx";
 import Root from "./pages/Root.tsx";
-import useConsoleLogOnStateChange from "./hooks/useConsoleLogOnStateChange.tsx";
 import URLRouter from "./components/URLRouter.tsx";
 
 

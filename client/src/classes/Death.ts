@@ -7,9 +7,9 @@ export default class Death extends TreeNode {
 
     constructor(
         parentID: string,
+        deathType: DeathType = "fullTry",
         note: string | null = null,
         tags: string[] = [],
-        deathType: DeathType = "fullTry",
         date: string = new Date().toString(),
         id: string = uuid4(),
     ) {
