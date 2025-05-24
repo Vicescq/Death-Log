@@ -1,10 +1,10 @@
-import { NavLink, Outlet } from "react-router";
+import { NavLink, Outlet, useNavigate } from "react-router";
 import ContextManager from "../classes/ContextManager";
 import useTreeContext from "../hooks/useTreeContext";
 import useURLMapContext from "../hooks/useURLMapContext";
 
 export default function Root() {
-
+    const navigate = useNavigate();
     const [tree, setTree] = useTreeContext();
     const [_, setURLMap] = useURLMapContext();
 
@@ -12,6 +12,7 @@ export default function Root() {
         const bool = confirm("LOAD PREVIOUS STATE")
         if (bool) {
             console.log(localStorage.getItem("main"));
+            navigate("/");
             ContextManager.deserializeTree(localStorage.getItem("main")!, setTree, setURLMap);
         }
 
@@ -19,6 +20,8 @@ export default function Root() {
     function save() {
         const bool = confirm("SAVE CURRENT STATE")
         if (bool) {
+            
+            navigate("/");
             localStorage.setItem("main", ContextManager.serializeTree(tree));
         }
     }

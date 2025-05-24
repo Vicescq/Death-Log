@@ -8,6 +8,7 @@ import useURLMapContext from "../hooks/useURLMapContext";
 import type Profile from "../classes/Profile";
 import type { DeathType } from "../classes/Death";
 import Death from "../classes/Death";
+import UIHelper from "../classes/UIHelper";
 
 export default function ProfileSubjects({ profileID }: { profileID: string }) {
 
@@ -15,12 +16,16 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
     const [urlMap, setURLMap] = useURLMapContext();
 
     function handleAdd(inputText: string) {
-        if (inputText != "") {
+        try {
+            inputText = UIHelper.sanitizeUserEntry(inputText);
             const node = tree.get(profileID)!;
             const currentProfile = node as Profile;
-            const path = currentProfile.path + "/" + inputText.trim();
-            const subject = new Subject(inputText.trim(), path, profileID);
+            const path = currentProfile.path + "/" + inputText.replaceAll(" ", "-");
+            const subject = new Subject(inputText, path, profileID, false);
             ContextManager.addNode(tree, setTree, subject, urlMap, setURLMap);
+        }
+        catch (err) {
+            window.alert(err);
         }
     }
 
@@ -40,7 +45,6 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
             subject.resets++;
         }
         ContextManager.addNode(tree, setTree, death, urlMap, setURLMap);
-
     }
 
     function subjectUI(subject: Subject) {
@@ -48,7 +52,7 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
             <>
                 <div className="flex gap-2">
                     <span className="rounded-md bg-amber-800 text-black m-auto p-1">Deaths: {subject.getCount()}</span>
-                    <span className="rounded-md bg-sky-950 text-black m-auto p-1">Full Tries: {subject.fullTries}</span>
+                    <span className="rounded-md bg-sky-700 text-black m-auto p-1">Full Tries: {subject.fullTries}</span>
                     <span className="rounded-md bg-gray-700 text-black m-auto p-1"> Resets: {subject.resets}</span>
                 </div>
                 <button onClick={() => handleDeathCount(subject, "fullTry")} className="border-2 p-1 px-2 border-red-400 rounded-lg bg-red-400">+</button>
@@ -57,13 +61,10 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
         )
     }
 
-    
-
-
     return (
         <>
             ProfileSubjects
-            <AddItemCard handleAdd={handleAdd} itemType="subject"/>
+            <AddItemCard handleAdd={handleAdd} itemType="subject" />
             {
                 tree.get(profileID)?.childIDS.map((nodeID, index) => {
                     const subject = tree.get(nodeID) as Subject;
@@ -72,6 +73,7 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
                         collectionNode={subject}
                         handleDelete={() => handleDelete(subject)}
                         subjectUI={subjectUI(subject)}
+                        subjectNotableCol={subject.notable ? null : "bg-green-900"}
                     />
                 })
             }

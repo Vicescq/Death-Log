@@ -5,12 +5,13 @@ interface CardProps {
     collectionNode: Collection;
     handleDelete: () => void;
     subjectUI?: React.JSX.Element | null;
+    subjectNotableCol?: string | null;
 }
 
-export default function Card({ collectionNode, handleDelete, subjectUI = null }: CardProps) {
+export default function Card({ collectionNode, handleDelete, subjectUI = null, subjectNotableCol = null }: CardProps) {
     return (
         <>
-            <div className="flex rounded-lg border p-3 gap-2 ">
+            <div className={`flex rounded-lg border p-3 gap-2  ${subjectNotableCol}`}>
                 <NavLink to={`/${collectionNode.path}`}>
                     <span className="cursor-pointer">{collectionNode.name}</span>
                 </NavLink>

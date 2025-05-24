@@ -1,13 +1,16 @@
-import { v4 as uuid4 } from "uuid";
-import type { TreeContextType, TreeStateType, URLMapContextType, URLMapStateType } from "../contexts/context";
-import type Collection from "./Collection";
-import Profile from "./Profile";
-import TreeNode from "./TreeNode";
-import Subject from "./Subject";
-import ContextManager from "./ContextManager";
-
-export default class UIHelper {
-    constructor() { };
-
+export default class UIHelper{
+    constructor(){};
     
+    static sanitizeUserEntry(inputText: string): string{
+        inputText = inputText.trim();
+        if (inputText.includes("?")){
+            throw new Error("No ?'s allowed!");
+        }
+        return inputText;
+    }
+
+    static createNodePath(inputText: string){
+        inputText = UIHelper.sanitizeUserEntry(inputText);
+        
+    }
 }

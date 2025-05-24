@@ -19,7 +19,12 @@ export default class ContextManager {
         }
         else {
             const parentNode = deepCopyTree.get(node.parentID!)!
-            parentNode.childIDS.push(node.id);
+            if (node instanceof Subject) {
+                !node.notable ? parentNode.childIDS.unshift(node.id) : null;
+            }
+            else {
+                parentNode.childIDS.push(node.id);
+            }
             deepCopyTree.set(node.id, node);
         }
 
@@ -70,6 +75,12 @@ export default class ContextManager {
         }
     }
 
+    static updateNode(updatedNode: TreeNode, tree: TreeStateType, setTree: TreeContextType[1]) {
+        const deepCopyTree = ContextManager.createDeepCopyTree(tree);
+        deepCopyTree.set(updatedNode.id, updatedNode);
+        setTree(deepCopyTree);
+    }
+
     static createDeepCopyTree(tree: TreeStateType): TreeStateType {
         const objLiteralFromTree = Object.fromEntries(tree);
         const objLiteralFromTreeDeepCopy = { ...objLiteralFromTree };
@@ -83,8 +94,8 @@ export default class ContextManager {
         })
         return deepCopyURLMap;
     }
-    
-    static serializeTree(tree: TreeStateType){
+
+    static serializeTree(tree: TreeStateType) {
         const objLiteralFromTree = Object.fromEntries(tree);
         return JSON.stringify(objLiteralFromTree);
     }
@@ -93,7 +104,7 @@ export default class ContextManager {
         const objLiteral = JSON.parse(serializedTree, (_, value) => {
             switch (value?._type) {
                 case "root":
-                    return new RootNode(value._childIDS, value._date);
+                    return new RootNode(value._childIDS);
                 case "game":
                     return new Game(value._name, value._path, value._parentID, value._childIDS, value._id, value._date);
                 case "profile":
@@ -111,7 +122,7 @@ export default class ContextManager {
         tree.entries().forEach((idAndNode) => {
             const id = idAndNode[0];
             const node = idAndNode[1];
-            if (node instanceof Collection){
+            if (node instanceof Collection) {
                 urlMap.set(node.path, id);
             }
         });
