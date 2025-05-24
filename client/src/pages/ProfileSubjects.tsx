@@ -16,17 +16,7 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
     const [urlMap, setURLMap] = useURLMapContext();
 
     function handleAdd(inputText: string) {
-        try {
-            inputText = UIHelper.sanitizeUserEntry(inputText);
-            const node = tree.get(profileID)!;
-            const currentProfile = node as Profile;
-            const path = currentProfile.path + "/" + inputText.replaceAll(" ", "-");
-            const subject = new Subject(inputText, path, profileID, false);
-            ContextManager.addNode(tree, setTree, subject, urlMap, setURLMap);
-        }
-        catch (err) {
-            window.alert(err);
-        }
+        UIHelper.handleAddHelper(inputText, tree, setTree, urlMap, setURLMap, true, "subject", profileID, true);
     }
 
     function handleDelete(node: Subject) {

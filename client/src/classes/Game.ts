@@ -9,7 +9,7 @@ export default class Game extends Collection {
         parentID: string,
         childIDS: string[] = [],
         id: string = uuid4(), 
-        date: string = new Date().toString(),
+        date: string | null = new Date().toString(),
     ) {
         super();
         this.name = name;
