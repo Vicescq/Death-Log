@@ -53,13 +53,13 @@ export default class UIHelper {
                 : new Game(inputText.trim(), path, "ROOT_NODE", undefined, undefined, null);
                 break;
             case "profile":
-                node = autoDate ? new Profile(inputText, path, parentID!) : new Profile(inputText, path, parentID!, undefined, undefined, undefined);
+                node = autoDate ? new Profile(inputText, path, parentID!) : new Profile(inputText, path, parentID!, undefined, undefined, null);
                 break;
             case "subject":
-                node = autoDate ? new Subject(inputText, path, parentID!, notable) : new Subject(inputText, path, parentID!, notable);
+                node = autoDate ? new Subject(inputText, path, parentID!, notable) : new Subject(inputText, path, parentID!, notable, undefined, undefined, undefined, undefined, null);
                 break;
         }
-        ContextManager.addNode(tree, setTree, node, urlMap, setURLMap);
+        ContextManager.addNode(tree, setTree, node!, urlMap, setURLMap);
     };
 
 }

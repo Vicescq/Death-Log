@@ -5,7 +5,6 @@ import ContextManager from "../classes/ContextManager";
 import { useEffect, useState } from "react";
 import useTreeContext from "../hooks/useTreeContext";
 import useURLMapContext from "../hooks/useURLMapContext";
-import type Profile from "../classes/Profile";
 import type { DeathType } from "../classes/Death";
 import Death from "../classes/Death";
 import UIHelper from "../classes/UIHelper";
@@ -15,8 +14,8 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
     const [tree, setTree] = useTreeContext();
     const [urlMap, setURLMap] = useURLMapContext();
 
-    function handleAdd(inputText: string) {
-        UIHelper.handleAddHelper(inputText, tree, setTree, urlMap, setURLMap, true, "subject", profileID, true);
+    function handleAdd(inputText: string, autoDate: boolean = true) {
+        UIHelper.handleAddHelper(inputText, tree, setTree, urlMap, setURLMap, autoDate, "subject", profileID, true);
     }
 
     function handleDelete(node: Subject) {

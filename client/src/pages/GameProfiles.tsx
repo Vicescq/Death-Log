@@ -3,7 +3,6 @@ import AddItemCard from "../components/AddItemCard";
 import ContextManager from "../classes/ContextManager";
 import Profile from "../classes/Profile";
 import useTreeContext from "../hooks/useTreeContext";
-import type Game from "../classes/Game";
 import useURLMapContext from "../hooks/useURLMapContext";
 import UIHelper from "../classes/UIHelper";
 
@@ -12,8 +11,8 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
     const [urlMap, setURLMap] = useURLMapContext();
     
 
-    function handleAdd(inputText: string) {
-        UIHelper.handleAddHelper(inputText, tree, setTree, urlMap, setURLMap, true, "profile", gameID);
+    function handleAdd(inputText: string, autoDate: boolean = true) {
+        UIHelper.handleAddHelper(inputText, tree, setTree, urlMap, setURLMap, autoDate, "profile", gameID);
     }
 
     function handleDelete(node: Profile) {

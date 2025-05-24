@@ -12,7 +12,7 @@ export default class Subject extends Collection {
         resets: number = 0,
         id: string = uuid4(),
         childIDS: string[] = [],
-        date: string = new Date().toString(),
+        date: string | null = new Date().toString(),
     ) {
         super();
         this.name = name;
