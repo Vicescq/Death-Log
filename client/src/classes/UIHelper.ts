@@ -1,7 +1,6 @@
 import type { TreeStateType, TreeContextType } from "../contexts/treeContext";
 import type { URLMapContextType } from "../contexts/urlMapContext";
 import APIManager from "./APIManager";
-import Collection from "./Collection";
 import ContextManager from "./ContextManager";
 import Game from "./Game";
 import Profile from "./Profile";
@@ -23,8 +22,8 @@ export default class UIHelper {
     static createNodePath(inputText: string, parentID: string | null = null, tree: TreeStateType) {
         let path: string;
         inputText = UIHelper.sanitizeUserEntry(inputText);
-        if (parentID != null && tree.get(parentID) instanceof Collection) {
-            const parentNode = tree.get(parentID)! as Collection
+        if (parentID != null && tree.get(parentID)?.type != "subject") {
+            const parentNode = tree.get(parentID)!
             path = parentNode.path + "/" + inputText.replaceAll(" ", "-");
         }
         else {
@@ -58,7 +57,7 @@ export default class UIHelper {
                 node = autoDate ? new Profile(inputText, path, parentID!) : new Profile(inputText, path, parentID!, undefined, undefined, null);
                 break;
             case "subject":
-                node = autoDate ? new Subject(inputText, path, parentID!, notable) : new Subject(inputText, path, parentID!, notable, undefined, undefined, undefined, undefined, null);
+                node = autoDate ? new Subject(inputText, parentID!, notable) : new Subject(inputText, parentID!, notable, undefined, undefined, undefined, null);
                 break;
         }
         ContextManager.addNode(tree, setTree, node!, urlMap, setURLMap);

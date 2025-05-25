@@ -1,4 +1,4 @@
-export type TreeNodeSerializableType = "root" | "game" | "profile" | "subject" | "death";
+export type TreeNodeSerializableType = "root" | "game" | "profile" | "subject";
 
 export default abstract class TreeNode {
 
@@ -18,14 +18,6 @@ export default abstract class TreeNode {
         this._id = value;
     }
 
-    private _childIDS!: string[];
-    get childIDS() {
-        return this._childIDS;
-    }
-    set childIDS(value) {
-        this._childIDS = value;
-    }
-
     private _date!: string | null;
     get date() {
         return this._date;
@@ -35,11 +27,35 @@ export default abstract class TreeNode {
     }
 
     private _parentID!: string | null;
-    get parentID(){
+    get parentID() {
         return this._parentID;
     }
-    set parentID(value){
+    set parentID(value) {
         this._parentID = value;
+    }
+
+    private _name!: string;
+    get name() {
+        return this._name;
+    }
+    set name(value) {
+        this._name = value;
+    }
+
+    private _path!: string;
+    get path() {
+        return this._path;
+    }
+    set path(value) {
+        this._path = value;
+    }
+
+    private _childIDS!: string[];
+    get childIDS() {
+        return this._childIDS;
+    }
+    set childIDS(value) {
+        this._childIDS = value;
     }
 
 }

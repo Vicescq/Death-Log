@@ -1,30 +1,30 @@
-import Collection from "./Collection";
 import { v4 as uuid4 } from "uuid";
+import TreeNode from "./TreeNode";
 
-export default class Subject extends Collection {
+export type DeathType = "fullTry" | "reset";
+
+export default class Subject extends TreeNode {
 
     constructor(
         name: string,
-        path: string,
         parentID: string,
         notable: boolean = true,
         fullTries: number = 0,
         resets: number = 0,
         id: string = uuid4(),
-        childIDS: string[] = [],
         date: string | null = new Date().toString(),
     ) {
         super();
         this.name = name;
         this.type = "subject";
-        this.path = path;
         this.id = id;
-        this.childIDS = childIDS
         this.date = date;
         this.notable = notable;
         this.parentID = parentID;
         this.fullTries = fullTries;
         this.resets = resets;
+        this.path = "";
+        this.childIDS = [];
     }
 
     private _notable!: boolean;
@@ -51,7 +51,7 @@ export default class Subject extends Collection {
         this._resets = value;
     }
     
-    getCount() {
-        return this.childIDS.length;
+    getDeaths() {
+        return this.resets + this.fullTries;
     }
 }

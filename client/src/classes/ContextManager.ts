@@ -1,7 +1,5 @@
 import type { TreeContextType, TreeStateType } from "../contexts/treeContext";
 import type { URLMapContextType } from "../contexts/urlMapContext";
-import Collection from "./Collection";
-import Death from "./Death";
 import Game from "./Game";
 import Profile from "./Profile";
 import RootNode from "./RootNode";
@@ -26,14 +24,13 @@ export default class ContextManager {
                 parentNode.childIDS.push(node.id);
             }
             deepCopyTree.set(node.id, node);
+            if (node.type != "subject"){
+                const deepCopyURLMap = ContextManager.createDeepCopyURLMap(urlMap);
+                deepCopyURLMap.set(node.path, node.id);
+                setURLMap(deepCopyURLMap);
+            }
+            
         }
-
-        if (node instanceof Collection) {
-            const deepCopyURLMap = ContextManager.createDeepCopyURLMap(urlMap);
-            deepCopyURLMap.set(node.path, node.id);
-            setURLMap(deepCopyURLMap);
-        }
-
         setTree(deepCopyTree);
     }
 
@@ -46,9 +43,7 @@ export default class ContextManager {
 
                 // leaf nodes
                 if (node.childIDS.length == 0) {
-                    if (node instanceof Collection) {
-                        deepCopyURLMap.delete(node.path)
-                    }
+                    deepCopyURLMap.delete(node.path)
                     deepCopyTree.delete(node.id);
                     return;
                 }
@@ -59,10 +54,8 @@ export default class ContextManager {
                 }
 
                 // deleting current node
-                if (node instanceof Collection) {
-                    deepCopyURLMap.delete(node.path);
-                }
                 deepCopyTree.delete(node.id);
+                deepCopyURLMap.delete(node.path);
             }
 
             const parentNode = deepCopyTree.get(node.parentID!);
@@ -110,9 +103,7 @@ export default class ContextManager {
                 case "profile":
                     return new Profile(value._name, value._path, value._parentID, value._id, value._childIDS, value._date);
                 case "subject":
-                    return new Subject(value._name, value._path, value._parentID, value._notable, value._fullTries, value._resets, value._id, value._childIDS, value._date);
-                case "death":
-                    return new Death(value._parentID, value._deathType, value._note, value._tags, value._date, value._id);
+                    return new Subject(value._name, value._parentID, value._notable, value._fullTries, value._resets, value._id, value._date);
                 default:
                     return value;
             }
@@ -122,7 +113,7 @@ export default class ContextManager {
         tree.entries().forEach((idAndNode) => {
             const id = idAndNode[0];
             const node = idAndNode[1];
-            if (node instanceof Collection) {
+            if (node.type != "root") {
                 urlMap.set(node.path, id);
             }
         });

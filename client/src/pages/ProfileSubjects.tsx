@@ -1,12 +1,10 @@
 import Card from "../components/Card";
 import AddItemCard from "../components/AddItemCard";
-import Subject from "../classes/Subject";
+import Subject, { type DeathType } from "../classes/Subject";
 import ContextManager from "../classes/ContextManager";
 import { useEffect, useState } from "react";
 import useTreeContext from "../hooks/useTreeContext";
 import useURLMapContext from "../hooks/useURLMapContext";
-import type { DeathType } from "../classes/Death";
-import Death from "../classes/Death";
 import UIHelper from "../classes/UIHelper";
 import { useAuth } from "@clerk/clerk-react";
 import APIManager from "../classes/APIManager";
@@ -26,25 +24,17 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
     }
 
     function handleDeathCount(subject: Subject, deathType: DeathType) {
-        let death: Death;
-        if (deathType == "fullTry") {
-            death = new Death(subject.id);
-            subject.fullTries++;
-        }
-
-        else {
-            death = new Death(subject.id, "reset");
-            subject.resets++;
-        }
-        ContextManager.addNode(tree, setTree, death, urlMap, setURLMap);
-        APIManager.storeAddedNode(death, userID!);
+        deathType == "fullTry" ? subject.fullTries++ : subject.resets++;
+        const deepCopyTree = ContextManager.createDeepCopyTree(tree);
+        deepCopyTree.set(subject.id, subject);
+        setTree(deepCopyTree);
     }
 
     function subjectUI(subject: Subject) {
         return (
             <>
                 <div className="flex gap-2">
-                    <span className="rounded-md bg-amber-800 text-black m-auto p-1">Deaths: {subject.getCount()}</span>
+                    <span className="rounded-md bg-amber-800 text-black m-auto p-1">Deaths: {subject.getDeaths()}</span>
                     <span className="rounded-md bg-sky-700 text-black m-auto p-1">Full Tries: {subject.fullTries}</span>
                     <span className="rounded-md bg-gray-700 text-black m-auto p-1"> Resets: {subject.resets}</span>
                 </div>
@@ -53,17 +43,18 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
             </>
         )
     }
-
+    
     return (
         <>
             ProfileSubjects
             <AddItemCard handleAdd={handleAdd} itemType="subject" />
             {
+                
                 tree.get(profileID)?.childIDS.map((nodeID, index) => {
                     const subject = tree.get(nodeID) as Subject;
                     return <Card
                         key={index}
-                        collectionNode={subject}
+                        treeNode={subject}
                         handleDelete={() => handleDelete(subject)}
                         subjectUI={subjectUI(subject)}
                         subjectNotableCol={subject.notable ? null : "bg-green-900"}

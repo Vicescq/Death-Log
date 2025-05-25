@@ -2,7 +2,6 @@ import { useParams } from "react-router";
 import useURLMapContext from "../hooks/useURLMapContext";
 import GameProfiles from "../pages/GameProfiles";
 import ProfileSubjects from "../pages/ProfileSubjects";
-import SubjectDeaths from "../pages/SubjectDeaths";
 import { ForceError } from "../pages/ErrorPage";
 
 export default function URLRouter() {
@@ -27,9 +26,6 @@ export default function URLRouter() {
         break;
       case 2:
         component = (<ProfileSubjects profileID={id!} />)
-        break;
-      case 3:
-        component = (<SubjectDeaths subjectID={id!} />)
         break;
       default:
         component = (<ForceError msg={"URL NOT FOUND!"} />)

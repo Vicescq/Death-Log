@@ -1,7 +1,7 @@
-import Collection from "./Collection";
 import { v4 as uuid4 } from "uuid";
+import TreeNode from "./TreeNode";
 
-export default class Profile extends Collection {
+export default class Profile extends TreeNode {
 
     constructor(
         name: string,
