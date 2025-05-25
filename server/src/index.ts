@@ -8,7 +8,6 @@ const port = 3000;
 app.use(express.json());
 
 app.post("/api/save", (req, res) => {
-    res.send('Got a POST request')
     Database.instance.run(`
         INSERT INTO users (log)
         VALUES (?)
@@ -27,9 +26,13 @@ app.get("/api/load", (req, res) => {
         data = row;
         res.send(data)
     })
-
-    
 });
+
+app.post("/api/add_node", (req, res) => {
+    const node = req.body;
+    console.log(node);
+})
+
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`);

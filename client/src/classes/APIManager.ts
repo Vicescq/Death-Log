@@ -1,7 +1,21 @@
-export default class APIManager{
-    constructor(){};
-}
+import type TreeNode from "./TreeNode";
 
-    // fetch("/api")
-    //     .then(res => res.json())
-    //     .then(data => console.log(data))
+export default class APIManager {
+    constructor() { };
+
+    static storeAddedNode(node: TreeNode) {
+        fetch("/api/add_node", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({[node.id]: node})
+        })
+    }
+
+    static removeDeletedNode(node: TreeNode) {
+        fetch("/api/delete_node", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({[node.id]: node})
+        })
+    }
+}
