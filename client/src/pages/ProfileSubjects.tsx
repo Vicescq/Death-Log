@@ -8,14 +8,17 @@ import useURLMapContext from "../hooks/useURLMapContext";
 import type { DeathType } from "../classes/Death";
 import Death from "../classes/Death";
 import UIHelper from "../classes/UIHelper";
+import { useAuth } from "@clerk/clerk-react";
+import APIManager from "../classes/APIManager";
 
 export default function ProfileSubjects({ profileID }: { profileID: string }) {
 
     const [tree, setTree] = useTreeContext();
     const [urlMap, setURLMap] = useURLMapContext();
+    const userID = useAuth().userId;
 
     function handleAdd(inputText: string, autoDate: boolean = true) {
-        UIHelper.handleAddHelper(inputText, tree, setTree, urlMap, setURLMap, autoDate, "subject", profileID, true);
+        UIHelper.handleAddHelper(inputText, tree, setTree, urlMap, setURLMap, autoDate, "subject", userID!, profileID);
     }
 
     function handleDelete(node: Subject) {
@@ -34,6 +37,7 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
             subject.resets++;
         }
         ContextManager.addNode(tree, setTree, death, urlMap, setURLMap);
+        APIManager.storeAddedNode(death, userID!);
     }
 
     function subjectUI(subject: Subject) {

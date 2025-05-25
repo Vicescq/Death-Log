@@ -2,6 +2,7 @@ import { NavLink, Outlet, useNavigate } from "react-router";
 import ContextManager from "../classes/ContextManager";
 import useTreeContext from "../hooks/useTreeContext";
 import useURLMapContext from "../hooks/useURLMapContext";
+import { SignedIn, SignedOut, SignInButton, useAuth, useClerk, UserButton, useUser } from "@clerk/clerk-react";
 
 export default function Root() {
     const navigate = useNavigate();
@@ -35,7 +36,6 @@ export default function Root() {
         }
     }
 
-
     return (
         <>
             <div className="flex flex-col  gap-4 m-12 mx-52">
@@ -44,6 +44,14 @@ export default function Root() {
                 <button className="cursor-pointer border-1 rounded-md p-1 bg-black " >Redo</button>
                 <button className="cursor-pointer border-1 rounded-md p-1 bg-black " onClick={() => undoFunction()}>Undo</button>
             </div>
+            <header className="border-4">
+                <SignedOut>
+                    <SignInButton />
+                </SignedOut>
+                <SignedIn>
+                    <UserButton />
+                </SignedIn>
+            </header>
 
             <div className="flex flex-col items-center justify-center gap-2 m-10">
                 <NavLink to={"/"}>

@@ -5,14 +5,16 @@ import Game from "../classes/Game";
 import useTreeContext from "../hooks/useTreeContext";
 import useURLMapContext from "../hooks/useURLMapContext";
 import UIHelper from "../classes/UIHelper";
+import { useAuth } from "@clerk/clerk-react";
 
 export default function Home() {
 
     const [tree, setTree] = useTreeContext();
     const [urlMap, setURLMap] = useURLMapContext();
+    const userID = useAuth().userId;
 
     function handleAdd(inputText: string, autoDate: boolean = true) {
-        UIHelper.handleAddHelper(inputText, tree, setTree, urlMap, setURLMap, autoDate, "game");
+        UIHelper.handleAddHelper(inputText, tree, setTree, urlMap, setURLMap, autoDate, "game", userID!);
     }
 
     function handleDelete(node: Game) {

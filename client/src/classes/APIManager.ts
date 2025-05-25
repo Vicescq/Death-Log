@@ -3,11 +3,14 @@ import type TreeNode from "./TreeNode";
 export default class APIManager {
     constructor() { };
 
-    static storeAddedNode(node: TreeNode) {
+    static storeAddedNode(node: TreeNode, userID: string) {
         fetch("/api/add_node", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({[node.id]: node})
+            body: JSON.stringify({
+                userID: userID,
+                [node.id]: node
+            })
         })
     }
 

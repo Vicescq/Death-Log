@@ -41,6 +41,7 @@ export default class UIHelper {
         setURLMap: URLMapContextType[1],
         autoDate: boolean,
         nodeToBeAdded: TreeNodeSerializableType,
+        userID: string,
         parentID?: string,
         notable?: boolean,
     ) {
@@ -61,7 +62,7 @@ export default class UIHelper {
                 break;
         }
         ContextManager.addNode(tree, setTree, node!, urlMap, setURLMap);
-        APIManager.storeAddedNode(node!);
+        APIManager.storeAddedNode(node!, userID);
     };
 
 }
