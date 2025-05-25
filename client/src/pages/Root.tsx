@@ -11,32 +11,41 @@ export default function Root() {
     function load() {
         const bool = confirm("LOAD PREVIOUS STATE")
         if (bool) {
-            console.log(localStorage.getItem("main"));
             navigate("/");
-            ContextManager.deserializeTree(localStorage.getItem("main")!, setTree, setURLMap);
+            fetch("/api/load", {
+                method: "GET",
+                headers: { "Content-Type": "application/json" },
+            }).then(res => res.json()).then(data => {
+                ContextManager.deserializeTree(data["log"], setTree, setURLMap);
+            })
         }
-
     }
+
     function save() {
         const bool = confirm("SAVE CURRENT STATE")
         if (bool) {
-            
             navigate("/");
-            localStorage.setItem("main", ContextManager.serializeTree(tree));
+            fetch("/api/save", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: ContextManager.serializeTree(tree)
+            }).then(() => {
+                console.log("Saved current tree!");
+            })
         }
     }
 
 
     return (
         <>
-            <div className="flex flex-col float-right gap-4 pr-6">
-                <button className="cursor-pointer border-1 rounded-md p-1 bg-black float-right" onClick={() => save()}>save</button>
-                <button className="cursor-pointer border-1 rounded-md p-1 bg-black float-right" onClick={() => load()}>load</button>
-                <button className="cursor-pointer border-1 rounded-md p-1 bg-black float-right" >Redo</button>
-                <button className="cursor-pointer border-1 rounded-md p-1 bg-black float-right" onClick={() => undoFunction()}>Undo</button>
+            <div className="flex flex-col  gap-4 m-12 mx-52">
+                <button className="cursor-pointer border-1 rounded-md p-1 bg-black " onClick={() => save()}>save</button>
+                <button className="cursor-pointer border-1 rounded-md p-1 bg-black " onClick={() => load()}>load</button>
+                <button className="cursor-pointer border-1 rounded-md p-1 bg-black " >Redo</button>
+                <button className="cursor-pointer border-1 rounded-md p-1 bg-black " onClick={() => undoFunction()}>Undo</button>
             </div>
 
-            <div className="flex flex-col items-center justify-center gap-2 m-8">
+            <div className="flex flex-col items-center justify-center gap-2 m-10">
                 <NavLink to={"/"}>
                     <div className="border-2 p-1 rounded-md">Go back home</div>
                 </NavLink>
