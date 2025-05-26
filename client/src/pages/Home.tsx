@@ -9,7 +9,6 @@ import usePollNodeStatus from "../hooks/usePollNodeStatus";
 import useHistoryContext from "../hooks/useHistoryContext";
 import { useEffect, useState } from "react";
 import Action from "../classes/Action";
-import useLatestAction from "../hooks/useLatestAction";
 
 
 export default function Home() {
@@ -20,15 +19,15 @@ export default function Home() {
 
     function handleAdd(inputText: string, autoDate: boolean = true) {
         const node = UIHelper.handleAddHelper(inputText, tree, autoDate, "game");
+        ContextManager.addNode(tree, setTree, node, urlMap, setURLMap);
         ContextManager.updateHistory(history, setHistory, new Action("add", [node]));
-        
     }
 
     function handleDelete(node: Game) {
-        ContextManager.updateHistory(history, setHistory, new Action("delete", [node]));
+        const deletedNodes = ContextManager.deleteNode(tree, setTree, node, urlMap, setURLMap);
+        ContextManager.updateHistory(history, setHistory, new Action("delete", [...deletedNodes!]));
     }
 
-    useLatestAction(history, tree, setTree, urlMap, setURLMap);
     // usePollNodeStatus(newNodeEntriesRef, deletedNodeIDSRef)
     return (
         <>

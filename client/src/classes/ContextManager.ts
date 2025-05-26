@@ -1,4 +1,4 @@
-import type { HistoryContextType, HistoryStateType } from "../contexts/historyContext";
+import type { HistoryContextType } from "../contexts/historyContext";
 import type { TreeContextType, TreeStateType } from "../contexts/treeContext";
 import type { URLMapContextType } from "../contexts/urlMapContext";
 import type Action from "./Action";
@@ -6,7 +6,7 @@ import Game from "./Game";
 import Profile from "./Profile";
 import RootNode from "./RootNode";
 import Subject from "./Subject";
-import type TreeNode from "./TreeNode";
+import TreeNode from "./TreeNode";
 
 export default class ContextManager {
 
@@ -37,6 +37,7 @@ export default class ContextManager {
     }
 
     static deleteNode(tree: TreeStateType, setTree: TreeContextType[1], node: TreeNode, urlMap: URLMapContextType[0], setURLMap: URLMapContextType[1]) {
+        const nodesDeleted: TreeNode[] = [];
         const deepCopyURLMap = ContextManager.createDeepCopyURLMap(urlMap);
         if (!(node instanceof RootNode)) {
             let deepCopyTree = ContextManager.createDeepCopyTree(tree);
@@ -45,6 +46,7 @@ export default class ContextManager {
 
                 // leaf nodes
                 if (node.childIDS.length == 0) {
+                    nodesDeleted.push(tree.get(node.id)!);
                     deepCopyURLMap.delete(node.path)
                     deepCopyTree.delete(node.id);
                     return;
@@ -56,6 +58,7 @@ export default class ContextManager {
                 }
 
                 // deleting current node
+                nodesDeleted.push(tree.get(node.id)!);
                 deepCopyTree.delete(node.id);
                 deepCopyURLMap.delete(node.path);
             }
@@ -67,6 +70,7 @@ export default class ContextManager {
 
             setURLMap(deepCopyURLMap);
             setTree(deepCopyTree)
+            return nodesDeleted;
         }
     }
 

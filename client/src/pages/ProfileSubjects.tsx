@@ -2,32 +2,36 @@ import Card from "../components/Card";
 import AddItemCard from "../components/AddItemCard";
 import Subject, { type DeathType } from "../classes/Subject";
 import ContextManager from "../classes/ContextManager";
-import { useEffect, useState } from "react";
 import useTreeContext from "../hooks/useTreeContext";
 import useURLMapContext from "../hooks/useURLMapContext";
 import UIHelper from "../classes/UIHelper";
-import { useAuth } from "@clerk/clerk-react";
-import APIManager from "../classes/APIManager";
+import Action from "../classes/Action";
+import useHistoryContext from "../hooks/useHistoryContext";
 
 export default function ProfileSubjects({ profileID }: { profileID: string }) {
 
     const [tree, setTree] = useTreeContext();
     const [urlMap, setURLMap] = useURLMapContext();
-    const userID = useAuth().userId;
+    const [history, setHistory] = useHistoryContext();
 
     function handleAdd(inputText: string, autoDate: boolean = true) {
-        UIHelper.handleAddHelper(inputText, tree, setTree, urlMap, setURLMap, autoDate, "subject", profileID);
+        const node = UIHelper.handleAddHelper(inputText, tree, autoDate, "subject", profileID);
+        ContextManager.addNode(tree, setTree, node, urlMap, setURLMap);
+        ContextManager.updateHistory(history, setHistory, new Action("add", [node]));
     }
 
     function handleDelete(node: Subject) {
-        ContextManager.deleteNode(tree, setTree, node, urlMap, setURLMap);
+        const deletedNodes = ContextManager.deleteNode(tree, setTree, node, urlMap, setURLMap);
+        ContextManager.updateHistory(history, setHistory, new Action("delete", [...deletedNodes!]));
+
     }
 
     function handleDeathCount(subject: Subject, deathType: DeathType) {
-        deathType == "fullTry" ? subject.fullTries++ : subject.resets++;
-        const deepCopyTree = ContextManager.createDeepCopyTree(tree);
-        deepCopyTree.set(subject.id, subject);
-        setTree(deepCopyTree);
+        let fullTries = 0, resets = 0;
+        deathType == "fullTry" ? fullTries++ : resets++;
+        const updatedSubject = new Subject(subject.name, subject.parentID!, subject.notable, subject.fullTries+fullTries, subject.resets+resets, subject.id, subject.date);
+        ContextManager.updateNode(updatedSubject, tree, setTree);
+        ContextManager.updateHistory(history, setHistory, new Action("update", [updatedSubject]));
     }
 
     function subjectUI(subject: Subject) {
@@ -43,13 +47,13 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
             </>
         )
     }
-    
+
     return (
         <>
             ProfileSubjects
             <AddItemCard handleAdd={handleAdd} itemType="subject" />
             {
-                
+
                 tree.get(profileID)?.childIDS.map((nodeID, index) => {
                     const subject = tree.get(nodeID) as Subject;
                     return <Card

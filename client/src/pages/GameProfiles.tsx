@@ -5,30 +5,28 @@ import Profile from "../classes/Profile";
 import useTreeContext from "../hooks/useTreeContext";
 import useURLMapContext from "../hooks/useURLMapContext";
 import UIHelper from "../classes/UIHelper";
-import { useAuth } from "@clerk/clerk-react";
-import type { NodeEntry } from "../classes/APIManager";
-import { useRef } from "react";
-import usePollNodeStatus from "../hooks/usePollNodeStatus";
+import useHistoryContext from "../hooks/useHistoryContext";
+import Action from "../classes/Action";
 
 export default function GameProfiles({ gameID }: { gameID: string }) {
     const [tree, setTree] = useTreeContext();
     const [urlMap, setURLMap] = useURLMapContext();
-    const newNodeEntriesRef = useRef<NodeEntry[]>([]);
-    const deletedNodeIDSRef = useRef<string[]>([]);
-    const userID = useAuth().userId;
+    const [history, setHistory] = useHistoryContext();
 
     function handleAdd(inputText: string, autoDate: boolean = true) {
         const node = UIHelper.handleAddHelper(inputText, tree, autoDate, "profile", gameID);
-        newNodeEntriesRef.current.push({userID: userID!, node: node})
         ContextManager.addNode(tree, setTree, node, urlMap, setURLMap);
+        ContextManager.updateHistory(history, setHistory, new Action("add", [node]));
+        
     }
 
     function handleDelete(node: Profile) {
-        ContextManager.deleteNode(tree, setTree, node, urlMap, setURLMap);
-        deletedNodeIDSRef.current.push(node.id);
+        const deletedNodes = ContextManager.deleteNode(tree, setTree, node, urlMap, setURLMap);
+        ContextManager.updateHistory(history, setHistory, new Action("delete", [...deletedNodes!]));
     }
 
-    usePollNodeStatus(newNodeEntriesRef, deletedNodeIDSRef);
+
+    // usePollNodeStatus(newNodeEntriesRef, deletedNodeIDSRef);
 
     return (
         <>
