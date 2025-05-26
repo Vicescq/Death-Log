@@ -35,12 +35,8 @@ export default class UIHelper {
     static handleAddHelper(
         inputText: string,
         tree: TreeStateType,
-        setTree: TreeContextType[1],
-        urlMap: URLMapContextType[0],
-        setURLMap: URLMapContextType[1],
         autoDate: boolean,
         nodeToBeAdded: TreeNodeSerializableType,
-        userID: string,
         parentID?: string,
         notable?: boolean,
     ) {
@@ -56,12 +52,11 @@ export default class UIHelper {
             case "profile":
                 node = autoDate ? new Profile(inputText, path, parentID!) : new Profile(inputText, path, parentID!, undefined, undefined, null);
                 break;
-            case "subject":
+            default:
                 node = autoDate ? new Subject(inputText, parentID!, notable) : new Subject(inputText, parentID!, notable, undefined, undefined, undefined, null);
                 break;
         }
-        ContextManager.addNode(tree, setTree, node!, urlMap, setURLMap);
-        APIManager.storeAddedNode(node!, userID);
+        return node
     };
 
 }

@@ -16,7 +16,7 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
     const userID = useAuth().userId;
 
     function handleAdd(inputText: string, autoDate: boolean = true) {
-        UIHelper.handleAddHelper(inputText, tree, setTree, urlMap, setURLMap, autoDate, "subject", userID!, profileID);
+        UIHelper.handleAddHelper(inputText, tree, setTree, urlMap, setURLMap, autoDate, "subject", profileID);
     }
 
     function handleDelete(node: Subject) {
