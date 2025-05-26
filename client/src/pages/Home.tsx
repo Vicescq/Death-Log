@@ -28,6 +28,8 @@ export default function Home() {
         ContextManager.updateHistory(history, setHistory, new Action("delete", [...deletedNodes!]));
     }
 
+    
+
     // usePollNodeStatus(newNodeEntriesRef, deletedNodeIDSRef)
     return (
         <>

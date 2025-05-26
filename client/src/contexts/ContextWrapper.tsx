@@ -7,6 +7,7 @@ import { URLMapContext, type URLMapStateType } from "./urlMapContext";
 import { useAuth } from "@clerk/clerk-react";
 import { HistoryContext, type HistoryStateType } from "./historyContext";
 import useLoadUserID from "../hooks/useLoadUserID";
+import APIManager from "../classes/APIManager";
 
 export function ContextWrapper({ children }: { children: ReactNode }) {
     const { isLoaded, userId} = useAuth();
@@ -24,8 +25,9 @@ export function ContextWrapper({ children }: { children: ReactNode }) {
     useLoadUserID(isLoaded, userId, history, setHistory);
 
     useConsoleLogOnStateChange(tree, "TREE: ", tree);
-    useConsoleLogOnStateChange(urlMap, "URL MAP: ", urlMap);
+    // useConsoleLogOnStateChange(urlMap, "URL MAP: ", urlMap);
     useConsoleLogOnStateChange(history, "HISTORY: ", history);
+    useConsoleLogOnStateChange(history, "\nSANITIZED: ", APIManager.deduplicateHistory(history));
     
     if (isLoaded && userId){
         return (
