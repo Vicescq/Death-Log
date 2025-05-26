@@ -7,6 +7,7 @@ import useURLMapContext from "../hooks/useURLMapContext";
 import UIHelper from "../classes/UIHelper";
 import useHistoryContext from "../hooks/useHistoryContext";
 import Action from "../classes/Action";
+import usePollNodeStatus from "../hooks/usePollNodeStatus";
 
 export default function GameProfiles({ gameID }: { gameID: string }) {
     const [tree, setTree] = useTreeContext();
@@ -25,9 +26,7 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
         ContextManager.updateHistory(history, setHistory, new Action("delete", [...deletedNodes!]));
     }
 
-
-    // usePollNodeStatus(newNodeEntriesRef, deletedNodeIDSRef);
-
+    usePollNodeStatus(history);
     return (
         <>
             GameProfiles

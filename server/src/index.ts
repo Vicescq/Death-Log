@@ -32,62 +32,78 @@ app.get("/api/load", (req, res) => {
     })
 });
 
-export type NodeEntry = { userID: string, node: Object };
 
-app.post("/api/add_node", (req, res) => {
 
-    const data = req.body as NodeEntry[];
-    let valueSetSQL = "";
-    const valueSetArray = [];
-    for (let i = 0; i < data.length; i++) {
-        const userID = data[i]["userID"];
-        const nodeID = data[i]["node"]["_id"];
-        const serializedNode = JSON.stringify(req.body[i]["node"]);
-        if (i == data.length - 1) {
-            valueSetSQL = valueSetSQL + "(?, ?, ?);"
+app.post("/api/node", (req, res) => {
+    const toAddOrUpdate = [];
+    const toDelete = [];
+    const toUpdate = [];
+
+    const data = req.body;
+    const userID = data.userID;
+
+    let toAddOrUpdateSQLHolders = "";
+
+    for (let i = 0; i < data.actionHistory.length; i++) {
+        const action = data.actionHistory[i];
+        for (let j = 0; j < action._targets.length; j++) {
+            const nodeID = action._targets[j]._id;
+            const node = JSON.stringify(action._targets[j]);
+
+            if (action._type == "add") {
+                toAddOrUpdate.push(userID, nodeID, node);
+
+                if (toAddOrUpdateSQLHolders === "") {
+                    toAddOrUpdateSQLHolders = "(?, ?, ?)";
+                }
+                else {
+                    toAddOrUpdateSQLHolders += ", (?, ?, ?)";
+                }
+            }
+
+            else if (action._type == "update"){
+                toUpdate.push(node, nodeID);
+            }
+
+            else {
+                // Only store nodeID since userID is the same for all
+                toDelete.push(nodeID);
+            }
         }
-        else {
-            valueSetSQL = valueSetSQL + "(?, ?, ?), "
-        }
-        valueSetArray.push(userID, nodeID, serializedNode);
     }
-    const sql = `
-        INSERT OR IGNORE INTO nodes (uuid, node_id, node)
-        VALUES ${valueSetSQL}
-    `
-    Database.instance.run(sql, [...valueSetArray], ((err) => err ? console.log(err) : null));
 
 
-    console.log("ADDED:", req.body);
-    res.status(200).send("Success!");
-})
-
-
-app.post("/api/delete_node", (req, res) => {
-    const data = req.body as string[];
-    let valueSetSQL = "(";
-    const valueSetArray = [];
-    for (let i = 0; i < data.length; i++) {
-        const nodeID = data[i];
-        if (i == data.length - 1) {
-            valueSetSQL = valueSetSQL + "?);"
-        }
-        else {
-            valueSetSQL = valueSetSQL + "?,  "
-        }
-        valueSetArray.push(nodeID);
+    if (toAddOrUpdate.length > 0) {
+        const sqlAddorUpdate = `
+            INSERT OR IGNORE INTO nodes (uuid, node_id, node)
+            VALUES ${toAddOrUpdateSQLHolders}
+        `;
+        Database.instance.run(sqlAddorUpdate, [...toAddOrUpdate], ((err) => err ? console.log(err) : null));
     }
-    const sql = `
-        DELETE FROM nodes
-        WHERE node_id in ${valueSetSQL}
-    `
-    Database.instance.run(sql, [...valueSetArray], ((err) => err ? console.log(err) : null));
 
-    console.log("DELETE:", req.body);
+    if (toDelete.length > 0) {
+        const placeholders = toDelete.map(() => '?').join(', ');
+        const sqlDelete = `DELETE FROM nodes WHERE uuid = ? AND node_id IN (${placeholders})`;
+        Database.instance.run(sqlDelete, [userID, ...toDelete], ((err) => err ? console.log(err) : null));
+    }
+
+    if (toUpdate.length > 0){
+        const sql = `
+            UPDATE nodes
+            SET node = ?
+            WHERE node_id = ? 
+        `
+        let j = 1
+        for (let i = 0; i < toUpdate.length - 1; i++){
+            Database.instance.run(sql, [toUpdate[i], toUpdate[j]], ((err) => err ? console.log(err) : null))
+            j++
+        }
+        
+    }
+
+    console.log("PROCESSED:", req.body);
     res.status(200).send("Success!");
-})
-
-
+});
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`);

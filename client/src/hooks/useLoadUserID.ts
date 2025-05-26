@@ -5,7 +5,7 @@ export default function useLoadUserID(isLoaded: boolean, userId: string | null |
     useEffect(() => {
         if (isLoaded && userId) {
             const newHistory = { ...history };
-            newHistory.userID = userId!
+            newHistory.userID = userId;
             setHistory(newHistory);
         }
     }, [isLoaded, userId])

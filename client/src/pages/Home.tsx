@@ -12,7 +12,6 @@ import Action from "../classes/Action";
 
 
 export default function Home() {
-
     const [tree, setTree] = useTreeContext();
     const [urlMap, setURLMap] = useURLMapContext();
     const [history, setHistory] = useHistoryContext();
@@ -28,9 +27,8 @@ export default function Home() {
         ContextManager.updateHistory(history, setHistory, new Action("delete", [...deletedNodes!]));
     }
 
-    
 
-    // usePollNodeStatus(newNodeEntriesRef, deletedNodeIDSRef)
+    usePollNodeStatus(history);
     return (
         <>
             Home

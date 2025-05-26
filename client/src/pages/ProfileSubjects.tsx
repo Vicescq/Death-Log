@@ -7,6 +7,7 @@ import useURLMapContext from "../hooks/useURLMapContext";
 import UIHelper from "../classes/UIHelper";
 import Action from "../classes/Action";
 import useHistoryContext from "../hooks/useHistoryContext";
+import usePollNodeStatus from "../hooks/usePollNodeStatus";
 
 export default function ProfileSubjects({ profileID }: { profileID: string }) {
 
@@ -33,7 +34,7 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
         ContextManager.updateNode(updatedSubject, tree, setTree);
         ContextManager.updateHistory(history, setHistory, new Action("update", [updatedSubject]));
     }
-
+    
     function subjectUI(subject: Subject) {
         return (
             <>
@@ -47,7 +48,7 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
             </>
         )
     }
-
+    usePollNodeStatus(history);
     return (
         <>
             ProfileSubjects

@@ -1,22 +1,17 @@
 import { useEffect } from "react";
-import type { NodeEntry } from "../classes/APIManager";
 import APIManager from "../classes/APIManager";
+import type { HistoryStateType } from "../contexts/historyContext";
 
-export default function usePollNodeStatus(newNodeEntriesRef: React.RefObject<NodeEntry[]>, deletedNodeIDSRef: React.RefObject<string[]>) {
+export default function usePollNodeStatus(historyState: HistoryStateType) {
+    
     useEffect(() => {
         const interval = setInterval(() => {
-            if (newNodeEntriesRef.current.length > 0) {
-                
-                APIManager.storeAddedNode(newNodeEntriesRef.current);
-                newNodeEntriesRef.current = [];
-                
+                const deduplicatedHistoryState = APIManager.deduplicateHistory(historyState);
+                console.log(historyState)
+                if (historyState.actionHistory.length > 0) {
+                    APIManager.storeModifiedNode(historyState);
             }
-            if (deletedNodeIDSRef.current.length > 0){
-                APIManager.removeDeletedNode(deletedNodeIDSRef.current);
-                deletedNodeIDSRef.current = [];
-            }
-
-        }, 5000);
+        }, 3000);
         return () => clearInterval(interval);
-    }, []);
+    }, [historyState]);
 }

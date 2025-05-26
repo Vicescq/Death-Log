@@ -17,6 +17,7 @@ export function ContextWrapper({ children }: { children: ReactNode }) {
     const initHistory = {userID: userId, actionHistory: []} as HistoryStateType;
     const [history, setHistory] = useState<HistoryStateType>(initHistory);
     
+    
     useEffect(() => {
         const rootNode = new RootNode();
         ContextManager.addNode(tree, setTree, rootNode, urlMap, setURLMap);
@@ -24,12 +25,12 @@ export function ContextWrapper({ children }: { children: ReactNode }) {
     
     useLoadUserID(isLoaded, userId, history, setHistory);
 
-    useConsoleLogOnStateChange(tree, "TREE: ", tree);
+    // useConsoleLogOnStateChange(tree, "TREE: ", tree);
     // useConsoleLogOnStateChange(urlMap, "URL MAP: ", urlMap);
     useConsoleLogOnStateChange(history, "HISTORY: ", history);
     useConsoleLogOnStateChange(history, "\nSANITIZED: ", APIManager.deduplicateHistory(history));
-    
-    if (isLoaded && userId){
+
+    if (isLoaded && (userId != undefined)){
         return (
             <TreeContext.Provider value={[tree, setTree]}>
                 <URLMapContext.Provider value={[urlMap, setURLMap]}>
