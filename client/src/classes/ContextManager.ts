@@ -1,5 +1,7 @@
+import type { HistoryContextType, HistoryStateType } from "../contexts/historyContext";
 import type { TreeContextType, TreeStateType } from "../contexts/treeContext";
 import type { URLMapContextType } from "../contexts/urlMapContext";
+import type Action from "./Action";
 import Game from "./Game";
 import Profile from "./Profile";
 import RootNode from "./RootNode";
@@ -119,5 +121,11 @@ export default class ContextManager {
         });
         setTree(tree);
         setURLMap(urlMap);
+    }
+
+    static updateHistory(history: HistoryContextType[0], setHistory: HistoryContextType[1], action: Action){
+        const updatedHistory = {...history};
+        updatedHistory.actionHistory.push(action);
+        setHistory(updatedHistory)
     }
 }
