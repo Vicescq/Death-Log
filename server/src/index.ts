@@ -66,7 +66,6 @@ app.post("/api/node", (req, res) => {
             }
 
             else {
-                // Only store nodeID since userID is the same for all
                 toDelete.push(nodeID);
             }
         }
