@@ -1,6 +1,6 @@
 import { NavLink } from "react-router"
-import type TreeNode from "../classes/Collection";
 import Subject from "../classes/Subject";
+import type TreeNode from "../classes/TreeNode";
 
 type Props = {
     treeNode: TreeNode;

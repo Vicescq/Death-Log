@@ -32,12 +32,8 @@ export default class ContextManager {
                 parentNode.childIDS.push(node.id);
             }
 
-            else {
-                parentNode.childIDS.forEach((nodeID) => {
-                    if (!(nodeID == node.id)) {
-                        parentNode.childIDS.push(node.id); // if adding a new node that did not exist in db
-                    }
-                })
+            else if (!parentNode.childIDS.includes(node.id)) {
+                parentNode.childIDS.push(node.id);
             }
         })
         setTree(deepCopyTree);
