@@ -10,6 +10,7 @@ import useHistoryContext from "../hooks/useHistoryContext";
 import Action from "../classes/Action";
 import useCurrentHistoryIndex from "../hooks/useCurrentHistoryIndex";
 import Modal from "../components/Modal";
+import { UserButton } from "@clerk/clerk-react";
 
 
 export default function Home() {
@@ -49,6 +50,8 @@ export default function Home() {
         <>
             Home
             <Modal />
+            
+            
             <AddItemCard itemType="game" handleAdd={handleAdd} />
             {
                 tree.get("ROOT_NODE")?.childIDS.map((nodeID, index) => {

@@ -5,21 +5,25 @@ import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-reac
 export default function NavBar() {
 
     return (
-        <nav className="bg-zomp text-black p-1 px-5 ">
+        <nav className="bg-zomp text-black  px-2 ">
             <ul className="flex gap-3 justify-center ">
-                <li>
+                <li className="m-2">
                     <NavLink to="/">
-                        <img src={grimpReaper} className="w-8" />
+                        <img src={grimpReaper} className="w-7" />
                     </NavLink>
                 </li>
-                <li className="ml-auto ">
-                    <SignedIn>
-                        <UserButton />
-                    </SignedIn>
+                <li>
                     <SignedOut>
                         <SignInButton />
                     </SignedOut>
                 </li>
+                <li className="ml-auto m-2">
+                    <SignedIn>
+                        <UserButton appearance={{ elements: { rootBox: "m-0.75" } }} />
+                    </SignedIn>
+                </li>
+
+
             </ul>
         </nav>
     )
