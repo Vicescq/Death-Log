@@ -2,23 +2,20 @@ import { NavLink, Outlet, useNavigate } from "react-router";
 import ContextManager from "../classes/ContextManager";
 import useTreeContext from "../hooks/useTreeContext";
 import useURLMapContext from "../hooks/useURLMapContext";
-import { SignedIn, SignedOut, SignInButton, useAuth, useClerk, UserButton, useUser } from "@clerk/clerk-react";
+import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react";
+import useHistoryContext from "../hooks/useHistoryContext";
 
 export default function Root() {
     const navigate = useNavigate();
     const [tree, setTree] = useTreeContext();
     const [_, setURLMap] = useURLMapContext();
+    const [history, setHistory] = useHistoryContext();
 
     function load() {
         const bool = confirm("LOAD PREVIOUS STATE")
         if (bool) {
             navigate("/");
-            fetch("/api/load", {
-                method: "GET",
-                headers: { "Content-Type": "application/json" },
-            }).then(res => res.json()).then(data => {
-                ContextManager.deserializeTree(data["log"], setTree, setURLMap);
-            })
+ 
         }
     }
 
@@ -26,13 +23,6 @@ export default function Root() {
         const bool = confirm("SAVE CURRENT STATE")
         if (bool) {
             navigate("/");
-            fetch("/api/save", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: ContextManager.serializeTree(tree)
-            }).then(() => {
-                console.log("Saved current tree!");
-            })
         }
     }
 

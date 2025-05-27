@@ -9,8 +9,17 @@ export default class APIManager {
 
     static storeModifiedNode(historyState: HistoryStateType) {
         const serializedHistory = JSON.stringify(historyState);
-        fetch("/api/node", {
+        fetch("/api/nodes", {
             method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: serializedHistory
+        })
+    }
+
+    static loadNodes(historyState: HistoryStateType, uuid: string) {
+        const serializedHistory = JSON.stringify(historyState);
+        fetch(`/api/load_nodes/${uuid}`, {
+            method: "GET",
             headers: { "Content-Type": "application/json" },
             body: serializedHistory
         })

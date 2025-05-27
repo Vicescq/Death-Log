@@ -6,12 +6,12 @@ export default function useSaveDeathLogStatus(historyState: HistoryStateType, cu
 
     useEffect(() => {
         const interval = setTimeout(() => {
-            if (historyState.actionHistory.length > 0 && historyState.actionHistory.slice(currentHistoryIndexRef.current).length > 0) {
+            if (historyState.actionHistory.slice(currentHistoryIndexRef.current).length > 0) {
                 const deduplicatedHistoryState = APIManager.deduplicateHistory(historyState, currentHistoryIndexRef);
                 APIManager.storeModifiedNode(deduplicatedHistoryState);
                 currentHistoryIndexRef.current = historyState.actionHistory.length
             }
-        }, 2000);
+        }, 10000);
         return () => clearTimeout(interval);
     }, [historyState]);
 }

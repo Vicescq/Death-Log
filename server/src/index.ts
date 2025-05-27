@@ -11,30 +11,10 @@ app.use(express.json());
 
 
 
-app.post("/api/save", (req, res) => {
-    Database.instance.run(`
-        INSERT INTO users (log)
-        VALUES (?)
-        
-        `, [JSON.stringify(req.body)])
-});
-
-app.get("/api/load", (req, res) => {
-    let data;
-    Database.instance.get(`SELECT log FROM users`, [], (err, row) => {
-        console.log(row)
-        if (err) {
-            console.log(err)
-            throw err;
-        }
-        data = row;
-        res.send(data)
-    })
-});
 
 
 
-app.post("/api/node", (req, res) => {
+app.post("/api/nodes", (req, res) => {
     const toAddOrUpdate = [];
     const toDelete = [];
     const toUpdate = [];
@@ -102,6 +82,19 @@ app.post("/api/node", (req, res) => {
 
     console.log("PROCESSED:", req.body);
     res.status(200).send("Success!");
+});
+
+app.get("/api/load_nodes/:uuid", (req, res) => {
+    let data;
+    Database.instance.get(`SELECT log FROM users`, [], (err, row) => {
+        console.log(row)
+        if (err) {
+            console.log(err)
+            throw err;
+        }
+        data = row;
+        res.send(data)
+    })
 });
 
 app.listen(port, () => {
