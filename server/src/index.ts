@@ -41,7 +41,7 @@ app.post("/api/nodes", (req, res) => {
                 }
             }
 
-            else if (action._type == "update"){
+            else if (action._type == "update") {
                 toUpdate.push(node, nodeID);
             }
 
@@ -66,18 +66,18 @@ app.post("/api/nodes", (req, res) => {
         Database.instance.run(sqlDelete, [userID, ...toDelete], ((err) => err ? console.log(err) : null));
     }
 
-    if (toUpdate.length > 0){
+    if (toUpdate.length > 0) {
         const sql = `
             UPDATE nodes
             SET node = ?
             WHERE node_id = ? 
         `
         let j = 1
-        for (let i = 0; i < toUpdate.length - 1; i++){
+        for (let i = 0; i < toUpdate.length - 1; i++) {
             Database.instance.run(sql, [toUpdate[i], toUpdate[j]], ((err) => err ? console.log(err) : null))
             j++
         }
-        
+
     }
 
     console.log("PROCESSED:", req.body);
@@ -85,15 +85,30 @@ app.post("/api/nodes", (req, res) => {
 });
 
 app.get("/api/load_nodes/:uuid", (req, res) => {
-    let data;
-    Database.instance.get(`SELECT log FROM users`, [], (err, row) => {
-        console.log(row)
+    const uuid = req.params.uuid;
+    res.set("content-type", "application/json")
+
+    let data: any[] = [];
+    const sql = `
+        SELECT node_id, node
+        FROM nodes
+        WHERE uuid = ?
+    `
+    Database.instance.all(sql, [uuid], (err, rows) => {
         if (err) {
             console.log(err)
             throw err;
         }
-        data = row;
-        res.send(data)
+        else{
+            rows.forEach((row: any) => {
+                const node_id = row.node_id;
+                const node = row.node
+                const dataRow = {[node_id]: node};
+                data.push(dataRow);
+            })
+            let content = JSON.stringify(data);
+            res.send(content);
+        }
     })
 });
 

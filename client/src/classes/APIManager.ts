@@ -16,12 +16,10 @@ export default class APIManager {
         })
     }
 
-    static loadNodes(historyState: HistoryStateType, uuid: string) {
-        const serializedHistory = JSON.stringify(historyState);
+    static loadNodes(uuid: string) {
         fetch(`/api/load_nodes/${uuid}`, {
             method: "GET",
             headers: { "Content-Type": "application/json" },
-            body: serializedHistory
         })
     }
 

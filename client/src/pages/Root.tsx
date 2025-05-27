@@ -4,6 +4,7 @@ import useTreeContext from "../hooks/useTreeContext";
 import useURLMapContext from "../hooks/useURLMapContext";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react";
 import useHistoryContext from "../hooks/useHistoryContext";
+import APIManager from "../classes/APIManager";
 
 export default function Root() {
     const navigate = useNavigate();
@@ -15,7 +16,7 @@ export default function Root() {
         const bool = confirm("LOAD PREVIOUS STATE")
         if (bool) {
             navigate("/");
- 
+            APIManager.loadNodes(history.userID);
         }
     }
 
