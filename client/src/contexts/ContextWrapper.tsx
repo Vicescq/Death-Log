@@ -21,11 +21,6 @@ export function ContextWrapper({ children }: { children: ReactNode }) {
 
     const currentHistoryIndexRef = useRef(history.actionHistory.length);
 
-    useEffect(() => {
-        const rootNode = new RootNode();
-        ContextManager.addNode(tree, setTree, rootNode, urlMap, setURLMap);
-    }, [])
-
     useLoadUserID(isLoaded, userId, history, setHistory);
 
     useConsoleLogOnStateChange(tree, "TREE: ", tree);

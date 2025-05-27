@@ -19,17 +19,11 @@ export default function Root() {
         }
     }
 
-    function save() {
-        const bool = confirm("SAVE CURRENT STATE")
-        if (bool) {
-            navigate("/");
-        }
-    }
+
 
     return (
         <>
             <div className="flex flex-col  gap-4 m-12 mx-52">
-                <button className="cursor-pointer border-1 rounded-md p-1 bg-black " onClick={() => save()}>save</button>
                 <button className="cursor-pointer border-1 rounded-md p-1 bg-black " onClick={() => load()}>load</button>
                 <button className="cursor-pointer border-1 rounded-md p-1 bg-black " >Redo</button>
                 <button className="cursor-pointer border-1 rounded-md p-1 bg-black " onClick={() => undoFunction()}>Undo</button>

@@ -107,7 +107,7 @@ app.get("/api/load_nodes/:uuid", (req, res) => {
                 data.push(dataRow);
             })
             let content = JSON.stringify(data);
-            res.send(content);
+            res.json(data);
         }
     })
 });

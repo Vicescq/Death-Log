@@ -8,7 +8,6 @@ import UIHelper from "../classes/UIHelper";
 import useHistoryContext from "../hooks/useHistoryContext";
 import Action from "../classes/Action";
 import useSaveDeathLogStatus from "../hooks/useSaveDeathLogStatus";
-import { useRef } from "react";
 import useCurrentHistoryIndex from "../hooks/useCurrentHistoryIndex";
 
 export default function GameProfiles({ gameID }: { gameID: string }) {
@@ -21,9 +20,6 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
         const node = UIHelper.handleAddHelper(inputText, tree, autoDate, "profile", gameID);
         ContextManager.addNode(tree, setTree, node, urlMap, setURLMap);
         ContextManager.updateHistory(history, setHistory, new Action("add", [node]), new Action("update", [tree.get(gameID!)!]));
-        // const updatedHistory = { ...history };
-        // updatedHistory.actionHistory.push(new Action("add", [node]), new Action("update", [tree.get(gameID!)!]));
-        // setHistory(updatedHistory)
     }
 
     function handleDelete(node: Profile) {

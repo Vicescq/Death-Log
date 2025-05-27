@@ -101,10 +101,8 @@ export default class ContextManager {
 
     static deserializeTree(serializedTree: object[], setTree: TreeContextType[1], setURLMap: URLMapContextType[1]) {
 
-        
         const urlMap: URLMapStateType = new Map();
         const tree: TreeStateType = new Map();
-
 
         function reviver(obj: any): TreeNode {
             switch (obj._type) {
@@ -123,7 +121,7 @@ export default class ContextManager {
         const rootNode = new RootNode();
         tree.set(rootNode.id, rootNode);
         for (const [_, outerLiteral] of Object.entries(serializedTree)) {
-            for (const [nodeID, innerLiteral] of Object.entries(outerLiteral)){
+            for (const [_, innerLiteral] of Object.entries(outerLiteral)){
                 const revivedNode = reviver(JSON.parse(innerLiteral));
 
                 tree.set(revivedNode.id, revivedNode);
