@@ -20,8 +20,10 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
     function handleAdd(inputText: string, autoDate: boolean = true) {
         const node = UIHelper.handleAddHelper(inputText, tree, autoDate, "profile", gameID);
         ContextManager.addNode(tree, setTree, node, urlMap, setURLMap);
-        ContextManager.updateHistory(history, setHistory, new Action("add", [node]));
-
+        
+        const updatedHistory = { ...history };
+        updatedHistory.actionHistory.push(new Action("add", [node]), new Action("update", [tree.get(gameID!)!]));
+        setHistory(updatedHistory)
     }
 
     function handleDelete(node: Profile) {

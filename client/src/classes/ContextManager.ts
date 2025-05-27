@@ -128,7 +128,10 @@ export default class ContextManager {
 
                 tree.set(revivedNode.id, revivedNode);
                 urlMap.set(revivedNode.path, revivedNode.id);
-                tree.get(revivedNode.parentID!)?.childIDS.push(revivedNode.id);
+                if (revivedNode.type == "game"){
+                    tree.get(revivedNode.parentID!)?.childIDS.push(revivedNode.id);
+                    
+                }
 
             }
         }
