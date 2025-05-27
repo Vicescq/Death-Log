@@ -26,7 +26,7 @@ export default function Home() {
 
     function handleDelete(node: Game) {
         const deletedNodes = ContextManager.deleteNode(tree, setTree, node, urlMap, setURLMap);
-        ContextManager.updateHistory(history, setHistory, new Action("delete", [...deletedNodes!]), new Action("update", [tree.get(node.parentID!)!]));
+        ContextManager.updateHistory(history, setHistory, new Action("delete", [...deletedNodes!]));
     }
     
     useSaveDeathLogStatus(history, currentHistoryIndexRef);

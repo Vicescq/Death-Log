@@ -17,31 +17,27 @@ export default class ContextManager {
         const deepCopyURLMap = ContextManager.createDeepCopyURLMap(urlMap);
 
         nodes.forEach((node) => {
-            if (node instanceof RootNode) {
-                deepCopyTree.set(node.id, node);
+            deepCopyTree.set(node.id, node);
+            const parentNode = deepCopyTree.get(node.parentID!)!
+
+            if (node instanceof Subject && !node.notable) {
+                parentNode.childIDS.unshift(node.id) // keep a watch on this, for db syncing
+            }
+
+            if (node.type != "subject") {
+                deepCopyURLMap.set(node.path, node.id);
+            }
+
+            if (node instanceof Game || parentNode.childIDS.length == 0) {
+                parentNode.childIDS.push(node.id);
             }
 
             else {
-                const parentNode = deepCopyTree.get(node.parentID!)!
-                if (node instanceof Subject && !node.notable) {
-                    parentNode.childIDS.unshift(node.id) // keep a watch on this, for db syncing
-                }
-
-                if (node instanceof Game || parentNode.childIDS.length == 0){
-                    parentNode.childIDS.push(node.id);
-                }
-
-                else {
-                    parentNode.childIDS.forEach((nodeID) => {
-                        if(!(nodeID == node.id)){
-                            parentNode.childIDS.push(node.id); // if adding a new node that did not exist in db
-                        }
-                    })
-                }
-                deepCopyTree.set(node.id, node);
-                if (node.type != "subject") {
-                    deepCopyURLMap.set(node.path, node.id);
-                }
+                parentNode.childIDS.forEach((nodeID) => {
+                    if (!(nodeID == node.id)) {
+                        parentNode.childIDS.push(node.id); // if adding a new node that did not exist in db
+                    }
+                })
             }
         })
         setTree(deepCopyTree);
@@ -106,12 +102,7 @@ export default class ContextManager {
         return deepCopyURLMap;
     }
 
-    static serializeTree(tree: TreeStateType) {
-        const objLiteralFromTree = Object.fromEntries(tree);
-        return JSON.stringify(objLiteralFromTree);
-    }
-
-    static deserializeTree(serializedTree: object[], setTree: TreeContextType[1], setURLMap: URLMapContextType[1]) {
+    static initializeTreeState(serializedTree: object[], setTree: TreeContextType[1], setURLMap: URLMapContextType[1]) {
 
         const urlMap: URLMapStateType = new Map();
         const tree: TreeStateType = new Map();

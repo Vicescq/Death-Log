@@ -26,7 +26,7 @@ export default class APIManager {
             headers: { "Content-Type": "application/json" },
         }).then((res) => res.json()).then((value) => {
             console.log(value);
-            ContextManager.deserializeTree(value, setTree, setURLMap)
+            ContextManager.initializeTreeState(value, setTree, setURLMap)
         });
     }
 

@@ -7,7 +7,7 @@ import APIManager from "../classes/APIManager";
 
 export default function Root() {
     const navigate = useNavigate();
-    const [tree, setTree] = useTreeContext();
+    const [_, setTree] = useTreeContext();
     const [__, setURLMap] = useURLMapContext();
     const [history, ___] = useHistoryContext();
 
@@ -24,7 +24,7 @@ export default function Root() {
     return (
         <>
             <div className="flex flex-col  gap-4 m-12 mx-52">
-                <button className="cursor-pointer border-1 rounded-md p-1 bg-black " onClick={() => load()}>load</button>
+                <button className="cursor-pointer border-1 rounded-md p-1 bg-black " onClick={() => load()}>INIT</button>
                 <button className="cursor-pointer border-1 rounded-md p-1 bg-black " >Redo</button>
                 <button className="cursor-pointer border-1 rounded-md p-1 bg-black " onClick={() => undoFunction()}>Undo</button>
             </div>
