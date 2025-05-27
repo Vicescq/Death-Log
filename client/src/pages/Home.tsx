@@ -34,13 +34,15 @@ export default function Home() {
     }
 
     function handleSettings(game: Game) {
-        const ans = prompt("SET NAME = n {name}");
-        game.name = ans!;
-        game.path = ans!;
-        const newURLMap = ContextManager.createDeepCopyURLMap(urlMap);
-        setURLMap(newURLMap);
-        ContextManager.updateNode(game, tree, setTree);
-        ContextManager.updateHistory(history, setHistory, new Action("update", [game]));
+        // let ans = prompt("SET NAME = n {name}");
+        // ans = UIHelper.sanitizeUserEntry(ans!);
+        // UIHelper.createNodePath(ans, "ROOT_NODE")
+        // game.name = ans!;
+        // game.path = ans!;
+        // const newURLMap = ContextManager.createDeepCopyURLMap(urlMap);
+        // setURLMap(newURLMap);
+        // ContextManager.updateNode(game, tree, setTree);
+        // ContextManager.updateHistory(history, setHistory, new Action("update", [game]));
     }
     useSaveDeathLogStatus(history, currentHistoryIndexRef);
     return (

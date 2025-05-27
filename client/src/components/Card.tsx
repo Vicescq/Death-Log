@@ -5,7 +5,7 @@ import type TreeNode from "../classes/TreeNode";
 type Props = {
     treeNode: TreeNode;
     handleDelete: () => void;
-    handleSettings: () => void;
+    handleSettings?: () => void;
     subjectUI?: React.JSX.Element | null;
     subjectNotableCol?: string | null;
 }
