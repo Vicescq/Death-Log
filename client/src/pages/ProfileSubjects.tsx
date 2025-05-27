@@ -7,13 +7,16 @@ import useURLMapContext from "../hooks/useURLMapContext";
 import UIHelper from "../classes/UIHelper";
 import Action from "../classes/Action";
 import useHistoryContext from "../hooks/useHistoryContext";
-import usePollNodeStatus from "../hooks/usePollNodeStatus";
+import useSaveDeathLogStatus from "../hooks/useSaveDeathLogStatus";
+import useCurrentHistoryIndex from "../hooks/useCurrentHistoryIndex";
 
 export default function ProfileSubjects({ profileID }: { profileID: string }) {
 
     const [tree, setTree] = useTreeContext();
     const [urlMap, setURLMap] = useURLMapContext();
     const [history, setHistory] = useHistoryContext();
+    
+    const currentHistoryIndexRef = useCurrentHistoryIndex();
 
     function handleAdd(inputText: string, autoDate: boolean = true) {
         const node = UIHelper.handleAddHelper(inputText, tree, autoDate, "subject", profileID);
@@ -48,7 +51,8 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
             </>
         )
     }
-    usePollNodeStatus(history);
+
+    useSaveDeathLogStatus(history, currentHistoryIndexRef);
     return (
         <>
             ProfileSubjects

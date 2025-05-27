@@ -7,26 +7,29 @@ import useURLMapContext from "../hooks/useURLMapContext";
 import UIHelper from "../classes/UIHelper";
 import useHistoryContext from "../hooks/useHistoryContext";
 import Action from "../classes/Action";
-import usePollNodeStatus from "../hooks/usePollNodeStatus";
+import useSaveDeathLogStatus from "../hooks/useSaveDeathLogStatus";
+import { useRef } from "react";
+import useCurrentHistoryIndex from "../hooks/useCurrentHistoryIndex";
 
 export default function GameProfiles({ gameID }: { gameID: string }) {
     const [tree, setTree] = useTreeContext();
     const [urlMap, setURLMap] = useURLMapContext();
     const [history, setHistory] = useHistoryContext();
+    const currentHistoryIndexRef = useCurrentHistoryIndex();
 
     function handleAdd(inputText: string, autoDate: boolean = true) {
         const node = UIHelper.handleAddHelper(inputText, tree, autoDate, "profile", gameID);
         ContextManager.addNode(tree, setTree, node, urlMap, setURLMap);
         ContextManager.updateHistory(history, setHistory, new Action("add", [node]));
-        
+
     }
 
     function handleDelete(node: Profile) {
         const deletedNodes = ContextManager.deleteNode(tree, setTree, node, urlMap, setURLMap);
         ContextManager.updateHistory(history, setHistory, new Action("delete", [...deletedNodes!]));
     }
+    useSaveDeathLogStatus(history, currentHistoryIndexRef);
 
-    usePollNodeStatus(history);
     return (
         <>
             GameProfiles

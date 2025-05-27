@@ -5,16 +5,18 @@ import Game from "../classes/Game";
 import useTreeContext from "../hooks/useTreeContext";
 import useURLMapContext from "../hooks/useURLMapContext";
 import UIHelper from "../classes/UIHelper";
-import usePollNodeStatus from "../hooks/usePollNodeStatus";
+import useSaveDeathLogStatus from "../hooks/useSaveDeathLogStatus";
 import useHistoryContext from "../hooks/useHistoryContext";
-import { useEffect, useState } from "react";
 import Action from "../classes/Action";
+import useCurrentHistoryIndex from "../hooks/useCurrentHistoryIndex";
 
 
 export default function Home() {
     const [tree, setTree] = useTreeContext();
     const [urlMap, setURLMap] = useURLMapContext();
     const [history, setHistory] = useHistoryContext();
+
+    const currentHistoryIndexRef = useCurrentHistoryIndex();
 
     function handleAdd(inputText: string, autoDate: boolean = true) {
         const node = UIHelper.handleAddHelper(inputText, tree, autoDate, "game");
@@ -27,8 +29,7 @@ export default function Home() {
         ContextManager.updateHistory(history, setHistory, new Action("delete", [...deletedNodes!]));
     }
 
-
-    usePollNodeStatus(history);
+    useSaveDeathLogStatus(history, currentHistoryIndexRef);
     return (
         <>
             Home
