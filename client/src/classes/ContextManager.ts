@@ -139,9 +139,9 @@ export default class ContextManager {
         setURLMap(urlMap)
     }
 
-    static updateHistory(history: HistoryContextType[0], setHistory: HistoryContextType[1], action: Action) {
+    static updateHistory(history: HistoryContextType[0], setHistory: HistoryContextType[1], ...actions: Action[]) {
         const updatedHistory = { ...history };
-        updatedHistory.actionHistory.push(action);
-        setHistory(updatedHistory)
+        actions.forEach((action) => updatedHistory.actionHistory.push(action));
+        setHistory(updatedHistory);
     }
 }

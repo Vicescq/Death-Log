@@ -15,7 +15,7 @@ app.use(express.json());
 
 
 app.post("/api/nodes", (req, res) => {
-    const toAddOrUpdate = [];
+    const toAdd = [];
     const toDelete = [];
     const toUpdate = [];
 
@@ -31,7 +31,7 @@ app.post("/api/nodes", (req, res) => {
             const node = JSON.stringify(action._targets[j]);
 
             if (action._type == "add") {
-                toAddOrUpdate.push(userID, nodeID, node);
+                toAdd.push(userID, nodeID, node);
 
                 if (toAddOrUpdateSQLHolders === "") {
                     toAddOrUpdateSQLHolders = "(?, ?, ?)";
@@ -52,12 +52,12 @@ app.post("/api/nodes", (req, res) => {
     }
 
 
-    if (toAddOrUpdate.length > 0) {
+    if (toAdd.length > 0) {
         const sqlAddorUpdate = `
             INSERT OR IGNORE INTO nodes (uuid, node_id, node)
             VALUES ${toAddOrUpdateSQLHolders}
         `;
-        Database.instance.run(sqlAddorUpdate, [...toAddOrUpdate], ((err) => err ? console.log(err) : null));
+        Database.instance.run(sqlAddorUpdate, [...toAdd], ((err) => err ? console.log(err) : null));
     }
 
     if (toDelete.length > 0) {

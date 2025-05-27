@@ -21,12 +21,12 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
     function handleAdd(inputText: string, autoDate: boolean = true) {
         const node = UIHelper.handleAddHelper(inputText, tree, autoDate, "subject", profileID);
         ContextManager.addNode(tree, setTree, node, urlMap, setURLMap);
-        ContextManager.updateHistory(history, setHistory, new Action("add", [node]));
+        ContextManager.updateHistoryABCDEF(history, setHistory, new Action("add", [node]));
     }
 
     function handleDelete(node: Subject) {
         const deletedNodes = ContextManager.deleteNode(tree, setTree, node, urlMap, setURLMap);
-        ContextManager.updateHistory(history, setHistory, new Action("delete", [...deletedNodes!]));
+        ContextManager.updateHistoryABCDEF(history, setHistory, new Action("delete", [...deletedNodes!]));
 
     }
 
@@ -35,7 +35,7 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
         deathType == "fullTry" ? fullTries++ : resets++;
         const updatedSubject = new Subject(subject.name, subject.parentID!, subject.notable, subject.fullTries+fullTries, subject.resets+resets, subject.id, subject.date);
         ContextManager.updateNode(updatedSubject, tree, setTree);
-        ContextManager.updateHistory(history, setHistory, new Action("update", [updatedSubject]));
+        ContextManager.updateHistoryABCDEF(history, setHistory, new Action("update", [updatedSubject]));
     }
     
     function subjectUI(subject: Subject) {
