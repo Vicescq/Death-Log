@@ -15,11 +15,11 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
     const [tree, setTree] = useTreeContext();
     const [urlMap, setURLMap] = useURLMapContext();
     const [history, setHistory] = useHistoryContext();
-    
+
     const currentHistoryIndexRef = useCurrentHistoryIndex();
 
-    function handleAdd(inputText: string, autoDate: boolean = true) {
-        const node = UIHelper.handleAddHelper(inputText, tree, autoDate, "subject", profileID);
+    function handleAdd(inputText: string, autoDate: boolean = true, notable: boolean = true) {
+        const node = UIHelper.handleAddHelper(inputText, tree, autoDate, "subject", profileID, notable);
         ContextManager.addNodes(tree, setTree, urlMap, setURLMap, [node]);
         ContextManager.updateHistory(history, setHistory, new Action("add", [node]), new Action("update", [tree.get(profileID!)!]));
     }
@@ -27,17 +27,16 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
     function handleDelete(node: Subject) {
         const deletedNodes = ContextManager.deleteNode(tree, setTree, node, urlMap, setURLMap);
         ContextManager.updateHistory(history, setHistory, new Action("delete", [...deletedNodes!]), new Action("update", [tree.get(node.parentID!)!]));
-
     }
 
     function handleDeathCount(subject: Subject, deathType: DeathType) {
         let fullTries = 0, resets = 0;
         deathType == "fullTry" ? fullTries++ : resets++;
-        const updatedSubject = new Subject(subject.name, subject.parentID!, subject.notable, subject.fullTries+fullTries, subject.resets+resets, subject.id, subject.date);
+        const updatedSubject = new Subject(subject.name, subject.parentID!, subject.notable, subject.fullTries + fullTries, subject.resets + resets, subject.id, subject.date);
         ContextManager.updateNode(updatedSubject, tree, setTree);
         ContextManager.updateHistory(history, setHistory, new Action("update", [updatedSubject]));
     }
-    
+
     function subjectUI(subject: Subject) {
         return (
             <>

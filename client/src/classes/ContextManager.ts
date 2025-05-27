@@ -20,8 +20,8 @@ export default class ContextManager {
             deepCopyTree.set(node.id, node);
             const parentNode = deepCopyTree.get(node.parentID!)!
 
-            if (node instanceof Subject && !node.notable) {
-                parentNode.childIDS.unshift(node.id) // keep a watch on this, for db syncing
+            if (node instanceof Subject && !node.notable && !parentNode.childIDS.includes(node.id)) {
+                parentNode.childIDS.unshift(node.id)
             }
 
             if (node.type != "subject") {
