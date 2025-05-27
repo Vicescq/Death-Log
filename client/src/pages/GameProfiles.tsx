@@ -18,7 +18,7 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 
     function handleAdd(inputText: string, autoDate: boolean = true) {
         const node = UIHelper.handleAddHelper(inputText, tree, autoDate, "profile", gameID);
-        ContextManager.addNode(tree, setTree, node, urlMap, setURLMap);
+        ContextManager.addNodes(tree, setTree, urlMap, setURLMap, [node]);
         ContextManager.updateHistory(history, setHistory, new Action("add", [node]), new Action("update", [tree.get(gameID!)!]));
     }
 

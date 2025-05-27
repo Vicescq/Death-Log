@@ -11,7 +11,7 @@ export default function useSaveDeathLogStatus(historyState: HistoryStateType, cu
                 APIManager.storeModifiedNode(deduplicatedHistoryState);
                 currentHistoryIndexRef.current = historyState.actionHistory.length
             }
-        }, 1000);
+        }, 10000);
         return () => clearTimeout(interval);
     }, [historyState]);
 }

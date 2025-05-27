@@ -12,28 +12,40 @@ export default class ContextManager {
 
     constructor() { }
 
-    static addNode(tree: TreeStateType, setTree: TreeContextType[1], node: TreeNode, urlMap: URLMapContextType[0], setURLMap: URLMapContextType[1]) {
+    static addNodes(tree: TreeStateType, setTree: TreeContextType[1], urlMap: URLMapContextType[0], setURLMap: URLMapContextType[1], nodes: TreeNode[]) {
         const deepCopyTree = ContextManager.createDeepCopyTree(tree);
-        if (node instanceof RootNode) {
-            deepCopyTree.set(node.id, node);
-        }
-        else {
-            const parentNode = deepCopyTree.get(node.parentID!)!
-            if (node instanceof Subject && !node.notable) {
-                parentNode.childIDS.unshift(node.id)
-            }
-            else {
-                parentNode.childIDS.push(node.id);
-            }
-            deepCopyTree.set(node.id, node);
-            if (node.type != "subject") {
-                const deepCopyURLMap = ContextManager.createDeepCopyURLMap(urlMap);
-                deepCopyURLMap.set(node.path, node.id);
-                setURLMap(deepCopyURLMap);
+        const deepCopyURLMap = ContextManager.createDeepCopyURLMap(urlMap);
+
+        nodes.forEach((node) => {
+            if (node instanceof RootNode) {
+                deepCopyTree.set(node.id, node);
             }
 
-        }
+            else {
+                const parentNode = deepCopyTree.get(node.parentID!)!
+                if (node instanceof Subject && !node.notable) {
+                    parentNode.childIDS.unshift(node.id) // keep a watch on this, for db syncing
+                }
+
+                if (node instanceof Game || parentNode.childIDS.length == 0){
+                    parentNode.childIDS.push(node.id);
+                }
+
+                else {
+                    parentNode.childIDS.forEach((nodeID) => {
+                        if(!(nodeID == node.id)){
+                            parentNode.childIDS.push(node.id); // if adding a new node that did not exist in db
+                        }
+                    })
+                }
+                deepCopyTree.set(node.id, node);
+                if (node.type != "subject") {
+                    deepCopyURLMap.set(node.path, node.id);
+                }
+            }
+        })
         setTree(deepCopyTree);
+        setURLMap(deepCopyURLMap);
     }
 
     static deleteNode(tree: TreeStateType, setTree: TreeContextType[1], node: TreeNode, urlMap: URLMapContextType[0], setURLMap: URLMapContextType[1]) {
@@ -118,23 +130,18 @@ export default class ContextManager {
                     return obj;
             }
         }
+
         const rootNode = new RootNode();
         tree.set(rootNode.id, rootNode);
+        const revivedNodes: TreeNode[] = [];
+
         for (const [_, outerLiteral] of Object.entries(serializedTree)) {
-            for (const [_, innerLiteral] of Object.entries(outerLiteral)){
+            for (const [_, innerLiteral] of Object.entries(outerLiteral)) {
                 const revivedNode = reviver(JSON.parse(innerLiteral));
-
-                tree.set(revivedNode.id, revivedNode);
-                urlMap.set(revivedNode.path, revivedNode.id);
-                if (revivedNode.type == "game"){
-                    tree.get(revivedNode.parentID!)?.childIDS.push(revivedNode.id);
-                    
-                }
-
+                revivedNodes.push(revivedNode);
             }
         }
-        setTree(tree);
-        setURLMap(urlMap)
+        ContextManager.addNodes(tree, setTree, urlMap, setURLMap, [...revivedNodes])
     }
 
     static updateHistory(history: HistoryContextType[0], setHistory: HistoryContextType[1], ...actions: Action[]) {

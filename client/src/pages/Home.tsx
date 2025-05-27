@@ -20,7 +20,7 @@ export default function Home() {
 
     function handleAdd(inputText: string, autoDate: boolean = true) {
         const node = UIHelper.handleAddHelper(inputText, tree, autoDate, "game");
-        ContextManager.addNode(tree, setTree, node, urlMap, setURLMap);
+        ContextManager.addNodes(tree, setTree, urlMap, setURLMap, [node]);
         ContextManager.updateHistory(history, setHistory, new Action("add", [node]));
     }
 
@@ -28,8 +28,7 @@ export default function Home() {
         const deletedNodes = ContextManager.deleteNode(tree, setTree, node, urlMap, setURLMap);
         ContextManager.updateHistory(history, setHistory, new Action("delete", [...deletedNodes!]), new Action("update", [tree.get(node.parentID!)!]));
     }
-    console.log("HOME:", tree)
-
+    
     useSaveDeathLogStatus(history, currentHistoryIndexRef);
     return (
         <>

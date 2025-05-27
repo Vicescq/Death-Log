@@ -20,7 +20,7 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 
     function handleAdd(inputText: string, autoDate: boolean = true) {
         const node = UIHelper.handleAddHelper(inputText, tree, autoDate, "subject", profileID);
-        ContextManager.addNode(tree, setTree, node, urlMap, setURLMap);
+        ContextManager.addNodes(tree, setTree, urlMap, setURLMap, [node]);
         ContextManager.updateHistory(history, setHistory, new Action("add", [node]), new Action("update", [tree.get(profileID!)!]));
     }
 
