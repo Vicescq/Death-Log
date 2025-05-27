@@ -8,6 +8,7 @@ import useLoadUserID from "../hooks/useLoadUserID";
 import { CurrentHistoryIndexContext } from "./currentHistoryIndexContext";
 import APIManager from "../classes/APIManager";
 import useLoadDeathLog from "../hooks/useLoadDeathLog";
+import NavBar from "../components/NavBar";
 
 export function ContextWrapper({ children }: { children: ReactNode }) {
     const { isLoaded, userId } = useAuth();
@@ -47,14 +48,7 @@ export function ContextWrapper({ children }: { children: ReactNode }) {
 
     else {
         return (
-            <header className="border-4">
-                <SignedOut>
-                    <SignInButton />
-                </SignedOut>
-                <SignedIn>
-                    <UserButton />
-                </SignedIn>
-            </header>
+            <NavBar/>
         )
     }
 }

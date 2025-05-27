@@ -3,15 +3,17 @@
 :root {
   background-color: #2a242d;
   color: white;
-  font-family: "Rubik";
+  font-family: "Urbanist";
+  font-weight: 500;
 }
 
-
-
 @layer base {
-      * {
-        margin: 0;
-        padding: 0;
+  * {
+    margin: 0;
+    padding: 0;
+  }
+}
 
-      }
-    }
+@theme{
+  --color-zomp: #3ea38d;
+}
