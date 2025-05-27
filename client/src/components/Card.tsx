@@ -5,11 +5,12 @@ import type TreeNode from "../classes/TreeNode";
 type Props = {
     treeNode: TreeNode;
     handleDelete: () => void;
+    handleSettings: () => void;
     subjectUI?: React.JSX.Element | null;
     subjectNotableCol?: string | null;
 }
 
-export default function Card({ treeNode, handleDelete, subjectUI = null, subjectNotableCol = null }: Props) {
+export default function Card({ treeNode, handleDelete, handleSettings, subjectUI = null, subjectNotableCol = null }: Props) {
 
     return (
         <>
@@ -22,7 +23,7 @@ export default function Card({ treeNode, handleDelete, subjectUI = null, subject
                     </NavLink>
                 }
                 {subjectUI}
-
+                <button onClick={handleSettings} className="border-2 p-1 rounded-lg bg-emerald-800">set</button>
                 <button onClick={handleDelete} className="border-2 p-1 border-red-400 rounded-lg bg-red-400">del</button>
             </div>
         </>

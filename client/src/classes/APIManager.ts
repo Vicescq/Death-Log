@@ -1,12 +1,11 @@
-import { validate } from "uuid";
 import type { HistoryStateType } from "../contexts/historyContext";
 import Action from "./Action";
 import ContextManager from "./ContextManager";
 import Game from "./Game";
 import Profile from "./Profile";
 import Subject from "./Subject";
-import type { TreeContextType, TreeStateType } from "../contexts/treeContext";
-import type { URLMapContextType, URLMapStateType } from "../contexts/urlMapContext";
+import type { TreeContextType } from "../contexts/treeContext";
+import type { URLMapContextType } from "../contexts/urlMapContext";
 
 export default class APIManager {
     constructor() { };

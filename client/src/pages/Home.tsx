@@ -9,6 +9,7 @@ import useSaveDeathLogStatus from "../hooks/useSaveDeathLogStatus";
 import useHistoryContext from "../hooks/useHistoryContext";
 import Action from "../classes/Action";
 import useCurrentHistoryIndex from "../hooks/useCurrentHistoryIndex";
+import Modal from "../components/Modal";
 
 
 export default function Home() {
@@ -26,21 +27,31 @@ export default function Home() {
 
     function handleDelete(node: Game) {
         const bool = window.confirm();
-        if (bool){
+        if (bool) {
             const deletedNodes = ContextManager.deleteNode(tree, setTree, node, urlMap, setURLMap);
             ContextManager.updateHistory(history, setHistory, new Action("delete", [...deletedNodes!]));
         }
     }
-    
+
+    function handleSettings(game: Game) {
+        const ans = prompt("SET NAME = n {name}");
+        game.name = ans!;
+        game.path = ans!;
+        const newURLMap = ContextManager.createDeepCopyURLMap(urlMap);
+        setURLMap(newURLMap);
+        ContextManager.updateNode(game, tree, setTree);
+        ContextManager.updateHistory(history, setHistory, new Action("update", [game]));
+    }
     useSaveDeathLogStatus(history, currentHistoryIndexRef);
     return (
         <>
             Home
+            <Modal />
             <AddItemCard itemType="game" handleAdd={handleAdd} />
             {
                 tree.get("ROOT_NODE")?.childIDS.map((nodeID, index) => {
                     const game = tree.get(nodeID) as Game;
-                    return <Card key={index} treeNode={game} handleDelete={() => handleDelete(game)} />
+                    return <Card key={index} treeNode={game} handleDelete={() => handleDelete(game)} handleSettings={() => handleSettings(game)} />
                 })
             }
         </>

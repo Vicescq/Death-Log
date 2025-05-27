@@ -1,32 +1,14 @@
-import { NavLink, Outlet, useNavigate } from "react-router";
-import useTreeContext from "../hooks/useTreeContext";
-import useURLMapContext from "../hooks/useURLMapContext";
+import { NavLink, Outlet } from "react-router";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react";
-import useHistoryContext from "../hooks/useHistoryContext";
-import APIManager from "../classes/APIManager";
+
 
 export default function Root() {
-    const navigate = useNavigate();
-    const [_, setTree] = useTreeContext();
-    const [__, setURLMap] = useURLMapContext();
-    const [history, ___] = useHistoryContext();
-
-    function load() {
-        const bool = confirm("LOAD PREVIOUS STATE")
-        if (bool) {
-            navigate("/");
-            APIManager.loadNodes(history.userID, setTree, setURLMap);
-        }
-    }
-
-
 
     return (
         <>
             <div className="flex flex-col  gap-4 m-12 mx-52">
-                <button className="cursor-pointer border-1 rounded-md p-1 bg-black " onClick={() => load()}>INIT</button>
                 <button className="cursor-pointer border-1 rounded-md p-1 bg-black " >Redo</button>
-                <button className="cursor-pointer border-1 rounded-md p-1 bg-black " onClick={() => undoFunction()}>Undo</button>
+                <button className="cursor-pointer border-1 rounded-md p-1 bg-black " >Undo</button>
             </div>
             <header className="border-4">
                 <SignedOut>
