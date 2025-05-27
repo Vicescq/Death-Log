@@ -1,8 +1,12 @@
+import { validate } from "uuid";
 import type { HistoryStateType } from "../contexts/historyContext";
 import Action from "./Action";
+import ContextManager from "./ContextManager";
 import Game from "./Game";
 import Profile from "./Profile";
 import Subject from "./Subject";
+import type { TreeContextType, TreeStateType } from "../contexts/treeContext";
+import type { URLMapContextType, URLMapStateType } from "../contexts/urlMapContext";
 
 export default class APIManager {
     constructor() { };
@@ -16,15 +20,18 @@ export default class APIManager {
         })
     }
 
-    static loadNodes(uuid: string) {
+    static loadNodes(uuid: string, setTree: TreeContextType[1], setURLMap: URLMapContextType[1]) {
         fetch(`/api/load_nodes/${uuid}`, {
             method: "GET",
             headers: { "Content-Type": "application/json" },
-        })
+        }).then((res) => res.json()).then((value) => {
+            console.log(value);
+            ContextManager.deserializeTree(value, setTree, setURLMap)
+        });
     }
 
     static deduplicateHistory(history: HistoryStateType, currentHistoryIndexRef: React.RefObject<number>) {
-    
+
         function reviver(key: any, value: any) {
             if (key == "actionHistory") {
                 return value.map((value: any) => Object.assign(Object.create(Action.prototype), value));
@@ -72,7 +79,7 @@ export default class APIManager {
 
         deduplicatedHistory.actionHistory = deduplicatedHistory.actionHistory.filter((action) => !(action.type == "__PLACEHOLDER__"));
         deduplicatedHistory.actionHistory.reverse()
-        
+
         return deduplicatedHistory;
     }
 }

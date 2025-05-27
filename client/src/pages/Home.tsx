@@ -28,6 +28,7 @@ export default function Home() {
         const deletedNodes = ContextManager.deleteNode(tree, setTree, node, urlMap, setURLMap);
         ContextManager.updateHistory(history, setHistory, new Action("delete", [...deletedNodes!]));
     }
+    console.log("HOME:", tree)
 
     useSaveDeathLogStatus(history, currentHistoryIndexRef);
     return (

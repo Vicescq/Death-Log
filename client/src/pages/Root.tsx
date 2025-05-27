@@ -1,5 +1,4 @@
 import { NavLink, Outlet, useNavigate } from "react-router";
-import ContextManager from "../classes/ContextManager";
 import useTreeContext from "../hooks/useTreeContext";
 import useURLMapContext from "../hooks/useURLMapContext";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react";
@@ -9,14 +8,14 @@ import APIManager from "../classes/APIManager";
 export default function Root() {
     const navigate = useNavigate();
     const [tree, setTree] = useTreeContext();
-    const [_, setURLMap] = useURLMapContext();
-    const [history, setHistory] = useHistoryContext();
+    const [__, setURLMap] = useURLMapContext();
+    const [history, ___] = useHistoryContext();
 
     function load() {
         const bool = confirm("LOAD PREVIOUS STATE")
         if (bool) {
             navigate("/");
-            APIManager.loadNodes(history.userID);
+            APIManager.loadNodes(history.userID, setTree, setURLMap);
         }
     }
 

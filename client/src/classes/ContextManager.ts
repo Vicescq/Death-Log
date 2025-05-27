@@ -1,6 +1,6 @@
 import type { HistoryContextType } from "../contexts/historyContext";
 import type { TreeContextType, TreeStateType } from "../contexts/treeContext";
-import type { URLMapContextType } from "../contexts/urlMapContext";
+import type { URLMapContextType, URLMapStateType } from "../contexts/urlMapContext";
 import type Action from "./Action";
 import Game from "./Game";
 import Profile from "./Profile";
@@ -26,12 +26,12 @@ export default class ContextManager {
                 parentNode.childIDS.push(node.id);
             }
             deepCopyTree.set(node.id, node);
-            if (node.type != "subject"){
+            if (node.type != "subject") {
                 const deepCopyURLMap = ContextManager.createDeepCopyURLMap(urlMap);
                 deepCopyURLMap.set(node.path, node.id);
                 setURLMap(deepCopyURLMap);
             }
-            
+
         }
         setTree(deepCopyTree);
     }
@@ -99,36 +99,45 @@ export default class ContextManager {
         return JSON.stringify(objLiteralFromTree);
     }
 
-    static deserializeTree(serializedTree: string, setTree: TreeContextType[1], setURLMap: URLMapContextType[1]) {
-        const objLiteral = JSON.parse(serializedTree, (_, value) => {
-            switch (value?._type) {
+    static deserializeTree(serializedTree: object[], setTree: TreeContextType[1], setURLMap: URLMapContextType[1]) {
+
+        
+        const urlMap: URLMapStateType = new Map();
+        const tree: TreeStateType = new Map();
+
+
+        function reviver(obj: any): TreeNode {
+            switch (obj._type) {
                 case "root":
-                    return new RootNode(value._childIDS);
+                    return Object.assign(Object.create(RootNode.prototype), obj);
                 case "game":
-                    return new Game(value._name, value._path, value._parentID, value._childIDS, value._id, value._date);
+                    return Object.assign(Object.create(Game.prototype), obj);
                 case "profile":
-                    return new Profile(value._name, value._path, value._parentID, value._id, value._childIDS, value._date);
+                    return Object.assign(Object.create(Profile.prototype), obj);
                 case "subject":
-                    return new Subject(value._name, value._parentID, value._notable, value._fullTries, value._resets, value._id, value._date);
+                    return Object.assign(Object.create(Subject.prototype), obj);
                 default:
-                    return value;
+                    return obj;
             }
-        });
-        const tree = new Map(Object.entries(objLiteral)) as TreeStateType;
-        const urlMap = new Map() as URLMapContextType[0];
-        tree.entries().forEach((idAndNode) => {
-            const id = idAndNode[0];
-            const node = idAndNode[1];
-            if (node.type != "root") {
-                urlMap.set(node.path, id);
+        }
+        const rootNode = new RootNode();
+        tree.set(rootNode.id, rootNode);
+        for (const [_, outerLiteral] of Object.entries(serializedTree)) {
+            for (const [nodeID, innerLiteral] of Object.entries(outerLiteral)){
+                const revivedNode = reviver(JSON.parse(innerLiteral));
+
+                tree.set(revivedNode.id, revivedNode);
+                urlMap.set(revivedNode.path, revivedNode.id);
+                tree.get(revivedNode.parentID!)?.childIDS.push(revivedNode.id);
+
             }
-        });
+        }
         setTree(tree);
-        setURLMap(urlMap);
+        setURLMap(urlMap)
     }
 
-    static updateHistory(history: HistoryContextType[0], setHistory: HistoryContextType[1], action: Action){
-        const updatedHistory = {...history};
+    static updateHistory(history: HistoryContextType[0], setHistory: HistoryContextType[1], action: Action) {
+        const updatedHistory = { ...history };
         updatedHistory.actionHistory.push(action);
         setHistory(updatedHistory)
     }

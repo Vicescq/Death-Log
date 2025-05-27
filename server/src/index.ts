@@ -21,7 +21,7 @@ app.post("/api/nodes", (req, res) => {
 
     const data = req.body;
     const userID = data.userID;
-
+    console.log(JSON.stringify(data, null, 4));
     let toAddOrUpdateSQLHolders = "";
 
     for (let i = 0; i < data.actionHistory.length; i++) {
