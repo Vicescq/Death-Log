@@ -25,16 +25,22 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
     }
 
     function handleDelete(node: Subject) {
-        const deletedNodes = ContextManager.deleteNode(tree, setTree, node, urlMap, setURLMap);
-        ContextManager.updateHistory(history, setHistory, new Action("delete", [...deletedNodes!]), new Action("update", [tree.get(node.parentID!)!]));
+        const bool = window.confirm();
+        if (bool){
+            const deletedNodes = ContextManager.deleteNode(tree, setTree, node, urlMap, setURLMap);
+            ContextManager.updateHistory(history, setHistory, new Action("delete", [...deletedNodes!]), new Action("update", [tree.get(node.parentID!)!]));
+        }
     }
 
     function handleDeathCount(subject: Subject, deathType: DeathType) {
-        let fullTries = 0, resets = 0;
-        deathType == "fullTry" ? fullTries++ : resets++;
-        const updatedSubject = new Subject(subject.name, subject.parentID!, subject.notable, subject.fullTries + fullTries, subject.resets + resets, subject.id, subject.date);
-        ContextManager.updateNode(updatedSubject, tree, setTree);
-        ContextManager.updateHistory(history, setHistory, new Action("update", [updatedSubject]));
+        const bool = window.confirm();
+        if (bool){
+            let fullTries = 0, resets = 0;
+            deathType == "fullTry" ? fullTries++ : resets++;
+            const updatedSubject = new Subject(subject.name, subject.parentID!, subject.notable, subject.fullTries + fullTries, subject.resets + resets, subject.id, subject.date);
+            ContextManager.updateNode(updatedSubject, tree, setTree);
+            ContextManager.updateHistory(history, setHistory, new Action("update", [updatedSubject]));
+        }
     }
 
     function subjectUI(subject: Subject) {
@@ -54,7 +60,7 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
     useSaveDeathLogStatus(history, currentHistoryIndexRef);
     return (
         <>
-            ProfileSubjects
+            ProfileSubjects: TOTAL DEATHS: {}
             <AddItemCard handleAdd={handleAdd} itemType="subject" />
             {
 

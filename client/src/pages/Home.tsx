@@ -25,8 +25,11 @@ export default function Home() {
     }
 
     function handleDelete(node: Game) {
-        const deletedNodes = ContextManager.deleteNode(tree, setTree, node, urlMap, setURLMap);
-        ContextManager.updateHistory(history, setHistory, new Action("delete", [...deletedNodes!]));
+        const bool = window.confirm();
+        if (bool){
+            const deletedNodes = ContextManager.deleteNode(tree, setTree, node, urlMap, setURLMap);
+            ContextManager.updateHistory(history, setHistory, new Action("delete", [...deletedNodes!]));
+        }
     }
     
     useSaveDeathLogStatus(history, currentHistoryIndexRef);

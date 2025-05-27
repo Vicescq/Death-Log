@@ -23,8 +23,11 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
     }
 
     function handleDelete(node: Profile) {
-        const deletedNodes = ContextManager.deleteNode(tree, setTree, node, urlMap, setURLMap);
-        ContextManager.updateHistory(history, setHistory, new Action("delete", [...deletedNodes!]), new Action("update", [tree.get(node.parentID!)!]));
+        const bool = window.confirm();
+        if (bool){
+            const deletedNodes = ContextManager.deleteNode(tree, setTree, node, urlMap, setURLMap);
+            ContextManager.updateHistory(history, setHistory, new Action("delete", [...deletedNodes!]), new Action("update", [tree.get(node.parentID!)!]));
+        }
     }
     useSaveDeathLogStatus(history, currentHistoryIndexRef);
 
