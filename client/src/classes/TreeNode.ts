@@ -1,4 +1,12 @@
+import type { TreeStateType } from "../contexts/treeContext";
+
 export type TreeNodeSerializableType = "root" | "game" | "profile" | "subject";
+
+export interface TangibleTreeNodeParent{
+    getDeaths(tree: TreeStateType): number;
+    getFullTries(tree: TreeStateType): number;
+    getResets(tree: TreeStateType): number;
+}
 
 export default abstract class TreeNode {
 
