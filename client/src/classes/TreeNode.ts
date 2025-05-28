@@ -1,6 +1,6 @@
 import type { TreeStateType } from "../contexts/treeContext";
 
-export type TreeNodeSerializableType = "root" | "game" | "profile" | "subject";
+export type TreeNodeSerializableType = "game" | "profile" | "subject";
 
 export interface TangibleTreeNodeParent{
     getDeaths(tree: TreeStateType): number;
@@ -64,6 +64,14 @@ export default abstract class TreeNode {
     }
     set childIDS(value) {
         this._childIDS = value;
+    }
+
+    private _completed!: boolean;
+    public get completed() {
+        return this._completed;
+    }
+    public set completed(value: boolean) {
+        this._completed = value;
     }
 
 }

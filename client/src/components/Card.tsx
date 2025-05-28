@@ -1,5 +1,5 @@
 import { NavLink } from "react-router"
-import Subject from "../classes/Subject";
+import Subject, { type DeathType } from "../classes/Subject";
 import skull from "../assets/skull.svg"
 import add from "../assets/add.svg"
 import minus from "../assets/minus.svg"
@@ -17,19 +17,21 @@ type Props = {
     treeNode: Game | Profile | Subject;
     handleDelete: () => void;
     handleDetails?: () => void;
-    handleDeathCount?: () => void;
+    handleDeathCount?: (subject: Subject, deathType: DeathType) => void;
+    handleCompletedStatus?: (newStatus: boolean) => void;
 }
 
-export default function Card({ tree, treeNode, handleDelete, handleDetails }: Props) {
+export default function Card({ tree, treeNode, handleDelete, handleDetails, handleDeathCount, handleCompletedStatus }: Props) {
 
     const enabledCSS = "bg-green-400 border-2 rounded-2xl";
-    const [resetToggle, setResetToggle] = useState(false);
-    const [readOnly, setReadOnly] = useState(false);
+    const [resetDeathTypeMode, setResetDeathTypeMode] = useState(false);
+    const [readOnly, setReadOnly] = useState(treeNode.completed);
 
     const cardCSS = readOnly ? "bg-gray-600 text-amber-200" : "bg-zomp text-black";
     const readOnlyToggleCSS = readOnly ? enabledCSS : "";
-    const resetToggleCSS = resetToggle ? enabledCSS : "";
+    const resetToggleCSS = resetDeathTypeMode ? enabledCSS : "";
     const settersBtnDisplay = readOnly ? "hidden" : "";
+    const deathType = resetDeathTypeMode ? "reset" : "fullTry";
 
     const deathCount = treeNode instanceof Game || treeNode instanceof Profile ? treeNode.getDeaths(tree) : treeNode.getDeaths();
     const fullTries = treeNode instanceof Game || treeNode instanceof Profile ? treeNode.getFullTries(tree) : treeNode.fullTries;
@@ -60,18 +62,17 @@ export default function Card({ tree, treeNode, handleDelete, handleDetails }: Pr
                             </NavLink>
                             :
                             <>
-                                <img className={`w-10 cursor-pointer ${settersBtnDisplay}`} src={add} alt="" onClick={() => {
-
-                                }}/>
+                                <img className={`w-10 cursor-pointer ${settersBtnDisplay}`} src={add} alt="" onClick={() => handleDeathCount!(treeNode, deathType)} />
                                 <img className={`w-10 cursor-pointer ${settersBtnDisplay}`} src={minus} alt="" onClick={() => console.log(1)} />
                                 <img className={`w-10 cursor-pointer ${settersBtnDisplay}  ${resetToggleCSS}`} src={reset} alt="" onClick={() => {
-                                    setResetToggle((prev) => !prev);
+                                    setResetDeathTypeMode((prev) => !prev);
                                 }} />
                             </>
                     }
-                    <img className="w-10 cursor-pointer" src={details} alt="" />
+                    <img className="w-10 cursor-pointer" src={details} alt="" onClick={handleDelete}/>
                     <img className={`w-10 cursor-pointer ${readOnlyToggleCSS}`} src={readonly} alt="" onClick={() => {
                         setReadOnly((prev) => !prev);
+                        handleCompletedStatus!(!treeNode.completed);
                     }} />
                 </div>
             </div>

@@ -36,26 +36,19 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
     function handleDeathCount(subject: Subject, deathType: DeathType) {
         const bool = window.confirm();
         if (bool) {
-            let fullTries = 0, resets = 0;
-            deathType == "fullTry" ? fullTries++ : resets++;
-            const updatedSubject = new Subject(subject.name, subject.parentID!, subject.notable, subject.fullTries + fullTries, subject.resets + resets, subject.id, subject.date);
-            ContextManager.updateNode(updatedSubject, tree, setTree);
-            ContextManager.updateHistory(history, setHistory, new Action("update", [updatedSubject]));
+            deathType == "fullTry" ? subject.fullTries++ : subject.resets++;
+            ContextManager.updateNode(subject, tree, setTree);
+            ContextManager.updateHistory(history, setHistory, new Action("update", [subject]));
         }
     }
 
-    function subjectUI(subject: Subject) {
-        return (
-            <>
-                <div className="flex gap-2">
-                    <span className="p-2">Deaths: {subject.getDeaths()}</span>
-                    <span className="p-2">Full Tries: {subject.fullTries}</span>
-                    <span className="p-2"> Resets: {subject.resets}</span>
-                </div>
-                <button onClick={() => handleDeathCount(subject, "fullTry")} className="px-2 ">+</button>
-                <button onClick={() => handleDeathCount(subject, "reset")} className="">~ +</button>
-            </>
-        )
+    function handleCompletedStatus(subject: Subject, newStatus: boolean) {
+        const bool = window.confirm();
+        if (bool) {
+            subject.completed = newStatus;
+            ContextManager.updateNode(subject, tree, setTree);
+            ContextManager.updateHistory(history, setHistory, new Action("update", [subject]));
+        }
     }
 
     function createCards() {
@@ -66,6 +59,8 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
                 tree={tree}
                 treeNode={subject}
                 handleDelete={() => handleDelete(subject)}
+                handleDeathCount={handleDeathCount}
+                handleCompletedStatus={(newStatus) => handleCompletedStatus(subject, newStatus)}
             />
         })
     }
@@ -75,7 +70,7 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
         <>
             ProfileSubjects: TOTAL DEATHS: { }
             <AddItemCard handleAdd={handleAdd} itemType="subject" />
-            <CardWrapper cards={createCards()}/>
+            <CardWrapper cards={createCards()} />
         </>
     )
 }

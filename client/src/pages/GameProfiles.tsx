@@ -31,10 +31,25 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
         }
     }
 
+    function handleCompletedStatus(profile: Profile, newStatus: boolean) {
+        const bool = window.confirm();
+        if (bool) {
+            profile.completed = newStatus;
+            ContextManager.updateNode(profile, tree, setTree);
+            ContextManager.updateHistory(history, setHistory, new Action("update", [profile]));
+        }
+    }
+
     function createCards() {
         return tree.get(gameID)?.childIDS.map((nodeID, index) => {
             const profile = tree.get(nodeID) as Profile;
-            return <Card key={index} tree={tree} treeNode={profile} handleDelete={() => handleDelete(profile)} />
+            return <Card 
+            key={index} 
+            tree={tree} 
+            treeNode={profile} 
+            handleDelete={() => handleDelete(profile)} 
+            handleCompletedStatus={(newStatus) => handleCompletedStatus(profile, newStatus)}
+            />
         })
     }
 

@@ -12,6 +12,7 @@ export default class Profile extends TreeNode implements TangibleTreeNodeParent{
         id: string = uuid4(),
         childIDS: string[] = [],
         date: string | null = new Date().toString(),
+        completed: boolean = false
     ) {
         super();
         this.name = name;
@@ -21,6 +22,7 @@ export default class Profile extends TreeNode implements TangibleTreeNodeParent{
         this.childIDS = childIDS
         this.date = date;
         this.parentID = parentID;
+        this.completed = completed;
     }
 
     getDeaths(tree: TreeStateType): number {

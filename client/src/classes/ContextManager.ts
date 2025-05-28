@@ -103,16 +103,28 @@ export default class ContextManager {
         const urlMap: URLMapStateType = new Map();
         const tree: TreeStateType = new Map();
 
+        function migrationNewCompletedField(revived: TreeNode) {
+            if (revived.completed == undefined) {
+                revived.completed = false;
+            }
+            return revived
+        }
+
         function reviver(obj: any): TreeNode {
+            let revived: TreeNode;
             switch (obj._type) {
                 case "root":
-                    return Object.assign(Object.create(RootNode.prototype), obj);
+                    revived = Object.assign(Object.create(RootNode.prototype), obj);
+                    return migrationNewCompletedField(revived);
                 case "game":
-                    return Object.assign(Object.create(Game.prototype), obj);
+                    revived = Object.assign(Object.create(Game.prototype), obj);
+                    return migrationNewCompletedField(revived);
                 case "profile":
-                    return Object.assign(Object.create(Profile.prototype), obj);
+                    revived = Object.assign(Object.create(Profile.prototype), obj);
+                    return migrationNewCompletedField(revived);
                 case "subject":
-                    return Object.assign(Object.create(Subject.prototype), obj);
+                    revived = Object.assign(Object.create(Subject.prototype), obj);
+                    return migrationNewCompletedField(revived);
                 default:
                     return obj;
             }

@@ -13,6 +13,7 @@ export default class Subject extends TreeNode {
         resets: number = 0,
         id: string = uuid4(),
         date: string | null = new Date().toString(),
+        completed: boolean = false
     ) {
         super();
         this.name = name;
@@ -25,6 +26,7 @@ export default class Subject extends TreeNode {
         this.resets = resets;
         this.path = "";
         this.childIDS = [];
+        this.completed = completed;
     }
 
     private _notable!: boolean;

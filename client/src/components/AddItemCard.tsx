@@ -1,7 +1,7 @@
 import { useState } from "react"
 import type { TreeNodeSerializableType } from "../classes/TreeNode";
 type Props = {
-    handleAdd(inputText: string, autoDate?: boolean, notable?: boolean): void;
+    handleAdd: (inputText: string, autoDate?: boolean, notable?: boolean) => void;
     itemType: TreeNodeSerializableType;
 }
 

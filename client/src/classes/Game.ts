@@ -12,6 +12,7 @@ export default class Game extends TreeNode implements TangibleTreeNodeParent {
         childIDS: string[] = [],
         id: string = uuid4(),
         date: string | null = new Date().toString(),
+        completed: boolean = false
     ) {
         super();
         this.name = name;
@@ -21,6 +22,7 @@ export default class Game extends TreeNode implements TangibleTreeNodeParent {
         this.id = id;
         this.date = date;
         this.parentID = parentID;
+        this.completed = completed;
     }
 
     getDeaths(tree: TreeStateType): number {

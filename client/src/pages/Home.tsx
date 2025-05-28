@@ -10,7 +10,6 @@ import useHistoryContext from "../hooks/useHistoryContext";
 import Action from "../classes/Action";
 import useCurrentHistoryIndex from "../hooks/useCurrentHistoryIndex";
 import Modal from "../components/Modal";
-import { UserButton } from "@clerk/clerk-react";
 import CardWrapper from "../components/CardWrapper";
 
 
@@ -35,13 +34,25 @@ export default function Home() {
         }
     }
 
-    function handleSettings(game: Game) {
+    function handleCompletedStatus(game: Game, newStatus: boolean) {
+        const bool = window.confirm();
+        if (bool) {
+            game.completed = newStatus;
+            ContextManager.updateNode(game, tree, setTree);
+            ContextManager.updateHistory(history, setHistory, new Action("update", [game]));
+        }
     }
 
     function createCards() {
         return tree.get("ROOT_NODE")?.childIDS.map((nodeID, index) => {
             const game = tree.get(nodeID) as Game;
-            return <Card key={index} tree={tree} treeNode={game} handleDelete={() => handleDelete(game)} handleDetails={() => handleSettings(game)} />
+            return <Card
+                key={index}
+                tree={tree}
+                treeNode={game}
+                handleDelete={() => handleDelete(game)}
+                handleCompletedStatus={(newStatus) => handleCompletedStatus(game, newStatus)}
+            />
         })
     }
 
@@ -53,7 +64,7 @@ export default function Home() {
             Home
             <Modal />
             <AddItemCard itemType="game" handleAdd={handleAdd} />
-            <CardWrapper cards={createCards()}/>
+            <CardWrapper cards={createCards()} />
         </>
     )
 }
