@@ -11,6 +11,7 @@ import Action from "../classes/Action";
 import useCurrentHistoryIndex from "../hooks/useCurrentHistoryIndex";
 import Modal from "../components/Modal";
 import { UserButton } from "@clerk/clerk-react";
+import CardWrapper from "../components/CardWrapper";
 
 
 export default function Home() {
@@ -35,30 +36,24 @@ export default function Home() {
     }
 
     function handleSettings(game: Game) {
-        // let ans = prompt("SET NAME = n {name}");
-        // ans = UIHelper.sanitizeUserEntry(ans!);
-        // UIHelper.createNodePath(ans, "ROOT_NODE")
-        // game.name = ans!;
-        // game.path = ans!;
-        // const newURLMap = ContextManager.createDeepCopyURLMap(urlMap);
-        // setURLMap(newURLMap);
-        // ContextManager.updateNode(game, tree, setTree);
-        // ContextManager.updateHistory(history, setHistory, new Action("update", [game]));
     }
+
+    function createCards() {
+        return tree.get("ROOT_NODE")?.childIDS.map((nodeID, index) => {
+            const game = tree.get(nodeID) as Game;
+            return <Card key={index} treeNode={game} handleDelete={() => handleDelete(game)} handleSettings={() => handleSettings(game)} />
+        })
+    }
+
     useSaveDeathLogStatus(history, currentHistoryIndexRef);
+
+
     return (
         <>
             Home
             <Modal />
-            
-            
             <AddItemCard itemType="game" handleAdd={handleAdd} />
-            {
-                tree.get("ROOT_NODE")?.childIDS.map((nodeID, index) => {
-                    const game = tree.get(nodeID) as Game;
-                    return <Card key={index} treeNode={game} handleDelete={() => handleDelete(game)} handleSettings={() => handleSettings(game)} />
-                })
-            }
+            <CardWrapper cards={createCards()}/>
         </>
     )
 }

@@ -14,7 +14,7 @@ export default function Card({ treeNode, handleDelete, handleSettings, subjectUI
 
     return (
         <>
-            <div className={`flex rounded-lg border p-3 gap-2  ${subjectNotableCol}`}>
+            <div className={`flex bg-zomp text-black border-black border-2  rounded-xl  p-3 w-72 h-64 ${subjectNotableCol}`}>
 
                 {treeNode instanceof Subject ?
                     (<span className="cursor-pointer">{treeNode.name}</span>)
@@ -23,8 +23,8 @@ export default function Card({ treeNode, handleDelete, handleSettings, subjectUI
                     </NavLink>
                 }
                 {subjectUI}
-                <button onClick={handleSettings} className="border-2 p-1 rounded-lg bg-emerald-800">set</button>
-                <button onClick={handleDelete} className="border-2 p-1 border-red-400 rounded-lg bg-red-400">del</button>
+                <button onClick={handleSettings} className="pr-2">set</button>
+                <button onClick={handleDelete} >del</button>
             </div>
         </>
     )

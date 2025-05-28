@@ -9,6 +9,7 @@ import Action from "../classes/Action";
 import useHistoryContext from "../hooks/useHistoryContext";
 import useSaveDeathLogStatus from "../hooks/useSaveDeathLogStatus";
 import useCurrentHistoryIndex from "../hooks/useCurrentHistoryIndex";
+import CardWrapper from "../components/CardWrapper";
 
 export default function ProfileSubjects({ profileID }: { profileID: string }) {
 
@@ -26,7 +27,7 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 
     function handleDelete(node: Subject) {
         const bool = window.confirm();
-        if (bool){
+        if (bool) {
             const deletedNodes = ContextManager.deleteNode(tree, setTree, node, urlMap, setURLMap);
             ContextManager.updateHistory(history, setHistory, new Action("delete", [...deletedNodes!]), new Action("update", [tree.get(node.parentID!)!]));
         }
@@ -34,7 +35,7 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 
     function handleDeathCount(subject: Subject, deathType: DeathType) {
         const bool = window.confirm();
-        if (bool){
+        if (bool) {
             let fullTries = 0, resets = 0;
             deathType == "fullTry" ? fullTries++ : resets++;
             const updatedSubject = new Subject(subject.name, subject.parentID!, subject.notable, subject.fullTries + fullTries, subject.resets + resets, subject.id, subject.date);
@@ -47,34 +48,35 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
         return (
             <>
                 <div className="flex gap-2">
-                    <span className="rounded-md bg-amber-800 text-black m-auto p-1">Deaths: {subject.getDeaths()}</span>
-                    <span className="rounded-md bg-sky-700 text-black m-auto p-1">Full Tries: {subject.fullTries}</span>
-                    <span className="rounded-md bg-gray-700 text-black m-auto p-1"> Resets: {subject.resets}</span>
+                    <span className="p-2">Deaths: {subject.getDeaths()}</span>
+                    <span className="p-2">Full Tries: {subject.fullTries}</span>
+                    <span className="p-2"> Resets: {subject.resets}</span>
                 </div>
-                <button onClick={() => handleDeathCount(subject, "fullTry")} className="border-2 p-1 px-2 border-red-400 rounded-lg bg-red-400">+</button>
-                <button onClick={() => handleDeathCount(subject, "reset")} className="border-2 p-1 border-red-400 rounded-lg bg-red-400">~ +</button>
+                <button onClick={() => handleDeathCount(subject, "fullTry")} className="px-2 ">+</button>
+                <button onClick={() => handleDeathCount(subject, "reset")} className="">~ +</button>
             </>
         )
+    }
+
+    function createCards() {
+        return tree.get(profileID)?.childIDS.map((nodeID, index) => {
+            const subject = tree.get(nodeID) as Subject;
+            return <Card
+                key={index}
+                treeNode={subject}
+                handleDelete={() => handleDelete(subject)}
+                subjectUI={subjectUI(subject)}
+                subjectNotableCol={subject.notable ? null : "bg-green-900"}
+            />
+        })
     }
 
     useSaveDeathLogStatus(history, currentHistoryIndexRef);
     return (
         <>
-            ProfileSubjects: TOTAL DEATHS: {}
+            ProfileSubjects: TOTAL DEATHS: { }
             <AddItemCard handleAdd={handleAdd} itemType="subject" />
-            {
-
-                tree.get(profileID)?.childIDS.map((nodeID, index) => {
-                    const subject = tree.get(nodeID) as Subject;
-                    return <Card
-                        key={index}
-                        treeNode={subject}
-                        handleDelete={() => handleDelete(subject)}
-                        subjectUI={subjectUI(subject)}
-                        subjectNotableCol={subject.notable ? null : "bg-green-900"}
-                    />
-                })
-            }
+            <CardWrapper cards={createCards()}/>
         </>
     )
 }

@@ -9,6 +9,7 @@ import useHistoryContext from "../hooks/useHistoryContext";
 import Action from "../classes/Action";
 import useSaveDeathLogStatus from "../hooks/useSaveDeathLogStatus";
 import useCurrentHistoryIndex from "../hooks/useCurrentHistoryIndex";
+import CardWrapper from "../components/CardWrapper";
 
 export default function GameProfiles({ gameID }: { gameID: string }) {
     const [tree, setTree] = useTreeContext();
@@ -24,24 +25,26 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 
     function handleDelete(node: Profile) {
         const bool = window.confirm();
-        if (bool){
+        if (bool) {
             const deletedNodes = ContextManager.deleteNode(tree, setTree, node, urlMap, setURLMap);
             ContextManager.updateHistory(history, setHistory, new Action("delete", [...deletedNodes!]), new Action("update", [tree.get(node.parentID!)!]));
         }
     }
+
+    function createCards() {
+        return tree.get(gameID)?.childIDS.map((nodeID, index) => {
+            const profile = tree.get(nodeID) as Profile;
+            return <Card key={index} treeNode={profile} handleDelete={() => handleDelete(profile)} />
+        })
+    }
+
     useSaveDeathLogStatus(history, currentHistoryIndexRef);
 
     return (
         <>
             GameProfiles
             <AddItemCard itemType="profile" handleAdd={handleAdd} />
-            {
-                tree.get(gameID)?.childIDS.map((nodeID, index) => {
-                    const profile = tree.get(nodeID) as Profile;
-                    return <Card key={index} treeNode={profile} handleDelete={() => handleDelete(profile)} />
-
-                })
-            }
+            <CardWrapper cards={createCards()} />
         </>
     )
 }

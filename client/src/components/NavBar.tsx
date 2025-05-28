@@ -5,7 +5,7 @@ import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-reac
 export default function NavBar() {
 
     return (
-        <nav className="bg-zomp text-black  px-2 ">
+        <nav className="bg-zomp text-black  px-2 border-b-4 border-b-black">
             <ul className="flex gap-3 justify-center ">
                 <li className="m-2">
                     <NavLink to="/">
