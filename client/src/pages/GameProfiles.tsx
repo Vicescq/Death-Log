@@ -34,7 +34,7 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
     function createCards() {
         return tree.get(gameID)?.childIDS.map((nodeID, index) => {
             const profile = tree.get(nodeID) as Profile;
-            return <Card key={index} treeNode={profile} handleDelete={() => handleDelete(profile)} />
+            return <Card key={index} tree={tree} treeNode={profile} handleDelete={() => handleDelete(profile)} />
         })
     }
 

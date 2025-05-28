@@ -63,10 +63,9 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
             const subject = tree.get(nodeID) as Subject;
             return <Card
                 key={index}
+                tree={tree}
                 treeNode={subject}
                 handleDelete={() => handleDelete(subject)}
-                subjectUI={subjectUI(subject)}
-                subjectNotableCol={subject.notable ? null : "bg-green-900"}
             />
         })
     }

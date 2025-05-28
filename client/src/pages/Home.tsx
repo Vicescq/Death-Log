@@ -41,7 +41,7 @@ export default function Home() {
     function createCards() {
         return tree.get("ROOT_NODE")?.childIDS.map((nodeID, index) => {
             const game = tree.get(nodeID) as Game;
-            return <Card key={index} treeNode={game} handleDelete={() => handleDelete(game)} handleSettings={() => handleSettings(game)} />
+            return <Card key={index} tree={tree} treeNode={game} handleDelete={() => handleDelete(game)} handleDetails={() => handleSettings(game)} />
         })
     }
 
