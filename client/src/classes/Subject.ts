@@ -43,6 +43,9 @@ export default class Subject extends TreeNode {
     }
     set fullTries(value){
         this._fullTries = value;
+        if(this._fullTries < 0){
+            this._fullTries = 0;
+        }
     }
 
     private _resets!: number;
@@ -51,6 +54,9 @@ export default class Subject extends TreeNode {
     }
     set resets(value){
         this._resets = value;
+        if(this._resets < 0){
+            this._resets = 0;
+        }
     }
     
     getDeaths() {

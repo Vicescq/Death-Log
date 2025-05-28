@@ -12,25 +12,27 @@ import Profile from "../classes/Profile";
 import type { TreeStateType } from "../contexts/treeContext";
 import { useState } from "react";
 
+export type HandleDeathCountOperation = "add" | "subtract";
+
 type Props = {
     tree: TreeStateType;
     treeNode: Game | Profile | Subject;
     handleDelete: () => void;
     handleDetails?: () => void;
-    handleDeathCount?: (subject: Subject, deathType: DeathType) => void;
+    handleDeathCount?: (deathType: DeathType, operation: HandleDeathCountOperation) => void;
     handleCompletedStatus?: (newStatus: boolean) => void;
 }
 
 export default function Card({ tree, treeNode, handleDelete, handleDetails, handleDeathCount, handleCompletedStatus }: Props) {
 
-    const enabledCSS = "bg-green-400 border-2 rounded-2xl";
+    const enabledCSS = "bg-amber-200 border-2 rounded-2xl shadow-[5px_2px_0px_rgba(0,0,0,1)]";
     const [resetDeathTypeMode, setResetDeathTypeMode] = useState(false);
-    const [readOnly, setReadOnly] = useState(treeNode.completed);
 
-    const cardCSS = readOnly ? "bg-gray-600 text-amber-200" : "bg-zomp text-black";
-    const readOnlyToggleCSS = readOnly ? enabledCSS : "";
+    const cardCSS = treeNode.completed ? "bg-raisinblack text-amber-200" : "bg-zomp text-black";
+    const readOnlyToggleCSS = treeNode.completed ? enabledCSS : "";
     const resetToggleCSS = resetDeathTypeMode ? enabledCSS : "";
-    const settersBtnDisplay = readOnly ? "hidden" : "";
+    const settersBtnDisplay = treeNode.completed ? "hidden" : "";
+    const detailsReadOnlyCSS = treeNode.completed ? "bg-amber-200 rounded-l shadow-[5px_2px_0px_rgba(0,0,0,1)]" : "";
     const deathType = resetDeathTypeMode ? "reset" : "fullTry";
 
     const deathCount = treeNode instanceof Game || treeNode instanceof Profile ? treeNode.getDeaths(tree) : treeNode.getDeaths();
@@ -39,13 +41,12 @@ export default function Card({ tree, treeNode, handleDelete, handleDetails, hand
 
     return (
         <>
-
-            <div className={`flex font-semibold border-black border-4 ${cardCSS} p-2  rounded-xl w-72 h-72 `}>
+            <div className={`flex font-semibold border-black border-4 ${cardCSS} p-2  rounded-xl w-72 h-72 shadow-[10px_8px_0px_rgba(0,0,0,1)] hover:shadow-[20px_10px_0px_rgba(0,0,0,1)]`}>
                 <div className="flex flex-col w-52">
 
-                    <div className="flex gap-1  p-1 px-3 bg-indianred border-2 rounded-2xl border-black">
+                    <div className="flex gap-1  p-1 px-3 bg-indianred border-2 rounded-2xl border-black shadow-[4px_4px_0px_rgba(0,0,0,1)]">
                         <img className="w-10" src={skull} alt="" />
-                        <p className="text-xl mt-auto mb-auto truncate">{deathCount}</p>
+                        <p className="text-xl mt-auto mb-auto truncate ">{deathCount}</p>
                     </div>
 
                     <div className=" rounded-xl text-2xl mt-auto">
@@ -62,16 +63,15 @@ export default function Card({ tree, treeNode, handleDelete, handleDetails, hand
                             </NavLink>
                             :
                             <>
-                                <img className={`w-10 cursor-pointer ${settersBtnDisplay}`} src={add} alt="" onClick={() => handleDeathCount!(treeNode, deathType)} />
-                                <img className={`w-10 cursor-pointer ${settersBtnDisplay}`} src={minus} alt="" onClick={() => console.log(1)} />
+                                <img className={`w-10 cursor-pointer ${settersBtnDisplay}`} src={add} alt="" onClick={() => handleDeathCount!(deathType, "add")} />
+                                <img className={`w-10 cursor-pointer ${settersBtnDisplay}`} src={minus} alt="" onClick={() => handleDeathCount!(deathType, "subtract")} />
                                 <img className={`w-10 cursor-pointer ${settersBtnDisplay}  ${resetToggleCSS}`} src={reset} alt="" onClick={() => {
                                     setResetDeathTypeMode((prev) => !prev);
                                 }} />
                             </>
                     }
-                    <img className="w-10 cursor-pointer" src={details} alt="" onClick={handleDelete}/>
+                    <img className={`w-10 cursor-pointer ${detailsReadOnlyCSS}`} src={details} alt="" onClick={handleDelete}/>
                     <img className={`w-10 cursor-pointer ${readOnlyToggleCSS}`} src={readonly} alt="" onClick={() => {
-                        setReadOnly((prev) => !prev);
                         handleCompletedStatus!(!treeNode.completed);
                     }} />
                 </div>

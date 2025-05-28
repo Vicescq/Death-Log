@@ -1,4 +1,4 @@
-import Card from "../components/Card";
+import Card, { type HandleDeathCountOperation } from "../components/Card";
 import AddItemCard from "../components/AddItemCard";
 import Subject, { type DeathType } from "../classes/Subject";
 import ContextManager from "../classes/ContextManager";
@@ -33,12 +33,19 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
         }
     }
 
-    function handleDeathCount(subject: Subject, deathType: DeathType) {
+    function handleDeathCount(subject: Subject, deathType: DeathType, operation: HandleDeathCountOperation) {
         const bool = window.confirm();
         if (bool) {
-            deathType == "fullTry" ? subject.fullTries++ : subject.resets++;
-            ContextManager.updateNode(subject, tree, setTree);
-            ContextManager.updateHistory(history, setHistory, new Action("update", [subject]));
+            if(operation == "add"){
+                deathType == "fullTry" ? subject.fullTries++ : subject.resets++;
+                ContextManager.updateNode(subject, tree, setTree);
+                ContextManager.updateHistory(history, setHistory, new Action("update", [subject]));
+            }
+            else{
+                deathType == "fullTry" ? subject.fullTries-- : subject.resets--;
+                ContextManager.updateNode(subject, tree, setTree);
+                ContextManager.updateHistory(history, setHistory, new Action("update", [subject]));
+            }
         }
     }
 
@@ -59,7 +66,7 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
                 tree={tree}
                 treeNode={subject}
                 handleDelete={() => handleDelete(subject)}
-                handleDeathCount={handleDeathCount}
+                handleDeathCount={(deathType, operation) => handleDeathCount(subject, deathType, operation)}
                 handleCompletedStatus={(newStatus) => handleCompletedStatus(subject, newStatus)}
             />
         })
@@ -68,7 +75,6 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
     useSaveDeathLogStatus(history, currentHistoryIndexRef);
     return (
         <>
-            ProfileSubjects: TOTAL DEATHS: { }
             <AddItemCard handleAdd={handleAdd} itemType="subject" />
             <CardWrapper cards={createCards()} />
         </>

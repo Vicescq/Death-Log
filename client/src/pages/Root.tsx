@@ -7,7 +7,7 @@ export default function Root() {
     return (
         <>
             <NavBar />
-            <div className="flex flex-col items-center justify-center gap-2 m-10">
+            <div className="flex flex-col items-center gap-4 mt-10 mb-10">
                 <Outlet />
             </div >
         </>

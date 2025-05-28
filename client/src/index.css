@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  background-color: #2a242d;
+  background-color: #3F3644;
   color: white;
   font-family: "Urbanist";
   font-weight: 500;
@@ -18,4 +18,6 @@
   --color-zomp: #3ea38d;
   --color-raisinblack: #2a242d;
   --color-indianred: #d16666;
+  --color-hunyadi: #e9b44c;
+  --color-englishvio: #3F3644;
 }

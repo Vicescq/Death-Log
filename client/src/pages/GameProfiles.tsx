@@ -57,7 +57,6 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 
     return (
         <>
-            GameProfiles
             <AddItemCard itemType="profile" handleAdd={handleAdd} />
             <CardWrapper cards={createCards()} />
         </>

@@ -61,7 +61,6 @@ export default function Home() {
 
     return (
         <>
-            Home
             <Modal />
             <AddItemCard itemType="game" handleAdd={handleAdd} />
             <CardWrapper cards={createCards()} />

@@ -13,16 +13,18 @@ export default function AddItemCard({ handleAdd, itemType }: Props) {
 
 
     return (
-        <div className="flex rounded-lg border p-3 gap-2">
-            {itemType == "subject" ?
-                (
-                    <button type="button" onClick={() => handleAdd(inputText, false, false)} className="rounded-lg border p-1 cursor-pointer bg-amber-800">Add Non Notable</button>
-                )
-                : null}
-            <button type="button" onClick={() => handleAdd(inputText, false)} className="rounded-lg border p-1 cursor-pointer bg-amber-800">No Date Time</button>
-            <button type="button" onClick={() => handleAdd(inputText)} className="rounded-lg border p-3 cursor-pointer bg-amber-800">Add {itemType}</button>
-            <input type="text" onChange={(event) => setInputText((event.target.value))} className=" focus:outline-none border" />
 
-        </div>
+        <header className="flex gap-10 border-4 p-4 mb-8 border-black text-black bg-amber-200 shadow-[8px_5px_0px_rgba(0,0,0,1)]">
+                <button className="font-bold text-2xl border-4 rounded-2xl p-1 sm:px-10 shadow-[8px_5px_0px_rgba(0,0,0,1)] hover:shadow-[15px_8px_0px_rgba(0,0,0,1)]" onClick={() => {handleAdd(inputText)}}>
+                    Add
+                </button>
+                <button className="font-bold text-2xl border-4 rounded-2xl p-1 px-10 shadow-[8px_5px_0px_rgba(0,0,0,1)] hover:shadow-[15px_8px_0px_rgba(0,0,0,1)]">
+                    Add
+                </button>
+                <button className="font-bold text-2xl border-4 rounded-2xl p-1 px-10 shadow-[8px_5px_0px_rgba(0,0,0,1)] hover:shadow-[15px_8px_0px_rgba(0,0,0,1)]">
+                    Add
+                </button>
+                <input type="text" className="border-2" onChange={((e) => setInputText(e.target.value))}/>
+        </header>
     )
 }
