@@ -9,7 +9,7 @@ import useSaveDeathLogStatus from "../hooks/useSaveDeathLogStatus";
 import useHistoryContext from "../hooks/useHistoryContext";
 import Action from "../classes/Action";
 import useCurrentHistoryIndex from "../hooks/useCurrentHistoryIndex";
-import Modal from "../components/Modal";
+import DetailsSettingModal from "../components/DetailsSettingModal";
 import CardWrapper from "../components/CardWrapper";
 
 
@@ -61,7 +61,7 @@ export default function Home() {
 
     return (
         <>
-            <Modal />
+            <DetailsSettingModal />
             <AddItemCard itemType="game" handleAdd={handleAdd} />
             <CardWrapper cards={createCards()} />
         </>

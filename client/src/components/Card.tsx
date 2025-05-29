@@ -28,7 +28,12 @@ export default function Card({ tree, treeNode, handleDelete, handleDetails, hand
     const enabledCSS = "bg-amber-200 border-2 rounded-2xl shadow-[5px_2px_0px_rgba(0,0,0,1)]";
     const [resetDeathTypeMode, setResetDeathTypeMode] = useState(false);
 
-    const cardCSS = treeNode.completed ? "bg-raisinblack text-amber-200" : "bg-zomp text-black";
+    let cardCol = "bg-zomp";
+    if (treeNode instanceof Subject && !treeNode.notable){
+        cardCol = "bg-amber-500";
+    }
+
+    const cardCSS = treeNode.completed ? "bg-raisinblack text-amber-200" : `${cardCol} text-black`;
     const readOnlyToggleCSS = treeNode.completed ? enabledCSS : "";
     const resetToggleCSS = resetDeathTypeMode ? enabledCSS : "";
     const settersBtnDisplay = treeNode.completed ? "hidden" : "";
@@ -76,8 +81,6 @@ export default function Card({ tree, treeNode, handleDelete, handleDetails, hand
                     }} />
                 </div>
             </div>
-
-
         </>
     )
 }
