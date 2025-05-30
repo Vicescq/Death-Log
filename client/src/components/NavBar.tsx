@@ -1,15 +1,21 @@
 import { NavLink } from "react-router"
 import grimpReaper from "../assets/grim-reaper.png"
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react"
+import info from "../assets/info.svg"
 
 export default function NavBar() {
 
     return (
         <nav className="bg-zomp text-black  px-2 border-b-4 border-b-black">
-            <ul className="flex gap-3 justify-center ">
+            <ul className="flex gap-3">
                 <li className="m-2">
                     <NavLink to="/">
-                        <img src={grimpReaper} className="w-7" />
+                        <img src={grimpReaper} className="max-w-8" />
+                    </NavLink>
+                </li>
+                <li className="m-2">
+                    <NavLink to="/">
+                        <img src={info} className="max-w-8" />
                     </NavLink>
                 </li>
                 <li>
@@ -17,13 +23,11 @@ export default function NavBar() {
                         <SignInButton />
                     </SignedOut>
                 </li>
-                <li className="ml-auto m-2">
+                <li className="ml-auto ">
                     <SignedIn>
-                        <UserButton appearance={{ elements: { rootBox: "m-0.75" } }} />
+                        <UserButton appearance={{ elements: { rootBox: "m-2" } }} />
                     </SignedIn>
                 </li>
-
-
             </ul>
         </nav>
     )
