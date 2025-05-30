@@ -13,19 +13,19 @@ export default class ContextManager {
     constructor() { }
 
     static addNodes(tree: TreeStateType, setTree: TreeContextType[1], urlMap: URLMapContextType[0], setURLMap: URLMapContextType[1], nodes: TreeNode[]) {
-        const deepCopyTree = ContextManager.createDeepCopyTree(tree);
-        const deepCopyURLMap = ContextManager.createDeepCopyURLMap(urlMap);
+        const shallowCopyTree = ContextManager.createShallowCopyMap(tree);
+        const shallowCopyURLMap = ContextManager.createShallowCopyMap(urlMap);
 
         nodes.forEach((node) => {
-            deepCopyTree.set(node.id, node);
-            const parentNode = deepCopyTree.get(node.parentID!)!
+            shallowCopyTree.set(node.id, node);
+            const parentNode = shallowCopyTree.get(node.parentID!)!
 
             if (node instanceof Subject && !node.notable && !parentNode.childIDS.includes(node.id)) {
                 parentNode.childIDS.unshift(node.id)
             }
 
             if (node.type != "subject") {
-                deepCopyURLMap.set(node.path, node.id);
+                shallowCopyURLMap.set(node.path, node.id);
             }
 
             if (node instanceof Game || parentNode.childIDS.length == 0) {
@@ -36,66 +36,58 @@ export default class ContextManager {
                 parentNode.childIDS.push(node.id);
             }
         })
-        setTree(deepCopyTree);
-        setURLMap(deepCopyURLMap);
+        setTree(shallowCopyTree);
+        setURLMap(shallowCopyURLMap);
     }
 
     static deleteNode(tree: TreeStateType, setTree: TreeContextType[1], node: TreeNode, urlMap: URLMapContextType[0], setURLMap: URLMapContextType[1]) {
         const nodesDeleted: TreeNode[] = [];
-        const deepCopyURLMap = ContextManager.createDeepCopyURLMap(urlMap);
+        const shallowCopyURLMap = ContextManager.createShallowCopyMap(urlMap);
         if (!(node instanceof RootNode)) {
-            let deepCopyTree = ContextManager.createDeepCopyTree(tree);
+            let shallowCopyTree = ContextManager.createShallowCopyMap(tree);
 
             function deleteSelfAndChild(node: TreeNode) {
 
                 // leaf nodes
                 if (node.childIDS.length == 0) {
                     nodesDeleted.push(tree.get(node.id)!);
-                    deepCopyURLMap.delete(node.path)
-                    deepCopyTree.delete(node.id);
+                    shallowCopyURLMap.delete(node.path)
+                    shallowCopyTree.delete(node.id);
                     return;
                 }
 
                 // iterate every child node
                 for (let i = 0; i < node.childIDS.length; i++) {
-                    deleteSelfAndChild(deepCopyTree.get(node.childIDS[i])!);
+                    deleteSelfAndChild(shallowCopyTree.get(node.childIDS[i])!);
                 }
 
                 // deleting current node
                 nodesDeleted.push(tree.get(node.id)!);
-                deepCopyTree.delete(node.id);
-                deepCopyURLMap.delete(node.path);
+                shallowCopyTree.delete(node.id);
+                shallowCopyURLMap.delete(node.path);
             }
 
-            const parentNode = deepCopyTree.get(node.parentID!);
+            const parentNode = shallowCopyTree.get(node.parentID!);
             const targetIndex = parentNode?.childIDS.indexOf(node.id)!;
             parentNode?.childIDS.splice(targetIndex, 1);
             deleteSelfAndChild(node);
 
-            setURLMap(deepCopyURLMap);
-            setTree(deepCopyTree)
+            setURLMap(shallowCopyURLMap);
+            setTree(shallowCopyTree)
             return nodesDeleted;
         }
     }
 
     static updateNode(updatedNode: TreeNode, tree: TreeStateType, setTree: TreeContextType[1]) {
-        const deepCopyTree = ContextManager.createDeepCopyTree(tree);
-        deepCopyTree.set(updatedNode.id, updatedNode);
-        setTree(deepCopyTree);
+        const shallowCopyTree = ContextManager.createShallowCopyMap(tree);
+        shallowCopyTree.set(updatedNode.id, updatedNode);
+        setTree(shallowCopyTree);
     }
 
-    static createDeepCopyTree(tree: TreeStateType): TreeStateType {
+    static createShallowCopyMap<T>(tree: Map<string, T>) {
         const objLiteralFromTree = Object.fromEntries(tree);
-        const objLiteralFromTreeDeepCopy = { ...objLiteralFromTree };
-        return new Map(Object.entries(objLiteralFromTreeDeepCopy));
-    }
-
-    static createDeepCopyURLMap(urlMap: URLMapContextType[0]): URLMapContextType[0] {
-        const deepCopyURLMap = new Map();
-        urlMap.forEach((id, path) => {
-            deepCopyURLMap.set(path, id);
-        })
-        return deepCopyURLMap;
+        const objLiteralFromTreeShallowCopy = { ...objLiteralFromTree };
+        return new Map(Object.entries(objLiteralFromTreeShallowCopy));
     }
 
     static initializeTreeState(serializedTree: object[], setTree: TreeContextType[1], setURLMap: URLMapContextType[1]) {
