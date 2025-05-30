@@ -6,7 +6,7 @@ import type { URLMapContextType } from "../contexts/urlMapContext";
 export default function useLoadDeathLog(uuid: string | undefined | null, setTree: TreeContextType[1], setURLMap: URLMapContextType[1]){
     useEffect(() => {
         if (uuid){
-            APIManager.loadNodes(uuid, setTree, setURLMap);
+            APIManager.getDeathLog(uuid, setTree, setURLMap);
         }
     }, [uuid])
 }

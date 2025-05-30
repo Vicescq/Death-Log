@@ -135,9 +135,14 @@ export default class ContextManager {
         ContextManager.addNodes(tree, setTree, urlMap, setURLMap, [...revivedNodes])
     }
 
-    static updateHistory(history: HistoryContextType[0], setHistory: HistoryContextType[1], ...actions: Action[]) {
+    static updateActionHistory(history: HistoryContextType[0], setHistory: HistoryContextType[1], ...actions: Action[]) {
         const updatedHistory = { ...history };
         actions.forEach((action) => updatedHistory.actionHistory.push(action));
+        setHistory(updatedHistory);
+    }
+
+    static updateNewActionStartIndex(history: HistoryContextType[0], setHistory: HistoryContextType[1]) {
+        const updatedHistory = { ...history, newActionStartIndex: history.actionHistory.length};
         setHistory(updatedHistory);
     }
 }

@@ -10,17 +10,18 @@ import type { URLMapContextType } from "../contexts/urlMapContext";
 export default class APIManager {
     constructor() { };
 
-    static storeModifiedNode(historyState: HistoryStateType) {
-        const serializedHistory = JSON.stringify(historyState);
-        fetch("/api/nodes", {
+    static postDeathLog(uuid: string, history: HistoryStateType) {
+
+        const serializedActionHistory = JSON.stringify(history.actionHistory);
+        fetch(`/api/nodes/${uuid}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: serializedHistory
-        })
+            body: serializedActionHistory
+        });
     }
 
-    static loadNodes(uuid: string, setTree: TreeContextType[1], setURLMap: URLMapContextType[1]) {
-        fetch(`/api/load_nodes/${uuid}`, {
+    static getDeathLog(uuid: string, setTree: TreeContextType[1], setURLMap: URLMapContextType[1]) {
+        fetch(`/api/nodes/${uuid}`, {
             method: "GET",
             headers: { "Content-Type": "application/json" },
         }).then((res) => res.json()).then((value) => {
@@ -29,7 +30,7 @@ export default class APIManager {
         });
     }
 
-    static deduplicateHistory(history: HistoryStateType, currentHistoryIndexRef: React.RefObject<number>) {
+    static deduplicateHistory(history: HistoryStateType) {
 
         function reviver(key: any, value: any) {
             if (key == "actionHistory") {
@@ -56,7 +57,7 @@ export default class APIManager {
         }
 
         let deduplicatedHistory = structuredClone(history);
-        deduplicatedHistory.actionHistory = history.actionHistory.slice(currentHistoryIndexRef.current);
+        deduplicatedHistory.actionHistory = history.actionHistory.slice(history.newActionStartIndex);
         deduplicatedHistory = JSON.parse(JSON.stringify(deduplicatedHistory), (key, value) => reviver(key, value))
 
         const nodeIDToActionMap = new Map() as Map<string, Action>;

@@ -8,7 +8,6 @@ import UIHelper from "../classes/UIHelper";
 import useSaveDeathLogStatus from "../hooks/useSaveDeathLogStatus";
 import useHistoryContext from "../hooks/useHistoryContext";
 import Action from "../classes/Action";
-import useCurrentHistoryIndex from "../hooks/useCurrentHistoryIndex";
 import DetailsSettingModal from "../components/DetailsSettingModal";
 import CardWrapper from "../components/CardWrapper";
 
@@ -18,19 +17,18 @@ export default function Home() {
     const [urlMap, setURLMap] = useURLMapContext();
     const [history, setHistory] = useHistoryContext();
 
-    const currentHistoryIndexRef = useCurrentHistoryIndex();
 
     function handleAdd(inputText: string, autoDate: boolean = true) {
         const node = UIHelper.handleAddHelper(inputText, tree, autoDate, "game");
         ContextManager.addNodes(tree, setTree, urlMap, setURLMap, [node]);
-        ContextManager.updateHistory(history, setHistory, new Action("add", [node]));
+        ContextManager.updateActionHistory(history, setHistory, new Action("add", [node]));
     }
 
     function handleDelete(node: Game) {
         const bool = window.confirm();
         if (bool) {
             const deletedNodes = ContextManager.deleteNode(tree, setTree, node, urlMap, setURLMap);
-            ContextManager.updateHistory(history, setHistory, new Action("delete", [...deletedNodes!]));
+            ContextManager.updateActionHistory(history, setHistory, new Action("delete", [...deletedNodes!]));
         }
     }
 
@@ -39,7 +37,7 @@ export default function Home() {
         if (bool) {
             game.completed = newStatus;
             ContextManager.updateNode(game, tree, setTree);
-            ContextManager.updateHistory(history, setHistory, new Action("update", [game]));
+            ContextManager.updateActionHistory(history, setHistory, new Action("update", [game]));
         }
     }
 
@@ -56,7 +54,7 @@ export default function Home() {
         })
     }
 
-    useSaveDeathLogStatus(history, currentHistoryIndexRef);
+    useSaveDeathLogStatus(history, setHistory);
 
 
     return (

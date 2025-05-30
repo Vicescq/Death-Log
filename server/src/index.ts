@@ -14,24 +14,25 @@ app.use(express.json());
 
 
 
-app.post("/api/nodes", (req, res) => {
+app.post("/api/nodes/:uuid", (req, res) => {
     const toAdd = [];
     const toDelete = [];
     const toUpdate = [];
 
-    const data = req.body;
-    const userID = data.userID;
-    console.log(JSON.stringify(data, null, 4));
+    const actionHistory = req.body;
+    console.log(actionHistory)
+    const uuid = req.params.uuid;
+    console.log(JSON.stringify(actionHistory, null, 4));
     let toAddOrUpdateSQLHolders = "";
 
-    for (let i = 0; i < data.actionHistory.length; i++) {
-        const action = data.actionHistory[i];
+    for (let i = 0; i < actionHistory.length; i++) {
+        const action = actionHistory[i];
         for (let j = 0; j < action._targets.length; j++) {
             const nodeID = action._targets[j]._id;
             const node = JSON.stringify(action._targets[j]);
 
             if (action._type == "add") {
-                toAdd.push(userID, nodeID, node);
+                toAdd.push(uuid, nodeID, node);
 
                 if (toAddOrUpdateSQLHolders === "") {
                     toAddOrUpdateSQLHolders = "(?, ?, ?)";
@@ -63,7 +64,7 @@ app.post("/api/nodes", (req, res) => {
     if (toDelete.length > 0) {
         const placeholders = toDelete.map(() => '?').join(', ');
         const sqlDelete = `DELETE FROM nodes WHERE uuid = ? AND node_id IN (${placeholders})`;
-        Database.instance.run(sqlDelete, [userID, ...toDelete], ((err) => err ? console.log(err) : null));
+        Database.instance.run(sqlDelete, [uuid, ...toDelete], ((err) => err ? console.log(err) : null));
     }
 
     if (toUpdate.length > 0) {
@@ -84,9 +85,9 @@ app.post("/api/nodes", (req, res) => {
     res.status(200).send("Success!");
 });
 
-app.get("/api/load_nodes/:uuid", (req, res) => {
+app.get("/api/nodes/:uuid", (req, res) => {
     const uuid = req.params.uuid;
-    res.set("content-type", "application/json")
+    res.set("content-type", "application/json");
 
     let data: any[] = [];
     const sql = `
@@ -106,7 +107,6 @@ app.get("/api/load_nodes/:uuid", (req, res) => {
                 const dataRow = {[node_id]: node};
                 data.push(dataRow);
             })
-            let content = JSON.stringify(data);
             res.json(data);
         }
     })

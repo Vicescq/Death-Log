@@ -17,19 +17,17 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
     const [urlMap, setURLMap] = useURLMapContext();
     const [history, setHistory] = useHistoryContext();
 
-    const currentHistoryIndexRef = useCurrentHistoryIndex();
-
     function handleAdd(inputText: string, autoDate: boolean = true, notable: boolean = true) {
         const node = UIHelper.handleAddHelper(inputText, tree, autoDate, "subject", profileID, notable);
         ContextManager.addNodes(tree, setTree, urlMap, setURLMap, [node]);
-        ContextManager.updateHistory(history, setHistory, new Action("add", [node]), new Action("update", [tree.get(profileID!)!]));
+        ContextManager.updateActionHistory(history, setHistory, new Action("add", [node]), new Action("update", [tree.get(profileID!)!]));
     }
 
     function handleDelete(node: Subject) {
         const bool = window.confirm();
         if (bool) {
             const deletedNodes = ContextManager.deleteNode(tree, setTree, node, urlMap, setURLMap);
-            ContextManager.updateHistory(history, setHistory, new Action("delete", [...deletedNodes!]), new Action("update", [tree.get(node.parentID!)!]));
+            ContextManager.updateActionHistory(history, setHistory, new Action("delete", [...deletedNodes!]), new Action("update", [tree.get(node.parentID!)!]));
         }
     }
 
@@ -39,12 +37,12 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
             if(operation == "add"){
                 deathType == "fullTry" ? subject.fullTries++ : subject.resets++;
                 ContextManager.updateNode(subject, tree, setTree);
-                ContextManager.updateHistory(history, setHistory, new Action("update", [subject]));
+                ContextManager.updateActionHistory(history, setHistory, new Action("update", [subject]));
             }
             else{
                 deathType == "fullTry" ? subject.fullTries-- : subject.resets--;
                 ContextManager.updateNode(subject, tree, setTree);
-                ContextManager.updateHistory(history, setHistory, new Action("update", [subject]));
+                ContextManager.updateActionHistory(history, setHistory, new Action("update", [subject]));
             }
         }
     }
@@ -54,7 +52,7 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
         if (bool) {
             subject.completed = newStatus;
             ContextManager.updateNode(subject, tree, setTree);
-            ContextManager.updateHistory(history, setHistory, new Action("update", [subject]));
+            ContextManager.updateActionHistory(history, setHistory, new Action("update", [subject]));
         }
     }
 
@@ -72,7 +70,7 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
         })
     }
 
-    useSaveDeathLogStatus(history, currentHistoryIndexRef);
+    useSaveDeathLogStatus(history, setHistory);
     return (
         <>
             <AddItemCard handleAdd={handleAdd} itemType="subject" />
