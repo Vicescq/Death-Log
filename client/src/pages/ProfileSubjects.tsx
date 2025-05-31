@@ -1,5 +1,5 @@
 import Card, { type HandleDeathCountOperation } from "../components/Card";
-import AddItemCard from "../components/AddItemCard";
+import AddItemCard, { type ToggleSettingsState } from "../components/AddItemCard";
 import Subject, { type DeathType } from "../classes/Subject";
 import ContextManager from "../classes/ContextManager";
 import useTreeContext from "../hooks/useTreeContext";
@@ -8,13 +8,18 @@ import UIHelper from "../classes/UIHelper";
 import Action from "../classes/Action";
 import useHistoryContext from "../hooks/useHistoryContext";
 import useSaveDeathLogStatus from "../hooks/useSaveDeathLogStatus";
-import useCurrentHistoryIndex from "../hooks/useCurrentHistoryIndex";
 import CardWrapper from "../components/CardWrapper";
+import { useState } from "react";
 
 export default function ProfileSubjects({ profileID }: { profileID: string }) {
 	const [tree, setTree] = useTreeContext();
 	const [urlMap, setURLMap] = useURLMapContext();
 	const [history, setHistory] = useHistoryContext();
+
+	const initToggleState: ToggleSettingsState = new Map();
+	initToggleState.set("autoDate", true);
+	const [toggleSettings, setToggleSettings] =
+		useState<ToggleSettingsState>(initToggleState);
 
 	function handleAdd(
 		inputText: string,
@@ -120,7 +125,11 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 	useSaveDeathLogStatus(history, setHistory);
 	return (
 		<>
-			<AddItemCard handleAdd={handleAdd} itemType="subject" />
+			<AddItemCard
+				handleAdd={handleAdd}
+				itemType="subject"
+				toggleSettingsState={toggleSettings}
+			/>
 			<CardWrapper cards={createCards()} />
 		</>
 	);

@@ -3,6 +3,11 @@ import type { TreeNodeSerializableType } from "../classes/TreeNode";
 import Toggle from "./Toggle";
 import gear from "../assets/gear.svg";
 import filter from "../assets/filter.svg";
+import { Link } from "react-router";
+
+export type ToggleSetting = "autoDate" | "challenge" | "notable" | "boss" | "location"
+
+export type ToggleSettingsState = Map<ToggleSetting, boolean>;
 
 type Props = {
 	handleAdd: (
@@ -11,9 +16,14 @@ type Props = {
 		notable?: boolean,
 	) => void;
 	itemType: TreeNodeSerializableType;
+	toggleSettingsState: ToggleSettingsState;
 };
 
-export default function AddItemCard({ handleAdd, itemType }: Props) {
+export default function AddItemCard({
+	handleAdd,
+	itemType,
+	toggleSettingsState,
+}: Props) {
 	const [inputText, setInputText] = useState("");
 	const addItemCardModalRef = useRef<HTMLDialogElement>(null);
 	const firstLetterCapitalized =
@@ -52,8 +62,25 @@ export default function AddItemCard({ handleAdd, itemType }: Props) {
 				ref={addItemCardModalRef}
 				className="bg-zomp m-auto border-4 border-black p-10 text-xl shadow-[8px_5px_0px_rgba(0,0,0,1)] backdrop:backdrop-brightness-40"
 			>
-				<div className="flex flex-col gap-8">
-					<Toggle />
+				<div className="flex flex-col gap-4">
+					<div className="flex gap-4">
+						<Link to="#">Automatic dates </Link>
+						<Toggle defaultEnable={toggleSettingsState.get("autoDate")!} />
+					</div>
+
+					{toggleSettingsState.get("challenge") ? (
+						<div className="flex gap-4">
+							<Link to="#">Challenge Profile</Link>
+							<Toggle defaultEnable={toggleSettingsState.get("challenge")!} />
+						</div>
+					) : null}
+
+					<button
+						className="border- bg-hunyadi rounded-2xl border-4 p-2 font-bold shadow-[4px_4px_0px_rgba(0,0,0,1)] outline-0"
+						onClick={() => console.log("PLACE INFO LINK HERE!")}
+					>
+						SETTINGS INFO
+					</button>
 					<button
 						className="border- rounded-2xl border-4 bg-amber-200 p-2 font-bold shadow-[4px_4px_0px_rgba(0,0,0,1)] outline-0"
 						onClick={() => addItemCardModalRef.current?.close()}
