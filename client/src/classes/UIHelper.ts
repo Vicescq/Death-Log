@@ -1,7 +1,4 @@
 import type { TreeStateType, TreeContextType } from "../contexts/treeContext";
-import type { URLMapContextType } from "../contexts/urlMapContext";
-import APIManager from "./APIManager";
-import ContextManager from "./ContextManager";
 import Game from "./Game";
 import Profile from "./Profile";
 import Subject from "./Subject";

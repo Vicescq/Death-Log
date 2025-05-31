@@ -94,7 +94,7 @@ export default function Home() {
 
     return (
         <>
-            <AddItemCard itemType="game" handleAdd={handleAdd} toggleSettingsState={toggleSettings}/>
+            <AddItemCard itemType="game" handleAdd={handleAdd} toggleSettingsState={toggleSettings} handleToggleSetting={handleToggleSetting}/>
             <CardWrapper cards={createCards()} />
         </>
     );
