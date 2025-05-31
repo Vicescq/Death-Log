@@ -142,7 +142,7 @@ export default class ContextManager {
     }
 
     static updateNewActionStartIndex(history: HistoryContextType[0], setHistory: HistoryContextType[1]) {
-        const updatedHistory = { ...history, newActionStartIndex: history.actionHistory.length};
+        const updatedHistory = { ...history, newActionStartIndex: history.actionHistory.length };
         setHistory(updatedHistory);
     }
 }

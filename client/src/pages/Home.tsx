@@ -10,24 +10,41 @@ import useHistoryContext from "../hooks/useHistoryContext";
 import Action from "../classes/Action";
 import CardWrapper from "../components/CardWrapper";
 
-
 export default function Home() {
     const [tree, setTree] = useTreeContext();
     const [urlMap, setURLMap] = useURLMapContext();
     const [history, setHistory] = useHistoryContext();
 
-
     function handleAdd(inputText: string, autoDate: boolean = true) {
-        const node = UIHelper.handleAddHelper(inputText, tree, autoDate, "game");
+        const node = UIHelper.handleAddHelper(
+            inputText,
+            tree,
+            autoDate,
+            "game",
+        );
         ContextManager.addNodes(tree, setTree, urlMap, setURLMap, [node]);
-        ContextManager.updateActionHistory(history, setHistory, new Action("add", [node]));
+        ContextManager.updateActionHistory(
+            history,
+            setHistory,
+            new Action("add", [node]),
+        );
     }
 
     function handleDelete(node: Game) {
         const bool = window.confirm();
         if (bool) {
-            const deletedNodes = ContextManager.deleteNode(tree, setTree, node, urlMap, setURLMap);
-            ContextManager.updateActionHistory(history, setHistory, new Action("delete", [...deletedNodes!]));
+            const deletedNodes = ContextManager.deleteNode(
+                tree,
+                setTree,
+                node,
+                urlMap,
+                setURLMap,
+            );
+            ContextManager.updateActionHistory(
+                history,
+                setHistory,
+                new Action("delete", [...deletedNodes!]),
+            );
         }
     }
 
@@ -36,30 +53,37 @@ export default function Home() {
         if (bool) {
             game.completed = newStatus;
             ContextManager.updateNode(game, tree, setTree);
-            ContextManager.updateActionHistory(history, setHistory, new Action("update", [game]));
+            ContextManager.updateActionHistory(
+                history,
+                setHistory,
+                new Action("update", [game]),
+            );
         }
     }
 
     function createCards() {
         return tree.get("ROOT_NODE")?.childIDS.map((nodeID, index) => {
             const game = tree.get(nodeID) as Game;
-            return <Card
-                key={index}
-                tree={tree}
-                treeNode={game}
-                handleDelete={() => handleDelete(game)}
-                handleCompletedStatus={(newStatus) => handleCompletedStatus(game, newStatus)}
-            />
-        })
+            return (
+                <Card
+                    key={index}
+                    tree={tree}
+                    treeNode={game}
+                    handleDelete={() => handleDelete(game)}
+                    handleCompletedStatus={(newStatus) =>
+                        handleCompletedStatus(game, newStatus)
+                    }
+                />
+            );
+        });
     }
 
     useSaveDeathLogStatus(history, setHistory);
-
 
     return (
         <>
             <AddItemCard itemType="game" handleAdd={handleAdd} />
             <CardWrapper cards={createCards()} />
         </>
-    )
+    );
 }
