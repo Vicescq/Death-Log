@@ -10,7 +10,8 @@ import readonly from "../assets/readonly.svg";
 import Game from "../classes/Game";
 import Profile from "../classes/Profile";
 import type { TreeStateType } from "../contexts/treeContext";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import DetailsSettingModal from "./DetailsSettingModal";
 
 export type HandleDeathCountOperation = "add" | "subtract";
 
@@ -34,6 +35,7 @@ export default function Card({
 	handleDeathCount,
 	handleCompletedStatus,
 }: Props) {
+	const addItemCardModalRef = useRef<HTMLDialogElement>(null);
 	const enabledCSS =
 		"bg-amber-200 border-2 rounded-2xl shadow-[5px_2px_0px_rgba(0,0,0,1)]";
 	const [resetDeathTypeMode, setResetDeathTypeMode] = useState(false);
@@ -74,7 +76,7 @@ export default function Card({
 			>
 				<div className="flex w-52 flex-col">
 					<div className="bg-indianred flex gap-1 rounded-2xl border-2 border-black p-1 px-3 shadow-[4px_4px_0px_rgba(0,0,0,1)]">
-						<img className="w-10" src={skull} alt="" />
+						<img className="w-9" src={skull} alt="" />
 						<p className="mt-auto mb-auto truncate text-xl">
 							{deathCount}
 						</p>
@@ -87,15 +89,15 @@ export default function Card({
 					</div>
 				</div>
 
-				<div className="ml-auto flex flex-col gap-3">
+				<div className="ml-auto flex flex-col gap-2">
 					{!(treeNode instanceof Subject) ? (
 						<NavLink to={`/${treeNode.path}`}>
-							<img className="w-10" src={step_into} alt="" />
+							<img className="w-9" src={step_into} alt="" />
 						</NavLink>
 					) : (
 						<>
 							<img
-								className={`w-10 cursor-pointer ${settersBtnDisplay}`}
+								className={`w-9 cursor-pointer ${settersBtnDisplay}`}
 								src={add}
 								alt=""
 								onClick={() =>
@@ -103,7 +105,7 @@ export default function Card({
 								}
 							/>
 							<img
-								className={`w-10 cursor-pointer ${settersBtnDisplay}`}
+								className={`w-9 cursor-pointer ${settersBtnDisplay}`}
 								src={minus}
 								alt=""
 								onClick={() =>
@@ -111,7 +113,7 @@ export default function Card({
 								}
 							/>
 							<img
-								className={`w-10 cursor-pointer ${settersBtnDisplay} ${resetToggleCSS}`}
+								className={`w-9 cursor-pointer ${settersBtnDisplay} ${resetToggleCSS}`}
 								src={reset}
 								alt=""
 								onClick={() => {
@@ -121,13 +123,13 @@ export default function Card({
 						</>
 					)}
 					<img
-						className={`w-10 cursor-pointer ${detailsReadOnlyCSS}`}
+						className={`w-9 cursor-pointer ${detailsReadOnlyCSS}`}
 						src={details}
 						alt=""
-						onClick={handleDelete}
+						onClick={() => addItemCardModalRef.current!.showModal()}
 					/>
 					<img
-						className={`w-10 cursor-pointer ${readOnlyToggleCSS}`}
+						className={`w-9 cursor-pointer ${readOnlyToggleCSS}`}
 						src={readonly}
 						alt=""
 						onClick={() => {
@@ -136,6 +138,7 @@ export default function Card({
 					/>
 				</div>
 			</div>
+			<DetailsSettingModal addItemCardModalRef={addItemCardModalRef}/>
 		</>
 	);
 }
