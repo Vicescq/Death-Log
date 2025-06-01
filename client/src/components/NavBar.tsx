@@ -11,7 +11,7 @@ import info from "../assets/info.svg";
 export default function NavBar() {
 	return (
 		<nav className="bg-zomp border-b-4 border-b-black px-2 text-black">
-			<ul className="flex gap-3">
+			<ul className="flex">
 				<li className="m-2">
 					<NavLink to="/">
 						<img src={grimpReaper} className="max-w-8" />
