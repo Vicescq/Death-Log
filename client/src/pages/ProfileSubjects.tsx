@@ -1,5 +1,8 @@
 import Card, { type HandleDeathCountOperation } from "../components/Card";
-import AddItemCard, { type ToggleSettingsState } from "../components/AddItemCard";
+import AddItemCard, {
+	type ToggleSetting,
+	type ToggleSettingsState,
+} from "../components/AddItemCard";
 import Subject, { type DeathType } from "../classes/Subject";
 import ContextManager from "../classes/ContextManager";
 import useTreeContext from "../hooks/useTreeContext";
@@ -18,6 +21,10 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 
 	const initToggleState: ToggleSettingsState = new Map();
 	initToggleState.set("autoDate", true);
+	initToggleState.set("notable", true);
+	initToggleState.set("boss", true);
+	initToggleState.set("location", false);
+
 	const [toggleSettings, setToggleSettings] =
 		useState<ToggleSettingsState>(initToggleState);
 
@@ -102,6 +109,15 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 		}
 	}
 
+	function handleToggleSetting(setting: ToggleSetting, status: boolean) {
+		UIHelper.handleToggleSetting(
+			setting,
+			status,
+			toggleSettings,
+			setToggleSettings,
+		);
+	}
+
 	function createCards() {
 		return tree.get(profileID)?.childIDS.map((nodeID, index) => {
 			const subject = tree.get(nodeID) as Subject;
@@ -129,6 +145,7 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 				handleAdd={handleAdd}
 				itemType="subject"
 				toggleSettingsState={toggleSettings}
+				handleToggleSetting={handleToggleSetting}
 			/>
 			<CardWrapper cards={createCards()} />
 		</>

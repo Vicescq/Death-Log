@@ -1,5 +1,6 @@
 import Card from "../components/Card";
 import AddItemCard, {
+	type ToggleSetting,
 	type ToggleSettingsState,
 } from "../components/AddItemCard";
 import ContextManager from "../classes/ContextManager";
@@ -20,6 +21,7 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 
 	const initToggleState: ToggleSettingsState = new Map();
 	initToggleState.set("autoDate", true);
+	initToggleState.set("challenge", false);
 	const [toggleSettings, setToggleSettings] =
 		useState<ToggleSettingsState>(initToggleState);
 
@@ -72,6 +74,10 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 		}
 	}
 
+	function handleToggleSetting(setting: ToggleSetting, status: boolean) {
+		UIHelper.handleToggleSetting(setting, status, toggleSettings, setToggleSettings);
+	}
+
 	function createCards() {
 		return tree.get(gameID)?.childIDS.map((nodeID, index) => {
 			const profile = tree.get(nodeID) as Profile;
@@ -97,6 +103,7 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 				itemType="profile"
 				handleAdd={handleAdd}
 				toggleSettingsState={toggleSettings}
+				handleToggleSetting={handleToggleSetting}
 			/>
 			<CardWrapper cards={createCards()} />
 		</>

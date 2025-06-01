@@ -1,4 +1,5 @@
-import type { TreeStateType, TreeContextType } from "../contexts/treeContext";
+import type { ToggleSetting, ToggleSettingsState } from "../components/AddItemCard";
+import type { TreeStateType } from "../contexts/treeContext";
 import Game from "./Game";
 import Profile from "./Profile";
 import Subject from "./Subject";
@@ -55,5 +56,12 @@ export default class UIHelper {
         }
         return node
     };
+
+    static handleToggleSetting(setting: ToggleSetting, status: boolean, toggleSettings: ToggleSettingsState, setToggleSettings: React.Dispatch<React.SetStateAction<ToggleSettingsState>>) {
+        toggleSettings.set(setting, status);
+        const objLiteral = Object.fromEntries(toggleSettings);
+        const shallowCopyObjLiteral = { ...objLiteral };
+        setToggleSettings(new Map(Object.entries(shallowCopyObjLiteral)) as ToggleSettingsState);
+    }
 
 }
