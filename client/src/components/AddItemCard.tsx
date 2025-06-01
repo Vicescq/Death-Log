@@ -1,19 +1,9 @@
 import { useRef, useState } from "react";
 import type { TreeNodeSerializableType } from "../classes/TreeNode";
-import Toggle from "./Toggle";
 import gear from "../assets/gear.svg";
 import filter from "../assets/filter.svg";
-import { Link } from "react-router";
-import AddItemCardToggleModal from "./AddItemCardToggleModal";
-
-export type ToggleSetting =
-	| "autoDate"
-	| "challenge"
-	| "notable"
-	| "boss"
-	| "location";
-
-export type ToggleSettingsState = Map<ToggleSetting, boolean>;
+import Modal, { type ModalListItemState } from "./Modal";
+import type { ToggleSetting } from "./Toggle";
 
 type Props = {
 	handleAdd: (
@@ -22,15 +12,15 @@ type Props = {
 		notable?: boolean,
 	) => void;
 	itemType: TreeNodeSerializableType;
-	toggleSettingsState: ToggleSettingsState;
-	handleToggleSetting: (setting: ToggleSetting, status: boolean) => void;
+	modalListItemStateArray: ModalListItemState[];
+	handleToggleSetting: (setting: ToggleSetting, status: boolean, index: number) => void
 };
 
 export default function AddItemCard({
 	handleAdd,
 	itemType,
-	toggleSettingsState,
-	handleToggleSetting,
+	modalListItemStateArray,
+	handleToggleSetting
 }: Props) {
 	const [inputText, setInputText] = useState("");
 	const addItemCardModalRef = useRef<HTMLDialogElement>(null);
@@ -38,11 +28,16 @@ export default function AddItemCard({
 		itemType[0].toUpperCase() + itemType.slice(1);
 
 	function handleAddWrapper() {
-		if (toggleSettingsState.get("autoDate") == false) {
-			handleAdd(inputText, false);
-		} else {
-			handleAdd(inputText);
-		}
+		let autoDate = true;
+		modalListItemStateArray.forEach((state) => {
+			if (state.toggleSetting?.setting == "autoDate" && !state.toggleSetting?.enable ){
+				autoDate = false
+			}
+		})
+
+
+		handleAdd(inputText, autoDate);
+		
 	}
 
 	return (
@@ -73,12 +68,11 @@ export default function AddItemCard({
 					<img src={filter} alt="" className="w-10" />
 				</button>
 			</div>
-
-			<AddItemCardToggleModal
-				addItemCardModalRef={addItemCardModalRef}
-				toggleSettingsState={toggleSettingsState}
+			<Modal
+				modalListItemStateArray={modalListItemStateArray}
+				modalRef={addItemCardModalRef}
 				handleToggleSetting={handleToggleSetting}
-			/>
+			/>{" "}
 		</header>
 	);
 }

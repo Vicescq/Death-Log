@@ -1,8 +1,5 @@
 import Card from "../components/Card";
-import AddItemCard, {
-	type ToggleSetting,
-	type ToggleSettingsState,
-} from "../components/AddItemCard";
+import AddItemCard from "../components/AddItemCard";
 import ContextManager from "../classes/ContextManager";
 import Game from "../classes/Game";
 import useTreeContext from "../hooks/useTreeContext";
@@ -13,16 +10,29 @@ import useHistoryContext from "../hooks/useHistoryContext";
 import Action from "../classes/Action";
 import CardWrapper from "../components/CardWrapper";
 import { useState } from "react";
+import type { ModalListItemState } from "../components/Modal";
+import type { ToggleSetting } from "../components/Toggle";
 
 export default function Home() {
 	const [tree, setTree] = useTreeContext();
 	const [urlMap, setURLMap] = useURLMapContext();
 	const [history, setHistory] = useHistoryContext();
 
-	const initToggleState: ToggleSettingsState = new Map();
-	initToggleState.set("autoDate", true);
-	const [toggleSettings, setToggleSettings] =
-		useState<ToggleSettingsState>(initToggleState);
+	const initModalListItemStateArray: ModalListItemState[] = [];
+
+	for (let i = 0; i < 10; i++) {
+		const modalToggleSetting: ModalListItemState = {
+			index: i,
+			toggleSetting: {
+				setting: "autoDate",
+				enable: true,
+			},
+		};
+		initModalListItemStateArray.push(modalToggleSetting);
+	}
+	const [modalListItemStateArray, setModalListItemStateArray] = useState(
+		initModalListItemStateArray,
+	);
 
 	function handleAdd(inputText: string, autoDate: boolean = true) {
 		const node = UIHelper.handleAddHelper(
@@ -70,13 +80,23 @@ export default function Home() {
 		}
 	}
 
-	function handleToggleSetting(setting: ToggleSetting, status: boolean) {
-		UIHelper.handleToggleSetting(
-			setting,
-			status,
-			toggleSettings,
-			setToggleSettings,
-		);
+	function handleToggleSetting(
+		setting: ToggleSetting,
+		status: boolean,
+		index: number,
+	) {
+		const newModalListItemStateArray: ModalListItemState[] =
+			modalListItemStateArray.map((state, i) => {
+				if (i == index) {
+					return {
+						...state,
+						toggleSetting: { ...state.toggleSetting!, enable: status, setting: setting },
+					};
+				} 
+				return state
+			});
+
+		setModalListItemStateArray(newModalListItemStateArray);
 	}
 
 	function createCards() {
@@ -95,7 +115,7 @@ export default function Home() {
 			);
 		});
 	}
-
+	console.log(modalListItemStateArray);
 	useSaveDeathLogStatus(history, setHistory);
 
 	return (
@@ -103,7 +123,7 @@ export default function Home() {
 			<AddItemCard
 				itemType="game"
 				handleAdd={handleAdd}
-				toggleSettingsState={toggleSettings}
+				modalListItemStateArray={modalListItemStateArray}
 				handleToggleSetting={handleToggleSetting}
 			/>
 			<CardWrapper cards={createCards()} />
