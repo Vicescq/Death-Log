@@ -1,18 +1,18 @@
 import Card, { type HandleDeathCountOperation } from "../components/Card";
 import AddItemCard from "../components/AddItemCard";
-import Subject, { type DeathType } from "../classes/Subject";
-import ContextManager from "../classes/ContextManager";
+import Subject, { type DeathType } from "../model/Subject";
 import useTreeContext from "../hooks/useTreeContext";
 import useURLMapContext from "../hooks/useURLMapContext";
-import UIHelper from "../classes/UIHelper";
-import Action from "../classes/Action";
+import Action from "../model/Action";
 import useHistoryContext from "../hooks/useHistoryContext";
-import useSaveDeathLogStatus from "../hooks/useSaveDeathLogStatus";
+import usePostDeathLog from "../hooks/usePostDeathLog";
 import CardWrapper from "../components/CardWrapper";
 import { useRef, useState } from "react";
 import type { ModalListItemToggleType } from "../components/modals/ModalListItemTypes";
 import Modal from "../components/modals/Modal";
 import ModalListItemToggle from "../components/modals/ModalListItemToggle";
+import ContextManager from "../services/ContextManager";
+import { handleAddHelper } from "../utils/eventHandlers";
 
 export default function ProfileSubjects({ profileID }: { profileID: string }) {
 	const [tree, setTree] = useTreeContext();
@@ -43,7 +43,7 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 		autoDate: boolean = true,
 		notable: boolean = true,
 	) {
-		const node = UIHelper.handleAddHelper(
+		const node = handleAddHelper(
 			inputText,
 			tree,
 			autoDate,
@@ -149,7 +149,7 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 		});
 	}
 
-	useSaveDeathLogStatus(history, setHistory);
+	usePostDeathLog(history, setHistory);
 	return (
 		<>
 			<AddItemCard

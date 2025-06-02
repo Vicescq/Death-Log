@@ -1,11 +1,11 @@
+import Action from "../model/Action";
+import Game from "../model/Game";
+import Profile from "../model/Profile";
+import Subject from "../model/Subject";
 import type { HistoryStateType } from "../contexts/historyContext";
-import Action from "./Action";
-import ContextManager from "./ContextManager";
-import Game from "./Game";
-import Profile from "./Profile";
-import Subject from "./Subject";
 import type { TreeContextType } from "../contexts/treeContext";
 import type { URLMapContextType } from "../contexts/urlMapContext";
+import ContextManager from "./ContextManager";
 
 export default class APIManager {
     constructor() { };

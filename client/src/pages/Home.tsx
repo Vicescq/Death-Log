@@ -1,18 +1,18 @@
 import Card from "../components/Card";
 import AddItemCard from "../components/AddItemCard";
-import ContextManager from "../classes/ContextManager";
-import Game from "../classes/Game";
+import Game from "../model/Game";
 import useTreeContext from "../hooks/useTreeContext";
 import useURLMapContext from "../hooks/useURLMapContext";
-import UIHelper from "../classes/UIHelper";
-import useSaveDeathLogStatus from "../hooks/useSaveDeathLogStatus";
+import usePostDeathLog from "../hooks/usePostDeathLog";
 import useHistoryContext from "../hooks/useHistoryContext";
-import Action from "../classes/Action";
+import Action from "../model/Action";
 import CardWrapper from "../components/CardWrapper";
 import { useRef, useState } from "react";
 import type { ModalListItemToggleType } from "../components/modals/ModalListItemTypes";
 import Modal from "../components/modals/Modal";
 import ModalListItemToggle from "../components/modals/ModalListItemToggle";
+import ContextManager from "../services/ContextManager";
+import { handleAddHelper } from "../utils/eventHandlers";
 
 export default function Home() {
 	const [tree, setTree] = useTreeContext();
@@ -32,7 +32,7 @@ export default function Home() {
 		useState(initAddItemCardModalListItemArray);
 
 	function handleAdd(inputText: string, autoDate: boolean = true) {
-		const node = UIHelper.handleAddHelper(
+		const node = handleAddHelper(
 			inputText,
 			tree,
 			autoDate,
@@ -104,7 +104,7 @@ export default function Home() {
 		});
 	}
 
-	useSaveDeathLogStatus(history, setHistory);
+	usePostDeathLog(history, setHistory);
 
 	return (
 		<>

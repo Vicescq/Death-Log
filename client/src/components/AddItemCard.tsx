@@ -1,5 +1,5 @@
 import {  useState } from "react";
-import type { TreeNodeSerializableType } from "../classes/TreeNode";
+import type { TreeNodeSerializableType } from "../model/TreeNode";
 import gear from "../assets/gear.svg";
 import filter from "../assets/filter.svg";
 

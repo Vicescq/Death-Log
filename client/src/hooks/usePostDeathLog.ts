@@ -1,9 +1,9 @@
 import { useEffect } from "react";
-import APIManager from "../classes/APIManager";
 import type { HistoryContextType, HistoryStateType } from "../contexts/historyContext";
-import ContextManager from "../classes/ContextManager";
+import APIManager from "../services/APIManager";
+import ContextManager from "../services/ContextManager";
 
-export default function useSaveDeathLogStatus(history: HistoryStateType, setHistory: HistoryContextType[1]) {
+export default function usePostDeathLog(history: HistoryStateType, setHistory: HistoryContextType[1]) {
 
     useEffect(() => {
         const interval = setTimeout(() => {

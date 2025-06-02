@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import type TreeNode from "../classes/TreeNode";
+import type TreeNode from "../model/TreeNode";
 
 export type TreeContextType = [TreeStateType, React.Dispatch<React.SetStateAction<TreeStateType>>];
 export type TreeStateType = Map<string, TreeNode>

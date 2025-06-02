@@ -1,5 +1,5 @@
 import { NavLink } from "react-router";
-import Subject, { type DeathType } from "../classes/Subject";
+import Subject, { type DeathType } from "../model/Subject";
 import skull from "../assets/skull.svg";
 import add from "../assets/add.svg";
 import minus from "../assets/minus.svg";
@@ -7,8 +7,8 @@ import step_into from "../assets/step_into.svg";
 import details from "../assets/details.svg";
 import reset from "../assets/reset.svg";
 import readonly from "../assets/readonly.svg";
-import Game from "../classes/Game";
-import Profile from "../classes/Profile";
+import Game from "../model/Game";
+import Profile from "../model/Profile";
 import type { TreeStateType } from "../contexts/treeContext";
 import { useState } from "react";
 

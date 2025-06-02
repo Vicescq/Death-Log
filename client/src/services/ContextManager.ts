@@ -1,12 +1,12 @@
+import type Action from "../model/Action";
+import Game from "../model/Game";
+import Profile from "../model/Profile";
+import RootNode from "../model/RootNode";
+import Subject from "../model/Subject";
+import type TreeNode from "../model/TreeNode";
 import type { HistoryContextType } from "../contexts/historyContext";
 import type { TreeContextType, TreeStateType } from "../contexts/treeContext";
 import type { URLMapContextType, URLMapStateType } from "../contexts/urlMapContext";
-import type Action from "./Action";
-import Game from "./Game";
-import Profile from "./Profile";
-import RootNode from "./RootNode";
-import Subject from "./Subject";
-import TreeNode from "./TreeNode";
 
 export default class ContextManager {
 
