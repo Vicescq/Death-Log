@@ -11,47 +11,32 @@ import useSaveDeathLogStatus from "../hooks/useSaveDeathLogStatus";
 import CardWrapper from "../components/CardWrapper";
 import { useState } from "react";
 import type { ToggleSetting } from "../components/Toggle";
-import type { ModalListItemState } from "../components/Modal";
+import type { ModalListItemState } from "../components/modals/Modal";
+import type { ModalListItemToggle } from "../components/modals/ModalListItemTypes";
 
 export default function ProfileSubjects({ profileID }: { profileID: string }) {
 	const [tree, setTree] = useTreeContext();
 	const [urlMap, setURLMap] = useURLMapContext();
 	const [history, setHistory] = useHistoryContext();
 
-	const initModalListItemStateArray: ModalListItemState[] = [];
-	const autoDateToggleSetting: ModalListItemState = {
-		toggleSetting: {
-			setting: "autoDate",
+	const initAddItemCardModalListItemArray: ModalListItemToggle[] = [];
+
+	initAddItemCardModalListItemArray.push(
+		{
+			type: "toggle",
 			enable: true,
+			settingLabel: "AUTO-DATE",
+			toggleSetting: "autoDate",
 		},
-	};
-	const notableToggleSetting: ModalListItemState = {
-		toggleSetting: {
-			setting: "notable",
-			enable: true,
-		},
-	};
-	const bossToggleSetting: ModalListItemState = {
-		toggleSetting: {
-			setting: "boss",
-			enable: true,
-		},
-	};
-	const locationToggleSetting: ModalListItemState = {
-		toggleSetting: {
-			setting: "location",
+		{
+			type: "toggle",
 			enable: false,
+			settingLabel: "CHALLENGE",
+			toggleSetting: "challenge",
 		},
-	};
-	initModalListItemStateArray.push(
-		autoDateToggleSetting,
-		notableToggleSetting,
-		bossToggleSetting,
-		locationToggleSetting,
 	);
-	const [modalListItemStateArray, setModalListItemStateArray] = useState(
-		initModalListItemStateArray,
-	);
+	const [addItemCardModalListItemArray, setAddItemCardModalListItemArray] =
+		useState(initAddItemCardModalListItemArray);
 
 	function handleAdd(
 		inputText: string,
@@ -139,22 +124,7 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 		status: boolean,
 		index: number,
 	) {
-		const newModalListItemStateArray: ModalListItemState[] =
-			modalListItemStateArray.map((state, i) => {
-				if (i == index) {
-					return {
-						...state,
-						toggleSetting: {
-							...state.toggleSetting!,
-							enable: status,
-							setting: setting,
-						},
-					};
-				}
-				return state;
-			});
 
-		setModalListItemStateArray(newModalListItemStateArray);
 	}
 
 	function createCards() {
@@ -184,7 +154,7 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 				handleAdd={handleAdd}
 				itemType="subject"
 				handleToggleSetting={handleToggleSetting}
-				modalListItemStateArray={modalListItemStateArray}
+				modalListItemArray={addItemCardModalListItemArray}
 			/>
 			<CardWrapper cards={createCards()} />
 		</>

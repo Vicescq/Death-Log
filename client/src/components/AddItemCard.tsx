@@ -2,8 +2,9 @@ import { useRef, useState } from "react";
 import type { TreeNodeSerializableType } from "../classes/TreeNode";
 import gear from "../assets/gear.svg";
 import filter from "../assets/filter.svg";
-import Modal, { type ModalListItemState } from "./Modal";
+import Modal from "./modals/Modal";
 import type { ToggleSetting } from "./Toggle";
+import type { ModalListItemToggle } from "./modals/ModalListItemTypes";
 
 type Props = {
 	handleAdd: (
@@ -12,14 +13,14 @@ type Props = {
 		notable?: boolean,
 	) => void;
 	itemType: TreeNodeSerializableType;
-	modalListItemStateArray: ModalListItemState[];
+	modalListItemArray: ModalListItemToggle[];
 	handleToggleSetting: (setting: ToggleSetting, status: boolean, index: number) => void
 };
 
 export default function AddItemCard({
 	handleAdd,
 	itemType,
-	modalListItemStateArray,
+	modalListItemArray,
 	handleToggleSetting
 }: Props) {
 	const [inputText, setInputText] = useState("");
@@ -29,15 +30,20 @@ export default function AddItemCard({
 
 	function handleAddWrapper() {
 		let autoDate = true, notable = true;
-		modalListItemStateArray.forEach((state) => {
-			if (state.toggleSetting?.setting == "autoDate" && !state.toggleSetting?.enable ){
+		modalListItemArray.forEach((li) => {
+			if (li.type == "toggle" && li.toggleSetting == "autoDate" && !li.enable){
 				autoDate = false
 			}
-
-			if (state.toggleSetting?.setting == "notable" && !state.toggleSetting.enable){
-				notable = false
-			}
 		})
+		// modalListItemArray.forEach((state) => {
+		// 	if (state.toggleSetting?.setting == "autoDate" && !state.toggleSetting?.enable ){
+		// 		autoDate = false
+		// 	}
+
+		// 	if (state.toggleSetting?.setting == "notable" && !state.toggleSetting.enable){
+		// 		notable = false
+		// 	}
+		// })
 		handleAdd(inputText, autoDate, notable);
 	}
 
@@ -70,9 +76,10 @@ export default function AddItemCard({
 				</button>
 			</div>
 			<Modal
-				modalListItemStateArray={modalListItemStateArray}
+				modalListItemArray={modalListItemArray}
 				modalRef={addItemCardModalRef}
 				handleToggleSetting={handleToggleSetting}
+				modalParent="addItemCard"
 			/>{" "}
 		</header>
 	);

@@ -8,7 +8,11 @@ export type ToggleSetting =
 type Props = {
 	enable: boolean;
 	setting: ToggleSetting;
-	handleToggleSetting: (setting: ToggleSetting, status: boolean, index: number) => void;
+	handleToggleSetting: (
+		setting: ToggleSetting,
+		status: boolean,
+		index: number,
+	) => void;
 	index: number;
 };
 
@@ -16,7 +20,7 @@ export default function Toggle({
 	enable,
 	setting,
 	handleToggleSetting,
-	index
+	index,
 }: Props) {
 	const circleCSS = enable ? "translate-x-4" : null;
 	const bgCSS = enable ? "bg-blue-700" : "bg-gray-700";

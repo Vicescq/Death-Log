@@ -11,7 +11,7 @@ import Game from "../classes/Game";
 import Profile from "../classes/Profile";
 import type { TreeStateType } from "../contexts/treeContext";
 import { useRef, useState } from "react";
-import Modal, { type ModalListItemState } from "./Modal";
+import Modal, { type ModalListItemState } from "./modals/Modal";
 
 export type HandleDeathCountOperation = "add" | "subtract";
 
@@ -128,8 +128,8 @@ export default function Card({
 						className={`w-9 cursor-pointer ${detailsReadOnlyCSS}`}
 						src={details}
 						alt=""
-						onClick={() => addItemCardModalRef.current!.showModal()}
-						// onClick={() => handleDelete()}
+						// onClick={() => addItemCardModalRef.current!.showModal()}
+						onClick={() => handleDelete()}
 					/>
 					<img
 						className={`w-9 cursor-pointer ${readOnlyToggleCSS}`}
@@ -141,11 +141,11 @@ export default function Card({
 					/>
 				</div>
 			</div>
-			<Modal
+			{/* <Modal
 				modalRef={addItemCardModalRef}
-				modalListItemStateArray={modalListItemStateArray}
+				// modalListItemStateArray={modalListItemStateArray}
 				handleDelete={handleDelete}
-			/>
+			/> */}
 		</>
 	);
 }
