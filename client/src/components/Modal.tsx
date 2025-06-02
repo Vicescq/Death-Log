@@ -1,16 +1,23 @@
 import { Link } from "react-router";
 import Toggle, { type ToggleSetting } from "./Toggle";
+import { useState } from "react";
 
 type ModalProps = {
 	modalRef: React.RefObject<HTMLDialogElement | null>;
 	modalListItemStateArray: ModalListItemState[];
-	handleToggleSetting: (setting: ToggleSetting, status: boolean, index: number) => void
+	handleToggleSetting?: (
+		setting: ToggleSetting,
+		status: boolean,
+		index: number,
+	) => void;
+	handleDelete?: () => void;
 };
 
 export default function Modal({
 	modalRef,
 	modalListItemStateArray,
-	handleToggleSetting
+	handleToggleSetting,
+	handleDelete,
 }: ModalProps) {
 	return (
 		<dialog
@@ -20,11 +27,19 @@ export default function Modal({
 			<div className="flex flex-col gap-2">
 				<ul className="flex flex-col">
 					{modalListItemStateArray?.map((state, index) => {
-						return <ModalListItem key={index} index={index} modalListItemState={state} handleToggleSetting={handleToggleSetting}/>
+						return (
+							<ModalListItem
+								key={index}
+								index={index}
+								modalListItemState={state}
+								handleToggleSetting={handleToggleSetting}
+							/>
+						);
 					})}
 				</ul>
-
-				<ModalUtilityButton name="SAVE" />
+				
+				<ModalUtilityButton name="DELETE" bgCol="bg-red-500" onClick={handleDelete}/>
+				<ModalUtilityButton name="SAVE" bgCol="bg-hunyadi" />
 
 				<button
 					className="border- rounded-2xl border-4 bg-amber-200 p-2 font-bold shadow-[4px_4px_0px_rgba(0,0,0,1)] outline-0"
@@ -40,12 +55,13 @@ export default function Modal({
 type ModalUtilityButtonProps = {
 	name: string;
 	onClick?: () => void;
+	bgCol: string;
 };
 
-function ModalUtilityButton({ name, onClick }: ModalUtilityButtonProps) {
+function ModalUtilityButton({ name, onClick, bgCol }: ModalUtilityButtonProps) {
 	return (
 		<button
-			className="bg-hunyadi rounded-2xl border-4 p-2 font-bold shadow-[4px_4px_0px_rgba(0,0,0,1)] outline-0"
+			className={`${bgCol} rounded-2xl border-4 p-2 font-bold shadow-[4px_4px_0px_rgba(0,0,0,1)] outline-0`}
 			onClick={onClick}
 		>
 			{name}
@@ -60,34 +76,52 @@ export type ModalListItemState = {
 	};
 	detailsSetting?: {
 		setting: string;
-		
 	};
 	filterSetting?: { [key: string]: any };
 };
 
 type ModalListItemProp = {
 	modalListItemState: ModalListItemState;
-	handleToggleSetting: (setting: ToggleSetting, status: boolean, index: number) => void,
-	index: number
+	handleToggleSetting?: (
+		setting: ToggleSetting,
+		status: boolean,
+		index: number,
+	) => void;
+	index: number;
 };
 
-function ModalListItem({ modalListItemState, handleToggleSetting, index }: ModalListItemProp) {
+function ModalListItem({
+	modalListItemState,
+	handleToggleSetting,
+	index,
+}: ModalListItemProp) {
+	const [inputText, setInputText] = useState("");
 	let content: React.JSX.Element | null = null;
 	if (modalListItemState.toggleSetting) {
 		content = (
 			<>
-				<Link to="#">{modalListItemState.toggleSetting.setting.toUpperCase()}</Link>
+				<Link to="#">
+					{modalListItemState.toggleSetting.setting.toUpperCase()}
+				</Link>
 				<div className="ml-auto">
 					<Toggle
 						enable={modalListItemState.toggleSetting.enable}
 						setting={modalListItemState.toggleSetting.setting}
-						handleToggleSetting={
-							handleToggleSetting
-						}
+						handleToggleSetting={handleToggleSetting}
 						index={index}
 					/>
 				</div>
 			</>
+		);
+	}
+
+	if (modalListItemState.detailsSetting) {
+		content = (
+			<input
+				type="search"
+				className="w-full rounded-xl border-2 p-1 shadow-[8px_5px_0px_rgba(0,0,0,1)]"
+				onChange={(e) => setInputText(e.target.value)}
+			/>
 		);
 	}
 

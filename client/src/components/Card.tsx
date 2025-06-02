@@ -11,7 +11,7 @@ import Game from "../classes/Game";
 import Profile from "../classes/Profile";
 import type { TreeStateType } from "../contexts/treeContext";
 import { useRef, useState } from "react";
-import Modal from "./Modal";
+import Modal, { type ModalListItemState } from "./Modal";
 
 export type HandleDeathCountOperation = "add" | "subtract";
 
@@ -25,6 +25,7 @@ type Props = {
 		operation: HandleDeathCountOperation,
 	) => void;
 	handleCompletedStatus?: (newStatus: boolean) => void;
+	modalListItemStateArray: ModalListItemState[];
 };
 
 export default function Card({
@@ -34,6 +35,7 @@ export default function Card({
 	handleDetails,
 	handleDeathCount,
 	handleCompletedStatus,
+	modalListItemStateArray,
 }: Props) {
 	const addItemCardModalRef = useRef<HTMLDialogElement>(null);
 	const enabledCSS =
@@ -139,7 +141,11 @@ export default function Card({
 					/>
 				</div>
 			</div>
-			<Modal modalRef={addItemCardModalRef} />
+			<Modal
+				modalRef={addItemCardModalRef}
+				modalListItemStateArray={modalListItemStateArray}
+				handleDelete={handleDelete}
+			/>
 		</>
 	);
 }

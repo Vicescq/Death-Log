@@ -28,13 +28,17 @@ export default function AddItemCard({
 		itemType[0].toUpperCase() + itemType.slice(1);
 
 	function handleAddWrapper() {
-		let autoDate = true;
+		let autoDate = true, notable = true;
 		modalListItemStateArray.forEach((state) => {
 			if (state.toggleSetting?.setting == "autoDate" && !state.toggleSetting?.enable ){
 				autoDate = false
 			}
+
+			if (state.toggleSetting?.setting == "notable" && !state.toggleSetting.enable){
+				notable = false
+			}
 		})
-		handleAdd(inputText, autoDate);
+		handleAdd(inputText, autoDate, notable);
 	}
 
 	return (
