@@ -12,7 +12,7 @@ import type { ModalListItemToggleType } from "../components/modals/ModalListItem
 import Modal from "../components/modals/Modal";
 import ModalListItemToggle from "../components/modals/ModalListItemToggle";
 import ContextService from "../services/ContextService";
-import { handleAddHelper } from "../utils/eventHandlers";
+import { createNode } from "../utils/treeUtils";
 
 export default function GameProfiles({ gameID }: { gameID: string }) {
 	const [tree, setTree] = useTreeContext();
@@ -39,7 +39,7 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 		useState(initAddItemCardModalListItemArray);
 
 	function handleAdd(inputText: string, autoDate: boolean = true) {
-		const node = handleAddHelper(
+		const node = createNode(
 			inputText,
 			tree,
 			autoDate,

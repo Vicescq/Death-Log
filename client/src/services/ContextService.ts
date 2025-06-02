@@ -7,14 +7,15 @@ import type TreeNode from "../model/TreeNode";
 import type { HistoryContextType } from "../contexts/historyContext";
 import type { TreeContextType, TreeStateType } from "../contexts/treeContext";
 import type { URLMapContextType, URLMapStateType } from "../contexts/urlMapContext";
+import { createShallowCopyMap } from "../utils/treeUtils";
 
 export default class ContextService {
 
     constructor() { }
 
     static addNodes(tree: TreeStateType, setTree: TreeContextType[1], urlMap: URLMapContextType[0], setURLMap: URLMapContextType[1], nodes: TreeNode[]) {
-        const shallowCopyTree = ContextService.createShallowCopyMap(tree);
-        const shallowCopyURLMap = ContextService.createShallowCopyMap(urlMap);
+        const shallowCopyTree = createShallowCopyMap(tree);
+        const shallowCopyURLMap = createShallowCopyMap(urlMap);
 
         nodes.forEach((node) => {
             shallowCopyTree.set(node.id, node);
@@ -42,9 +43,9 @@ export default class ContextService {
 
     static deleteNode(tree: TreeStateType, setTree: TreeContextType[1], node: TreeNode, urlMap: URLMapContextType[0], setURLMap: URLMapContextType[1]) {
         const nodesDeleted: TreeNode[] = [];
-        const shallowCopyURLMap = ContextService.createShallowCopyMap(urlMap);
+        const shallowCopyURLMap = createShallowCopyMap(urlMap);
         if (!(node instanceof RootNode)) {
-            let shallowCopyTree = ContextService.createShallowCopyMap(tree);
+            let shallowCopyTree = createShallowCopyMap(tree);
 
             function deleteSelfAndChild(node: TreeNode) {
 
@@ -79,16 +80,12 @@ export default class ContextService {
     }
 
     static updateNode(updatedNode: TreeNode, tree: TreeStateType, setTree: TreeContextType[1]) {
-        const shallowCopyTree = ContextService.createShallowCopyMap(tree);
+        const shallowCopyTree = createShallowCopyMap(tree);
         shallowCopyTree.set(updatedNode.id, updatedNode);
         setTree(shallowCopyTree);
     }
 
-    static createShallowCopyMap<T>(tree: Map<string, T>) {
-        const objLiteralFromTree = Object.fromEntries(tree);
-        const objLiteralFromTreeShallowCopy = { ...objLiteralFromTree };
-        return new Map(Object.entries(objLiteralFromTreeShallowCopy));
-    }
+    
 
     static initializeTreeState(serializedTree: object[], setTree: TreeContextType[1], setURLMap: URLMapContextType[1]) {
 
