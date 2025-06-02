@@ -3,7 +3,7 @@ import Profile from "../model/Profile";
 import Subject from "../model/Subject";
 import TreeNode, { type TreeNodeSerializableType } from "../model/TreeNode";
 import type { TreeStateType } from "../contexts/treeContext";
-import { sanitizeUserEntry, createNodePath } from "./uiHelpers";
+import { sanitizeUserEntry, createNodePath } from "./treeUtils";
 
 export function handleAddHelper(
     inputText: string,

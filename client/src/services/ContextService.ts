@@ -8,13 +8,13 @@ import type { HistoryContextType } from "../contexts/historyContext";
 import type { TreeContextType, TreeStateType } from "../contexts/treeContext";
 import type { URLMapContextType, URLMapStateType } from "../contexts/urlMapContext";
 
-export default class ContextManager {
+export default class ContextService {
 
     constructor() { }
 
     static addNodes(tree: TreeStateType, setTree: TreeContextType[1], urlMap: URLMapContextType[0], setURLMap: URLMapContextType[1], nodes: TreeNode[]) {
-        const shallowCopyTree = ContextManager.createShallowCopyMap(tree);
-        const shallowCopyURLMap = ContextManager.createShallowCopyMap(urlMap);
+        const shallowCopyTree = ContextService.createShallowCopyMap(tree);
+        const shallowCopyURLMap = ContextService.createShallowCopyMap(urlMap);
 
         nodes.forEach((node) => {
             shallowCopyTree.set(node.id, node);
@@ -42,9 +42,9 @@ export default class ContextManager {
 
     static deleteNode(tree: TreeStateType, setTree: TreeContextType[1], node: TreeNode, urlMap: URLMapContextType[0], setURLMap: URLMapContextType[1]) {
         const nodesDeleted: TreeNode[] = [];
-        const shallowCopyURLMap = ContextManager.createShallowCopyMap(urlMap);
+        const shallowCopyURLMap = ContextService.createShallowCopyMap(urlMap);
         if (!(node instanceof RootNode)) {
-            let shallowCopyTree = ContextManager.createShallowCopyMap(tree);
+            let shallowCopyTree = ContextService.createShallowCopyMap(tree);
 
             function deleteSelfAndChild(node: TreeNode) {
 
@@ -79,7 +79,7 @@ export default class ContextManager {
     }
 
     static updateNode(updatedNode: TreeNode, tree: TreeStateType, setTree: TreeContextType[1]) {
-        const shallowCopyTree = ContextManager.createShallowCopyMap(tree);
+        const shallowCopyTree = ContextService.createShallowCopyMap(tree);
         shallowCopyTree.set(updatedNode.id, updatedNode);
         setTree(shallowCopyTree);
     }
@@ -132,7 +132,7 @@ export default class ContextManager {
                 revivedNodes.push(revivedNode);
             }
         }
-        ContextManager.addNodes(tree, setTree, urlMap, setURLMap, [...revivedNodes])
+        ContextService.addNodes(tree, setTree, urlMap, setURLMap, [...revivedNodes])
     }
 
     static updateActionHistory(history: HistoryContextType[0], setHistory: HistoryContextType[1], ...actions: Action[]) {

@@ -7,7 +7,7 @@ import { HistoryContext, type HistoryStateType } from "./historyContext";
 import useGetDeathLog from "../hooks/useGetDeathLog";
 import NavBar from "../components/NavBar";
 import useLoadUserID from "../hooks/useLoadUserID";
-import APIManager from "../services/APIManager";
+import APIService from "../services/APIService";
 
 export function ContextWrapper({ children }: { children: ReactNode }) {
 	const { isLoaded, userId } = useAuth();
@@ -31,7 +31,7 @@ export function ContextWrapper({ children }: { children: ReactNode }) {
 	useConsoleLogOnStateChange(
 		history,
 		"\nSANITIZED: ",
-		APIManager.deduplicateHistory(history),
+		APIService.deduplicateHistory(history),
 	);
 	useConsoleLogOnStateChange(
 		history.newActionStartIndex,

@@ -5,9 +5,9 @@ import Subject from "../model/Subject";
 import type { HistoryStateType } from "../contexts/historyContext";
 import type { TreeContextType } from "../contexts/treeContext";
 import type { URLMapContextType } from "../contexts/urlMapContext";
-import ContextManager from "./ContextManager";
+import ContextService from "./ContextService";
 
-export default class APIManager {
+export default class APIService {
     constructor() { };
 
     static postDeathLog(uuid: string, history: HistoryStateType) {
@@ -26,7 +26,7 @@ export default class APIManager {
             headers: { "Content-Type": "application/json" },
         }).then((res) => res.json()).then((value) => {
             console.log(value);
-            ContextManager.initializeTreeState(value, setTree, setURLMap)
+            ContextService.initializeTreeState(value, setTree, setURLMap)
         });
     }
 

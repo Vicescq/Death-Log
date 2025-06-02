@@ -11,7 +11,7 @@ import { useRef, useState } from "react";
 import type { ModalListItemToggleType } from "../components/modals/ModalListItemTypes";
 import Modal from "../components/modals/Modal";
 import ModalListItemToggle from "../components/modals/ModalListItemToggle";
-import ContextManager from "../services/ContextManager";
+import ContextService from "../services/ContextService";
 import { handleAddHelper } from "../utils/eventHandlers";
 
 export default function Home() {
@@ -38,8 +38,8 @@ export default function Home() {
 			autoDate,
 			"game",
 		);
-		ContextManager.addNodes(tree, setTree, urlMap, setURLMap, [node]);
-		ContextManager.updateActionHistory(
+		ContextService.addNodes(tree, setTree, urlMap, setURLMap, [node]);
+		ContextService.updateActionHistory(
 			history,
 			setHistory,
 			new Action("add", [node]),
@@ -49,14 +49,14 @@ export default function Home() {
 	function handleDelete(node: Game) {
 		const bool = window.confirm();
 		if (bool) {
-			const deletedNodes = ContextManager.deleteNode(
+			const deletedNodes = ContextService.deleteNode(
 				tree,
 				setTree,
 				node,
 				urlMap,
 				setURLMap,
 			);
-			ContextManager.updateActionHistory(
+			ContextService.updateActionHistory(
 				history,
 				setHistory,
 				new Action("delete", [...deletedNodes!]),
@@ -68,8 +68,8 @@ export default function Home() {
 		const bool = window.confirm();
 		if (bool) {
 			game.completed = newStatus;
-			ContextManager.updateNode(game, tree, setTree);
-			ContextManager.updateActionHistory(
+			ContextService.updateNode(game, tree, setTree);
+			ContextService.updateActionHistory(
 				history,
 				setHistory,
 				new Action("update", [game]),

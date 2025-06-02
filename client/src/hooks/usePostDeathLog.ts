@@ -1,16 +1,16 @@
 import { useEffect } from "react";
 import type { HistoryContextType, HistoryStateType } from "../contexts/historyContext";
-import APIManager from "../services/APIManager";
-import ContextManager from "../services/ContextManager";
+import APIService from "../services/APIService";
+import ContextService from "../services/ContextService";
 
 export default function usePostDeathLog(history: HistoryStateType, setHistory: HistoryContextType[1]) {
 
     useEffect(() => {
         const interval = setTimeout(() => {
             if (history.actionHistory.slice(history.newActionStartIndex).length > 0) {
-                const deduplicatedHistoryState = APIManager.deduplicateHistory(history);
-                APIManager.postDeathLog(deduplicatedHistoryState.uuid, deduplicatedHistoryState);
-                ContextManager.updateNewActionStartIndex(history, setHistory);
+                const deduplicatedHistoryState = APIService.deduplicateHistory(history);
+                APIService.postDeathLog(deduplicatedHistoryState.uuid, deduplicatedHistoryState);
+                ContextService.updateNewActionStartIndex(history, setHistory);
             }
         }, 3000);
         return () => clearTimeout(interval);

@@ -11,7 +11,7 @@ import { useRef, useState } from "react";
 import type { ModalListItemToggleType } from "../components/modals/ModalListItemTypes";
 import Modal from "../components/modals/Modal";
 import ModalListItemToggle from "../components/modals/ModalListItemToggle";
-import ContextManager from "../services/ContextManager";
+import ContextService from "../services/ContextService";
 import { handleAddHelper } from "../utils/eventHandlers";
 
 export default function ProfileSubjects({ profileID }: { profileID: string }) {
@@ -51,8 +51,8 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 			profileID,
 			notable,
 		);
-		ContextManager.addNodes(tree, setTree, urlMap, setURLMap, [node]);
-		ContextManager.updateActionHistory(
+		ContextService.addNodes(tree, setTree, urlMap, setURLMap, [node]);
+		ContextService.updateActionHistory(
 			history,
 			setHistory,
 			new Action("add", [node]),
@@ -63,14 +63,14 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 	function handleDelete(node: Subject) {
 		const bool = window.confirm();
 		if (bool) {
-			const deletedNodes = ContextManager.deleteNode(
+			const deletedNodes = ContextService.deleteNode(
 				tree,
 				setTree,
 				node,
 				urlMap,
 				setURLMap,
 			);
-			ContextManager.updateActionHistory(
+			ContextService.updateActionHistory(
 				history,
 				setHistory,
 				new Action("delete", [...deletedNodes!]),
@@ -88,16 +88,16 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 		if (bool) {
 			if (operation == "add") {
 				deathType == "fullTry" ? subject.fullTries++ : subject.resets++;
-				ContextManager.updateNode(subject, tree, setTree);
-				ContextManager.updateActionHistory(
+				ContextService.updateNode(subject, tree, setTree);
+				ContextService.updateActionHistory(
 					history,
 					setHistory,
 					new Action("update", [subject]),
 				);
 			} else {
 				deathType == "fullTry" ? subject.fullTries-- : subject.resets--;
-				ContextManager.updateNode(subject, tree, setTree);
-				ContextManager.updateActionHistory(
+				ContextService.updateNode(subject, tree, setTree);
+				ContextService.updateActionHistory(
 					history,
 					setHistory,
 					new Action("update", [subject]),
@@ -110,8 +110,8 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 		const bool = window.confirm();
 		if (bool) {
 			subject.completed = newStatus;
-			ContextManager.updateNode(subject, tree, setTree);
-			ContextManager.updateActionHistory(
+			ContextService.updateNode(subject, tree, setTree);
+			ContextService.updateActionHistory(
 				history,
 				setHistory,
 				new Action("update", [subject]),
