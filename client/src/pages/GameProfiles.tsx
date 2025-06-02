@@ -1,8 +1,5 @@
 import Card from "../components/Card";
-import AddItemCard, {
-	type ToggleSetting,
-	type ToggleSettingsState,
-} from "../components/AddItemCard";
+import AddItemCard from "../components/AddItemCard";
 import ContextManager from "../classes/ContextManager";
 import Profile from "../classes/Profile";
 import useTreeContext from "../hooks/useTreeContext";
@@ -13,17 +10,34 @@ import Action from "../classes/Action";
 import useSaveDeathLogStatus from "../hooks/useSaveDeathLogStatus";
 import CardWrapper from "../components/CardWrapper";
 import { useState } from "react";
+import type { ModalListItemState } from "../components/Modal";
+import type { ToggleSetting } from "../components/Toggle";
 
 export default function GameProfiles({ gameID }: { gameID: string }) {
 	const [tree, setTree] = useTreeContext();
 	const [urlMap, setURLMap] = useURLMapContext();
 	const [history, setHistory] = useHistoryContext();
 
-	const initToggleState: ToggleSettingsState = new Map();
-	initToggleState.set("autoDate", true);
-	initToggleState.set("challenge", false);
-	const [toggleSettings, setToggleSettings] =
-		useState<ToggleSettingsState>(initToggleState);
+	const initModalListItemStateArray: ModalListItemState[] = [];
+	const autoDateToggleSetting: ModalListItemState = {
+		toggleSetting: {
+			setting: "autoDate",
+			enable: true,
+		},
+	};
+	const challengeToggleSetting: ModalListItemState = {
+		toggleSetting: {
+			setting: "challenge",
+			enable: false,
+		},
+	};
+	initModalListItemStateArray.push(
+		autoDateToggleSetting,
+		challengeToggleSetting,
+	);
+	const [modalListItemStateArray, setModalListItemStateArray] = useState(
+		initModalListItemStateArray,
+	);
 
 	function handleAdd(inputText: string, autoDate: boolean = true) {
 		const node = UIHelper.handleAddHelper(
@@ -74,8 +88,28 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 		}
 	}
 
-	function handleToggleSetting(setting: ToggleSetting, status: boolean) {
-		UIHelper.handleToggleSetting(setting, status, toggleSettings, setToggleSettings);
+	function handleToggleSetting(
+		setting: ToggleSetting,
+		status: boolean,
+		index: number,
+	) {
+		
+		const newModalListItemStateArray: ModalListItemState[] =
+			modalListItemStateArray.map((state, i) => {
+				if (i == index) {
+					return {
+						...state,
+						toggleSetting: {
+							...state.toggleSetting!,
+							enable: status,
+							setting: setting,
+						},
+					};
+				}
+				return state;
+			});
+
+		setModalListItemStateArray(newModalListItemStateArray);
 	}
 
 	function createCards() {
@@ -102,8 +136,8 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 			<AddItemCard
 				itemType="profile"
 				handleAdd={handleAdd}
-				toggleSettingsState={toggleSettings}
 				handleToggleSetting={handleToggleSetting}
+				modalListItemStateArray={modalListItemStateArray}
 			/>
 			<CardWrapper cards={createCards()} />
 		</>

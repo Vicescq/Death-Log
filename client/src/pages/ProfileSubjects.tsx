@@ -1,8 +1,5 @@
 import Card, { type HandleDeathCountOperation } from "../components/Card";
-import AddItemCard, {
-	type ToggleSetting,
-	type ToggleSettingsState,
-} from "../components/AddItemCard";
+import AddItemCard from "../components/AddItemCard";
 import Subject, { type DeathType } from "../classes/Subject";
 import ContextManager from "../classes/ContextManager";
 import useTreeContext from "../hooks/useTreeContext";
@@ -13,20 +10,48 @@ import useHistoryContext from "../hooks/useHistoryContext";
 import useSaveDeathLogStatus from "../hooks/useSaveDeathLogStatus";
 import CardWrapper from "../components/CardWrapper";
 import { useState } from "react";
+import type { ToggleSetting } from "../components/Toggle";
+import type { ModalListItemState } from "../components/Modal";
 
 export default function ProfileSubjects({ profileID }: { profileID: string }) {
 	const [tree, setTree] = useTreeContext();
 	const [urlMap, setURLMap] = useURLMapContext();
 	const [history, setHistory] = useHistoryContext();
 
-	const initToggleState: ToggleSettingsState = new Map();
-	initToggleState.set("autoDate", true);
-	initToggleState.set("notable", true);
-	initToggleState.set("boss", true);
-	initToggleState.set("location", false);
-
-	const [toggleSettings, setToggleSettings] =
-		useState<ToggleSettingsState>(initToggleState);
+	const initModalListItemStateArray: ModalListItemState[] = [];
+	const autoDateToggleSetting: ModalListItemState = {
+		toggleSetting: {
+			setting: "autoDate",
+			enable: true,
+		},
+	};
+	const notableToggleSetting: ModalListItemState = {
+		toggleSetting: {
+			setting: "notable",
+			enable: true,
+		},
+	};
+	const bossToggleSetting: ModalListItemState = {
+		toggleSetting: {
+			setting: "boss",
+			enable: true,
+		},
+	};
+	const locationToggleSetting: ModalListItemState = {
+		toggleSetting: {
+			setting: "location",
+			enable: false,
+		},
+	};
+	initModalListItemStateArray.push(
+		autoDateToggleSetting,
+		notableToggleSetting,
+		bossToggleSetting,
+		locationToggleSetting,
+	);
+	const [modalListItemStateArray, setModalListItemStateArray] = useState(
+		initModalListItemStateArray,
+	);
 
 	function handleAdd(
 		inputText: string,
@@ -109,13 +134,27 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 		}
 	}
 
-	function handleToggleSetting(setting: ToggleSetting, status: boolean) {
-		UIHelper.handleToggleSetting(
-			setting,
-			status,
-			toggleSettings,
-			setToggleSettings,
-		);
+	function handleToggleSetting(
+		setting: ToggleSetting,
+		status: boolean,
+		index: number,
+	) {
+		const newModalListItemStateArray: ModalListItemState[] =
+			modalListItemStateArray.map((state, i) => {
+				if (i == index) {
+					return {
+						...state,
+						toggleSetting: {
+							...state.toggleSetting!,
+							enable: status,
+							setting: setting,
+						},
+					};
+				}
+				return state;
+			});
+
+		setModalListItemStateArray(newModalListItemStateArray);
 	}
 
 	function createCards() {
@@ -144,8 +183,8 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 			<AddItemCard
 				handleAdd={handleAdd}
 				itemType="subject"
-				toggleSettingsState={toggleSettings}
 				handleToggleSetting={handleToggleSetting}
+				modalListItemStateArray={modalListItemStateArray}
 			/>
 			<CardWrapper cards={createCards()} />
 		</>

@@ -11,7 +11,6 @@ import Game from "../classes/Game";
 import Profile from "../classes/Profile";
 import type { TreeStateType } from "../contexts/treeContext";
 import { useRef, useState } from "react";
-import DetailsSettingModal from "./DetailsSettingModal";
 import Modal from "./Modal";
 
 export type HandleDeathCountOperation = "add" | "subtract";

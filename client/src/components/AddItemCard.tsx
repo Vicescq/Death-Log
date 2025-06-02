@@ -34,10 +34,7 @@ export default function AddItemCard({
 				autoDate = false
 			}
 		})
-
-
 		handleAdd(inputText, autoDate);
-		
 	}
 
 	return (

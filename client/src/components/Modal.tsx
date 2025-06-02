@@ -20,7 +20,7 @@ export default function Modal({
 			<div className="flex flex-col gap-2">
 				<ul className="flex flex-col">
 					{modalListItemStateArray?.map((state, index) => {
-						return <ModalListItem key={index} modalListItemState={state} handleToggleSetting={handleToggleSetting}/>
+						return <ModalListItem key={index} index={index} modalListItemState={state} handleToggleSetting={handleToggleSetting}/>
 					})}
 				</ul>
 
@@ -54,34 +54,37 @@ function ModalUtilityButton({ name, onClick }: ModalUtilityButtonProps) {
 }
 
 export type ModalListItemState = {
-	index: number
 	toggleSetting?: {
 		enable: boolean;
 		setting: ToggleSetting;
 	};
-	detailsSetting?: { [key: string]: any };
+	detailsSetting?: {
+		setting: string;
+		
+	};
 	filterSetting?: { [key: string]: any };
 };
 
 type ModalListItemProp = {
 	modalListItemState: ModalListItemState;
-	handleToggleSetting: (setting: ToggleSetting, status: boolean, index: number) => void
+	handleToggleSetting: (setting: ToggleSetting, status: boolean, index: number) => void,
+	index: number
 };
 
-function ModalListItem({ modalListItemState, handleToggleSetting }: ModalListItemProp) {
+function ModalListItem({ modalListItemState, handleToggleSetting, index }: ModalListItemProp) {
 	let content: React.JSX.Element | null = null;
 	if (modalListItemState.toggleSetting) {
 		content = (
 			<>
-				<Link to="#">Automatic Dates </Link>
+				<Link to="#">{modalListItemState.toggleSetting.setting.toUpperCase()}</Link>
 				<div className="ml-auto">
 					<Toggle
 						enable={modalListItemState.toggleSetting.enable}
-						setting="autoDate"
+						setting={modalListItemState.toggleSetting.setting}
 						handleToggleSetting={
 							handleToggleSetting
 						}
-						index={modalListItemState.index}
+						index={index}
 					/>
 				</div>
 			</>

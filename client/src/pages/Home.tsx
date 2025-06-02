@@ -19,17 +19,13 @@ export default function Home() {
 	const [history, setHistory] = useHistoryContext();
 
 	const initModalListItemStateArray: ModalListItemState[] = [];
-
-	for (let i = 0; i < 10; i++) {
-		const modalToggleSetting: ModalListItemState = {
-			index: i,
-			toggleSetting: {
-				setting: "autoDate",
-				enable: true,
-			},
-		};
-		initModalListItemStateArray.push(modalToggleSetting);
-	}
+	const autoDateToggleSetting: ModalListItemState = {
+		toggleSetting: {
+			setting: "autoDate",
+			enable: true,
+		},
+	};
+	initModalListItemStateArray.push(autoDateToggleSetting);
 	const [modalListItemStateArray, setModalListItemStateArray] = useState(
 		initModalListItemStateArray,
 	);
@@ -90,10 +86,14 @@ export default function Home() {
 				if (i == index) {
 					return {
 						...state,
-						toggleSetting: { ...state.toggleSetting!, enable: status, setting: setting },
+						toggleSetting: {
+							...state.toggleSetting!,
+							enable: status,
+							setting: setting,
+						},
 					};
-				} 
-				return state
+				}
+				return state;
 			});
 
 		setModalListItemStateArray(newModalListItemStateArray);
@@ -115,7 +115,7 @@ export default function Home() {
 			);
 		});
 	}
-	console.log(modalListItemStateArray);
+
 	useSaveDeathLogStatus(history, setHistory);
 
 	return (
