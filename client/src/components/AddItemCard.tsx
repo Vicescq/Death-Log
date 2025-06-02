@@ -1,47 +1,32 @@
-import { useRef, useState } from "react";
+import {  useState } from "react";
 import type { TreeNodeSerializableType } from "../classes/TreeNode";
 import gear from "../assets/gear.svg";
 import filter from "../assets/filter.svg";
-import Modal from "./modals/Modal";
-import type { ToggleSetting } from "./Toggle";
-import type { ModalListItemToggle } from "./modals/ModalListItemTypes";
 
 type Props = {
+	children: React.JSX.Element
 	handleAdd: (
 		inputText: string,
 		autoDate?: boolean,
 		notable?: boolean,
 	) => void;
 	itemType: TreeNodeSerializableType;
-	modalListItemArray: ModalListItemToggle[];
-	handleToggleSetting: (setting: ToggleSetting, status: boolean, index: number) => void
+	modalRef: React.RefObject<HTMLDialogElement | null>
 };
 
 export default function AddItemCard({
+	children,
 	handleAdd,
 	itemType,
-	modalListItemArray,
-	handleToggleSetting
+	modalRef,
 }: Props) {
 	const [inputText, setInputText] = useState("");
-	const addItemCardModalRef = useRef<HTMLDialogElement>(null);
-	const firstLetterCapitalized =
-		itemType[0].toUpperCase() + itemType.slice(1);
 
 	function handleAddWrapper() {
 		let autoDate = true, notable = true;
-		modalListItemArray.forEach((li) => {
-			if (li.type == "toggle" && li.toggleSetting == "autoDate" && !li.enable){
-				autoDate = false
-			}
-		})
-		// modalListItemArray.forEach((state) => {
-		// 	if (state.toggleSetting?.setting == "autoDate" && !state.toggleSetting?.enable ){
+		// modalListItemArray.forEach((li) => {
+		// 	if (li.type == "toggle" && li.toggleSetting == "autoDate" && !li.enable){
 		// 		autoDate = false
-		// 	}
-
-		// 	if (state.toggleSetting?.setting == "notable" && !state.toggleSetting.enable){
-		// 		notable = false
 		// 	}
 		// })
 		handleAdd(inputText, autoDate, notable);
@@ -60,7 +45,7 @@ export default function AddItemCard({
 						src={gear}
 						alt=""
 						className="w-10"
-						onClick={() => addItemCardModalRef.current?.showModal()}
+						onClick={() => modalRef.current?.showModal()}
 					/>
 				</button>
 			</div>
@@ -69,18 +54,13 @@ export default function AddItemCard({
 					className="bg-zomp w-full rounded-2xl border-4 text-2xl font-bold shadow-[4px_2px_0px_rgba(0,0,0,1)]"
 					onClick={() => handleAddWrapper()}
 				>
-					Add {firstLetterCapitalized}
+					Add {itemType[0].toUpperCase() + itemType.slice(1)}
 				</button>
 				<button className="bg-zomp ml-auto border-4 text-2xl font-bold shadow-[4px_2px_0px_rgba(0,0,0,1)]">
 					<img src={filter} alt="" className="w-10" />
 				</button>
 			</div>
-			<Modal
-				modalListItemArray={modalListItemArray}
-				modalRef={addItemCardModalRef}
-				handleToggleSetting={handleToggleSetting}
-				modalParent="addItemCard"
-			/>{" "}
+			{children}
 		</header>
 	);
 }

@@ -9,18 +9,18 @@ import Action from "../classes/Action";
 import useHistoryContext from "../hooks/useHistoryContext";
 import useSaveDeathLogStatus from "../hooks/useSaveDeathLogStatus";
 import CardWrapper from "../components/CardWrapper";
-import { useState } from "react";
-import type { ToggleSetting } from "../components/Toggle";
-import type { ModalListItemState } from "../components/modals/Modal";
-import type { ModalListItemToggle } from "../components/modals/ModalListItemTypes";
+import { useRef, useState } from "react";
+import type { ModalListItemToggleType } from "../components/modals/ModalListItemTypes";
+import Modal from "../components/modals/Modal";
+import ModalListItemToggle from "../components/modals/ModalListItemToggle";
 
 export default function ProfileSubjects({ profileID }: { profileID: string }) {
 	const [tree, setTree] = useTreeContext();
 	const [urlMap, setURLMap] = useURLMapContext();
 	const [history, setHistory] = useHistoryContext();
+	const addItemCardModalRef = useRef<HTMLDialogElement | null>(null);
 
-	const initAddItemCardModalListItemArray: ModalListItemToggle[] = [];
-
+	const initAddItemCardModalListItemArray: ModalListItemToggleType[] = [];
 	initAddItemCardModalListItemArray.push(
 		{
 			type: "toggle",
@@ -119,12 +119,14 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 		}
 	}
 
-	function handleToggleSetting(
-		setting: ToggleSetting,
-		status: boolean,
-		index: number,
-	) {
-
+	function handleToggleSetting(status: boolean, index: number) {
+		const newState = addItemCardModalListItemArray.map((li, i) => {
+			if (index == i) {
+				li = { ...li, enable: status };
+			}
+			return li;
+		});
+		setAddItemCardModalListItemArray(newState);
 	}
 
 	function createCards() {
@@ -151,11 +153,26 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 	return (
 		<>
 			<AddItemCard
-				handleAdd={handleAdd}
+				modalRef={addItemCardModalRef}
 				itemType="subject"
-				handleToggleSetting={handleToggleSetting}
-				modalListItemArray={addItemCardModalListItemArray}
-			/>
+				handleAdd={handleAdd}
+			>
+				<Modal
+					modalRef={addItemCardModalRef}
+					listItems={addItemCardModalListItemArray.map(
+						(li, index) => {
+							return (
+								<ModalListItemToggle
+									modalListItem={li}
+									index={index}
+									handleToggleSetting={handleToggleSetting}
+								/>
+							);
+						},
+					)}
+					utilityBtns={[]}
+				/>
+			</AddItemCard>
 			<CardWrapper cards={createCards()} />
 		</>
 	);

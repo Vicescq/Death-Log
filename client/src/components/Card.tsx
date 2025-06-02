@@ -10,8 +10,7 @@ import readonly from "../assets/readonly.svg";
 import Game from "../classes/Game";
 import Profile from "../classes/Profile";
 import type { TreeStateType } from "../contexts/treeContext";
-import { useRef, useState } from "react";
-import Modal, { type ModalListItemState } from "./modals/Modal";
+import { useState } from "react";
 
 export type HandleDeathCountOperation = "add" | "subtract";
 
@@ -19,25 +18,20 @@ type Props = {
 	tree: TreeStateType;
 	treeNode: Game | Profile | Subject;
 	handleDelete: () => void;
-	handleDetails?: () => void;
 	handleDeathCount?: (
 		deathType: DeathType,
 		operation: HandleDeathCountOperation,
 	) => void;
 	handleCompletedStatus?: (newStatus: boolean) => void;
-	modalListItemStateArray: ModalListItemState[];
 };
 
 export default function Card({
 	tree,
 	treeNode,
 	handleDelete,
-	handleDetails,
 	handleDeathCount,
 	handleCompletedStatus,
-	modalListItemStateArray,
 }: Props) {
-	const addItemCardModalRef = useRef<HTMLDialogElement>(null);
 	const enabledCSS =
 		"bg-amber-200 border-2 rounded-2xl shadow-[5px_2px_0px_rgba(0,0,0,1)]";
 	const [resetDeathTypeMode, setResetDeathTypeMode] = useState(false);
@@ -141,11 +135,6 @@ export default function Card({
 					/>
 				</div>
 			</div>
-			{/* <Modal
-				modalRef={addItemCardModalRef}
-				// modalListItemStateArray={modalListItemStateArray}
-				handleDelete={handleDelete}
-			/> */}
 		</>
 	);
 }

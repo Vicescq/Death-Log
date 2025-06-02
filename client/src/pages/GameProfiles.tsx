@@ -9,28 +9,32 @@ import useHistoryContext from "../hooks/useHistoryContext";
 import Action from "../classes/Action";
 import useSaveDeathLogStatus from "../hooks/useSaveDeathLogStatus";
 import CardWrapper from "../components/CardWrapper";
-import { useState } from "react";
-import type { ToggleSetting } from "../components/Toggle";
-import type { ModalListItemToggle } from "../components/modals/ModalListItemTypes";
+import { useRef, useState } from "react";
+import type { ModalListItemToggleType } from "../components/modals/ModalListItemTypes";
+import Modal from "../components/modals/Modal";
+import ModalListItemToggle from "../components/modals/ModalListItemToggle";
 
 export default function GameProfiles({ gameID }: { gameID: string }) {
 	const [tree, setTree] = useTreeContext();
 	const [urlMap, setURLMap] = useURLMapContext();
 	const [history, setHistory] = useHistoryContext();
+	const addItemCardModalRef = useRef<HTMLDialogElement | null>(null);
 
-	const initAddItemCardModalListItemArray: ModalListItemToggle[] = [];
-
-	initAddItemCardModalListItemArray.push({
-		type: "toggle",
-		enable: true,
-		settingLabel: "AUTO-DATE",
-		toggleSetting: "autoDate",
-	}, {
-		type: "toggle",
-		enable: false,
-		settingLabel: "CHALLENGE",
-		toggleSetting: "challenge"
-	});
+	const initAddItemCardModalListItemArray: ModalListItemToggleType[] = [];
+	initAddItemCardModalListItemArray.push(
+		{
+			type: "toggle",
+			enable: true,
+			settingLabel: "AUTO-DATE",
+			toggleSetting: "autoDate",
+		},
+		{
+			type: "toggle",
+			enable: false,
+			settingLabel: "CHALLENGE",
+			toggleSetting: "challenge",
+		},
+	);
 	const [addItemCardModalListItemArray, setAddItemCardModalListItemArray] =
 		useState(initAddItemCardModalListItemArray);
 
@@ -83,11 +87,14 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 		}
 	}
 
-	function handleToggleSetting(
-		setting: ToggleSetting,
-		status: boolean,
-		index: number,
-	) {
+	function handleToggleSetting(status: boolean, index: number) {
+		const newState = addItemCardModalListItemArray.map((li, i) => {
+			if (index == i) {
+				li = { ...li, enable: status };
+			}
+			return li;
+		});
+		setAddItemCardModalListItemArray(newState);
 	}
 
 	function createCards() {
@@ -112,11 +119,26 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 	return (
 		<>
 			<AddItemCard
+				modalRef={addItemCardModalRef}
 				itemType="profile"
 				handleAdd={handleAdd}
-				handleToggleSetting={handleToggleSetting}
-				modalListItemArray={addItemCardModalListItemArray}
-			/>
+			>
+				<Modal
+					modalRef={addItemCardModalRef}
+					listItems={addItemCardModalListItemArray.map(
+						(li, index) => {
+							return (
+								<ModalListItemToggle
+									modalListItem={li}
+									index={index}
+									handleToggleSetting={handleToggleSetting}
+								/>
+							);
+						},
+					)}
+					utilityBtns={[]}
+				/>
+			</AddItemCard>
 			<CardWrapper cards={createCards()} />
 		</>
 	);

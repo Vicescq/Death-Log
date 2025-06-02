@@ -9,12 +9,12 @@ interface ModalListItem {
     settingLabel: string
 }
 
-export interface ModalListItemInputEdit extends ModalListItem{
+export interface ModalListItemInputEditType extends ModalListItem{
     type: "inputEdit";
     targetField: string
 }
 
-export interface ModalListItemToggle extends ModalListItem {
+export interface ModalListItemToggleType extends ModalListItem {
     type: "toggle";
     toggleSetting: ToggleSetting;
     enable: boolean;
