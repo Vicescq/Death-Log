@@ -13,6 +13,7 @@ import Modal from "../components/modals/Modal";
 import ModalListItemToggle from "../components/modals/ModalListItemToggle";
 import ContextService from "../services/ContextService";
 import { createSubject } from "../utils/treeUtils";
+import { changeToggleSettingState } from "../utils/eventHandlerUtils";
 
 export default function ProfileSubjects({ profileID }: { profileID: string }) {
 	const [tree, setTree] = useTreeContext();
@@ -113,12 +114,11 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 	}
 
 	function handleToggleSetting(status: boolean, index: number) {
-		const newState = addItemCardModalListItemArray.map((li, i) => {
-			if (index == i) {
-				li = { ...li, enable: status };
-			}
-			return li;
-		});
+		const newState = changeToggleSettingState(
+			addItemCardModalListItemArray,
+			status,
+			index,
+		);
 		setAddItemCardModalListItemArray(newState);
 	}
 

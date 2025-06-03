@@ -14,6 +14,7 @@ import ModalListItemToggle from "../components/modals/ModalListItemToggle";
 import ContextService from "../services/ContextService";
 import { createGame } from "../utils/treeUtils";
 import type { HandleAddGame } from "../components/addItemCard/AddItemCardProps";
+import { changeToggleSettingState } from "../utils/eventHandlerUtils";
 
 export default function Home() {
 	const [tree, setTree] = useTreeContext();
@@ -32,19 +33,18 @@ export default function Home() {
 	const [addItemCardModalListItemArray, setAddItemCardModalListItemArray] =
 		useState(initAddItemCardModalListItemArray);
 
-	const handleAdd: HandleAddGame = (inputText: string, date: null | undefined) => {
-		const node = createGame(
-			inputText,
-			tree,
-			date,
-		);
+	const handleAdd: HandleAddGame = (
+		inputText: string,
+		date: null | undefined,
+	) => {
+		const node = createGame(inputText, tree, date);
 		ContextService.addNodes(tree, setTree, urlMap, setURLMap, [node]);
 		ContextService.updateActionHistory(
 			history,
 			setHistory,
 			new Action("add", [node]),
 		);
-	}
+	};
 
 	function handleDelete(node: Game) {
 		const bool = window.confirm();
@@ -78,12 +78,11 @@ export default function Home() {
 	}
 
 	function handleToggleSetting(status: boolean, index: number) {
-		const newState = addItemCardModalListItemArray.map((li, i) => {
-			if (index == i) {
-				li = { ...li, enable: status };
-			}
-			return li;
-		});
+		const newState = changeToggleSettingState(
+			addItemCardModalListItemArray,
+			status,
+			index,
+		);
 		setAddItemCardModalListItemArray(newState);
 	}
 

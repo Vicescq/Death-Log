@@ -13,7 +13,7 @@ export default function AddItemCard({
 	const [inputText, setInputText] = useState("");
 
 	function handleAddWrapper() {
-		let date = undefined,
+		let date: undefined | null = undefined,
 			notable = true;
 		modalListItemArray.forEach((li) => {
 			if (

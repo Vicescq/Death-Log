@@ -14,6 +14,7 @@ import ContextService from "../services/ContextService";
 import { createProfile } from "../utils/treeUtils";
 import AddItemCard from "../components/addItemCard/AddItemCard";
 import type { HandleAddProfile } from "../components/addItemCard/AddItemCardProps";
+import { changeToggleSettingState } from "../utils/eventHandlerUtils";
 
 export default function GameProfiles({ gameID }: { gameID: string }) {
 	const [tree, setTree] = useTreeContext();
@@ -39,13 +40,11 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 	const [addItemCardModalListItemArray, setAddItemCardModalListItemArray] =
 		useState(initAddItemCardModalListItemArray);
 
-	const handleAdd: HandleAddProfile = (inputText: string, date: null | undefined) => {
-		const node = createProfile(
-			inputText,
-			tree,
-			date,
-			gameID,
-		);
+	const handleAdd: HandleAddProfile = (
+		inputText: string,
+		date: null | undefined,
+	) => {
+		const node = createProfile(inputText, tree, date, gameID);
 		ContextService.addNodes(tree, setTree, urlMap, setURLMap, [node]);
 		ContextService.updateActionHistory(
 			history,
@@ -53,7 +52,7 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 			new Action("add", [node]),
 			new Action("update", [tree.get(gameID!)!]),
 		);
-	}
+	};
 
 	function handleDelete(node: Profile) {
 		const bool = window.confirm();
@@ -88,12 +87,11 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 	}
 
 	function handleToggleSetting(status: boolean, index: number) {
-		const newState = addItemCardModalListItemArray.map((li, i) => {
-			if (index == i) {
-				li = { ...li, enable: status };
-			}
-			return li;
-		});
+		const newState = changeToggleSettingState(
+			addItemCardModalListItemArray,
+			status,
+			index,
+		);
 		setAddItemCardModalListItemArray(newState);
 	}
 
