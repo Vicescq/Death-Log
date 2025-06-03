@@ -2,7 +2,7 @@ import type { TreeStateType } from "../contexts/treeContext";
 import Game from "../model/Game";
 import Profile from "../model/Profile";
 import Subject from "../model/Subject";
-import TreeNode, { type TreeNodeSerializableType } from "../model/TreeNode";
+import { type TreeNodeSerializableType } from "../model/TreeNode";
 
 export function sanitizeUserEntry(inputText: string) {
     inputText = inputText.trim();
@@ -12,10 +12,10 @@ export function sanitizeUserEntry(inputText: string) {
     return inputText;
 }
 
-export function createNodePath(inputText: string, parentID: string | null = null, tree: TreeStateType) {
+export function createNodePath(inputText: string, parentID: string, tree: TreeStateType) {
     let path: string;
     inputText = sanitizeUserEntry(inputText);
-    if (parentID != null && tree.get(parentID)?.type != "subject") {
+    if (parentID != "ROOT_NODE") {
         const parentNode = tree.get(parentID)!
         path = parentNode.path + "/" + inputText.replaceAll(" ", "-");
     }

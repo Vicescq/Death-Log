@@ -22,7 +22,21 @@ export default class ContextService {
             const parentNode = shallowCopyTree.get(node.parentID!)!
 
             if (node instanceof Subject && !node.notable && !parentNode.childIDS.includes(node.id)) {
-                parentNode.childIDS.unshift(node.id)
+                if (parentNode.childIDS.length == 0) {
+                    parentNode.childIDS.unshift(node.id);
+                }
+                else {
+                    const startIndex = parentNode.childIDS.findIndex((id) => {
+                        const subject = tree.get(id) as Subject;
+                        return subject.notable
+                    });
+                    if (startIndex != -1) {
+                        parentNode.childIDS = parentNode.childIDS.slice(0, startIndex).concat([node.id]).concat(parentNode.childIDS.slice(startIndex));
+                    }
+                    else {
+                        parentNode.childIDS.push(node.id);
+                    }
+                }
             }
 
             if (node.type != "subject") {
@@ -85,7 +99,7 @@ export default class ContextService {
         setTree(shallowCopyTree);
     }
 
-    
+
 
     static initializeTreeState(serializedTree: object[], setTree: TreeContextType[1], setURLMap: URLMapContextType[1]) {
 
