@@ -15,7 +15,10 @@ import { createProfile } from "../utils/tree";
 import AddItemCard from "../components/addItemCard/AddItemCard";
 import type { HandleAddProfile } from "../components/addItemCard/AddItemCardProps";
 import { changeToggleSettingState } from "../utils/eventHandlers";
-import { createModalListItemInputEdit, createModalListItemToggle } from "../utils/ui";
+import {
+	createModalListItemInputEdit,
+	createModalListItemToggle,
+} from "../utils/ui";
 
 export default function GameProfiles({ gameID }: { gameID: string }) {
 	const [tree, setTree] = useTreeContext();
@@ -24,9 +27,14 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 	const addItemCardModalRef = useRef<HTMLDialogElement | null>(null);
 
 	const [addItemCardModalListItemArray, setAddItemCardModalListItemArray] =
-		useState([createModalListItemToggle("AUTO-DATE", "autoDate", true), createModalListItemToggle("CHALLENGE", "challenge", false)]);
+		useState([
+			createModalListItemToggle("AUTO-DATE", "autoDate", true),
+			createModalListItemToggle("CHALLENGE", "challenge", false),
+		]);
 
-	const [cardModalListItemArray, setCardModalListItemArray] = useState([createModalListItemInputEdit("Edit Name:", "name")]);
+	const [cardModalListItemArray, setCardModalListItemArray] = useState([
+		createModalListItemInputEdit("Edit Name:", "name"),
+	]);
 
 	const handleAdd: HandleAddProfile = (
 		inputText: string,
@@ -117,6 +125,7 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 						(li, index) => {
 							return (
 								<ModalListItemToggle
+									key={index}
 									modalListItem={li}
 									index={index}
 									handleToggleSetting={handleToggleSetting}

@@ -8,7 +8,9 @@ import {
 } from "@clerk/clerk-react";
 import info from "../assets/info.svg";
 
+
 export default function NavBar() {
+	
 	return (
 		<nav className="bg-zomp border-b-4 border-b-black px-2 text-black">
 			<ul className="flex">

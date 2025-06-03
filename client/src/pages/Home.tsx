@@ -18,6 +18,9 @@ import {
 	createModalListItemInputEdit,
 	createModalListItemToggle,
 } from "../utils/ui";
+import migrateAllToDB from "../utils/migration";
+import APIService from "../services/APIService";
+import info from "../assets/info.svg"
 
 export default function Home() {
 	const [tree, setTree] = useTreeContext();
@@ -104,9 +107,10 @@ export default function Home() {
 	}
 
 	usePostDeathLog(history, setHistory);
-
+	
 	return (
 		<>
+		<img src={info} className="w-10" onClick={() => APIService.manualPostDeathLog(history.uuid, migrateAllToDB(tree))}/>
 			<AddItemCard
 				handleAdd={handleAdd}
 				itemType="game"

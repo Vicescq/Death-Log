@@ -181,14 +181,16 @@ export default function Card({
 				})}
 				utilityBtns={[
 					<ModalUtilityButton
+						key={0}
 						name={"EDIT"}
 						handleClick={() => {
 							handleDetailsSettingSubmit!(inputText);
-							modalRef.current?.close()
+							modalRef.current?.close();
 						}}
 						bgCol="bg-hunyadi"
 					/>,
 					<ModalUtilityButton
+						key={1}
 						name={"DELETE"}
 						handleClick={handleDelete}
 						bgCol="bg-indianred"
