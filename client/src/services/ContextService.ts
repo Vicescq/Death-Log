@@ -7,7 +7,7 @@ import type TreeNode from "../model/TreeNode";
 import type { HistoryContextType } from "../contexts/historyContext";
 import type { TreeContextType, TreeStateType } from "../contexts/treeContext";
 import type { URLMapContextType, URLMapStateType } from "../contexts/urlMapContext";
-import { createShallowCopyMap } from "../utils/tree";
+import { createShallowCopyMap, sortChildIDS } from "../utils/tree";
 
 export default class ContextService {
 
@@ -16,6 +16,7 @@ export default class ContextService {
     static addNodes(tree: TreeStateType, setTree: TreeContextType[1], urlMap: URLMapContextType[0], setURLMap: URLMapContextType[1], nodes: TreeNode[]) {
         const shallowCopyTree = createShallowCopyMap(tree);
         const shallowCopyURLMap = createShallowCopyMap(urlMap);
+
 
         nodes.forEach((node) => {
             shallowCopyTree.set(node.id, node);
@@ -33,8 +34,8 @@ export default class ContextService {
                     parentNode.childIDS = parentNode.childIDS.slice(0, startUnnotableIndex).concat([node.id]).concat(parentNode.childIDS.slice(startUnnotableIndex));
                 }
 
-                else{
-                     parentNode.childIDS.push(node.id);
+                else {
+                    parentNode.childIDS.push(node.id);
                 }
             }
 
@@ -47,7 +48,11 @@ export default class ContextService {
             if (!(node instanceof Subject)) {
                 shallowCopyURLMap.set(node.path, node.id);
             }
+
+            parentNode.childIDS = sortChildIDS(parentNode, shallowCopyTree);
+
         })
+
         setTree(shallowCopyTree);
         setURLMap(shallowCopyURLMap);
     }
@@ -92,11 +97,11 @@ export default class ContextService {
 
     static updateNode(updatedNode: TreeNode, tree: TreeStateType, setTree: TreeContextType[1]) {
         const shallowCopyTree = createShallowCopyMap(tree);
+        const parentNode = shallowCopyTree.get(updatedNode.parentID!)!;
+        parentNode.childIDS = sortChildIDS(parentNode, shallowCopyTree);
         shallowCopyTree.set(updatedNode.id, updatedNode);
         setTree(shallowCopyTree);
     }
-
-
 
     static initializeTreeState(serializedTree: object[], setTree: TreeContextType[1], setURLMap: URLMapContextType[1]) {
 

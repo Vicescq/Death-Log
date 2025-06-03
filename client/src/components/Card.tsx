@@ -141,7 +141,6 @@ export default function Card({
 						src={details}
 						alt=""
 						onClick={() => modalRef.current!.showModal()}
-						// onClick={() => handleDelete()}
 					/>
 					<img
 						className={`w-9 cursor-pointer ${readOnlyToggleCSS}`}
@@ -192,7 +191,10 @@ export default function Card({
 					<ModalUtilityButton
 						key={1}
 						name={"DELETE"}
-						handleClick={handleDelete}
+						handleClick={() => {
+							handleDelete();
+							modalRef.current?.close();
+						}}
 						bgCol="bg-indianred"
 					/>,
 				]}

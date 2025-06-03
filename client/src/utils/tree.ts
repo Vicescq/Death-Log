@@ -2,6 +2,7 @@ import type { TreeStateType } from "../contexts/treeContext";
 import Game from "../model/Game";
 import Profile from "../model/Profile";
 import Subject from "../model/Subject";
+import type TreeNode from "../model/TreeNode";
 
 export function sanitizeUserEntry(inputText: string) {
     inputText = inputText.trim();
@@ -59,4 +60,20 @@ export function createShallowCopyMap<T>(map: Map<string, T>) {
     const objLiteralFromTree = Object.fromEntries(map);
     const objLiteralFromTreeShallowCopy = { ...objLiteralFromTree };
     return new Map(Object.entries(objLiteralFromTreeShallowCopy));
+}
+
+export function sortChildIDS(parentNode: TreeNode, tree: TreeStateType) {
+    const sorted = parentNode.childIDS.toSorted((a, b) => {
+        const nodeA = tree.get(a);
+        const nodeB = tree.get(b);
+
+        if (nodeA && nodeB) {
+            return Number(nodeA.completed) - Number(nodeB.completed);
+        }
+        else {
+            return 0
+        }
+
+    });
+    return sorted
 }
