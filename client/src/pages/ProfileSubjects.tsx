@@ -12,8 +12,8 @@ import type { ModalListItemInputEditType, ModalListItemToggleType } from "../com
 import Modal from "../components/modals/Modal";
 import ModalListItemToggle from "../components/modals/ModalListItemToggle";
 import ContextService from "../services/ContextService";
-import { createSubject } from "../utils/treeUtils";
-import { changeToggleSettingState } from "../utils/eventHandlerUtils";
+import { createSubject } from "../utils/tree";
+import { changeToggleSettingState } from "../utils/eventHandlers";
 
 export default function ProfileSubjects({ profileID }: { profileID: string }) {
 	const [tree, setTree] = useTreeContext();
@@ -135,6 +135,12 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 		setAddItemCardModalListItemArray(newState);
 	}
 
+	function handleDetailsSetting(subject: Subject, inputText: string){
+		subject.name = inputText;
+		ContextService.updateNode(subject, tree, setTree);
+		ContextService.updateActionHistory(history, setHistory, new Action("update", [subject]));
+	}
+
 	function createCards() {
 		return tree.get(profileID)?.childIDS.map((nodeID, index) => {
 			const subject = tree.get(nodeID) as Subject;
@@ -151,6 +157,7 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 						handleCompletedStatus(subject, newStatus)
 					}
 					modalListItemArray={cardModalListItemArray}
+					handleDetailsSettingSubmit={(inputText) => handleDetailsSetting(subject, inputText)}
 				/>
 			);
 		});

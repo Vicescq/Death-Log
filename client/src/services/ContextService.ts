@@ -7,7 +7,7 @@ import type TreeNode from "../model/TreeNode";
 import type { HistoryContextType } from "../contexts/historyContext";
 import type { TreeContextType, TreeStateType } from "../contexts/treeContext";
 import type { URLMapContextType, URLMapStateType } from "../contexts/urlMapContext";
-import { createShallowCopyMap } from "../utils/treeUtils";
+import { createShallowCopyMap } from "../utils/tree";
 
 export default class ContextService {
 

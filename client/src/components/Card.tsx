@@ -35,6 +35,7 @@ type Props = {
 		| ModalListItemToggleType
 		| ModalListItemInputEditType
 	)[];
+	handleDetailsSettingSubmit?: (inputText: string) => void;
 };
 
 export default function Card({
@@ -44,8 +45,10 @@ export default function Card({
 	handleCompletedStatus,
 	handleDelete,
 	modalListItemArray,
+	handleDetailsSettingSubmit,
 }: Props) {
 	const modalRef = useRef<HTMLDialogElement | null>(null);
+	const [inputText, setInputText] = useState("");
 
 	const enabledCSS =
 		"bg-amber-200 border-2 rounded-2xl shadow-[5px_2px_0px_rgba(0,0,0,1)]";
@@ -160,6 +163,9 @@ export default function Card({
 								key={index}
 								modalListItem={li}
 								index={index}
+								handleChange={(inputText) =>
+									setInputText(inputText)
+								}
 							/>
 						);
 					} else {
@@ -174,6 +180,14 @@ export default function Card({
 					}
 				})}
 				utilityBtns={[
+					<ModalUtilityButton
+						name={"EDIT"}
+						handleClick={() => {
+							handleDetailsSettingSubmit!(inputText);
+							modalRef.current?.close()
+						}}
+						bgCol="bg-hunyadi"
+					/>,
 					<ModalUtilityButton
 						name={"DELETE"}
 						handleClick={handleDelete}

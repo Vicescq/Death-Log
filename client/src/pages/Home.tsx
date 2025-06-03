@@ -15,9 +15,9 @@ import type {
 import Modal from "../components/modals/Modal";
 import ModalListItemToggle from "../components/modals/ModalListItemToggle";
 import ContextService from "../services/ContextService";
-import { createGame } from "../utils/treeUtils";
+import { createGame } from "../utils/tree";
 import type { HandleAddGame } from "../components/addItemCard/AddItemCardProps";
-import { changeToggleSettingState } from "../utils/eventHandlerUtils";
+import { changeToggleSettingState } from "../utils/eventHandlers";
 
 export default function Home() {
 	const [tree, setTree] = useTreeContext();

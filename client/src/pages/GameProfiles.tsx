@@ -11,10 +11,10 @@ import type { ModalListItemInputEditType, ModalListItemToggleType } from "../com
 import Modal from "../components/modals/Modal";
 import ModalListItemToggle from "../components/modals/ModalListItemToggle";
 import ContextService from "../services/ContextService";
-import { createProfile } from "../utils/treeUtils";
+import { createProfile } from "../utils/tree";
 import AddItemCard from "../components/addItemCard/AddItemCard";
 import type { HandleAddProfile } from "../components/addItemCard/AddItemCardProps";
-import { changeToggleSettingState } from "../utils/eventHandlerUtils";
+import { changeToggleSettingState } from "../utils/eventHandlers";
 
 export default function GameProfiles({ gameID }: { gameID: string }) {
 	const [tree, setTree] = useTreeContext();
