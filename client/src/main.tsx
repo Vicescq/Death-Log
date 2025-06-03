@@ -48,11 +48,7 @@ function AppRoutes() {
 						element={<URLRouter />}
 					/>
 					<Route
-						path=":gameName/:profileName/:subjectName"
-						element={<URLRouter />}
-					/>
-					<Route
-						path=":gameName/:profileName/:subjectName/*"
+						path=":gameName/:profileName/*"
 						element={<ForceError msg={"URL NOT FOUND!"} />}
 					/>
 				</Route>

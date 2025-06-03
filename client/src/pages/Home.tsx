@@ -18,9 +18,6 @@ import {
 	createModalListItemInputEdit,
 	createModalListItemToggle,
 } from "../utils/ui";
-import migrateAllToDB from "../utils/migration";
-import APIService from "../services/APIService";
-import info from "../assets/info.svg"
 
 export default function Home() {
 	const [tree, setTree] = useTreeContext();
