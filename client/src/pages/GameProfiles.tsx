@@ -7,7 +7,7 @@ import Action from "../model/Action";
 import usePostDeathLog from "../hooks/usePostDeathLog";
 import CardWrapper from "../components/CardWrapper";
 import { useRef, useState } from "react";
-import type { ModalListItemInputEditType, ModalListItemToggleType } from "../components/modals/ModalListItemTypes";
+
 import Modal from "../components/modals/Modal";
 import ModalListItemToggle from "../components/modals/ModalListItemToggle";
 import ContextService from "../services/ContextService";
