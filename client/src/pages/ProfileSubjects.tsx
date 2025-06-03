@@ -12,7 +12,7 @@ import type { ModalListItemToggleType } from "../components/modals/ModalListItem
 import Modal from "../components/modals/Modal";
 import ModalListItemToggle from "../components/modals/ModalListItemToggle";
 import ContextService from "../services/ContextService";
-import { createNode } from "../utils/treeUtils";
+import { createNode, createSubject } from "../utils/treeUtils";
 
 export default function ProfileSubjects({ profileID }: { profileID: string }) {
 	const [tree, setTree] = useTreeContext();
@@ -40,17 +40,10 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 
 	function handleAdd(
 		inputText: string,
-		autoDate: boolean = true,
-		notable: boolean = true,
+		date: null | undefined,
+		notable: boolean,
 	) {
-		const node = createNode(
-			inputText,
-			tree,
-			autoDate,
-			"subject",
-			profileID,
-			notable,
-		);
+		const node = createSubject(inputText, date, profileID, notable);
 		ContextService.addNodes(tree, setTree, urlMap, setURLMap, [node]);
 		ContextService.updateActionHistory(
 			history,

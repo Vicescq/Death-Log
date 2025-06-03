@@ -92,28 +92,16 @@ export default class ContextService {
         const urlMap: URLMapStateType = new Map();
         const tree: TreeStateType = new Map();
 
-        function migrationNewCompletedField(revived: TreeNode) {
-            if (revived.completed == undefined) {
-                revived.completed = false;
-            }
-            return revived
-        }
-
         function reviver(obj: any): TreeNode {
-            let revived: TreeNode;
             switch (obj._type) {
                 case "root":
-                    revived = Object.assign(Object.create(RootNode.prototype), obj);
-                    return migrationNewCompletedField(revived);
+                    return new RootNode(obj._childIDS);
                 case "game":
-                    revived = Object.assign(Object.create(Game.prototype), obj);
-                    return migrationNewCompletedField(revived);
+                    return new Game(obj._name, obj._path, obj._parentID, obj._childIDS, obj._id, obj._date, obj._completed);
                 case "profile":
-                    revived = Object.assign(Object.create(Profile.prototype), obj);
-                    return migrationNewCompletedField(revived);
+                    return new Profile(obj._name, obj._path, obj._parentID, obj._id, obj._childIDS, obj._date, obj._completed);
                 case "subject":
-                    revived = Object.assign(Object.create(Subject.prototype), obj);
-                    return migrationNewCompletedField(revived);
+                    return new Subject(obj._name, obj._parentID, obj._notable, obj._fullTries, obj._resets, obj._id, obj._date, obj._completed);
                 default:
                     return obj;
             }

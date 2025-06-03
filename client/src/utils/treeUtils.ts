@@ -28,28 +28,52 @@ export function createNodePath(inputText: string, parentID: string | null = null
 export function createNode(
     inputText: string,
     tree: TreeStateType,
-    autoDate: boolean,
     nodeToBeAdded: TreeNodeSerializableType,
+    date: string | null,
     parentID?: string,
     notable?: boolean,
 ) {
     inputText = sanitizeUserEntry(inputText);
     const path = createNodePath(inputText, parentID, tree);
-
-    let node: TreeNode;
     switch (nodeToBeAdded) {
         case "game":
-            node = autoDate ? new Game(inputText.trim(), path, "ROOT_NODE")
-                : new Game(inputText.trim(), path, "ROOT_NODE", undefined, undefined, null);
-            break;
+            return new Game(inputText, path, "ROOT_NODE", undefined, undefined, date);
         case "profile":
-            node = autoDate ? new Profile(inputText, path, parentID!) : new Profile(inputText, path, parentID!, undefined, undefined, null);
-            break;
+            return new Profile(inputText, path, parentID!, undefined, undefined, date);
         default:
-            node = autoDate ? new Subject(inputText, parentID!, notable) : new Subject(inputText, parentID!, notable, undefined, undefined, undefined, null);
-            break;
+            return new Subject(inputText, parentID!, notable, undefined, undefined, undefined, date);
     }
-    return node
+}
+
+export function createGame(
+    inputText: string,
+    tree: TreeStateType,
+    date: null | undefined,
+) {
+    inputText = sanitizeUserEntry(inputText);
+    const path = createNodePath(inputText, "ROOT_NODE", tree);
+    return new Game(inputText, path, "ROOT_NODE", undefined, undefined, date);
+}
+
+export function createProfile(
+    inputText: string,
+    tree: TreeStateType,
+    date: null | undefined,
+    parentID: string,
+) {
+    inputText = sanitizeUserEntry(inputText);
+    const path = createNodePath(inputText, parentID, tree);
+    return new Profile(inputText, path, parentID, undefined, undefined, date);
+}
+
+export function createSubject(
+    inputText: string,
+    date: null | undefined,
+    parentID: string,
+    notable: boolean,
+) {
+    inputText = sanitizeUserEntry(inputText);
+    return new Subject(inputText, parentID, notable, undefined, undefined, undefined, date);
 }
 
 export function createShallowCopyMap<T>(map: Map<string, T>) {

@@ -1,5 +1,5 @@
 import Card from "../components/Card";
-import AddItemCard from "../components/AddItemCard";
+import AddItemCard, { type HandleAddGame } from "../components/AddItemCard";
 import Game from "../model/Game";
 import useTreeContext from "../hooks/useTreeContext";
 import useURLMapContext from "../hooks/useURLMapContext";
@@ -12,7 +12,7 @@ import type { ModalListItemToggleType } from "../components/modals/ModalListItem
 import Modal from "../components/modals/Modal";
 import ModalListItemToggle from "../components/modals/ModalListItemToggle";
 import ContextService from "../services/ContextService";
-import { createNode } from "../utils/treeUtils";
+import { createGame } from "../utils/treeUtils";
 
 export default function Home() {
 	const [tree, setTree] = useTreeContext();
@@ -31,12 +31,11 @@ export default function Home() {
 	const [addItemCardModalListItemArray, setAddItemCardModalListItemArray] =
 		useState(initAddItemCardModalListItemArray);
 
-	function handleAdd(inputText: string, autoDate: boolean = true) {
-		const node = createNode(
+	const handleAdd: HandleAddGame = (inputText: string, date: null | undefined) => {
+		const node = createGame(
 			inputText,
 			tree,
-			autoDate,
-			"game",
+			date,
 		);
 		ContextService.addNodes(tree, setTree, urlMap, setURLMap, [node]);
 		ContextService.updateActionHistory(

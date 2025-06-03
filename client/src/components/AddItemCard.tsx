@@ -7,11 +7,22 @@ import type {
 	ModalListItemToggleType,
 } from "./modals/ModalListItemTypes";
 
+export type HandleAddGame = (inputText: string, date: null | undefined) => void;
+export type HandleAddProfile = (
+	inputText: string,
+	date: null | undefined,
+) => void;
+export type HandleAddSubject = (
+	inputText: string,
+	date: null | undefined,
+	notable: boolean,
+) => void;
+
 type Props = {
 	children: React.JSX.Element;
 	handleAdd: (
 		inputText: string,
-		autoDate?: boolean,
+		date: null | undefined,
 		notable?: boolean,
 	) => void;
 	itemType: TreeNodeSerializableType;
@@ -32,7 +43,7 @@ export default function AddItemCard({
 	const [inputText, setInputText] = useState("");
 
 	function handleAddWrapper() {
-		let autoDate = true,
+		let date = undefined,
 			notable = true;
 		modalListItemArray.forEach((li) => {
 			if (
@@ -40,7 +51,7 @@ export default function AddItemCard({
 				li.toggleSetting == "autoDate" &&
 				!li.enable
 			) {
-				autoDate = false;
+				date = null;
 			}
 
 			if (
@@ -51,7 +62,17 @@ export default function AddItemCard({
 				notable = false;
 			}
 		});
-		handleAdd(inputText, autoDate, notable);
+
+		switch (itemType) {
+			case "game":
+				handleAdd(inputText, date);
+				break;
+			case "profile":
+				handleAdd(inputText, date);
+				break;
+			default:
+				handleAdd(inputText, date, notable);
+		}
 	}
 
 	return (
