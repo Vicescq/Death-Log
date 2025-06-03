@@ -33,13 +33,14 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 	const [cardModalListItemArray, setCardModalListItemArray] = useState([
 		createModalListItemInputEdit("Edit Name:", "name"),
 	]);
-
+	
 	function handleAdd(
 		inputText: string,
 		date: null | undefined,
 		notable: boolean,
 	) {
 		const node = createSubject(inputText, date, profileID, notable);
+
 		ContextService.addNodes(tree, setTree, urlMap, setURLMap, [node]);
 		ContextService.updateActionHistory(
 			history,
@@ -166,6 +167,7 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 						(li, index) => {
 							return (
 								<ModalListItemToggle
+									key={index}
 									modalListItem={li}
 									index={index}
 									handleToggleSetting={handleToggleSetting}

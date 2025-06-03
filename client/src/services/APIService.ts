@@ -29,16 +29,6 @@ export default class APIService {
         });
     }
 
-    static manualPostDeathLog(uuid: string, actions: Action[]) {
-
-        const serializedActionHistory = JSON.stringify(actions);
-        fetch(`/api/nodes/${uuid}`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: serializedActionHistory
-        });
-    }
-
     static deduplicateHistory(history: HistoryStateType) {
 
         function reviver(key: any, value: any) {

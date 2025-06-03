@@ -10,7 +10,7 @@ import readonly from "../assets/readonly.svg";
 import Game from "../model/Game";
 import Profile from "../model/Profile";
 import type { TreeStateType } from "../contexts/treeContext";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type {
 	ModalListItemToggleType,
 	ModalListItemInputEditType,
@@ -82,6 +82,10 @@ export default function Card({
 		treeNode instanceof Game || treeNode instanceof Profile
 			? treeNode.getResets(tree)
 			: treeNode.resets;
+
+	useEffect(() => {
+		setResetDeathTypeMode(false);
+	}, [treeNode.id]);
 
 	return (
 		<>
