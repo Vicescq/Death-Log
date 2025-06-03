@@ -68,6 +68,27 @@ export function sortChildIDS(parentNode: TreeNode, tree: TreeStateType) {
         const nodeB = tree.get(b);
 
         if (nodeA && nodeB) {
+            if (nodeA instanceof Subject && nodeB instanceof Subject) {
+
+                let unnotableFactorA = 0;
+                let unnotableFactorB = 0;
+
+                if (!nodeA.notable) {
+                    unnotableFactorA += -1;
+                    if (nodeA.completed){
+                        unnotableFactorA += 1;
+                    }
+                }
+
+                if (!nodeB.notable) {
+                    unnotableFactorB += -1;
+                    if (nodeB.completed){
+                        unnotableFactorB += 1;
+                    }
+                }
+
+                return Number(nodeA.completed) + unnotableFactorA - (Number(nodeB.completed) + unnotableFactorB);
+            }
             return Number(nodeA.completed) - Number(nodeB.completed);
         }
         else {

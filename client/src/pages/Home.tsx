@@ -110,7 +110,6 @@ export default function Home() {
 	
 	return (
 		<>
-		<img src={info} className="w-10" onClick={() => APIService.manualPostDeathLog(history.uuid, migrateAllToDB(tree))}/>
 			<AddItemCard
 				handleAdd={handleAdd}
 				itemType="game"

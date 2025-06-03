@@ -9,7 +9,7 @@ export default function usePostDeathLog(history: HistoryStateType, setHistory: H
         const interval = setTimeout(() => {
             if (history.actionHistory.slice(history.newActionStartIndex).length > 0) {
                 const deduplicatedHistoryState = APIService.deduplicateHistory(history);
-                APIService.postDeathLog(deduplicatedHistoryState.uuid, deduplicatedHistoryState);
+                APIService.postDeathLog(deduplicatedHistoryState.uuid, deduplicatedHistoryState.actionHistory);
                 ContextService.updateNewActionStartIndex(history, setHistory);
             }
         }, 3000);

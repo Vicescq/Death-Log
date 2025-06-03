@@ -17,27 +17,9 @@ export default class ContextService {
         const shallowCopyTree = createShallowCopyMap(tree);
         const shallowCopyURLMap = createShallowCopyMap(urlMap);
 
-
         nodes.forEach((node) => {
             shallowCopyTree.set(node.id, node);
             const parentNode = shallowCopyTree.get(node.parentID!)!
-
-            // un-notable logic
-            if (node instanceof Subject && !node.notable && !parentNode.childIDS.includes(node.id)) {
-                const startUnnotableIndex = parentNode.childIDS.findIndex((id) => {
-                    const subject = tree.get(id) as Subject;
-                    return subject.notable
-                });
-
-                // if notables present
-                if (startUnnotableIndex != -1) {
-                    parentNode.childIDS = parentNode.childIDS.slice(0, startUnnotableIndex).concat([node.id]).concat(parentNode.childIDS.slice(startUnnotableIndex));
-                }
-
-                else {
-                    parentNode.childIDS.push(node.id);
-                }
-            }
 
             // if node not in db already
             if (!parentNode.childIDS.includes(node.id)) {

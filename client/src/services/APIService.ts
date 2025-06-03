@@ -10,9 +10,8 @@ import ContextService from "./ContextService";
 export default class APIService {
     constructor() { };
 
-    static postDeathLog(uuid: string, history: HistoryStateType) {
-
-        const serializedActionHistory = JSON.stringify(history.actionHistory);
+    static postDeathLog(uuid: string, actions: Action[]) {
+        const serializedActionHistory = JSON.stringify(actions);
         fetch(`/api/nodes/${uuid}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
