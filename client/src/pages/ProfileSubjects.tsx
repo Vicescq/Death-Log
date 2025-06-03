@@ -1,5 +1,5 @@
 import Card, { type HandleDeathCountOperation } from "../components/Card";
-import AddItemCard from "../components/AddItemCard";
+import AddItemCard from "../components/addItemCard/AddItemCard";
 import Subject, { type DeathType } from "../model/Subject";
 import useTreeContext from "../hooks/useTreeContext";
 import useURLMapContext from "../hooks/useURLMapContext";
@@ -12,7 +12,7 @@ import type { ModalListItemToggleType } from "../components/modals/ModalListItem
 import Modal from "../components/modals/Modal";
 import ModalListItemToggle from "../components/modals/ModalListItemToggle";
 import ContextService from "../services/ContextService";
-import { createNode, createSubject } from "../utils/treeUtils";
+import { createSubject } from "../utils/treeUtils";
 
 export default function ProfileSubjects({ profileID }: { profileID: string }) {
 	const [tree, setTree] = useTreeContext();

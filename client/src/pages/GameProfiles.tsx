@@ -1,5 +1,4 @@
 import Card from "../components/Card";
-import AddItemCard, { type HandleAddGame, type HandleAddProfile } from "../components/AddItemCard";
 import Profile from "../model/Profile";
 import useTreeContext from "../hooks/useTreeContext";
 import useURLMapContext from "../hooks/useURLMapContext";
@@ -12,7 +11,9 @@ import type { ModalListItemToggleType } from "../components/modals/ModalListItem
 import Modal from "../components/modals/Modal";
 import ModalListItemToggle from "../components/modals/ModalListItemToggle";
 import ContextService from "../services/ContextService";
-import { createNode, createProfile } from "../utils/treeUtils";
+import { createProfile } from "../utils/treeUtils";
+import AddItemCard from "../components/addItemCard/AddItemCard";
+import type { HandleAddProfile } from "../components/addItemCard/AddItemCardProps";
 
 export default function GameProfiles({ gameID }: { gameID: string }) {
 	const [tree, setTree] = useTreeContext();

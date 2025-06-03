@@ -1,37 +1,7 @@
 import { useState } from "react";
-import type { TreeNodeSerializableType } from "../model/TreeNode";
-import gear from "../assets/gear.svg";
-import filter from "../assets/filter.svg";
-import type {
-	ModalListItemInputEditType,
-	ModalListItemToggleType,
-} from "./modals/ModalListItemTypes";
-
-export type HandleAddGame = (inputText: string, date: null | undefined) => void;
-export type HandleAddProfile = (
-	inputText: string,
-	date: null | undefined,
-) => void;
-export type HandleAddSubject = (
-	inputText: string,
-	date: null | undefined,
-	notable: boolean,
-) => void;
-
-type Props = {
-	children: React.JSX.Element;
-	handleAdd: (
-		inputText: string,
-		date: null | undefined,
-		notable?: boolean,
-	) => void;
-	itemType: TreeNodeSerializableType;
-	modalRef: React.RefObject<HTMLDialogElement | null>;
-	modalListItemArray: (
-		| ModalListItemToggleType
-		| ModalListItemInputEditType
-	)[];
-};
+import gear from "../../assets/gear.svg";
+import filter from "../../assets/filter.svg";
+import type { AddItemCardProps } from "./AddItemCardProps";
 
 export default function AddItemCard({
 	children,
@@ -39,7 +9,7 @@ export default function AddItemCard({
 	itemType,
 	modalRef,
 	modalListItemArray,
-}: Props) {
+}: AddItemCardProps) {
 	const [inputText, setInputText] = useState("");
 
 	function handleAddWrapper() {

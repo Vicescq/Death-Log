@@ -25,26 +25,6 @@ export function createNodePath(inputText: string, parentID: string, tree: TreeSt
     return path;
 }
 
-export function createNode(
-    inputText: string,
-    tree: TreeStateType,
-    nodeToBeAdded: TreeNodeSerializableType,
-    date: string | null,
-    parentID?: string,
-    notable?: boolean,
-) {
-    inputText = sanitizeUserEntry(inputText);
-    const path = createNodePath(inputText, parentID, tree);
-    switch (nodeToBeAdded) {
-        case "game":
-            return new Game(inputText, path, "ROOT_NODE", undefined, undefined, date);
-        case "profile":
-            return new Profile(inputText, path, parentID!, undefined, undefined, date);
-        default:
-            return new Subject(inputText, parentID!, notable, undefined, undefined, undefined, date);
-    }
-}
-
 export function createGame(
     inputText: string,
     tree: TreeStateType,

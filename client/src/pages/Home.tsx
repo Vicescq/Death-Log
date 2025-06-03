@@ -1,5 +1,5 @@
 import Card from "../components/Card";
-import AddItemCard, { type HandleAddGame } from "../components/AddItemCard";
+import AddItemCard from "../components/addItemCard/AddItemCard";
 import Game from "../model/Game";
 import useTreeContext from "../hooks/useTreeContext";
 import useURLMapContext from "../hooks/useURLMapContext";
@@ -13,6 +13,7 @@ import Modal from "../components/modals/Modal";
 import ModalListItemToggle from "../components/modals/ModalListItemToggle";
 import ContextService from "../services/ContextService";
 import { createGame } from "../utils/treeUtils";
+import type { HandleAddGame } from "../components/addItemCard/AddItemCardProps";
 
 export default function Home() {
 	const [tree, setTree] = useTreeContext();
