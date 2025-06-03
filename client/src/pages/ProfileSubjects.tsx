@@ -8,7 +8,7 @@ import useHistoryContext from "../hooks/useHistoryContext";
 import usePostDeathLog from "../hooks/usePostDeathLog";
 import CardWrapper from "../components/CardWrapper";
 import { useRef, useState } from "react";
-import type { ModalListItemToggleType } from "../components/modals/ModalListItemTypes";
+import type { ModalListItemInputEditType, ModalListItemToggleType } from "../components/modals/ModalListItemTypes";
 import Modal from "../components/modals/Modal";
 import ModalListItemToggle from "../components/modals/ModalListItemToggle";
 import ContextService from "../services/ContextService";
@@ -38,6 +38,19 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 	);
 	const [addItemCardModalListItemArray, setAddItemCardModalListItemArray] =
 		useState(initAddItemCardModalListItemArray);
+
+	const initCardModalListItemArray: (
+		| ModalListItemToggleType
+		| ModalListItemInputEditType
+	)[] = [];
+	initCardModalListItemArray.push({
+		type: "inputEdit",
+		settingLabel: "Edit Name:",
+		targetField: "name",
+	});
+	const [cardModalListItemArray, setCardModalListItemArray] = useState(
+		initCardModalListItemArray,
+	);
 
 	function handleAdd(
 		inputText: string,
@@ -137,6 +150,7 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 					handleCompletedStatus={(newStatus) =>
 						handleCompletedStatus(subject, newStatus)
 					}
+					modalListItemArray={cardModalListItemArray}
 				/>
 			);
 		});

@@ -8,7 +8,10 @@ import useHistoryContext from "../hooks/useHistoryContext";
 import Action from "../model/Action";
 import CardWrapper from "../components/CardWrapper";
 import { useRef, useState } from "react";
-import type { ModalListItemToggleType } from "../components/modals/ModalListItemTypes";
+import type {
+	ModalListItemInputEditType,
+	ModalListItemToggleType,
+} from "../components/modals/ModalListItemTypes";
 import Modal from "../components/modals/Modal";
 import ModalListItemToggle from "../components/modals/ModalListItemToggle";
 import ContextService from "../services/ContextService";
@@ -23,7 +26,6 @@ export default function Home() {
 	const addItemCardModalRef = useRef<HTMLDialogElement | null>(null);
 
 	const initAddItemCardModalListItemArray: ModalListItemToggleType[] = [];
-
 	initAddItemCardModalListItemArray.push({
 		type: "toggle",
 		enable: true,
@@ -32,6 +34,19 @@ export default function Home() {
 	});
 	const [addItemCardModalListItemArray, setAddItemCardModalListItemArray] =
 		useState(initAddItemCardModalListItemArray);
+
+	const initCardModalListItemArray: (
+		| ModalListItemToggleType
+		| ModalListItemInputEditType
+	)[] = [];
+	initCardModalListItemArray.push({
+		type: "inputEdit",
+		settingLabel: "Edit Name:",
+		targetField: "name",
+	});
+	const [cardModalListItemArray, setCardModalListItemArray] = useState(
+		initCardModalListItemArray,
+	);
 
 	const handleAdd: HandleAddGame = (
 		inputText: string,
@@ -94,11 +109,13 @@ export default function Home() {
 					key={index}
 					tree={tree}
 					treeNode={game}
-					handleDelete={() => handleDelete(game)}
 					handleCompletedStatus={(newStatus) =>
 						handleCompletedStatus(game, newStatus)
 					}
+					handleDelete={() => handleDelete(game)}
+					modalListItemArray={cardModalListItemArray}
 				/>
+					
 			);
 		});
 	}
@@ -119,6 +136,7 @@ export default function Home() {
 						(li, index) => {
 							return (
 								<ModalListItemToggle
+									key={index}
 									modalListItem={li}
 									index={index}
 									handleToggleSetting={handleToggleSetting}

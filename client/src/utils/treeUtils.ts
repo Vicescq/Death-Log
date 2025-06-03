@@ -2,7 +2,6 @@ import type { TreeStateType } from "../contexts/treeContext";
 import Game from "../model/Game";
 import Profile from "../model/Profile";
 import Subject from "../model/Subject";
-import { type TreeNodeSerializableType } from "../model/TreeNode";
 
 export function sanitizeUserEntry(inputText: string) {
     inputText = inputText.trim();

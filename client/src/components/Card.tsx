@@ -10,28 +10,43 @@ import readonly from "../assets/readonly.svg";
 import Game from "../model/Game";
 import Profile from "../model/Profile";
 import type { TreeStateType } from "../contexts/treeContext";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import type {
+	ModalListItemToggleType,
+	ModalListItemInputEditType,
+} from "./modals/ModalListItemTypes";
+import Modal from "./modals/Modal";
+import ModalListItemInputEdit from "./modals/ModalListItemInputEdit";
+import ModalListItemToggle from "./modals/ModalListItemToggle";
+import { ModalUtilityButton } from "./modals/ModalUtilityButton";
 
 export type HandleDeathCountOperation = "add" | "subtract";
 
 type Props = {
 	tree: TreeStateType;
 	treeNode: Game | Profile | Subject;
-	handleDelete: () => void;
 	handleDeathCount?: (
 		deathType: DeathType,
 		operation: HandleDeathCountOperation,
 	) => void;
 	handleCompletedStatus?: (newStatus: boolean) => void;
+	handleDelete: () => void;
+	modalListItemArray: (
+		| ModalListItemToggleType
+		| ModalListItemInputEditType
+	)[];
 };
 
 export default function Card({
 	tree,
 	treeNode,
-	handleDelete,
 	handleDeathCount,
 	handleCompletedStatus,
+	handleDelete,
+	modalListItemArray,
 }: Props) {
+	const modalRef = useRef<HTMLDialogElement | null>(null);
+
 	const enabledCSS =
 		"bg-amber-200 border-2 rounded-2xl shadow-[5px_2px_0px_rgba(0,0,0,1)]";
 	const [resetDeathTypeMode, setResetDeathTypeMode] = useState(false);
@@ -122,8 +137,8 @@ export default function Card({
 						className={`w-9 cursor-pointer ${detailsReadOnlyCSS}`}
 						src={details}
 						alt=""
-						// onClick={() => addItemCardModalRef.current!.showModal()}
-						onClick={() => handleDelete()}
+						onClick={() => modalRef.current!.showModal()}
+						// onClick={() => handleDelete()}
 					/>
 					<img
 						className={`w-9 cursor-pointer ${readOnlyToggleCSS}`}
@@ -135,6 +150,37 @@ export default function Card({
 					/>
 				</div>
 			</div>
+
+			<Modal
+				modalRef={modalRef}
+				listItems={modalListItemArray.map((li, index) => {
+					if (li.type == "inputEdit") {
+						return (
+							<ModalListItemInputEdit
+								key={index}
+								modalListItem={li}
+								index={index}
+							/>
+						);
+					} else {
+						return (
+							<ModalListItemToggle
+								key={index}
+								modalListItem={li}
+								handleToggleSetting={() => true}
+								index={index}
+							/>
+						);
+					}
+				})}
+				utilityBtns={[
+					<ModalUtilityButton
+						name={"DELETE"}
+						handleClick={handleDelete}
+						bgCol="bg-indianred"
+					/>,
+				]}
+			/>
 		</>
 	);
 }

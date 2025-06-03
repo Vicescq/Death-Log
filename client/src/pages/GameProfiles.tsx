@@ -7,7 +7,7 @@ import Action from "../model/Action";
 import usePostDeathLog from "../hooks/usePostDeathLog";
 import CardWrapper from "../components/CardWrapper";
 import { useRef, useState } from "react";
-import type { ModalListItemToggleType } from "../components/modals/ModalListItemTypes";
+import type { ModalListItemInputEditType, ModalListItemToggleType } from "../components/modals/ModalListItemTypes";
 import Modal from "../components/modals/Modal";
 import ModalListItemToggle from "../components/modals/ModalListItemToggle";
 import ContextService from "../services/ContextService";
@@ -39,6 +39,19 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 	);
 	const [addItemCardModalListItemArray, setAddItemCardModalListItemArray] =
 		useState(initAddItemCardModalListItemArray);
+
+	const initCardModalListItemArray: (
+		| ModalListItemToggleType
+		| ModalListItemInputEditType
+	)[] = [];
+	initCardModalListItemArray.push({
+		type: "inputEdit",
+		settingLabel: "Edit Name:",
+		targetField: "name",
+	});
+	const [cardModalListItemArray, setCardModalListItemArray] = useState(
+		initCardModalListItemArray,
+	);
 
 	const handleAdd: HandleAddProfile = (
 		inputText: string,
@@ -107,6 +120,7 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 					handleCompletedStatus={(newStatus) =>
 						handleCompletedStatus(profile, newStatus)
 					}
+					modalListItemArray={cardModalListItemArray}
 				/>
 			);
 		});

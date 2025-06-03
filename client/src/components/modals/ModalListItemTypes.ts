@@ -11,7 +11,7 @@ interface ModalListItem {
 
 export interface ModalListItemInputEditType extends ModalListItem{
     type: "inputEdit";
-    targetField: string
+    targetField: InputEditTargetField
 }
 
 export interface ModalListItemToggleType extends ModalListItem {

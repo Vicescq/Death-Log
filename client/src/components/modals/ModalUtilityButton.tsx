@@ -1,6 +1,6 @@
 type Props = {
 	name: string;
-	handleClick?: () => void;
+	handleClick: () => void;
 	bgCol: string;
 };
 
