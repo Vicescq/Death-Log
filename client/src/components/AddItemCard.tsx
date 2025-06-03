@@ -1,17 +1,25 @@
-import {  useState } from "react";
+import { useState } from "react";
 import type { TreeNodeSerializableType } from "../model/TreeNode";
 import gear from "../assets/gear.svg";
 import filter from "../assets/filter.svg";
+import type {
+	ModalListItemInputEditType,
+	ModalListItemToggleType,
+} from "./modals/ModalListItemTypes";
 
 type Props = {
-	children: React.JSX.Element
+	children: React.JSX.Element;
 	handleAdd: (
 		inputText: string,
 		autoDate?: boolean,
 		notable?: boolean,
 	) => void;
 	itemType: TreeNodeSerializableType;
-	modalRef: React.RefObject<HTMLDialogElement | null>
+	modalRef: React.RefObject<HTMLDialogElement | null>;
+	modalListItemArray: (
+		| ModalListItemToggleType
+		| ModalListItemInputEditType
+	)[];
 };
 
 export default function AddItemCard({
@@ -19,21 +27,35 @@ export default function AddItemCard({
 	handleAdd,
 	itemType,
 	modalRef,
+	modalListItemArray,
 }: Props) {
 	const [inputText, setInputText] = useState("");
 
 	function handleAddWrapper() {
-		let autoDate = true, notable = true;
-		// modalListItemArray.forEach((li) => {
-		// 	if (li.type == "toggle" && li.toggleSetting == "autoDate" && !li.enable){
-		// 		autoDate = false
-		// 	}
-		// })
+		let autoDate = true,
+			notable = true;
+		modalListItemArray.forEach((li) => {
+			if (
+				li.type == "toggle" &&
+				li.toggleSetting == "autoDate" &&
+				!li.enable
+			) {
+				autoDate = false;
+			}
+
+			if (
+				li.type == "toggle" &&
+				li.toggleSetting == "notable" &&
+				!li.enable
+			) {
+				notable = false;
+			}
+		});
 		handleAdd(inputText, autoDate, notable);
 	}
 
 	return (
-		<header className="mb-8 flex w-72 flex-col gap-4 border-4 border-black bg-amber-200 p-4 text-black shadow-[8px_5px_0px_rgba(0,0,0,1)] md:w-lg">
+		<header className="mb-8 flex w-60 flex-col gap-4 border-4 border-black bg-amber-200 p-4 text-black shadow-[8px_5px_0px_rgba(0,0,0,1)] md:w-lg">
 			<div className="flex gap-4">
 				<input
 					type="search"

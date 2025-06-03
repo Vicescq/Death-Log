@@ -112,6 +112,7 @@ export default function Home() {
 				handleAdd={handleAdd}
 				itemType="game"
 				modalRef={addItemCardModalRef}
+				modalListItemArray={addItemCardModalListItemArray}
 			>
 				<Modal
 					modalRef={addItemCardModalRef}

@@ -30,9 +30,9 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 		},
 		{
 			type: "toggle",
-			enable: false,
-			settingLabel: "CHALLENGE",
-			toggleSetting: "challenge",
+			enable: true,
+			settingLabel: "NOTABLE",
+			toggleSetting: "notable",
 		},
 	);
 	const [addItemCardModalListItemArray, setAddItemCardModalListItemArray] =
@@ -156,6 +156,7 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 				modalRef={addItemCardModalRef}
 				itemType="subject"
 				handleAdd={handleAdd}
+				modalListItemArray={addItemCardModalListItemArray}
 			>
 				<Modal
 					modalRef={addItemCardModalRef}

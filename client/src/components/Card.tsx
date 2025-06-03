@@ -68,9 +68,9 @@ export default function Card({
 	return (
 		<>
 			<div
-				className={`flex border-4 border-black font-semibold ${cardCSS} h-72 w-72 rounded-xl p-2 shadow-[10px_8px_0px_rgba(0,0,0,1)] hover:shadow-[20px_10px_0px_rgba(0,0,0,1)]`}
+				className={`flex border-4 border-black font-semibold ${cardCSS} h-60 w-60 rounded-xl p-2 shadow-[10px_8px_0px_rgba(0,0,0,1)] hover:shadow-[20px_10px_0px_rgba(0,0,0,1)]`}
 			>
-				<div className="flex w-52 flex-col">
+				<div className="flex w-40 flex-col">
 					<div className="bg-indianred flex gap-1 rounded-2xl border-2 border-black p-1 px-3 shadow-[4px_4px_0px_rgba(0,0,0,1)]">
 						<img className="w-9" src={skull} alt="" />
 						<p className="mt-auto mb-auto truncate text-xl">

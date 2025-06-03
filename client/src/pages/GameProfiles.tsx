@@ -122,6 +122,7 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 				modalRef={addItemCardModalRef}
 				itemType="profile"
 				handleAdd={handleAdd}
+				modalListItemArray={addItemCardModalListItemArray}
 			>
 				<Modal
 					modalRef={addItemCardModalRef}
