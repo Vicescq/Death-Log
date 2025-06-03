@@ -8,16 +8,16 @@ import useHistoryContext from "../hooks/useHistoryContext";
 import Action from "../model/Action";
 import CardWrapper from "../components/CardWrapper";
 import { useRef, useState } from "react";
-import type {
-	ModalListItemInputEditType,
-	ModalListItemToggleType,
-} from "../components/modals/ModalListItemTypes";
 import Modal from "../components/modals/Modal";
 import ModalListItemToggle from "../components/modals/ModalListItemToggle";
 import ContextService from "../services/ContextService";
 import { createGame } from "../utils/tree";
 import type { HandleAddGame } from "../components/addItemCard/AddItemCardProps";
 import { changeToggleSettingState } from "../utils/eventHandlers";
+import {
+	createModalListItemInputEdit,
+	createModalListItemToggle,
+} from "../utils/ui";
 
 export default function Home() {
 	const [tree, setTree] = useTreeContext();
@@ -25,28 +25,12 @@ export default function Home() {
 	const [history, setHistory] = useHistoryContext();
 	const addItemCardModalRef = useRef<HTMLDialogElement | null>(null);
 
-	const initAddItemCardModalListItemArray: ModalListItemToggleType[] = [];
-	initAddItemCardModalListItemArray.push({
-		type: "toggle",
-		enable: true,
-		settingLabel: "AUTO-DATE",
-		toggleSetting: "autoDate",
-	});
 	const [addItemCardModalListItemArray, setAddItemCardModalListItemArray] =
-		useState(initAddItemCardModalListItemArray);
+		useState([createModalListItemToggle("AUTO-DATE", "autoDate", true)]);
 
-	const initCardModalListItemArray: (
-		| ModalListItemToggleType
-		| ModalListItemInputEditType
-	)[] = [];
-	initCardModalListItemArray.push({
-		type: "inputEdit",
-		settingLabel: "Edit Name:",
-		targetField: "name",
-	});
-	const [cardModalListItemArray, setCardModalListItemArray] = useState(
-		initCardModalListItemArray,
-	);
+	const [cardModalListItemArray, setCardModalListItemArray] = useState([
+		createModalListItemInputEdit("Edit Name:", "name"),
+	]);
 
 	const handleAdd: HandleAddGame = (
 		inputText: string,
@@ -115,7 +99,6 @@ export default function Home() {
 					handleDelete={() => handleDelete(game)}
 					modalListItemArray={cardModalListItemArray}
 				/>
-					
 			);
 		});
 	}

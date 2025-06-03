@@ -8,12 +8,15 @@ import useHistoryContext from "../hooks/useHistoryContext";
 import usePostDeathLog from "../hooks/usePostDeathLog";
 import CardWrapper from "../components/CardWrapper";
 import { useRef, useState } from "react";
-import type { ModalListItemInputEditType, ModalListItemToggleType } from "../components/modals/ModalListItemTypes";
 import Modal from "../components/modals/Modal";
 import ModalListItemToggle from "../components/modals/ModalListItemToggle";
 import ContextService from "../services/ContextService";
 import { createSubject } from "../utils/tree";
 import { changeToggleSettingState } from "../utils/eventHandlers";
+import {
+	createModalListItemInputEdit,
+	createModalListItemToggle,
+} from "../utils/ui";
 
 export default function ProfileSubjects({ profileID }: { profileID: string }) {
 	const [tree, setTree] = useTreeContext();
@@ -21,36 +24,15 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 	const [history, setHistory] = useHistoryContext();
 	const addItemCardModalRef = useRef<HTMLDialogElement | null>(null);
 
-	const initAddItemCardModalListItemArray: ModalListItemToggleType[] = [];
-	initAddItemCardModalListItemArray.push(
-		{
-			type: "toggle",
-			enable: true,
-			settingLabel: "AUTO-DATE",
-			toggleSetting: "autoDate",
-		},
-		{
-			type: "toggle",
-			enable: true,
-			settingLabel: "NOTABLE",
-			toggleSetting: "notable",
-		},
-	);
 	const [addItemCardModalListItemArray, setAddItemCardModalListItemArray] =
-		useState(initAddItemCardModalListItemArray);
+		useState([
+			createModalListItemToggle("AUTO-DATE", "autoDate", true),
+			createModalListItemToggle("NOTABLE", "notable", true),
+		]);
 
-	const initCardModalListItemArray: (
-		| ModalListItemToggleType
-		| ModalListItemInputEditType
-	)[] = [];
-	initCardModalListItemArray.push({
-		type: "inputEdit",
-		settingLabel: "Edit Name:",
-		targetField: "name",
-	});
-	const [cardModalListItemArray, setCardModalListItemArray] = useState(
-		initCardModalListItemArray,
-	);
+	const [cardModalListItemArray, setCardModalListItemArray] = useState([
+		createModalListItemInputEdit("Edit Name:", "name"),
+	]);
 
 	function handleAdd(
 		inputText: string,
@@ -135,10 +117,14 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 		setAddItemCardModalListItemArray(newState);
 	}
 
-	function handleDetailsSetting(subject: Subject, inputText: string){
+	function handleDetailsSetting(subject: Subject, inputText: string) {
 		subject.name = inputText;
 		ContextService.updateNode(subject, tree, setTree);
-		ContextService.updateActionHistory(history, setHistory, new Action("update", [subject]));
+		ContextService.updateActionHistory(
+			history,
+			setHistory,
+			new Action("update", [subject]),
+		);
 	}
 
 	function createCards() {
@@ -157,7 +143,9 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 						handleCompletedStatus(subject, newStatus)
 					}
 					modalListItemArray={cardModalListItemArray}
-					handleDetailsSettingSubmit={(inputText) => handleDetailsSetting(subject, inputText)}
+					handleDetailsSettingSubmit={(inputText) =>
+						handleDetailsSetting(subject, inputText)
+					}
 				/>
 			);
 		});

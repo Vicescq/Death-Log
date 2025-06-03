@@ -1,10 +1,10 @@
 import type { ToggleSetting } from "../Toggle";
 
-type ModalListItemType = "inputEdit" | "toggle"
+export type ModalListItemType = "inputEdit" | "toggle"
 
-type InputEditTargetField = "name" | "date" | "challenge" | "notable"
+export type InputEditTargetField = "name" | "date" | "challenge" | "notable"
 
-interface ModalListItem {
+export interface ModalListItem {
     type: ModalListItemType
     settingLabel: string
 }
