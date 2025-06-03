@@ -21,34 +21,31 @@ export default class ContextService {
             shallowCopyTree.set(node.id, node);
             const parentNode = shallowCopyTree.get(node.parentID!)!
 
+            // un-notable logic
             if (node instanceof Subject && !node.notable && !parentNode.childIDS.includes(node.id)) {
-                if (parentNode.childIDS.length == 0) {
-                    parentNode.childIDS.unshift(node.id);
+                const startUnnotableIndex = parentNode.childIDS.findIndex((id) => {
+                    const subject = tree.get(id) as Subject;
+                    return subject.notable
+                });
+
+                // if notables present
+                if (startUnnotableIndex != -1) {
+                    parentNode.childIDS = parentNode.childIDS.slice(0, startUnnotableIndex).concat([node.id]).concat(parentNode.childIDS.slice(startUnnotableIndex));
                 }
-                else {
-                    const startIndex = parentNode.childIDS.findIndex((id) => {
-                        const subject = tree.get(id) as Subject;
-                        return subject.notable
-                    });
-                    if (startIndex != -1) {
-                        parentNode.childIDS = parentNode.childIDS.slice(0, startIndex).concat([node.id]).concat(parentNode.childIDS.slice(startIndex));
-                    }
-                    else {
-                        parentNode.childIDS.push(node.id);
-                    }
+
+                else{
+                     parentNode.childIDS.push(node.id);
                 }
             }
 
-            if (node.type != "subject") {
+            // if node not in db already
+            if (!parentNode.childIDS.includes(node.id)) {
+                parentNode.childIDS.push(node.id);
+            }
+
+            // url map updates
+            if (!(node instanceof Subject)) {
                 shallowCopyURLMap.set(node.path, node.id);
-            }
-
-            if (node instanceof Game || parentNode.childIDS.length == 0) {
-                parentNode.childIDS.push(node.id);
-            }
-
-            else if (!parentNode.childIDS.includes(node.id)) {
-                parentNode.childIDS.push(node.id);
             }
         })
         setTree(shallowCopyTree);
