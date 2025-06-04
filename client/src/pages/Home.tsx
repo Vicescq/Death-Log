@@ -37,13 +37,14 @@ export default function Home() {
 		date: null | undefined,
 	) => {
 		const node = createGame(inputText, tree, date);
-		
+		dispatchTree(new Action("add", [node]));
 	};
 
 	function handleDelete(node: Game) {
 		const bool = window.confirm();
 		if (bool) {
-
+			console.log("Deleting node: ", node.id);
+			dispatchTree(new Action("delete", [node]));
 		}
 	}
 

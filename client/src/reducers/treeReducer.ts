@@ -1,7 +1,6 @@
 import type { TreeStateType } from "../contexts/treeContext";
 import type Action from "../model/Action";
 import RootNode from "../model/RootNode";
-import Subject from "../model/Subject";
 import type TreeNode from "../model/TreeNode";
 import { createShallowCopyMap, sortChildIDS } from "../utils/tree";
 
@@ -28,7 +27,7 @@ export default function treeReducer(tree: TreeStateType, action: Action) {
         const nodesDeleted: TreeNode[] = [];
         if (!(node instanceof RootNode)) {
 
-            function deleteSelfAndChild(node: TreeNode) {
+            function deleteSelfAndChildren(node: TreeNode) {
 
                 // leaf nodes
                 if (node.childIDS.length == 0) {
@@ -39,19 +38,23 @@ export default function treeReducer(tree: TreeStateType, action: Action) {
 
                 // iterate every child node
                 for (let i = 0; i < node.childIDS.length; i++) {
-                    deleteSelfAndChild(treeCopy.get(node.childIDS[i])!);
+                    deleteSelfAndChildren(treeCopy.get(node.childIDS[i])!);
                 }
 
                 // deleting current node
-                nodesDeleted.push(tree.get(node.id)!);
+                nodesDeleted.push(treeCopy.get(node.id)!);
                 treeCopy.delete(node.id);
             }
 
             const parentNode = treeCopy.get(node.parentID!);
             const targetIndex = parentNode?.childIDS.indexOf(node.id)!;
-            parentNode?.childIDS.splice(targetIndex, 1);
-            deleteSelfAndChild(node);
-
+            if (targetIndex != -1){
+                const parentNodeCopy = new RootNode([...parentNode?.childIDS!])
+                console.log(parentNodeCopy)
+                parentNodeCopy?.childIDS.splice(targetIndex, 1);
+                treeCopy.set(parentNodeCopy.id, parentNodeCopy);
+                deleteSelfAndChildren(node);
+            }
             return nodesDeleted;
         }
     }
@@ -71,6 +74,7 @@ export default function treeReducer(tree: TreeStateType, action: Action) {
         case "delete":
             const node = action.targets[0];
             deleteNodes(node);
+
             return treeCopy;
 
 
