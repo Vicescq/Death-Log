@@ -11,7 +11,7 @@ import { useRef, useState } from "react";
 import Modal from "../components/modals/Modal";
 import ModalListItemToggle from "../components/modals/ModalListItemToggle";
 import ContextService from "../services/ContextService";
-import { createProfile } from "../utils/tree";
+import { createNewTreeNodeRef, createProfile } from "../utils/tree";
 import AddItemCard from "../components/addItemCard/AddItemCard";
 import type { HandleAddProfile } from "../components/addItemCard/AddItemCardProps";
 import { changeToggleSettingState } from "../utils/eventHandlers";
@@ -21,9 +21,9 @@ import {
 } from "../utils/ui";
 
 export default function GameProfiles({ gameID }: { gameID: string }) {
-	const [tree, setTree] = useTreeContext();
+	const [tree, dispatchTree] = useTreeContext();
 	const [urlMap, setURLMap] = useURLMapContext();
-	const [history, setHistory] = useHistoryContext();
+	const [history, dispatchHistory] = useHistoryContext();
 	const addItemCardModalRef = useRef<HTMLDialogElement | null>(null);
 
 	const [addItemCardModalListItemArray, setAddItemCardModalListItemArray] =
@@ -41,45 +41,20 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 		date: null | undefined,
 	) => {
 		const node = createProfile(inputText, tree, date, gameID);
-		ContextService.addNodes(tree, setTree, urlMap, setURLMap, [node]);
-		ContextService.updateActionHistory(
-			history,
-			setHistory,
-			new Action("add", [node]),
-			new Action("update", [tree.get(gameID!)!]),
-		);
+		dispatchTree(new Action("add", [node]));
 	};
 
 	function handleDelete(node: Profile) {
 		const bool = window.confirm();
 		if (bool) {
-			const deletedNodes = ContextService.deleteNode(
-				tree,
-				setTree,
-				node,
-				urlMap,
-				setURLMap,
-			);
-			ContextService.updateActionHistory(
-				history,
-				setHistory,
-				new Action("delete", [...deletedNodes!]),
-				new Action("update", [tree.get(node.parentID!)!]),
-			);
+			dispatchTree(new Action("delete", [node]));
 		}
 	}
 
 	function handleCompletedStatus(profile: Profile, newStatus: boolean) {
-		const bool = window.confirm();
-		if (bool) {
-			profile.completed = newStatus;
-			ContextService.updateNode(profile, tree, setTree);
-			ContextService.updateActionHistory(
-				history,
-				setHistory,
-				new Action("update", [profile]),
-			);
-		}
+		const updatedGame = createNewTreeNodeRef(profile);
+		updatedGame.completed = newStatus;
+		dispatchTree(new Action("update", [updatedGame]));
 	}
 
 	function handleToggleSetting(status: boolean, index: number) {
@@ -109,7 +84,7 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 		});
 	}
 
-	usePostDeathLog(history, setHistory);
+	// usePostDeathLog(history, setHistory);
 
 	return (
 		<>

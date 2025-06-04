@@ -10,7 +10,6 @@ import useLoadUserID from "../hooks/useLoadUserID";
 import APIService from "../services/APIService";
 import treeReducer from "../reducers/treeReducer";
 import type Action from "../model/Action";
-import urlMapReducer from "../reducers/urlMapReducer";
 import historyReducer from "../reducers/historyReducer";
 import { UUIDContext } from "./uuidContext";
 
@@ -22,10 +21,7 @@ export function ContextWrapper({ children }: { children: ReactNode }) {
 		new Map(),
 	);
 
-	const [urlMap, dispatchURLMap] = useReducer<
-		URLMapStateType,
-		[action: Action]
-	>(urlMapReducer, new Map());
+	const [urlMap, setURLMap] = useState<URLMapStateType>(new Map());
 
 	const initHistory = {
 		newActionStartIndex: 0,
@@ -59,7 +55,7 @@ export function ContextWrapper({ children }: { children: ReactNode }) {
 	if (isLoaded && userId) {
 		return (
 			<TreeContext.Provider value={[tree, dispatchTree]}>
-				<URLMapContext.Provider value={[urlMap, dispatchURLMap]}>
+				<URLMapContext.Provider value={[urlMap, setURLMap]}>
 					<HistoryContext.Provider value={[history, dispatchHistory]}>
 						<UUIDContext.Provider value={[uuid, setUUID]}>
 							{children}

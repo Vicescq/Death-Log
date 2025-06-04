@@ -1,6 +1,5 @@
 import { createContext } from "react";
-import type Action from "../model/Action";
 
-export type URLMapContextType = [URLMapStateType, React.ActionDispatch<[action: Action]>]
+export type URLMapContextType = [URLMapStateType, React.Dispatch<React.SetStateAction<URLMapStateType>>]
 export type URLMapStateType = Map<string, string>;
 export const URLMapContext = createContext<URLMapContextType | undefined>(undefined);

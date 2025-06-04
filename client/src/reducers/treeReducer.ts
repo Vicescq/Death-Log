@@ -4,6 +4,7 @@ import RootNode from "../model/RootNode";
 import type TreeNode from "../model/TreeNode";
 import { createNewChildIDArrayReference, createShallowCopyMap, sortChildIDS } from "../utils/tree";
 
+
 export default function treeReducer(tree: TreeStateType, action: Action) {
     const treeCopy = createShallowCopyMap(tree);
 
@@ -17,14 +18,14 @@ export default function treeReducer(tree: TreeStateType, action: Action) {
             if (!parentNode.childIDS.includes(node.id)) {
                 const parentNodeCopy = createNewChildIDArrayReference(parentNode);
                 parentNodeCopy.childIDS.push(node.id);
+                parentNodeCopy.childIDS = sortChildIDS(parentNodeCopy, treeCopy);
                 treeCopy.set(parentNodeCopy.id, parentNodeCopy);
             }
-
-            parentNode.childIDS = sortChildIDS(parentNode, treeCopy);
         })
     }
 
-    function deleteNodes(node: TreeNode) {
+    function deleteNodes() {
+        const node = action.targets[0];
         const nodesDeleted: TreeNode[] = [];
         if (!(node instanceof RootNode)) {
 
@@ -58,10 +59,20 @@ export default function treeReducer(tree: TreeStateType, action: Action) {
         }
     }
 
+    function updateNode() {
+        const updatedNode = action.targets[0];
+        treeCopy.set(updatedNode.id, updatedNode);
+        const parentNode = treeCopy.get(updatedNode.parentID!)!
+        const parentNodeCopy = createNewChildIDArrayReference(parentNode);
+        parentNodeCopy.childIDS = sortChildIDS(parentNodeCopy, treeCopy);
+        treeCopy.set(parentNodeCopy.id, parentNodeCopy);
+    }
+
     switch (action.type) {
 
         case "init":
             const rootNode = new RootNode();
+            console.log(rootNode, "ROOOOOOT")
             treeCopy.set(rootNode.id, rootNode);
             addNodes();
             return treeCopy
@@ -71,11 +82,12 @@ export default function treeReducer(tree: TreeStateType, action: Action) {
             return treeCopy;
 
         case "delete":
-            const node = action.targets[0];
-            deleteNodes(node);
-
+            deleteNodes();
             return treeCopy;
 
+        case "update":
+            updateNode();
+            return treeCopy
 
         default:
             throw new Error("DEV ERROR!")

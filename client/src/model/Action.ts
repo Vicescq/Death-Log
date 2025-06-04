@@ -16,12 +16,11 @@ export default class Action {
         this._type = value;
     }
 
-    private _targets!: TreeNode[];
+    private _targets: TreeNode[];
     public get targets() {
         return this._targets;
     }
     public set targets(value) {
         this._targets = value;
     }
-
 }

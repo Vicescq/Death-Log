@@ -11,7 +11,7 @@ import { useRef, useState } from "react";
 import Modal from "../components/modals/Modal";
 import ModalListItemToggle from "../components/modals/ModalListItemToggle";
 import ContextService from "../services/ContextService";
-import { createSubject } from "../utils/tree";
+import { createNewTreeNodeRef, createSubject } from "../utils/tree";
 import { changeToggleSettingState } from "../utils/eventHandlers";
 import {
 	createModalListItemInputEdit,
@@ -19,9 +19,9 @@ import {
 } from "../utils/ui";
 
 export default function ProfileSubjects({ profileID }: { profileID: string }) {
-	const [tree, setTree] = useTreeContext();
+	const [tree, dispatchTree] = useTreeContext();
 	const [urlMap, setURLMap] = useURLMapContext();
-	const [history, setHistory] = useHistoryContext();
+	const [history, dispatchHistory] = useHistoryContext();
 	const addItemCardModalRef = useRef<HTMLDialogElement | null>(null);
 
 	const [addItemCardModalListItemArray, setAddItemCardModalListItemArray] =
@@ -33,39 +33,20 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 	const [cardModalListItemArray, setCardModalListItemArray] = useState([
 		createModalListItemInputEdit("Edit Name:", "name"),
 	]);
-	
+
 	function handleAdd(
 		inputText: string,
 		date: null | undefined,
 		notable: boolean,
 	) {
 		const node = createSubject(inputText, date, profileID, notable);
-
-		ContextService.addNodes(tree, setTree, urlMap, setURLMap, [node]);
-		ContextService.updateActionHistory(
-			history,
-			setHistory,
-			new Action("add", [node]),
-			new Action("update", [tree.get(profileID!)!]),
-		);
+		dispatchTree(new Action("add", [node]));
 	}
 
 	function handleDelete(node: Subject) {
 		const bool = window.confirm();
 		if (bool) {
-			const deletedNodes = ContextService.deleteNode(
-				tree,
-				setTree,
-				node,
-				urlMap,
-				setURLMap,
-			);
-			ContextService.updateActionHistory(
-				history,
-				setHistory,
-				new Action("delete", [...deletedNodes!]),
-				new Action("update", [tree.get(node.parentID!)!]),
-			);
+			dispatchTree(new Action("delete", [node]));
 		}
 	}
 
@@ -74,39 +55,23 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 		deathType: DeathType,
 		operation: HandleDeathCountOperation,
 	) {
-		const bool = window.confirm();
-		if (bool) {
-			if (operation == "add") {
-				deathType == "fullTry" ? subject.fullTries++ : subject.resets++;
-				ContextService.updateNode(subject, tree, setTree);
-				ContextService.updateActionHistory(
-					history,
-					setHistory,
-					new Action("update", [subject]),
-				);
-			} else {
-				deathType == "fullTry" ? subject.fullTries-- : subject.resets--;
-				ContextService.updateNode(subject, tree, setTree);
-				ContextService.updateActionHistory(
-					history,
-					setHistory,
-					new Action("update", [subject]),
-				);
-			}
+		const updatedSubject = createNewTreeNodeRef(subject) as Subject;
+		if (operation == "add") {
+			deathType == "fullTry"
+				? updatedSubject.fullTries++
+				: updatedSubject.resets++;
+		} else {
+			deathType == "fullTry"
+				? updatedSubject.fullTries--
+				: updatedSubject.resets--;
 		}
+		dispatchTree(new Action("update", [updatedSubject]));
 	}
 
 	function handleCompletedStatus(subject: Subject, newStatus: boolean) {
-		const bool = window.confirm();
-		if (bool) {
-			subject.completed = newStatus;
-			ContextService.updateNode(subject, tree, setTree);
-			ContextService.updateActionHistory(
-				history,
-				setHistory,
-				new Action("update", [subject]),
-			);
-		}
+		const updatedGame = createNewTreeNodeRef(subject);
+		updatedGame.completed = newStatus;
+		dispatchTree(new Action("update", [updatedGame]));
 	}
 
 	function handleToggleSetting(status: boolean, index: number) {
@@ -118,15 +83,7 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 		setAddItemCardModalListItemArray(newState);
 	}
 
-	function handleDetailsSetting(subject: Subject, inputText: string) {
-		subject.name = inputText;
-		ContextService.updateNode(subject, tree, setTree);
-		ContextService.updateActionHistory(
-			history,
-			setHistory,
-			new Action("update", [subject]),
-		);
-	}
+	function handleDetailsSetting(subject: Subject, inputText: string) {}
 
 	function createCards() {
 		return tree.get(profileID)?.childIDS.map((nodeID, index) => {
@@ -152,7 +109,7 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 		});
 	}
 
-	usePostDeathLog(history, setHistory);
+	// usePostDeathLog(history, setHistory);
 	return (
 		<>
 			<AddItemCard

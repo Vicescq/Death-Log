@@ -128,6 +128,20 @@ export function reviveTree(serializedTree: object[]) {
     return revivedNodes
 }
 
+export function createNewTreeNodeRef(previous: TreeNode) {
+    switch (previous.type) {
+        case "game":
+            const game = previous as Game;
+            return new Game(game.name, game.path, game.parentID!, game.childIDS, game.id, game.date, game.completed);
+        case "profile":
+            const profile = previous as Profile;
+            return new Profile(profile.name, profile.path, profile.parentID!, profile.id, profile.childIDS, profile.date, profile.completed);
+        default:
+            const subject = previous as Subject;
+            return new Subject(subject.name, subject.parentID!, subject.notable, subject.fullTries, subject.resets, subject.id, subject.date, subject.completed);
+    }
+}
+
 export function createNewChildIDArrayReference(parentNode: TreeNode) {
     let parentNodeCopy;
     switch (parentNode.type) {
@@ -143,3 +157,4 @@ export function createNewChildIDArrayReference(parentNode: TreeNode) {
     }
     return parentNodeCopy;
 }
+

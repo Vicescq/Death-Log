@@ -10,18 +10,18 @@ import CardWrapper from "../components/CardWrapper";
 import { useRef, useState } from "react";
 import Modal from "../components/modals/Modal";
 import ModalListItemToggle from "../components/modals/ModalListItemToggle";
-import ContextService from "../services/ContextService";
-import { createGame } from "../utils/tree";
+import { createGame, createNewTreeNodeRef } from "../utils/tree";
 import type { HandleAddGame } from "../components/addItemCard/AddItemCardProps";
 import { changeToggleSettingState } from "../utils/eventHandlers";
 import {
 	createModalListItemInputEdit,
 	createModalListItemToggle,
 } from "../utils/ui";
+import useUpdateURLMap from "../hooks/useUpdateURLMap";
 
 export default function Home() {
 	const [tree, dispatchTree] = useTreeContext();
-	const [urlMap, dispatchURLMap] = useURLMapContext();
+	const [urlMap, setURLMap] = useURLMapContext();
 	const [history, dispatchHistory] = useHistoryContext();
 	const addItemCardModalRef = useRef<HTMLDialogElement | null>(null);
 
@@ -43,16 +43,14 @@ export default function Home() {
 	function handleDelete(node: Game) {
 		const bool = window.confirm();
 		if (bool) {
-			console.log("Deleting node: ", node.id);
 			dispatchTree(new Action("delete", [node]));
 		}
 	}
 
 	function handleCompletedStatus(game: Game, newStatus: boolean) {
-		const bool = window.confirm();
-		if (bool) {
-
-		}
+		const updatedGame = createNewTreeNodeRef(game);
+		updatedGame.completed = newStatus;
+		dispatchTree(new Action("update", [updatedGame]));
 	}
 
 	function handleToggleSetting(status: boolean, index: number) {
@@ -81,7 +79,8 @@ export default function Home() {
 			);
 		});
 	}
-
+	
+	useUpdateURLMap(tree, urlMap, setURLMap);
 	// usePostDeathLog(history, setHistory);
 	
 	return (
