@@ -4,7 +4,6 @@ import Profile from "../model/Profile";
 import Subject from "../model/Subject";
 import type { HistoryStateType } from "../contexts/historyContext";
 import type { TreeContextType } from "../contexts/treeContext";
-import type { URLMapContextType } from "../contexts/urlMapContext";
 import { reviveTree } from "../utils/tree";
 
 export default class APIService {
@@ -26,7 +25,7 @@ export default class APIService {
         }).then((res) => res.json()).then((value) => {
             console.log(value);
             const revivedNodes = reviveTree(value);
-            dispatchTree(new Action("init", revivedNodes));
+            dispatchTree({ type: "init", payload: revivedNodes });
         })
     }
 
@@ -64,14 +63,15 @@ export default class APIService {
         deduplicatedHistory.actionHistory.reverse();
         deduplicatedHistory.actionHistory.forEach((action, actionIndex) => {
             action.targets.forEach((node) => {
-                if (action.type == "update") {
-                    if (!nodeIDToActionMap.has(node.id)) {
-                        nodeIDToActionMap.set(node.id, action);
-                    }
+                if (!(typeof node == "string")) {
+                    if (action.type == "update") {
+                        if (!nodeIDToActionMap.has(node.id)) {
+                            nodeIDToActionMap.set(node.id, action);
+                        }
 
-                    else {
-
-                        deduplicatedHistory.actionHistory[actionIndex] = new Action("__PLACEHOLDER__", []);
+                        else {
+                            deduplicatedHistory.actionHistory[actionIndex] = new Action("__PLACEHOLDER__", []);
+                        }
                     }
                 }
             })

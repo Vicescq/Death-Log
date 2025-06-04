@@ -1,68 +1,60 @@
 import type { TreeStateType } from "../contexts/treeContext";
-import type Action from "../model/Action";
 import RootNode from "../model/RootNode";
 import type TreeNode from "../model/TreeNode";
 import { createNewChildIDArrayReference, createShallowCopyMap, sortChildIDS } from "../utils/tree";
 
+type TreeReducerActionType = "init" | "add" | "delete" | "update";
 
-export default function treeReducer(tree: TreeStateType, action: Action) {
+export type TreeReducerAction = {
+    type: TreeReducerActionType,
+    payload: (TreeNode | string)[];
+}
+
+export default function treeReducer(tree: TreeStateType, action: TreeReducerAction) {
     const treeCopy = createShallowCopyMap(tree);
 
-    function addNodes() {
-        const nodes = action.targets
+    function init() {
+        const rootNode = new RootNode();
+        treeCopy.set(rootNode.id, rootNode);
+        const nodes = action.payload as TreeNode[];
         nodes.forEach((node) => {
             treeCopy.set(node.id, node);
-            const parentNode = treeCopy.get(node.parentID!)!
-
-            // if node not in db already
-            if (!parentNode.childIDS.includes(node.id)) {
-                const parentNodeCopy = createNewChildIDArrayReference(parentNode);
-                parentNodeCopy.childIDS.push(node.id);
-                parentNodeCopy.childIDS = sortChildIDS(parentNodeCopy, treeCopy);
-                treeCopy.set(parentNodeCopy.id, parentNodeCopy);
+            if (node.type == "game") {
+                const rootNode = treeCopy.get(node.parentID!) as RootNode;
+                const rootNodeCopy = createNewChildIDArrayReference(rootNode);
+                rootNodeCopy.childIDS.push(node.id);
+                rootNodeCopy.childIDS = sortChildIDS(rootNodeCopy, treeCopy);
+                treeCopy.set(rootNodeCopy.id, rootNodeCopy);
             }
         })
     }
 
-    function deleteNodes() {
-        const node = action.targets[0];
-        const nodesDeleted: TreeNode[] = [];
-        if (!(node instanceof RootNode)) {
+    function addNode() {
+        const node = action.payload[0] as TreeNode;
+        treeCopy.set(node.id, node);
+        const parentNode = treeCopy.get(node.parentID!)!;
+        const parentNodeCopy = createNewChildIDArrayReference(parentNode);
+        parentNodeCopy.childIDS.push(node.id);
+        parentNodeCopy.childIDS = sortChildIDS(parentNodeCopy, treeCopy);
+        treeCopy.set(parentNodeCopy.id, parentNodeCopy);
+    }
 
-            function deleteSelfAndChildren(node: TreeNode) {
-
-                // leaf nodes
-                if (node.childIDS.length == 0) {
-                    nodesDeleted.push(treeCopy.get(node.id)!);
-                    treeCopy.delete(node.id);
-                    return;
-                }
-
-                // iterate every child node
-                for (let i = 0; i < node.childIDS.length; i++) {
-                    deleteSelfAndChildren(treeCopy.get(node.childIDS[i])!);
-                }
-
-                // deleting current node
-                nodesDeleted.push(treeCopy.get(node.id)!);
-                treeCopy.delete(node.id);
-            }
-
-            const parentNode = treeCopy.get(node.parentID!)!;
-            const parentNodeCopy = createNewChildIDArrayReference(parentNode);
-            const targetIndex = parentNode?.childIDS.indexOf(node.id)!;
-            parentNodeCopy.childIDS.splice(targetIndex, 1);
-            treeCopy.set(parentNodeCopy.id, parentNodeCopy);
-            deleteSelfAndChildren(node);
-
-            return nodesDeleted;
-        }
+    function deleteNode() {
+        // first element is reserved to be the updated parent, 2nd is node, rest are children
+        const parentNodeID = action.payload[0] as string;
+        const centralNodeID = action.payload[1] as string;
+        const parentNode = treeCopy.get(parentNodeID)!;
+        const parentNodeCopy = createNewChildIDArrayReference(parentNode);
+        parentNodeCopy.childIDS = parentNodeCopy.childIDS.filter((id) => id != centralNodeID);
+        const nodeIDSToBeDeleted = action.payload.slice(2) as string[];
+        nodeIDSToBeDeleted.forEach((id) => treeCopy.delete(id));
+        treeCopy.set(parentNodeID, parentNodeCopy);
     }
 
     function updateNode() {
-        const updatedNode = action.targets[0];
-        treeCopy.set(updatedNode.id, updatedNode);
-        const parentNode = treeCopy.get(updatedNode.parentID!)!
+        const node = action.payload[0] as TreeNode;
+        treeCopy.set(node.id, node);
+        const parentNode = treeCopy.get(node.parentID!)!
         const parentNodeCopy = createNewChildIDArrayReference(parentNode);
         parentNodeCopy.childIDS = sortChildIDS(parentNodeCopy, treeCopy);
         treeCopy.set(parentNodeCopy.id, parentNodeCopy);
@@ -71,17 +63,15 @@ export default function treeReducer(tree: TreeStateType, action: Action) {
     switch (action.type) {
 
         case "init":
-            const rootNode = new RootNode();
-            treeCopy.set(rootNode.id, rootNode);
-            addNodes();
+            init();
             return treeCopy
 
         case "add":
-            addNodes();
+            addNode();
             return treeCopy;
 
         case "delete":
-            deleteNodes();
+            deleteNode();
             return treeCopy;
 
         case "update":
@@ -91,4 +81,11 @@ export default function treeReducer(tree: TreeStateType, action: Action) {
         default:
             throw new Error("DEV ERROR!")
     }
+
 }
+
+
+
+
+
+

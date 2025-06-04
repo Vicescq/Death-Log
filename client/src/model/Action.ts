@@ -1,9 +1,9 @@
 import type TreeNode from "./TreeNode";
 
-export type ActionType = "add" | "delete" | "update" | "init" | "__PLACEHOLDER__";
+export type ActionType = "add" | "delete" | "update" | "toBeUpdated" | "__PLACEHOLDER__";
 
 export default class Action {
-    constructor(type: ActionType, targets: TreeNode[]) {
+    constructor(type: ActionType, targets: (TreeNode | string)[]) {
         this._type = type;
         this._targets = targets;
     };
@@ -16,7 +16,7 @@ export default class Action {
         this._type = value;
     }
 
-    private _targets: TreeNode[];
+    private _targets: (TreeNode | string)[];
     public get targets() {
         return this._targets;
     }

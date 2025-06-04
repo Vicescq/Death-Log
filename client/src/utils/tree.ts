@@ -158,3 +158,22 @@ export function createNewChildIDArrayReference(parentNode: TreeNode) {
     return parentNodeCopy;
 }
 
+export function identifyDeletedChildrenIDS(node: TreeNode, tree: TreeStateType) {
+    const idsToBeDeleted: string[] = [];
+
+    function deleteSelfAndChildren(node: TreeNode) {
+        // leaf nodes
+        if (node.childIDS.length == 0) {
+            idsToBeDeleted.push(node.id);
+            return;
+        }
+
+        // iterate every child node
+        for (let i = 0; i < node.childIDS.length; i++) {
+            deleteSelfAndChildren(tree.get(node.childIDS[i])!);
+        }
+    }
+
+    deleteSelfAndChildren(node);
+    return idsToBeDeleted;
+}

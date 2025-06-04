@@ -10,18 +10,24 @@ import CardWrapper from "../components/CardWrapper";
 import { useRef, useState } from "react";
 import Modal from "../components/modals/Modal";
 import ModalListItemToggle from "../components/modals/ModalListItemToggle";
-import { createNewTreeNodeRef, createSubject } from "../utils/tree";
+import {
+	createNewTreeNodeRef,
+	createSubject,
+	identifyDeletedChildrenIDS,
+} from "../utils/tree";
 import { changeToggleSettingState } from "../utils/eventHandlers";
 import {
 	createModalListItemInputEdit,
 	createModalListItemToggle,
 } from "../utils/ui";
 import useUpdateURLMap from "../hooks/useUpdateURLMap";
+import useUpdateHistory from "../hooks/useUpdateHistory";
 
 export default function ProfileSubjects({ profileID }: { profileID: string }) {
 	const [tree, dispatchTree] = useTreeContext();
 	const [urlMap, setURLMap] = useURLMapContext();
-	const [history, dispatchHistory] = useHistoryContext();
+	const [history, setHistory] = useHistoryContext();
+	const [intents, setIntents] = useState<Action[]>([]);
 	const addItemCardModalRef = useRef<HTMLDialogElement | null>(null);
 
 	const [addItemCardModalListItemArray, setAddItemCardModalListItemArray] =
@@ -40,13 +46,25 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 		notable: boolean,
 	) {
 		const node = createSubject(inputText, date, profileID, notable);
-		dispatchTree(new Action("add", [node]));
+		dispatchTree({ type: "add", payload: [node] });
+		setIntents([
+			new Action("add", [node]),
+			new Action("toBeUpdated", [profileID]),
+		]);
 	}
 
 	function handleDelete(node: Subject) {
 		const bool = window.confirm();
 		if (bool) {
-			dispatchTree(new Action("delete", [node]));
+			const ids = identifyDeletedChildrenIDS(node, tree);
+			dispatchTree({
+				type: "delete",
+				payload: [profileID].concat(node.id).concat(ids),
+			});
+			setIntents([
+				new Action("delete", [node.id].concat(ids)),
+				new Action("toBeUpdated", [profileID]),
+			]);
 		}
 	}
 
@@ -65,13 +83,18 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 				? updatedSubject.fullTries--
 				: updatedSubject.resets--;
 		}
-		dispatchTree(new Action("update", [updatedSubject]));
+		dispatchTree({
+			type: "update",
+			payload: [updatedSubject],
+		});
+		setIntents([new Action("update", [updatedSubject])]);
 	}
 
 	function handleCompletedStatus(subject: Subject, newStatus: boolean) {
 		const updatedGame = createNewTreeNodeRef(subject);
 		updatedGame.completed = newStatus;
-		dispatchTree(new Action("update", [updatedGame]));
+		dispatchTree({ type: "update", payload: [updatedGame] });
+		setIntents([new Action("update", [updatedGame.id])]);
 	}
 
 	function handleToggleSetting(status: boolean, index: number) {
@@ -110,6 +133,7 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 	}
 
 	useUpdateURLMap(tree, urlMap, setURLMap);
+	useUpdateHistory(tree, intents, history, setHistory);
 	// usePostDeathLog(history, setHistory);
 	return (
 		<>

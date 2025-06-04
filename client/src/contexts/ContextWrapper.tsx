@@ -1,4 +1,4 @@
-import { type ReactNode, useReducer, useRef, useState } from "react";
+import { type ReactNode, useReducer, useState } from "react";
 import useConsoleLogOnStateChange from "../hooks/useConsoleLogOnStateChange";
 import { type TreeStateType, TreeContext } from "./treeContext";
 import { URLMapContext, type URLMapStateType } from "./urlMapContext";
@@ -8,15 +8,13 @@ import useGetDeathLog from "../hooks/useGetDeathLog";
 import NavBar from "../components/NavBar";
 import useLoadUserID from "../hooks/useLoadUserID";
 import APIService from "../services/APIService";
-import treeReducer from "../reducers/treeReducer";
-import type Action from "../model/Action";
-import historyReducer from "../reducers/historyReducer";
+import treeReducer, { type TreeReducerAction } from "../reducers/treeReducer";
 import { UUIDContext } from "./uuidContext";
 
 export function ContextWrapper({ children }: { children: ReactNode }) {
 	const { isLoaded, userId } = useAuth();
 
-	const [tree, dispatchTree] = useReducer<TreeStateType, [action: Action]>(
+	const [tree, dispatchTree] = useReducer<TreeStateType, [action: TreeReducerAction]>(
 		treeReducer,
 		new Map(),
 	);

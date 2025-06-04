@@ -10,7 +10,11 @@ import CardWrapper from "../components/CardWrapper";
 import { useRef, useState } from "react";
 import Modal from "../components/modals/Modal";
 import ModalListItemToggle from "../components/modals/ModalListItemToggle";
-import { createGame, createNewTreeNodeRef } from "../utils/tree";
+import {
+	createGame,
+	createNewTreeNodeRef,
+	identifyDeletedChildrenIDS,
+} from "../utils/tree";
 import type { HandleAddGame } from "../components/addItemCard/AddItemCardProps";
 import { changeToggleSettingState } from "../utils/eventHandlers";
 import {
@@ -18,12 +22,13 @@ import {
 	createModalListItemToggle,
 } from "../utils/ui";
 import useUpdateURLMap from "../hooks/useUpdateURLMap";
-import { updateActionHistory } from "../utils/history";
+import useUpdateHistory from "../hooks/useUpdateHistory";
 
 export default function Home() {
 	const [tree, dispatchTree] = useTreeContext();
 	const [urlMap, setURLMap] = useURLMapContext();
 	const [history, setHistory] = useHistoryContext();
+	const [intents, setIntents] = useState<Action[]>([]);
 	const addItemCardModalRef = useRef<HTMLDialogElement | null>(null);
 
 	const [addItemCardModalListItemArray, setAddItemCardModalListItemArray] =
@@ -38,26 +43,27 @@ export default function Home() {
 		date: null | undefined,
 	) => {
 		const node = createGame(inputText, tree, date);
-		const action = new Action("add", [node])
-		dispatchTree(action);
-		updateActionHistory(history, setHistory, [action]);
+		dispatchTree({ type: "add", payload: [node] });
+		setIntents([new Action("add", [node])]);
 	};
 
 	function handleDelete(node: Game) {
 		const bool = window.confirm();
 		if (bool) {
-			const action = new Action("delete", [node])
-			dispatchTree(action);
-			updateActionHistory(history, setHistory, [action]);
+			const ids = identifyDeletedChildrenIDS(node, tree);
+			dispatchTree({
+				type: "delete",
+				payload: ["ROOT_NODE"].concat(node.id).concat(ids),
+			});
+			setIntents([new Action("delete", [node.id].concat(ids))]);
 		}
 	}
 
 	function handleCompletedStatus(game: Game, newStatus: boolean) {
 		const updatedGame = createNewTreeNodeRef(game);
 		updatedGame.completed = newStatus;
-		const action = new Action("update", [updatedGame])
-		dispatchTree(action);
-		updateActionHistory(history, setHistory, [action]);
+		dispatchTree({ type: "update", payload: [updatedGame] });
+		setIntents([new Action("update", [updatedGame.id])]);
 	}
 
 	function handleToggleSetting(status: boolean, index: number) {
@@ -86,8 +92,9 @@ export default function Home() {
 			);
 		});
 	}
-
+	
 	useUpdateURLMap(tree, urlMap, setURLMap);
+	useUpdateHistory(tree, intents, history, setHistory);
 	// usePostDeathLog(history, setHistory);
 
 	return (
