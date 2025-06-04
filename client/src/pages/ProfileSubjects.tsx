@@ -17,6 +17,7 @@ import {
 	createModalListItemInputEdit,
 	createModalListItemToggle,
 } from "../utils/ui";
+import useUpdateURLMap from "../hooks/useUpdateURLMap";
 
 export default function ProfileSubjects({ profileID }: { profileID: string }) {
 	const [tree, dispatchTree] = useTreeContext();
@@ -109,6 +110,7 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 		});
 	}
 
+	useUpdateURLMap(tree, urlMap, setURLMap);
 	// usePostDeathLog(history, setHistory);
 	return (
 		<>

@@ -7,10 +7,8 @@ import Action from "../model/Action";
 import usePostDeathLog from "../hooks/usePostDeathLog";
 import CardWrapper from "../components/CardWrapper";
 import { useRef, useState } from "react";
-
 import Modal from "../components/modals/Modal";
 import ModalListItemToggle from "../components/modals/ModalListItemToggle";
-import ContextService from "../services/ContextService";
 import { createNewTreeNodeRef, createProfile } from "../utils/tree";
 import AddItemCard from "../components/addItemCard/AddItemCard";
 import type { HandleAddProfile } from "../components/addItemCard/AddItemCardProps";
@@ -19,6 +17,7 @@ import {
 	createModalListItemInputEdit,
 	createModalListItemToggle,
 } from "../utils/ui";
+import useUpdateURLMap from "../hooks/useUpdateURLMap";
 
 export default function GameProfiles({ gameID }: { gameID: string }) {
 	const [tree, dispatchTree] = useTreeContext();
@@ -83,7 +82,8 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 			);
 		});
 	}
-
+	
+	useUpdateURLMap(tree, urlMap, setURLMap);
 	// usePostDeathLog(history, setHistory);
 
 	return (

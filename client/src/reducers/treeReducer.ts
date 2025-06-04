@@ -72,7 +72,6 @@ export default function treeReducer(tree: TreeStateType, action: Action) {
 
         case "init":
             const rootNode = new RootNode();
-            console.log(rootNode, "ROOOOOOT")
             treeCopy.set(rootNode.id, rootNode);
             addNodes();
             return treeCopy

@@ -79,10 +79,10 @@ export default function Home() {
 			);
 		});
 	}
-	
+
 	useUpdateURLMap(tree, urlMap, setURLMap);
 	// usePostDeathLog(history, setHistory);
-	
+
 	return (
 		<>
 			<AddItemCard
