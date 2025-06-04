@@ -1,10 +1,9 @@
 import Action from "../model/Action";
-import Game from "../model/Game";
-import Profile from "../model/Profile";
-import Subject from "../model/Subject";
 import type { HistoryStateType } from "../contexts/historyContext";
 import type { TreeContextType } from "../contexts/treeContext";
 import { reviveTree } from "../utils/tree";
+import type TreeNode from "../model/TreeNode";
+import { v4 as uuid4 } from "uuid";
 
 export default class APIService {
     constructor() { };
@@ -30,56 +29,24 @@ export default class APIService {
     }
 
     static batchHistory(history: HistoryStateType) {
+        const batchedActionHistory = history.actionHistory.slice(history.newActionStartIndex);
+        const deduplicatedUpdateActions = new Map<(string | string[]), Action>();
+        const finalizedBatchedActionHistory: Action[] = [];
+        batchedActionHistory.reverse();
+        batchedActionHistory.forEach((action) => {
+            if (action.type == "update") {
+                const node = action.targets[0] as TreeNode;
+                !deduplicatedUpdateActions.has(node.id) ? deduplicatedUpdateActions.set(node.id, action) : null;
+            }
+            else {
+                deduplicatedUpdateActions.set("__PLACEHOLDER__" + uuid4(), action);
+            }
+        })
 
-        // function reviver(key: any, value: any) {
-        //     if (key == "actionHistory") {
-        //         return value.map((value: any) => Object.assign(Object.create(Action.prototype), value));
-        //     }
-        //     if (key == "_targets") {
+        Array.from(deduplicatedUpdateActions.entries()).reverse().forEach((([_, action]) => {
+            finalizedBatchedActionHistory.push(action);
+        }))
 
-        //         return value.map((value: any) => {
-        //             switch (value._type) {
-        //                 case "game":
-        //                     return Object.assign(Object.create(Game.prototype), value);
-        //                 case "profile":
-        //                     return Object.assign(Object.create(Profile.prototype), value);
-        //                 case "subject":
-        //                     return Object.assign(Object.create(Subject.prototype), value);
-        //                 default:
-        //                     return value;
-        //             }
-        //         })
-        //     }
-        //     else {
-        //         return value
-        //     }
-        // }
-
-        let deduplicatedHistory = structuredClone(history);
-        // deduplicatedHistory.actionHistory = history.actionHistory.slice(history.newActionStartIndex);
-        // deduplicatedHistory = JSON.parse(JSON.stringify(deduplicatedHistory), (key, value) => reviver(key, value))
-
-        // const nodeIDToActionMap = new Map() as Map<string, Action>;
-        // deduplicatedHistory.actionHistory.reverse();
-        // deduplicatedHistory.actionHistory.forEach((action, actionIndex) => {
-        //     action.targets.forEach((node) => {
-        //         if (!(typeof node == "string")) {
-        //             if (action.type == "update") {
-        //                 if (!nodeIDToActionMap.has(node.id)) {
-        //                     nodeIDToActionMap.set(node.id, action);
-        //                 }
-
-        //                 else {
-        //                     deduplicatedHistory.actionHistory[actionIndex] = new Action("__PLACEHOLDER__", []);
-        //                 }
-        //             }
-        //         }
-        //     })
-        // })
-
-        // deduplicatedHistory.actionHistory = deduplicatedHistory.actionHistory.filter((action) => !(action.type == "__PLACEHOLDER__"));
-        // deduplicatedHistory.actionHistory.reverse()
-
-        return deduplicatedHistory;
+        return finalizedBatchedActionHistory;
     }
 }

@@ -1,6 +1,6 @@
 import type TreeNode from "./TreeNode";
 
-export type ActionType = "add" | "delete" | "update" | "toBeUpdated" | "__PLACEHOLDER__";
+export type ActionType = "add" | "delete" | "update" | "toBeUpdated";
 
 export default class Action {
     constructor(type: ActionType, targets: (TreeNode | string)[]) {
