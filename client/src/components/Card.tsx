@@ -19,6 +19,7 @@ import Modal from "./modals/Modal";
 import ModalListItemInputEdit from "./modals/ModalListItemInputEdit";
 import ModalListItemToggle from "./modals/ModalListItemToggle";
 import { ModalUtilityButton } from "./modals/ModalUtilityButton";
+import { createCardCSS, generateCardDeathCounts } from "../utils/ui";
 
 export type HandleDeathCountOperation = "add" | "subtract";
 
@@ -49,39 +50,20 @@ export default function Card({
 }: Props) {
 	const modalRef = useRef<HTMLDialogElement | null>(null);
 	const [inputText, setInputText] = useState("");
-
-	const enabledCSS =
-		"bg-amber-200 border-2 rounded-2xl shadow-[5px_2px_0px_rgba(0,0,0,1)]";
 	const [resetDeathTypeMode, setResetDeathTypeMode] = useState(false);
-
-	let cardCol = "bg-zomp";
-	if (treeNode instanceof Subject && !treeNode.notable) {
-		cardCol = "bg-amber-500";
-	}
-
-	const cardCSS = treeNode.completed
-		? "bg-raisinblack text-amber-200"
-		: `${cardCol} text-black`;
-	const readOnlyToggleCSS = treeNode.completed ? enabledCSS : "";
-	const resetToggleCSS = resetDeathTypeMode ? enabledCSS : "";
-	const settersBtnDisplay = treeNode.completed ? "hidden" : "";
-	const detailsReadOnlyCSS = treeNode.completed
-		? "bg-amber-200 rounded-l shadow-[5px_2px_0px_rgba(0,0,0,1)]"
-		: "";
 	const deathType = resetDeathTypeMode ? "reset" : "fullTry";
+	const {
+		cardCSS,
+		readOnlyToggleCSS,
+		resetToggleCSS,
+		settersBtnDisplay,
+		detailsReadOnlyCSS,
+	} = createCardCSS(treeNode, resetDeathTypeMode);
 
-	const deathCount =
-		treeNode instanceof Game || treeNode instanceof Profile
-			? treeNode.getDeaths(tree)
-			: treeNode.getDeaths();
-	const fullTries =
-		treeNode instanceof Game || treeNode instanceof Profile
-			? treeNode.getFullTries(tree)
-			: treeNode.fullTries;
-	const resets =
-		treeNode instanceof Game || treeNode instanceof Profile
-			? treeNode.getResets(tree)
-			: treeNode.resets;
+	const { deathCount, fullTries, resets } = generateCardDeathCounts(
+		treeNode,
+		tree,
+	);
 
 	useEffect(() => {
 		setResetDeathTypeMode(false);

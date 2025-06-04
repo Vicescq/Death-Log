@@ -27,10 +27,7 @@ export function ContextWrapper({ children }: { children: ReactNode }) {
 		newActionStartIndex: 0,
 		actionHistory: [],
 	} as HistoryStateType;
-	const [history, dispatchHistory] = useReducer<
-		HistoryStateType,
-		[action: Action]
-	>(historyReducer, initHistory);
+	const [history, setHistory] = useState<HistoryStateType>(initHistory);
 
 	const [uuid, setUUID] = useState(userId);
 
@@ -43,20 +40,20 @@ export function ContextWrapper({ children }: { children: ReactNode }) {
 	useConsoleLogOnStateChange(
 		history,
 		"\nSANITIZED: ",
-		APIService.deduplicateHistory(history),
+		APIService.batchHistory(history),
 	);
 	useConsoleLogOnStateChange(
 		history.newActionStartIndex,
 		"INDEX:",
 		history.newActionStartIndex,
 	);
-	useConsoleLogOnStateChange(uuid, "UUID:", uuid)
+	useConsoleLogOnStateChange(uuid, "UUID:", uuid);
 
 	if (isLoaded && userId) {
 		return (
 			<TreeContext.Provider value={[tree, dispatchTree]}>
 				<URLMapContext.Provider value={[urlMap, setURLMap]}>
-					<HistoryContext.Provider value={[history, dispatchHistory]}>
+					<HistoryContext.Provider value={[history, setHistory]}>
 						<UUIDContext.Provider value={[uuid, setUUID]}>
 							{children}
 						</UUIDContext.Provider>

@@ -18,11 +18,12 @@ import {
 	createModalListItemToggle,
 } from "../utils/ui";
 import useUpdateURLMap from "../hooks/useUpdateURLMap";
+import { updateActionHistory } from "../utils/history";
 
 export default function Home() {
 	const [tree, dispatchTree] = useTreeContext();
 	const [urlMap, setURLMap] = useURLMapContext();
-	const [history, dispatchHistory] = useHistoryContext();
+	const [history, setHistory] = useHistoryContext();
 	const addItemCardModalRef = useRef<HTMLDialogElement | null>(null);
 
 	const [addItemCardModalListItemArray, setAddItemCardModalListItemArray] =
@@ -37,20 +38,26 @@ export default function Home() {
 		date: null | undefined,
 	) => {
 		const node = createGame(inputText, tree, date);
-		dispatchTree(new Action("add", [node]));
+		const action = new Action("add", [node])
+		dispatchTree(action);
+		updateActionHistory(history, setHistory, [action]);
 	};
 
 	function handleDelete(node: Game) {
 		const bool = window.confirm();
 		if (bool) {
-			dispatchTree(new Action("delete", [node]));
+			const action = new Action("delete", [node])
+			dispatchTree(action);
+			updateActionHistory(history, setHistory, [action]);
 		}
 	}
 
 	function handleCompletedStatus(game: Game, newStatus: boolean) {
 		const updatedGame = createNewTreeNodeRef(game);
 		updatedGame.completed = newStatus;
-		dispatchTree(new Action("update", [updatedGame]));
+		const action = new Action("update", [updatedGame])
+		dispatchTree(action);
+		updateActionHistory(history, setHistory, [action]);
 	}
 
 	function handleToggleSetting(status: boolean, index: number) {

@@ -18,11 +18,12 @@ import {
 	createModalListItemToggle,
 } from "../utils/ui";
 import useUpdateURLMap from "../hooks/useUpdateURLMap";
+import { updateActionHistory } from "../utils/history";
 
 export default function GameProfiles({ gameID }: { gameID: string }) {
 	const [tree, dispatchTree] = useTreeContext();
 	const [urlMap, setURLMap] = useURLMapContext();
-	const [history, dispatchHistory] = useHistoryContext();
+	const [history, setHistory] = useHistoryContext();
 	const addItemCardModalRef = useRef<HTMLDialogElement | null>(null);
 
 	const [addItemCardModalListItemArray, setAddItemCardModalListItemArray] =
@@ -40,7 +41,9 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 		date: null | undefined,
 	) => {
 		const node = createProfile(inputText, tree, date, gameID);
-		dispatchTree(new Action("add", [node]));
+		const action = new Action("add", [node])
+		dispatchTree(action);
+		updateActionHistory(history, setHistory, action);
 	};
 
 	function handleDelete(node: Profile) {
@@ -82,7 +85,7 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 			);
 		});
 	}
-	
+
 	useUpdateURLMap(tree, urlMap, setURLMap);
 	// usePostDeathLog(history, setHistory);
 

@@ -30,7 +30,7 @@ export default class APIService {
         })
     }
 
-    static deduplicateHistory(history: HistoryStateType) {
+    static batchHistory(history: HistoryStateType) {
 
         function reviver(key: any, value: any) {
             if (key == "actionHistory") {
