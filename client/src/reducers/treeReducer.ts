@@ -2,8 +2,7 @@ import type { TreeStateType } from "../contexts/treeContext";
 import type Action from "../model/Action";
 import RootNode from "../model/RootNode";
 import type TreeNode from "../model/TreeNode";
-import { createShallowCopyMap, sortChildIDS } from "../utils/tree";
-
+import { createNewChildIDArrayReference, createShallowCopyMap, sortChildIDS } from "../utils/tree";
 
 export default function treeReducer(tree: TreeStateType, action: Action) {
     const treeCopy = createShallowCopyMap(tree);
@@ -16,7 +15,9 @@ export default function treeReducer(tree: TreeStateType, action: Action) {
 
             // if node not in db already
             if (!parentNode.childIDS.includes(node.id)) {
-                parentNode.childIDS.push(node.id);
+                const parentNodeCopy = createNewChildIDArrayReference(parentNode);
+                parentNodeCopy.childIDS.push(node.id);
+                treeCopy.set(parentNodeCopy.id, parentNodeCopy);
             }
 
             parentNode.childIDS = sortChildIDS(parentNode, treeCopy);
@@ -46,15 +47,13 @@ export default function treeReducer(tree: TreeStateType, action: Action) {
                 treeCopy.delete(node.id);
             }
 
-            const parentNode = treeCopy.get(node.parentID!);
+            const parentNode = treeCopy.get(node.parentID!)!;
+            const parentNodeCopy = createNewChildIDArrayReference(parentNode);
             const targetIndex = parentNode?.childIDS.indexOf(node.id)!;
-            if (targetIndex != -1){
-                const parentNodeCopy = new RootNode([...parentNode?.childIDS!])
-                console.log(parentNodeCopy)
-                parentNodeCopy?.childIDS.splice(targetIndex, 1);
-                treeCopy.set(parentNodeCopy.id, parentNodeCopy);
-                deleteSelfAndChildren(node);
-            }
+            parentNodeCopy.childIDS.splice(targetIndex, 1);
+            treeCopy.set(parentNodeCopy.id, parentNodeCopy);
+            deleteSelfAndChildren(node);
+
             return nodesDeleted;
         }
     }

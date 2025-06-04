@@ -127,3 +127,19 @@ export function reviveTree(serializedTree: object[]) {
 
     return revivedNodes
 }
+
+export function createNewChildIDArrayReference(parentNode: TreeNode) {
+    let parentNodeCopy;
+    switch (parentNode.type) {
+        case "ROOT_NODE":
+            parentNodeCopy = new RootNode([...parentNode.childIDS]);
+            break;
+        case "game":
+            parentNodeCopy = new Game(parentNode.name, parentNode.path, parentNode.parentID!, [...parentNode.childIDS], parentNode.id, parentNode.date, parentNode.completed);
+            break;
+        default:
+            parentNodeCopy = new Profile(parentNode.name, parentNode.path, parentNode.parentID!, parentNode.id, [...parentNode.childIDS], parentNode.date, parentNode.completed);
+            break;
+    }
+    return parentNodeCopy;
+}

@@ -1,6 +1,6 @@
 import type { TreeStateType } from "../contexts/treeContext";
 
-export type TreeNodeSerializableType = "game" | "profile" | "subject";
+export type TreeNodeSerializableType = "game" | "profile" | "subject" | "ROOT_NODE";
 
 export interface TangibleTreeNodeParent{
     getDeaths(tree: TreeStateType): number;
