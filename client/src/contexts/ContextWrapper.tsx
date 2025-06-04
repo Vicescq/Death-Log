@@ -1,4 +1,4 @@
-import { type ReactNode, useState } from "react";
+import { type ReactNode, useReducer, useRef, useState } from "react";
 import useConsoleLogOnStateChange from "../hooks/useConsoleLogOnStateChange";
 import { type TreeStateType, TreeContext } from "./treeContext";
 import { URLMapContext, type URLMapStateType } from "./urlMapContext";
@@ -8,22 +8,38 @@ import useGetDeathLog from "../hooks/useGetDeathLog";
 import NavBar from "../components/NavBar";
 import useLoadUserID from "../hooks/useLoadUserID";
 import APIService from "../services/APIService";
+import treeReducer from "../reducers/treeReducer";
+import type Action from "../model/Action";
+import urlMapReducer from "../reducers/urlMapReducer";
+import historyReducer from "../reducers/historyReducer";
+import { UUIDContext } from "./uuidContext";
 
 export function ContextWrapper({ children }: { children: ReactNode }) {
 	const { isLoaded, userId } = useAuth();
 
-	const [tree, setTree] = useState<TreeStateType>(new Map());
-	const [urlMap, setURLMap] = useState<URLMapStateType>(new Map());
+	const [tree, dispatchTree] = useReducer<TreeStateType, [action: Action]>(
+		treeReducer,
+		new Map(),
+	);
+
+	const [urlMap, dispatchURLMap] = useReducer<
+		URLMapStateType,
+		[action: Action]
+	>(urlMapReducer, new Map());
 
 	const initHistory = {
-		uuid: userId,
 		newActionStartIndex: 0,
 		actionHistory: [],
 	} as HistoryStateType;
-	const [history, setHistory] = useState<HistoryStateType>(initHistory);
+	const [history, dispatchHistory] = useReducer<
+		HistoryStateType,
+		[action: Action]
+	>(historyReducer, initHistory);
 
-	useGetDeathLog(userId, setTree, setURLMap);
-	useLoadUserID(isLoaded, userId, history, setHistory);
+	const [uuid, setUUID] = useState(userId);
+
+	useLoadUserID(isLoaded, userId, setUUID);
+	useGetDeathLog(uuid, dispatchTree);
 
 	useConsoleLogOnStateChange(tree, "TREE: ", tree);
 	useConsoleLogOnStateChange(urlMap, "URL MAP: ", urlMap);
@@ -38,13 +54,16 @@ export function ContextWrapper({ children }: { children: ReactNode }) {
 		"INDEX:",
 		history.newActionStartIndex,
 	);
+	useConsoleLogOnStateChange(uuid, "UUID:", uuid)
 
 	if (isLoaded && userId) {
 		return (
-			<TreeContext.Provider value={[tree, setTree]}>
-				<URLMapContext.Provider value={[urlMap, setURLMap]}>
-					<HistoryContext.Provider value={[history, setHistory]}>
-						{children}
+			<TreeContext.Provider value={[tree, dispatchTree]}>
+				<URLMapContext.Provider value={[urlMap, dispatchURLMap]}>
+					<HistoryContext.Provider value={[history, dispatchHistory]}>
+						<UUIDContext.Provider value={[uuid, setUUID]}>
+							{children}
+						</UUIDContext.Provider>
 					</HistoryContext.Provider>
 				</URLMapContext.Provider>
 			</TreeContext.Provider>

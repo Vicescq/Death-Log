@@ -5,7 +5,7 @@ import Subject from "../model/Subject";
 import type { HistoryStateType } from "../contexts/historyContext";
 import type { TreeContextType } from "../contexts/treeContext";
 import type { URLMapContextType } from "../contexts/urlMapContext";
-import ContextService from "./ContextService";
+import { reviveTree } from "../utils/tree";
 
 export default class APIService {
     constructor() { };
@@ -19,14 +19,15 @@ export default class APIService {
         });
     }
 
-    static getDeathLog(uuid: string, setTree: TreeContextType[1], setURLMap: URLMapContextType[1]) {
+    static getDeathLog(uuid: string, dispatchTree: TreeContextType[1]) {
         fetch(`/api/nodes/${uuid}`, {
             method: "GET",
             headers: { "Content-Type": "application/json" },
         }).then((res) => res.json()).then((value) => {
             console.log(value);
-            ContextService.initializeTreeState(value, setTree, setURLMap)
-        });
+            const revivedNodes = reviveTree(value);
+            dispatchTree(new Action("init", revivedNodes));
+        })
     }
 
     static deduplicateHistory(history: HistoryStateType) {

@@ -20,9 +20,9 @@ import {
 } from "../utils/ui";
 
 export default function Home() {
-	const [tree, setTree] = useTreeContext();
-	const [urlMap, setURLMap] = useURLMapContext();
-	const [history, setHistory] = useHistoryContext();
+	const [tree, dispatchTree] = useTreeContext();
+	const [urlMap, dispatchURLMap] = useURLMapContext();
+	const [history, dispatchHistory] = useHistoryContext();
 	const addItemCardModalRef = useRef<HTMLDialogElement | null>(null);
 
 	const [addItemCardModalListItemArray, setAddItemCardModalListItemArray] =
@@ -37,42 +37,20 @@ export default function Home() {
 		date: null | undefined,
 	) => {
 		const node = createGame(inputText, tree, date);
-		ContextService.addNodes(tree, setTree, urlMap, setURLMap, [node]);
-		ContextService.updateActionHistory(
-			history,
-			setHistory,
-			new Action("add", [node]),
-		);
+		
 	};
 
 	function handleDelete(node: Game) {
 		const bool = window.confirm();
 		if (bool) {
-			const deletedNodes = ContextService.deleteNode(
-				tree,
-				setTree,
-				node,
-				urlMap,
-				setURLMap,
-			);
-			ContextService.updateActionHistory(
-				history,
-				setHistory,
-				new Action("delete", [...deletedNodes!]),
-			);
+
 		}
 	}
 
 	function handleCompletedStatus(game: Game, newStatus: boolean) {
 		const bool = window.confirm();
 		if (bool) {
-			game.completed = newStatus;
-			ContextService.updateNode(game, tree, setTree);
-			ContextService.updateActionHistory(
-				history,
-				setHistory,
-				new Action("update", [game]),
-			);
+
 		}
 	}
 
@@ -103,7 +81,7 @@ export default function Home() {
 		});
 	}
 
-	usePostDeathLog(history, setHistory);
+	// usePostDeathLog(history, setHistory);
 	
 	return (
 		<>

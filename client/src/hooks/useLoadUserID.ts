@@ -1,12 +1,10 @@
 import { useEffect } from "react";
-import type { HistoryContextType } from "../contexts/historyContext";
+import type { UUIDContextType, UUIDStateType } from "../contexts/uuidContext";
 
-export default function useLoadUserID(isLoaded: boolean, userId: string | null | undefined, history: HistoryContextType[0], setHistory: HistoryContextType[1]) {
+export default function useLoadUserID(isLoaded: boolean, userId: UUIDStateType, setUUID: UUIDContextType[1]) {
     useEffect(() => {
         if (isLoaded && userId) {
-            const newHistory = { ...history };
-            newHistory.uuid = userId;
-            setHistory(newHistory);
+            setUUID(userId);
         }
     }, [isLoaded, userId])
 }

@@ -1,6 +1,7 @@
 import type { TreeStateType } from "../contexts/treeContext";
 import Game from "../model/Game";
 import Profile from "../model/Profile";
+import RootNode from "../model/RootNode";
 import Subject from "../model/Subject";
 import type TreeNode from "../model/TreeNode";
 
@@ -75,14 +76,14 @@ export function sortChildIDS(parentNode: TreeNode, tree: TreeStateType) {
 
                 if (!nodeA.notable) {
                     unnotableFactorA += -1;
-                    if (nodeA.completed){
+                    if (nodeA.completed) {
                         unnotableFactorA += 1;
                     }
                 }
 
                 if (!nodeB.notable) {
                     unnotableFactorB += -1;
-                    if (nodeB.completed){
+                    if (nodeB.completed) {
                         unnotableFactorB += 1;
                     }
                 }
@@ -97,4 +98,32 @@ export function sortChildIDS(parentNode: TreeNode, tree: TreeStateType) {
 
     });
     return sorted
+}
+
+export function reviveTree(serializedTree: object[]) {
+
+    function reviver(obj: any): TreeNode {
+        switch (obj._type) {
+            case "root":
+                return new RootNode(obj._childIDS);
+            case "game":
+                return new Game(obj._name, obj._path, obj._parentID, obj._childIDS, obj._id, obj._date, obj._completed);
+            case "profile":
+                return new Profile(obj._name, obj._path, obj._parentID, obj._id, obj._childIDS, obj._date, obj._completed);
+            case "subject":
+                return new Subject(obj._name, obj._parentID, obj._notable, obj._fullTries, obj._resets, obj._id, obj._date, obj._completed);
+            default:
+                return obj;
+        }
+    }
+
+    const revivedNodes: TreeNode[] = [];
+    for (const [_, outerLiteral] of Object.entries(serializedTree)) {
+        for (const [_, innerLiteral] of Object.entries(outerLiteral)) {
+            const revivedNode = reviver(JSON.parse(innerLiteral));
+            revivedNodes.push(revivedNode);
+        }
+    }
+
+    return revivedNodes
 }
