@@ -31,54 +31,54 @@ export default class APIService {
 
     static batchHistory(history: HistoryStateType) {
 
-        function reviver(key: any, value: any) {
-            if (key == "actionHistory") {
-                return value.map((value: any) => Object.assign(Object.create(Action.prototype), value));
-            }
-            if (key == "_targets") {
+        // function reviver(key: any, value: any) {
+        //     if (key == "actionHistory") {
+        //         return value.map((value: any) => Object.assign(Object.create(Action.prototype), value));
+        //     }
+        //     if (key == "_targets") {
 
-                return value.map((value: any) => {
-                    switch (value._type) {
-                        case "game":
-                            return Object.assign(Object.create(Game.prototype), value);
-                        case "profile":
-                            return Object.assign(Object.create(Profile.prototype), value);
-                        case "subject":
-                            return Object.assign(Object.create(Subject.prototype), value);
-                        default:
-                            return value;
-                    }
-                })
-            }
-            else {
-                return value
-            }
-        }
+        //         return value.map((value: any) => {
+        //             switch (value._type) {
+        //                 case "game":
+        //                     return Object.assign(Object.create(Game.prototype), value);
+        //                 case "profile":
+        //                     return Object.assign(Object.create(Profile.prototype), value);
+        //                 case "subject":
+        //                     return Object.assign(Object.create(Subject.prototype), value);
+        //                 default:
+        //                     return value;
+        //             }
+        //         })
+        //     }
+        //     else {
+        //         return value
+        //     }
+        // }
 
         let deduplicatedHistory = structuredClone(history);
-        deduplicatedHistory.actionHistory = history.actionHistory.slice(history.newActionStartIndex);
-        deduplicatedHistory = JSON.parse(JSON.stringify(deduplicatedHistory), (key, value) => reviver(key, value))
+        // deduplicatedHistory.actionHistory = history.actionHistory.slice(history.newActionStartIndex);
+        // deduplicatedHistory = JSON.parse(JSON.stringify(deduplicatedHistory), (key, value) => reviver(key, value))
 
-        const nodeIDToActionMap = new Map() as Map<string, Action>;
-        deduplicatedHistory.actionHistory.reverse();
-        deduplicatedHistory.actionHistory.forEach((action, actionIndex) => {
-            action.targets.forEach((node) => {
-                if (!(typeof node == "string")) {
-                    if (action.type == "update") {
-                        if (!nodeIDToActionMap.has(node.id)) {
-                            nodeIDToActionMap.set(node.id, action);
-                        }
+        // const nodeIDToActionMap = new Map() as Map<string, Action>;
+        // deduplicatedHistory.actionHistory.reverse();
+        // deduplicatedHistory.actionHistory.forEach((action, actionIndex) => {
+        //     action.targets.forEach((node) => {
+        //         if (!(typeof node == "string")) {
+        //             if (action.type == "update") {
+        //                 if (!nodeIDToActionMap.has(node.id)) {
+        //                     nodeIDToActionMap.set(node.id, action);
+        //                 }
 
-                        else {
-                            deduplicatedHistory.actionHistory[actionIndex] = new Action("__PLACEHOLDER__", []);
-                        }
-                    }
-                }
-            })
-        })
+        //                 else {
+        //                     deduplicatedHistory.actionHistory[actionIndex] = new Action("__PLACEHOLDER__", []);
+        //                 }
+        //             }
+        //         }
+        //     })
+        // })
 
-        deduplicatedHistory.actionHistory = deduplicatedHistory.actionHistory.filter((action) => !(action.type == "__PLACEHOLDER__"));
-        deduplicatedHistory.actionHistory.reverse()
+        // deduplicatedHistory.actionHistory = deduplicatedHistory.actionHistory.filter((action) => !(action.type == "__PLACEHOLDER__"));
+        // deduplicatedHistory.actionHistory.reverse()
 
         return deduplicatedHistory;
     }

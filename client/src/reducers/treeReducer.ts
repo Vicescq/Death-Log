@@ -40,9 +40,9 @@ export default function treeReducer(tree: TreeStateType, action: TreeReducerActi
     }
 
     function deleteNode() {
-        // first element is reserved to be the updated parent, 2nd is node, rest are children
+        // first element is reserved to be the updated parent, LAST is central node, rest are children
         const parentNodeID = action.payload[0] as string;
-        const centralNodeID = action.payload[1] as string;
+        const centralNodeID = action.payload[action.payload.length-1] as string;
         const parentNode = treeCopy.get(parentNodeID)!;
         const parentNodeCopy = createNewChildIDArrayReference(parentNode);
         parentNodeCopy.childIDS = parentNodeCopy.childIDS.filter((id) => id != centralNodeID);

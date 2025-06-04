@@ -22,11 +22,13 @@ import {
 } from "../utils/ui";
 import useUpdateURLMap from "../hooks/useUpdateURLMap";
 import useUpdateHistory from "../hooks/useUpdateHistory";
+import useUUIDContext from "../hooks/useUUIDContext";
 
 export default function ProfileSubjects({ profileID }: { profileID: string }) {
 	const [tree, dispatchTree] = useTreeContext();
 	const [urlMap, setURLMap] = useURLMapContext();
 	const [history, setHistory] = useHistoryContext();
+	const [uuid] = useUUIDContext();
 	const [intents, setIntents] = useState<Action[]>([]);
 	const addItemCardModalRef = useRef<HTMLDialogElement | null>(null);
 
@@ -59,10 +61,10 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 			const ids = identifyDeletedChildrenIDS(node, tree);
 			dispatchTree({
 				type: "delete",
-				payload: [profileID].concat(node.id).concat(ids),
+				payload: [profileID].concat(ids),
 			});
 			setIntents([
-				new Action("delete", [node.id].concat(ids)),
+				new Action("delete", ids),
 				new Action("toBeUpdated", [profileID]),
 			]);
 		}
@@ -91,10 +93,10 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 	}
 
 	function handleCompletedStatus(subject: Subject, newStatus: boolean) {
-		const updatedGame = createNewTreeNodeRef(subject);
-		updatedGame.completed = newStatus;
-		dispatchTree({ type: "update", payload: [updatedGame] });
-		setIntents([new Action("update", [updatedGame.id])]);
+		const updatedSubject = createNewTreeNodeRef(subject);
+		updatedSubject.completed = newStatus;
+		dispatchTree({ type: "update", payload: [updatedSubject] });
+		setIntents([new Action("update", [updatedSubject])]);
 	}
 
 	function handleToggleSetting(status: boolean, index: number) {
@@ -134,7 +136,7 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 
 	useUpdateURLMap(tree, urlMap, setURLMap);
 	useUpdateHistory(tree, intents, history, setHistory);
-	// usePostDeathLog(history, setHistory);
+	usePostDeathLog(uuid, history, setHistory);
 	return (
 		<>
 			<AddItemCard

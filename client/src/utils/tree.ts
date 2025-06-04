@@ -172,6 +172,8 @@ export function identifyDeletedChildrenIDS(node: TreeNode, tree: TreeStateType) 
         for (let i = 0; i < node.childIDS.length; i++) {
             deleteSelfAndChildren(tree.get(node.childIDS[i])!);
         }
+
+        idsToBeDeleted.push(node.id);
     }
 
     deleteSelfAndChildren(node);

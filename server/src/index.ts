@@ -24,27 +24,29 @@ app.post("/api/nodes/:uuid", (req, res) => {
     for (let i = 0; i < actionHistory.length; i++) {
         const action = actionHistory[i];
         for (let j = 0; j < action._targets.length; j++) {
-            const nodeID = action._targets[j]._id;
-            const node = JSON.stringify(action._targets[j]);
-
-            if (action._type == "add") {
-                toAdd.push(uuid, nodeID, node);
-
-                if (toAddOrUpdateSQLHolders === "") {
-                    toAddOrUpdateSQLHolders = "(?, ?, ?)";
-                }
-                else {
-                    toAddOrUpdateSQLHolders += ", (?, ?, ?)";
-                }
+            if (typeof action._targets[j] == "string") {
+                toDelete.push(action._targets[j]);
             }
-
-            else if (action._type == "update") {
-                toUpdate.push(node, nodeID);
-            }
-
             else {
-                toDelete.push(nodeID);
+                const nodeID = action._targets[j]._id;
+                const node = JSON.stringify(action._targets[j]);
+
+                if (action._type == "add") {
+                    toAdd.push(uuid, nodeID, node);
+
+                    if (toAddOrUpdateSQLHolders === "") {
+                        toAddOrUpdateSQLHolders = "(?, ?, ?)";
+                    }
+                    else {
+                        toAddOrUpdateSQLHolders += ", (?, ?, ?)";
+                    }
+                }
+
+                else if (action._type == "update") {
+                    toUpdate.push(node, nodeID);
+                }
             }
+
         }
     }
 
@@ -96,11 +98,11 @@ app.get("/api/nodes/:uuid", (req, res) => {
             console.log(err)
             throw err;
         }
-        else{
+        else {
             rows.forEach((row: any) => {
                 const node_id = row.node_id;
                 const node = row.node
-                const dataRow = {[node_id]: node};
+                const dataRow = { [node_id]: node };
                 data.push(dataRow);
             })
             res.json(data);

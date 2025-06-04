@@ -23,11 +23,13 @@ import {
 } from "../utils/ui";
 import useUpdateURLMap from "../hooks/useUpdateURLMap";
 import useUpdateHistory from "../hooks/useUpdateHistory";
+import useUUIDContext from "../hooks/useUUIDContext";
 
 export default function GameProfiles({ gameID }: { gameID: string }) {
 	const [tree, dispatchTree] = useTreeContext();
 	const [urlMap, setURLMap] = useURLMapContext();
 	const [history, setHistory] = useHistoryContext();
+	const [uuid] = useUUIDContext();
 	const [intents, setIntents] = useState<Action[]>([]);
 	const addItemCardModalRef = useRef<HTMLDialogElement | null>(null);
 
@@ -59,20 +61,20 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 			const ids = identifyDeletedChildrenIDS(node, tree);
 			dispatchTree({
 				type: "delete",
-				payload: [gameID].concat(node.id).concat(ids),
+				payload: [gameID].concat(ids),
 			});
 			setIntents([
-				new Action("delete", [node.id].concat(ids)),
+				new Action("delete", ids),
 				new Action("toBeUpdated", [gameID]),
 			]);
 		}
 	}
 
 	function handleCompletedStatus(profile: Profile, newStatus: boolean) {
-		const updatedGame = createNewTreeNodeRef(profile);
-		updatedGame.completed = newStatus;
-		dispatchTree({ type: "update", payload: [updatedGame] });
-		setIntents([new Action("update", [updatedGame.id])]);
+		const updatedProfile = createNewTreeNodeRef(profile);
+		updatedProfile.completed = newStatus;
+		dispatchTree({ type: "update", payload: [updatedProfile] });
+		setIntents([new Action("update", [updatedProfile])]);
 	}
 
 	function handleToggleSetting(status: boolean, index: number) {
@@ -104,7 +106,7 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 
 	useUpdateURLMap(tree, urlMap, setURLMap);
 	useUpdateHistory(tree, intents, history, setHistory);
-	// usePostDeathLog(history, setHistory);
+	usePostDeathLog(uuid, history, setHistory);
 
 	return (
 		<>
