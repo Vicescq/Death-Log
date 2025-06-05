@@ -15,18 +15,17 @@ import {
 	createModalListItemToggle,
 } from "../utils/ui";
 import useUpdateURLMap from "../hooks/useUpdateURLMap";
-import useUpdateHistory from "../hooks/useUpdateHistory";
 import useUUIDContext from "../hooks/useUUIDContext";
-import type { DistinctAction } from "../model/Action";
 import type { Game } from "../model/TreeNodeModel";
-import { createGame, identifyDeletedChildrenIDS } from "../utils/tree";
+import { createGame } from "../utils/tree";
+import TreeContextService from "../services/TreeContextService";
+import { updateActionHistory } from "../utils/history";
 
 export default function Home() {
-	const [tree, dispatchTree] = useTreeContext();
+	const [tree, setTree] = useTreeContext();
 	const [urlMap, setURLMap] = useURLMapContext();
 	const [history, setHistory] = useHistoryContext();
 	const [uuid] = useUUIDContext();
-	const [intents, setIntents] = useState<DistinctAction[]>([]);
 	const addItemCardModalRef = useRef<HTMLDialogElement | null>(null);
 
 	const [addItemCardModalListItemArray, setAddItemCardModalListItemArray] =
@@ -41,27 +40,25 @@ export default function Home() {
 		date: null | undefined,
 	) => {
 		const node = createGame(inputText, tree, { date: date });
-		console.log(node);
-		dispatchTree({ type: "add", targets: [node] });
-		setIntents([{ type: "add", targets: [node] }]);
+		const {treeCopy, actions} = TreeContextService.addNode(tree, node);
+		setTree(treeCopy);
+		updateActionHistory(history, setHistory, actions);
 	};
 
 	function handleDelete(node: Game) {
 		const bool = window.confirm();
 		if (bool) {
-			const ids = identifyDeletedChildrenIDS(node, tree);
-			dispatchTree({
-				type: "delete",
-				targets: ["ROOT_NODE"].concat(ids),
-			});
-			setIntents([{ type: "delete", targets: ids }]);
+			const {treeCopy, actions} = TreeContextService.deleteNode(tree, node);
+			setTree(treeCopy);
+			updateActionHistory(history, setHistory, actions);
 		}
 	}
 
 	function handleCompletedStatus(game: Game, newStatus: boolean) {
 		const updatedGame: Game = { ...game, completed: newStatus };
-		dispatchTree({ type: "update", targets: [updatedGame] });
-		setIntents([{ type: "update", targets: [updatedGame] }]);
+		const {treeCopy, actions} = TreeContextService.updateNode(tree, updatedGame);
+		setTree(treeCopy);
+		updateActionHistory(history, setHistory, actions);
 	}
 
 	function handleToggleSetting(status: boolean, index: number) {
@@ -92,7 +89,6 @@ export default function Home() {
 	}
 
 	useUpdateURLMap(tree, urlMap, setURLMap);
-	useUpdateHistory(tree, intents, history, setHistory);
 	usePostDeathLog(uuid, history, setHistory);
 
 	return (

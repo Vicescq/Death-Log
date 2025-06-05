@@ -7,7 +7,7 @@ import CardWrapper from "../components/CardWrapper";
 import { useRef, useState } from "react";
 import Modal from "../components/modals/Modal";
 import ModalListItemToggle from "../components/modals/ModalListItemToggle";
-import { createProfile, identifyDeletedChildrenIDS } from "../utils/tree";
+import { createProfile } from "../utils/tree";
 import AddItemCard from "../components/addItemCard/AddItemCard";
 import type { HandleAddProfile } from "../components/addItemCard/AddItemCardProps";
 import { changeToggleSettingState } from "../utils/eventHandlers";
@@ -16,17 +16,17 @@ import {
 	createModalListItemToggle,
 } from "../utils/ui";
 import useUpdateURLMap from "../hooks/useUpdateURLMap";
-import useUpdateHistory from "../hooks/useUpdateHistory";
 import useUUIDContext from "../hooks/useUUIDContext";
-import type { Action, DistinctAction } from "../model/Action";
 import type { Profile } from "../model/TreeNodeModel";
+import TreeContextService from "../services/TreeContextService";
+import { updateActionHistory } from "../utils/history";
 
 export default function GameProfiles({ gameID }: { gameID: string }) {
-	const [tree, dispatchTree] = useTreeContext();
+	const [tree, setTree] = useTreeContext();
 	const [urlMap, setURLMap] = useURLMapContext();
 	const [history, setHistory] = useHistoryContext();
 	const [uuid] = useUUIDContext();
-	const [intents, setIntents] = useState<DistinctAction[]>([]);
+
 	const addItemCardModalRef = useRef<HTMLDialogElement | null>(null);
 
 	const [addItemCardModalListItemArray, setAddItemCardModalListItemArray] =
@@ -48,35 +48,31 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 			date: date,
 			challenge: challenge,
 		});
-		dispatchTree({ type: "add", targets: [node] });
-		setIntents([
-			{ type: "add", targets: [node] },
-			{ type: "toBeUpdated", targets: [gameID] },
-		]);
+		const { treeCopy, actions } = TreeContextService.addNode(tree, node);
+		setTree(treeCopy);
+		updateActionHistory(history, setHistory, actions);
 	};
 
 	function handleDelete(node: Profile) {
 		const bool = window.confirm();
 		if (bool) {
-			const ids = identifyDeletedChildrenIDS(node, tree);
-			dispatchTree({
-				type: "delete",
-				targets: [gameID].concat(ids),
-			});
-			setIntents([
-				{ type: "delete", targets: ids },
-				{ type: "toBeUpdated", targets: [gameID] },
-			]);
+			const { treeCopy, actions } = TreeContextService.deleteNode(
+				tree,
+				node,
+			);
+			setTree(treeCopy);
+			updateActionHistory(history, setHistory, actions);
 		}
 	}
 
 	function handleCompletedStatus(profile: Profile, newStatus: boolean) {
 		const updatedProfile: Profile = { ...profile, completed: newStatus };
-		dispatchTree({ type: "update", targets: [updatedProfile] });
-		setIntents([
-			{ type: "update", targets: [updatedProfile] },
-			{ type: "toBeUpdated", targets: [gameID] },
-		]);
+		const { treeCopy, actions } = TreeContextService.updateNode(
+			tree,
+			updatedProfile,
+		);
+		setTree(treeCopy);
+		updateActionHistory(history, setHistory, actions);
 	}
 
 	function handleToggleSetting(status: boolean, index: number) {
@@ -107,7 +103,6 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 	}
 
 	useUpdateURLMap(tree, urlMap, setURLMap);
-	useUpdateHistory(tree, intents, history, setHistory);
 	usePostDeathLog(uuid, history, setHistory);
 
 	return (

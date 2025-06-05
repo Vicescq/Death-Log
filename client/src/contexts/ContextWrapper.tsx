@@ -8,17 +8,12 @@ import useGetDeathLog from "../hooks/useGetDeathLog";
 import NavBar from "../components/NavBar";
 import useLoadUserID from "../hooks/useLoadUserID";
 import APIService from "../services/APIService";
-import treeReducer from "../reducers/treeReducer";
 import { UUIDContext } from "./uuidContext";
-import type { Action } from "../model/Action";
 
 export function ContextWrapper({ children }: { children: ReactNode }) {
 	const { isLoaded, userId } = useAuth();
 
-	const [tree, dispatchTree] = useReducer<TreeStateType, [action: Action]>(
-		treeReducer,
-		new Map(),
-	);
+	const [tree, setTree] = useState<TreeStateType>(new Map());
 
 	const [urlMap, setURLMap] = useState<URLMapStateType>(new Map());
 
@@ -31,7 +26,7 @@ export function ContextWrapper({ children }: { children: ReactNode }) {
 	const [uuid, setUUID] = useState(userId);
 
 	useLoadUserID(isLoaded, userId, setUUID);
-	useGetDeathLog(uuid, dispatchTree);
+	useGetDeathLog(uuid, tree, setTree);
 
 	useConsoleLogOnStateChange(tree, "TREE: ", tree);
 	useConsoleLogOnStateChange(urlMap, "URL MAP: ", urlMap);
@@ -50,7 +45,7 @@ export function ContextWrapper({ children }: { children: ReactNode }) {
 
 	if (isLoaded && userId) {
 		return (
-			<TreeContext.Provider value={[tree, dispatchTree]}>
+			<TreeContext.Provider value={[tree, setTree]}>
 				<URLMapContext.Provider value={[urlMap, setURLMap]}>
 					<HistoryContext.Provider value={[history, setHistory]}>
 						<UUIDContext.Provider value={[uuid, setUUID]}>

@@ -15,13 +15,14 @@ import {
 	createModalListItemToggle,
 } from "../utils/ui";
 import useUpdateURLMap from "../hooks/useUpdateURLMap";
-import useUpdateHistory from "../hooks/useUpdateHistory";
 import useUUIDContext from "../hooks/useUUIDContext";
 import type { DistinctAction } from "../model/Action";
 import type { Subject, DeathType } from "../model/TreeNodeModel";
+import TreeContextService from "../services/TreeContextService";
+import { updateActionHistory } from "../utils/history";
 
 export default function ProfileSubjects({ profileID }: { profileID: string }) {
-	const [tree, dispatchTree] = useTreeContext();
+	const [tree, setTree] = useTreeContext();
 	const [urlMap, setURLMap] = useURLMapContext();
 	const [history, setHistory] = useHistoryContext();
 	const [uuid] = useUUIDContext();
@@ -47,25 +48,20 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 			date: date,
 			notable: notable,
 		});
-		dispatchTree({ type: "add", targets: [node] });
-		setIntents([
-			{ type: "add", targets: [node] },
-			{ type: "toBeUpdated", targets: [profileID] },
-		]);
+		const { treeCopy, actions } = TreeContextService.addNode(tree, node);
+		setTree(treeCopy);
+		updateActionHistory(history, setHistory, actions);
 	}
 
 	function handleDelete(node: Subject) {
 		const bool = window.confirm();
 		if (bool) {
-			const ids = identifyDeletedChildrenIDS(node, tree);
-			dispatchTree({
-				type: "delete",
-				targets: [profileID].concat(ids),
-			});
-			setIntents([
-				{ type: "delete", targets: ids },
-				{ type: "toBeUpdated", targets: [profileID] },
-			]);
+			const { treeCopy, actions } = TreeContextService.deleteNode(
+				tree,
+				node,
+			);
+			setTree(treeCopy);
+			updateActionHistory(history, setHistory, actions);
 		}
 	}
 
@@ -84,20 +80,22 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 				? updatedSubject.fullTries--
 				: updatedSubject.resets--;
 		}
-		dispatchTree({
-			type: "update",
-			targets: [updatedSubject],
-		});
-		setIntents([{ type: "toBeUpdated", targets: [updatedSubject.id] }]);
+		const { treeCopy, actions } = TreeContextService.updateNode(
+			tree,
+			updatedSubject,
+		);
+		setTree(treeCopy);
+		updateActionHistory(history, setHistory, actions);
 	}
 
 	function handleCompletedStatus(subject: Subject, newStatus: boolean) {
 		const updatedSubject: Subject = { ...subject, completed: newStatus };
-		dispatchTree({ type: "update", targets: [updatedSubject] });
-		setIntents([
-			{ type: "update", targets: [updatedSubject] },
-			{ type: "toBeUpdated", targets: [profileID] },
-		]);
+		const { treeCopy, actions } = TreeContextService.updateNode(
+			tree,
+			updatedSubject,
+		);
+		setTree(treeCopy);
+		updateActionHistory(history, setHistory, actions);
 	}
 
 	function handleToggleSetting(status: boolean, index: number) {
@@ -136,7 +134,6 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 	}
 
 	useUpdateURLMap(tree, urlMap, setURLMap);
-	useUpdateHistory(tree, intents, history, setHistory);
 	usePostDeathLog(uuid, history, setHistory);
 	return (
 		<>

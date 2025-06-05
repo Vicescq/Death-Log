@@ -1,8 +1,9 @@
 import type { HistoryStateType } from "../contexts/historyContext";
-import type { TreeContextType } from "../contexts/treeContext";
+import type { TreeContextType, TreeStateType } from "../contexts/treeContext";
 import { v4 as uuid4 } from "uuid";
 import type { Action } from "../model/Action";
 import type { TreeNode } from "../model/TreeNodeModel";
+import TreeContextService from "./TreeContextService";
 
 export default class APIService {
     constructor() { };
@@ -16,13 +17,14 @@ export default class APIService {
         });
     }
 
-    static getDeathLog(uuid: string, dispatchTree: TreeContextType[1]) {
+    static getDeathLog(uuid: string, tree: TreeStateType, setTree: TreeContextType[1]) {
         fetch(`/api/nodes/${uuid}`, {
             method: "GET",
             headers: { "Content-Type": "application/json" },
         }).then((res) => res.json()).then((value) => {
             console.log("FROM DB", value);
-            dispatchTree({ type: "init", targets: value });
+            const initTree = TreeContextService.initTree(tree, value);
+            setTree(initTree);
         })
     }
 
