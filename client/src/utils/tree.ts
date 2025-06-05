@@ -12,7 +12,6 @@ export function sanitizeUserEntry(inputText: string) {
 
 export function createNodePath(inputText: string, parentID: string, tree: TreeStateType) {
     let path: string;
-    inputText = sanitizeUserEntry(inputText);
     if (parentID != "ROOT_NODE") {
         const parentNode = tree.get(parentID)! as TangibleTreeNodeParent
         path = parentNode.path + "/" + inputText.replaceAll(" ", "-");

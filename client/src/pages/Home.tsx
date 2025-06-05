@@ -20,6 +20,7 @@ import type { Game } from "../model/TreeNodeModel";
 import { createGame } from "../utils/tree";
 import TreeContextService from "../services/TreeContextService";
 import { updateActionHistory } from "../utils/history";
+import { ErrorBoundary, useErrorBoundary } from "react-error-boundary";
 
 export default function Home() {
 	const [tree, setTree] = useTreeContext();
@@ -27,6 +28,7 @@ export default function Home() {
 	const [history, setHistory] = useHistoryContext();
 	const [uuid] = useUUIDContext();
 	const addItemCardModalRef = useRef<HTMLDialogElement | null>(null);
+	const { showBoundary } = useErrorBoundary();
 
 	const [addItemCardModalListItemArray, setAddItemCardModalListItemArray] =
 		useState([createModalListItemToggle("AUTO-DATE", "autoDate", true)]);
@@ -39,10 +41,15 @@ export default function Home() {
 		inputText: string,
 		date: null | undefined,
 	) => {
-		const node = createGame(inputText, tree, { date: date });
-		const { treeCopy, actions } = TreeContextService.addNode(tree, node);
-		setTree(treeCopy);
-		setHistory(updateActionHistory(history, actions));
+		try{
+			const node = createGame(inputText, tree, { date: date });
+			const { treeCopy, actions } = TreeContextService.addNode(tree, node);
+			setTree(treeCopy);
+			setHistory(updateActionHistory(history, actions));
+		}
+		catch(err){
+			showBoundary(err)
+		}
 	};
 
 	function handleDelete(node: Game) {
