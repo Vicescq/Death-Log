@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import type { TreeStateType } from "../contexts/treeContext";
 import type { URLMapContextType, URLMapStateType } from "../contexts/urlMapContext";
 import { createShallowCopyMap } from "../utils/tree";
+import type { TangibleTreeNodeParent } from "../model/TreeNodeModel";
 
 
 export default function useUpdateURLMap(tree: TreeStateType, urlMap: URLMapStateType, setURLMap: URLMapContextType[1]) {
@@ -12,9 +13,10 @@ export default function useUpdateURLMap(tree: TreeStateType, urlMap: URLMapState
         // add new nodes to url map
         tree.forEach((node) => {
             if (node.type != "subject" && node.type != "ROOT_NODE") {
-                existingNodeIDS.push(node.id);
-                if (!urlMapCopy.has(node.path)) {
-                    urlMapCopy.set(node.path, node.id);
+                const tangibleNodeParent = node as TangibleTreeNodeParent;
+                existingNodeIDS.push(tangibleNodeParent.id);
+                if (!urlMapCopy.has(tangibleNodeParent.path)) {
+                    urlMapCopy.set(tangibleNodeParent.path, tangibleNodeParent.id);
                 }
             }
         })

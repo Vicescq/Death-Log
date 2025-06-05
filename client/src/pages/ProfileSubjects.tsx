@@ -1,9 +1,7 @@
 import Card, { type HandleDeathCountOperation } from "../components/Card";
 import AddItemCard from "../components/addItemCard/AddItemCard";
-import Subject, { type DeathType } from "../model/Subject";
 import useTreeContext from "../hooks/useTreeContext";
 import useURLMapContext from "../hooks/useURLMapContext";
-import Action from "../model/Action";
 import useHistoryContext from "../hooks/useHistoryContext";
 import usePostDeathLog from "../hooks/usePostDeathLog";
 import CardWrapper from "../components/CardWrapper";
@@ -11,7 +9,6 @@ import { useRef, useState } from "react";
 import Modal from "../components/modals/Modal";
 import ModalListItemToggle from "../components/modals/ModalListItemToggle";
 import {
-	createNewTreeNodeRef,
 	createSubject,
 	identifyDeletedChildrenIDS,
 } from "../utils/tree";

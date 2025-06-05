@@ -1,16 +1,13 @@
 import Card from "../components/Card";
-import Profile from "../model/Profile";
 import useTreeContext from "../hooks/useTreeContext";
 import useURLMapContext from "../hooks/useURLMapContext";
 import useHistoryContext from "../hooks/useHistoryContext";
-import Action from "../model/Action";
 import usePostDeathLog from "../hooks/usePostDeathLog";
 import CardWrapper from "../components/CardWrapper";
 import { useRef, useState } from "react";
 import Modal from "../components/modals/Modal";
 import ModalListItemToggle from "../components/modals/ModalListItemToggle";
 import {
-	createNewTreeNodeRef,
 	createProfile,
 	identifyDeletedChildrenIDS,
 } from "../utils/tree";
@@ -24,6 +21,8 @@ import {
 import useUpdateURLMap from "../hooks/useUpdateURLMap";
 import useUpdateHistory from "../hooks/useUpdateHistory";
 import useUUIDContext from "../hooks/useUUIDContext";
+import type { Action } from "../model/Action";
+import type { Profile } from "../model/TreeNodeModel";
 
 export default function GameProfiles({ gameID }: { gameID: string }) {
 	const [tree, dispatchTree] = useTreeContext();

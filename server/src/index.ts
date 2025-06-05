@@ -102,7 +102,7 @@ app.get("/api/nodes/:uuid", (req, res) => {
             rows.forEach((row: any) => {
                 const node_id = row.node_id;
                 const node = row.node
-                const dataRow = { [node_id]: node };
+                const dataRow = { [node_id]: JSON.parse(node) };
                 data.push(dataRow);
             })
             res.json(data);

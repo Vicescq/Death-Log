@@ -1,5 +1,4 @@
 import { NavLink } from "react-router";
-import Subject, { type DeathType } from "../model/Subject";
 import skull from "../assets/skull.svg";
 import add from "../assets/add.svg";
 import minus from "../assets/minus.svg";
@@ -7,8 +6,6 @@ import step_into from "../assets/step_into.svg";
 import details from "../assets/details.svg";
 import reset from "../assets/reset.svg";
 import readonly from "../assets/readonly.svg";
-import Game from "../model/Game";
-import Profile from "../model/Profile";
 import type { TreeStateType } from "../contexts/treeContext";
 import { useEffect, useRef, useState } from "react";
 import type {
@@ -20,12 +17,13 @@ import ModalListItemInputEdit from "./modals/ModalListItemInputEdit";
 import ModalListItemToggle from "./modals/ModalListItemToggle";
 import { ModalUtilityButton } from "./modals/ModalUtilityButton";
 import { createCardCSS, generateCardDeathCounts } from "../utils/ui";
+import type { DeathType, DistinctTreeNode } from "../model/TreeNodeModel";
 
 export type HandleDeathCountOperation = "add" | "subtract";
 
 type Props = {
 	tree: TreeStateType;
-	treeNode: Game | Profile | Subject;
+	treeNode: DistinctTreeNode;
 	handleDeathCount?: (
 		deathType: DeathType,
 		operation: HandleDeathCountOperation,
@@ -51,7 +49,7 @@ export default function Card({
 	const modalRef = useRef<HTMLDialogElement | null>(null);
 	const [inputText, setInputText] = useState("");
 	const [resetDeathTypeMode, setResetDeathTypeMode] = useState(false);
-	const deathType = resetDeathTypeMode ? "reset" : "fullTry";
+	const deathType: DeathType = resetDeathTypeMode ? "resets" : "fullTries";
 	const {
 		cardCSS,
 		readOnlyToggleCSS,
@@ -90,7 +88,7 @@ export default function Card({
 				</div>
 
 				<div className="ml-auto flex flex-col gap-2 ">
-					{!(treeNode instanceof Subject) ? (
+					{!(treeNode.type == "subject") ? (
 						<NavLink to={`/${treeNode.path}`}>
 							<img className={`w-9 ${readOnlyEnabledCSS}`} src={step_into} alt="" />
 						</NavLink>

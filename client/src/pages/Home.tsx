@@ -1,20 +1,13 @@
 import Card from "../components/Card";
 import AddItemCard from "../components/addItemCard/AddItemCard";
-import Game from "../model/Game";
 import useTreeContext from "../hooks/useTreeContext";
 import useURLMapContext from "../hooks/useURLMapContext";
 import usePostDeathLog from "../hooks/usePostDeathLog";
 import useHistoryContext from "../hooks/useHistoryContext";
-import Action from "../model/Action";
 import CardWrapper from "../components/CardWrapper";
 import { useRef, useState } from "react";
 import Modal from "../components/modals/Modal";
 import ModalListItemToggle from "../components/modals/ModalListItemToggle";
-import {
-	createGame,
-	createNewTreeNodeRef,
-	identifyDeletedChildrenIDS,
-} from "../utils/tree";
 import type { HandleAddGame } from "../components/addItemCard/AddItemCardProps";
 import { changeToggleSettingState } from "../utils/eventHandlers";
 import {
@@ -24,6 +17,9 @@ import {
 import useUpdateURLMap from "../hooks/useUpdateURLMap";
 import useUpdateHistory from "../hooks/useUpdateHistory";
 import useUUIDContext from "../hooks/useUUIDContext";
+import type { Action } from "../model/Action";
+import type { Game } from "../model/TreeNodeModel";
+import { createGame, identifyDeletedChildrenIDS } from "../utils/tree";
 
 export default function Home() {
 	const [tree, dispatchTree] = useTreeContext();
@@ -44,9 +40,10 @@ export default function Home() {
 		inputText: string,
 		date: null | undefined,
 	) => {
-		const node = createGame(inputText, tree, date);
-		dispatchTree({ type: "add", payload: [node] });
-		setIntents([new Action("add", [node])]);
+		const node = createGame(inputText, tree, { date: date });
+		console.log(node)
+		dispatchTree({ type: "add", targets: [node] });
+		setIntents([{ type: "add", targets: [node] }]);
 	};
 
 	function handleDelete(node: Game) {
@@ -55,17 +52,16 @@ export default function Home() {
 			const ids = identifyDeletedChildrenIDS(node, tree);
 			dispatchTree({
 				type: "delete",
-				payload: ["ROOT_NODE"].concat(ids),
+				targets: ["ROOT_NODE"].concat(ids),
 			});
-			setIntents([new Action("delete", ids)]);
+			setIntents([{ type: "delete", targets: ids }]);
 		}
 	}
 
 	function handleCompletedStatus(game: Game, newStatus: boolean) {
-		const updatedGame = createNewTreeNodeRef(game);
-		updatedGame.completed = newStatus;
-		dispatchTree({ type: "update", payload: [updatedGame] });
-		setIntents([new Action("update", [updatedGame])]);
+		const updatedGame: Game = { ...game, completed: newStatus };
+		dispatchTree({ type: "update", targets: [updatedGame] });
+		setIntents([{ type: "update", targets: [updatedGame] }]);
 	}
 
 	function handleToggleSetting(status: boolean, index: number) {
@@ -94,7 +90,7 @@ export default function Home() {
 			);
 		});
 	}
-	
+
 	useUpdateURLMap(tree, urlMap, setURLMap);
 	useUpdateHistory(tree, intents, history, setHistory);
 	usePostDeathLog(uuid, history, setHistory);

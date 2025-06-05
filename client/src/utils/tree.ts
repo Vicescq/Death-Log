@@ -1,5 +1,5 @@
 import type { TreeStateType } from "../contexts/treeContext";
-import type { RootNode, TreeNode, Game, Profile, Subject, TangibleTreeNodeParent, DistinctTreeNode } from "../model/TreeNodeModel";
+import type { RootNode, TreeNode, Game, Profile, Subject, TangibleTreeNodeParent, DistinctTreeNode, DeathType } from "../model/TreeNodeModel";
 import { v4 as uuidv4 } from 'uuid';
 
 export function sanitizeUserEntry(inputText: string) {
@@ -50,6 +50,7 @@ export function createGame(
         path: path,
         genre: null,
     };
+    deleteUndefinedValues(overrides);
     return {
         ...defaultGame,
         ...overrides
@@ -126,7 +127,7 @@ export function sortChildIDS(parentNode: TreeNode, tree: TreeStateType) {
 
         if (nodeA && nodeB) {
             if (nodeA.type == "subject" && nodeB.type == "subject") {
-                
+
                 let unnotableFactorA = 0;
                 let unnotableFactorB = 0;
 
@@ -176,4 +177,49 @@ export function identifyDeletedChildrenIDS(node: TreeNode, tree: TreeStateType) 
 
     deleteSelfAndChildren(node);
     return idsToBeDeleted;
+}
+
+export function getDeaths(node: DistinctTreeNode, tree: TreeStateType, mode: DeathType) {
+
+    function switchStatement(subject: Subject) {
+        switch (mode) {
+            case "fullTries":
+                count += subject.fullTries;
+                break;
+            case "resets":
+                count += subject.fullTries;
+                break;
+            default:
+                count += subject.fullTries + subject.resets;
+        }
+        return count;
+    }
+
+    let count = 0;
+    if (node.type == "game") {
+        node.childIDS.forEach((nodeID) => {
+            tree.get(nodeID)?.childIDS.forEach((nodeID) => {
+                const subject = tree.get(nodeID) as Subject;
+                count += switchStatement(subject);
+            })
+        })
+    }
+
+    else if (node.type == "profile") {
+        node.childIDS.forEach((nodeID) => {
+            const subject = tree.get(nodeID) as Subject;
+            count += switchStatement(subject);
+        })
+    }
+
+    else {
+        count += switchStatement(node);
+    }
+
+    return count;
+
+}
+
+export function deleteUndefinedValues(obj: any){
+    Object.keys(obj).forEach((key) => obj[key] === undefined ? delete obj[key] : null);
 }

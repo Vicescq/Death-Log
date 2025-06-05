@@ -1,9 +1,9 @@
-import Action from "../model/Action";
 import type { HistoryStateType } from "../contexts/historyContext";
 import type { TreeContextType } from "../contexts/treeContext";
-import { reviveTree } from "../utils/tree";
-import type TreeNode from "../model/TreeNodeModel";
 import { v4 as uuid4 } from "uuid";
+import type { Action } from "../model/Action";
+import type { TreeNode } from "../model/TreeNodeModel";
+import { convertOldModelToNew } from "../utils/migrations";
 
 export default class APIService {
     constructor() { };
@@ -23,8 +23,9 @@ export default class APIService {
             headers: { "Content-Type": "application/json" },
         }).then((res) => res.json()).then((value) => {
             console.log(value);
-            const revivedNodes = reviveTree(value);
-            dispatchTree({ type: "init", payload: revivedNodes });
+            // const convertedNodes = convertOldModelToNew(value);
+            // console.log("CONVERTED:", convertedNodes);
+            dispatchTree({ type: "init", targets: [] });
         })
     }
 
