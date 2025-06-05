@@ -50,7 +50,7 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 		});
 		const { treeCopy, actions } = TreeContextService.addNode(tree, node);
 		setTree(treeCopy);
-		updateActionHistory(history, setHistory, actions);
+		setHistory(updateActionHistory(history, actions));
 	};
 
 	function handleDelete(node: Profile) {
@@ -61,7 +61,7 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 				node,
 			);
 			setTree(treeCopy);
-			updateActionHistory(history, setHistory, actions);
+			setHistory(updateActionHistory(history, actions));
 		}
 	}
 
@@ -72,7 +72,7 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 			updatedProfile,
 		);
 		setTree(treeCopy);
-		updateActionHistory(history, setHistory, actions);
+		setHistory(updateActionHistory(history, actions));
 	}
 
 	function handleToggleSetting(status: boolean, index: number) {

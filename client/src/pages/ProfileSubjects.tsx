@@ -20,6 +20,7 @@ import type { DistinctAction } from "../model/Action";
 import type { Subject, DeathType } from "../model/TreeNodeModel";
 import TreeContextService from "../services/TreeContextService";
 import { updateActionHistory } from "../utils/history";
+import { v4 as uuidv4 } from 'uuid';
 
 export default function ProfileSubjects({ profileID }: { profileID: string }) {
 	const [tree, setTree] = useTreeContext();
@@ -50,7 +51,7 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 		});
 		const { treeCopy, actions } = TreeContextService.addNode(tree, node);
 		setTree(treeCopy);
-		updateActionHistory(history, setHistory, actions);
+		setHistory(updateActionHistory(history, actions));
 	}
 
 	function handleDelete(node: Subject) {
@@ -61,7 +62,7 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 				node,
 			);
 			setTree(treeCopy);
-			updateActionHistory(history, setHistory, actions);
+			setHistory(updateActionHistory(history, actions));
 		}
 	}
 
@@ -85,7 +86,7 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 			updatedSubject,
 		);
 		setTree(treeCopy);
-		updateActionHistory(history, setHistory, actions);
+		setHistory(updateActionHistory(history, actions));
 	}
 
 	function handleCompletedStatus(subject: Subject, newStatus: boolean) {
@@ -95,7 +96,7 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 			updatedSubject,
 		);
 		setTree(treeCopy);
-		updateActionHistory(history, setHistory, actions);
+		setHistory(updateActionHistory(history, actions));
 	}
 
 	function handleToggleSetting(status: boolean, index: number) {

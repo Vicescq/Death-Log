@@ -55,7 +55,7 @@ export default function AddItemCard({
 	}
 
 	return (
-		<header className="mb-8 flex w-60 flex-col gap-4 border-4 border-black bg-amber-200 p-4 text-black shadow-[8px_5px_0px_rgba(0,0,0,1)] md:w-lg">
+		<header className="mb-8 flex w-full flex-col gap-4 bg-amber-200 p-4 border-b-4 text-black md:w-xl md:border-4 md:border-black md:shadow-[8px_5px_0px_rgba(0,0,0,1)]">
 			<div className="flex gap-4">
 				<input
 					type="search"

@@ -40,25 +40,31 @@ export default function Home() {
 		date: null | undefined,
 	) => {
 		const node = createGame(inputText, tree, { date: date });
-		const {treeCopy, actions} = TreeContextService.addNode(tree, node);
+		const { treeCopy, actions } = TreeContextService.addNode(tree, node);
 		setTree(treeCopy);
-		updateActionHistory(history, setHistory, actions);
+		setHistory(updateActionHistory(history, actions));
 	};
 
 	function handleDelete(node: Game) {
 		const bool = window.confirm();
 		if (bool) {
-			const {treeCopy, actions} = TreeContextService.deleteNode(tree, node);
+			const { treeCopy, actions } = TreeContextService.deleteNode(
+				tree,
+				node,
+			);
 			setTree(treeCopy);
-			updateActionHistory(history, setHistory, actions);
+			setHistory(updateActionHistory(history, actions));
 		}
 	}
 
 	function handleCompletedStatus(game: Game, newStatus: boolean) {
 		const updatedGame: Game = { ...game, completed: newStatus };
-		const {treeCopy, actions} = TreeContextService.updateNode(tree, updatedGame);
+		const { treeCopy, actions } = TreeContextService.updateNode(
+			tree,
+			updatedGame,
+		);
 		setTree(treeCopy);
-		updateActionHistory(history, setHistory, actions);
+		setHistory(updateActionHistory(history, actions));
 	}
 
 	function handleToggleSetting(status: boolean, index: number) {
