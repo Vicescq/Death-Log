@@ -1,4 +1,4 @@
-import type { TreeNodeSerializableType } from "../../model/TreeNode";
+import type { TreeNodeType } from "../../model/TreeNodeModel";
 import type { ModalListItemToggleType, ModalListItemInputEditType } from "../modals/ModalListItemTypes";
 
 export type HandleAddGame = (inputText: string, date: null | undefined) => void;
@@ -14,7 +14,7 @@ export type HandleAddSubject = (
 
 interface AddItemCardPropsBase {
     children: React.JSX.Element;
-    itemType: TreeNodeSerializableType;
+    itemType: TreeNodeType;
     modalRef: React.RefObject<HTMLDialogElement | null>;
     modalListItemArray: (
         | ModalListItemToggleType

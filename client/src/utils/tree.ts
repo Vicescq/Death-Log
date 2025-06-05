@@ -3,7 +3,7 @@ import Game from "../model/Game";
 import Profile from "../model/Profile";
 import RootNode from "../model/RootNode";
 import Subject from "../model/Subject";
-import type TreeNode from "../model/TreeNode";
+import type TreeNode from "../model/TreeNodeModel";
 
 export function sanitizeUserEntry(inputText: string) {
     inputText = inputText.trim();

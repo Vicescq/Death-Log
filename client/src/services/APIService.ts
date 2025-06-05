@@ -2,7 +2,7 @@ import Action from "../model/Action";
 import type { HistoryStateType } from "../contexts/historyContext";
 import type { TreeContextType } from "../contexts/treeContext";
 import { reviveTree } from "../utils/tree";
-import type TreeNode from "../model/TreeNode";
+import type TreeNode from "../model/TreeNodeModel";
 import { v4 as uuid4 } from "uuid";
 
 export default class APIService {

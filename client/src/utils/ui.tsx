@@ -8,7 +8,7 @@ import type { TreeStateType } from "../contexts/treeContext";
 import Game from "../model/Game";
 import Profile from "../model/Profile";
 import Subject, { type DeathType } from "../model/Subject";
-import type TreeNode from "../model/TreeNode";
+import type TreeNode from "../model/TreeNodeModel";
 
 export function createModalListItemInputEdit(
 	settingLabel: string,

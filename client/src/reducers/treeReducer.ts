@@ -1,6 +1,6 @@
 import type { TreeStateType } from "../contexts/treeContext";
 import RootNode from "../model/RootNode";
-import type TreeNode from "../model/TreeNode";
+import type TreeNode from "../model/TreeNodeModel";
 import { createNewChildIDArrayReference, createShallowCopyMap, sortChildIDS } from "../utils/tree";
 
 type TreeReducerActionType = "init" | "add" | "delete" | "update";
