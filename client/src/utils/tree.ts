@@ -1,9 +1,6 @@
 import type { TreeStateType } from "../contexts/treeContext";
-import Game from "../model/Game";
-import Profile from "../model/Profile";
-import RootNode from "../model/RootNode";
-import Subject from "../model/Subject";
-import type TreeNode from "../model/TreeNodeModel";
+import type { RootNode, TreeNode, Game, Profile, Subject, TangibleTreeNodeParent, DistinctTreeNode } from "../model/TreeNodeModel";
+import { v4 as uuidv4 } from 'uuid';
 
 export function sanitizeUserEntry(inputText: string) {
     inputText = inputText.trim();
@@ -17,7 +14,7 @@ export function createNodePath(inputText: string, parentID: string, tree: TreeSt
     let path: string;
     inputText = sanitizeUserEntry(inputText);
     if (parentID != "ROOT_NODE") {
-        const parentNode = tree.get(parentID)!
+        const parentNode = tree.get(parentID)! as TangibleTreeNodeParent
         path = parentNode.path + "/" + inputText.replaceAll(" ", "-");
     }
     else {
@@ -26,35 +23,94 @@ export function createNodePath(inputText: string, parentID: string, tree: TreeSt
     return path;
 }
 
+export function createRootNode() {
+    const rootNode: RootNode = { type: "ROOT_NODE", id: "ROOT_NODE", childIDS: [], parentID: null };
+    return rootNode
+}
+
 export function createGame(
     inputText: string,
     tree: TreeStateType,
-    date: null | undefined,
+    overrides: Partial<Game>,
 ) {
     inputText = sanitizeUserEntry(inputText);
     const path = createNodePath(inputText, "ROOT_NODE", tree);
-    return new Game(inputText, path, "ROOT_NODE", undefined, undefined, date);
+    const defaultGame: Game = {
+        type: "game",
+        id: uuidv4(),
+        childIDS: [],
+        parentID: "ROOT_NODE",
+        name: inputText,
+        date: new Date().toString(),
+        completed: false,
+        notes: null,
+        timeSpent: null,
+        dateStart: null,
+        dateEnd: null,
+        path: path,
+        genre: null,
+    };
+    return {
+        ...defaultGame,
+        ...overrides
+    } as Game
 }
 
 export function createProfile(
     inputText: string,
     tree: TreeStateType,
-    date: null | undefined,
     parentID: string,
+    overrides: Partial<Profile>,
 ) {
     inputText = sanitizeUserEntry(inputText);
     const path = createNodePath(inputText, parentID, tree);
-    return new Profile(inputText, path, parentID, undefined, undefined, date);
+    const defaultProfile: Profile = {
+        type: "profile",
+        id: uuidv4(),
+        childIDS: [],
+        parentID: parentID,
+        name: inputText,
+        date: new Date().toString(),
+        completed: false,
+        notes: null,
+        timeSpent: null,
+        dateStart: null,
+        dateEnd: null,
+        path: path,
+        challenge: false,
+    };
+    return {
+        ...defaultProfile,
+        ...overrides
+    } as Profile
 }
 
 export function createSubject(
     inputText: string,
-    date: null | undefined,
     parentID: string,
-    notable: boolean,
+    overrides: Partial<Subject>,
 ) {
     inputText = sanitizeUserEntry(inputText);
-    return new Subject(inputText, parentID, notable, undefined, undefined, undefined, date);
+    const defaultSubject: Subject = {
+        type: "subject",
+        id: uuidv4(),
+        childIDS: [],
+        parentID: parentID,
+        name: inputText,
+        date: new Date().toString(),
+        completed: false,
+        notes: null,
+        timeSpent: null,
+        dateStart: null,
+        dateEnd: null,
+        notable: true,
+        fullTries: 0,
+        resets: 0,
+    };
+    return {
+        ...defaultSubject,
+        ...overrides
+    } as Subject
 }
 
 export function createShallowCopyMap<T>(map: Map<string, T>) {
@@ -65,12 +121,12 @@ export function createShallowCopyMap<T>(map: Map<string, T>) {
 
 export function sortChildIDS(parentNode: TreeNode, tree: TreeStateType) {
     const sorted = parentNode.childIDS.toSorted((a, b) => {
-        const nodeA = tree.get(a);
-        const nodeB = tree.get(b);
+        const nodeA = tree.get(a) as DistinctTreeNode;
+        const nodeB = tree.get(b) as DistinctTreeNode;
 
         if (nodeA && nodeB) {
-            if (nodeA instanceof Subject && nodeB instanceof Subject) {
-
+            if (nodeA.type == "subject" && nodeB.type == "subject") {
+                
                 let unnotableFactorA = 0;
                 let unnotableFactorB = 0;
 
@@ -98,64 +154,6 @@ export function sortChildIDS(parentNode: TreeNode, tree: TreeStateType) {
 
     });
     return sorted
-}
-
-export function reviveTree(serializedTree: object[]) {
-
-    function reviver(obj: any): TreeNode {
-        switch (obj._type) {
-            case "root":
-                return new RootNode(obj._childIDS);
-            case "game":
-                return new Game(obj._name, obj._path, obj._parentID, obj._childIDS, obj._id, obj._date, obj._completed);
-            case "profile":
-                return new Profile(obj._name, obj._path, obj._parentID, obj._id, obj._childIDS, obj._date, obj._completed);
-            case "subject":
-                return new Subject(obj._name, obj._parentID, obj._notable, obj._fullTries, obj._resets, obj._id, obj._date, obj._completed);
-            default:
-                return obj;
-        }
-    }
-
-    const revivedNodes: TreeNode[] = [];
-    for (const [_, outerLiteral] of Object.entries(serializedTree)) {
-        for (const [_, innerLiteral] of Object.entries(outerLiteral)) {
-            const revivedNode = reviver(JSON.parse(innerLiteral));
-            revivedNodes.push(revivedNode);
-        }
-    }
-
-    return revivedNodes
-}
-
-export function createNewTreeNodeRef(previous: TreeNode) {
-    switch (previous.type) {
-        case "game":
-            const game = previous as Game;
-            return new Game(game.name, game.path, game.parentID!, game.childIDS, game.id, game.date, game.completed);
-        case "profile":
-            const profile = previous as Profile;
-            return new Profile(profile.name, profile.path, profile.parentID!, profile.id, profile.childIDS, profile.date, profile.completed);
-        default:
-            const subject = previous as Subject;
-            return new Subject(subject.name, subject.parentID!, subject.notable, subject.fullTries, subject.resets, subject.id, subject.date, subject.completed);
-    }
-}
-
-export function createNewChildIDArrayReference(parentNode: TreeNode) {
-    let parentNodeCopy;
-    switch (parentNode.type) {
-        case "ROOT_NODE":
-            parentNodeCopy = new RootNode([...parentNode.childIDS]);
-            break;
-        case "game":
-            parentNodeCopy = new Game(parentNode.name, parentNode.path, parentNode.parentID!, [...parentNode.childIDS], parentNode.id, parentNode.date, parentNode.completed);
-            break;
-        default:
-            parentNodeCopy = new Profile(parentNode.name, parentNode.path, parentNode.parentID!, parentNode.id, [...parentNode.childIDS], parentNode.date, parentNode.completed);
-            break;
-    }
-    return parentNodeCopy;
 }
 
 export function identifyDeletedChildrenIDS(node: TreeNode, tree: TreeStateType) {

@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import type Action from "../model/Action";
+import type { Action } from "../model/Action";
 
 export type HistoryContextType = [HistoryStateType, React.Dispatch<React.SetStateAction<HistoryStateType>>]
 export type HistoryStateType =  {newActionStartIndex: number, actionHistory: Action[]};

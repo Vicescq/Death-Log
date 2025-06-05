@@ -1,8 +1,8 @@
-import type { TangibleTreeNode } from "./TreeNodeModel";
+import type { DistinctTreeNode } from "./TreeNodeModel";
 
-export type ActionType = "add" | "delete" | "update" | "toBeUpdated";
+export type ActionType = "add" | "delete" | "update" | "toBeUpdated" | "init";
 
 export type Action = {
     type: ActionType,
-    targets: (TangibleTreeNode | string)[]
+    targets: (DistinctTreeNode | string)[]
 }

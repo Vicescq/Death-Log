@@ -7,10 +7,16 @@ export type TreeNode = {
     childIDS: string[],
 }
 
+export type DistinctTreeNode = Game | Profile | Subject  // for discriminant unions
+
 export type TangibleTreeNode = TreeNode & {
     name: string,
-    date: string,
+    date: string | null,
     completed: boolean
+    notes: string | null
+    timeSpent: number | null // in seconds
+    dateStart: string | null,
+    dateEnd: string | null,
 }
 
 export type TangibleTreeNodeParent = TangibleTreeNode & {
@@ -24,15 +30,18 @@ export type RootNode = TreeNode & {
 }
 
 export type Game = TangibleTreeNodeParent & {
-
+    type: "game"
+    genre: string | null,
 }
 
 export type Profile = TangibleTreeNodeParent & {
-    challenge: boolean
+    type: "profile"
+    challenge: boolean,
 }
 
 export type Subject = TangibleTreeNode & {
+    type: "subject"
     notable: boolean,
     fullTries: number,
-    resets: number
+    resets: number,
 }
