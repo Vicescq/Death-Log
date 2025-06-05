@@ -57,7 +57,7 @@ export default function Card({
 		readOnlyToggleCSS,
 		resetToggleCSS,
 		settersBtnDisplay,
-		detailsReadOnlyCSS,
+		readOnlyEnabledCSS,
 	} = createCardCSS(treeNode, resetDeathTypeMode);
 
 	const { deathCount, fullTries, resets } = generateCardDeathCounts(
@@ -89,10 +89,10 @@ export default function Card({
 					</div>
 				</div>
 
-				<div className="ml-auto flex flex-col gap-2">
+				<div className="ml-auto flex flex-col gap-2 ">
 					{!(treeNode instanceof Subject) ? (
 						<NavLink to={`/${treeNode.path}`}>
-							<img className="w-9" src={step_into} alt="" />
+							<img className={`w-9 ${readOnlyEnabledCSS}`} src={step_into} alt="" />
 						</NavLink>
 					) : (
 						<>
@@ -123,7 +123,7 @@ export default function Card({
 						</>
 					)}
 					<img
-						className={`w-9 cursor-pointer ${detailsReadOnlyCSS}`}
+						className={`w-9 cursor-pointer ${readOnlyEnabledCSS}`}
 						src={details}
 						alt=""
 						onClick={() => modalRef.current!.showModal()}

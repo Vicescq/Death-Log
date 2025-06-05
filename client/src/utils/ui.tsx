@@ -48,7 +48,7 @@ export function createCardCSS(treeNode: Game | Profile | Subject, resetDeathType
 	const readOnlyToggleCSS = treeNode.completed ? enabledCSS : "";
 	const resetToggleCSS = resetDeathTypeMode ? enabledCSS : "";
 	const settersBtnDisplay = treeNode.completed ? "hidden" : "";
-	const detailsReadOnlyCSS = treeNode.completed
+	const readOnlyEnabledCSS = treeNode.completed
 		? "bg-amber-200 rounded-l shadow-[5px_2px_0px_rgba(0,0,0,1)]"
 		: "";
 	return {
@@ -56,7 +56,7 @@ export function createCardCSS(treeNode: Game | Profile | Subject, resetDeathType
 		readOnlyToggleCSS,
 		resetToggleCSS,
 		settersBtnDisplay,
-		detailsReadOnlyCSS,
+		readOnlyEnabledCSS,
 	};
 }
 
