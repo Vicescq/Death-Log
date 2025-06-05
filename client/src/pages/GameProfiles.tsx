@@ -7,10 +7,7 @@ import CardWrapper from "../components/CardWrapper";
 import { useRef, useState } from "react";
 import Modal from "../components/modals/Modal";
 import ModalListItemToggle from "../components/modals/ModalListItemToggle";
-import {
-	createProfile,
-	identifyDeletedChildrenIDS,
-} from "../utils/tree";
+import { createProfile, identifyDeletedChildrenIDS } from "../utils/tree";
 import AddItemCard from "../components/addItemCard/AddItemCard";
 import type { HandleAddProfile } from "../components/addItemCard/AddItemCardProps";
 import { changeToggleSettingState } from "../utils/eventHandlers";
@@ -21,7 +18,7 @@ import {
 import useUpdateURLMap from "../hooks/useUpdateURLMap";
 import useUpdateHistory from "../hooks/useUpdateHistory";
 import useUUIDContext from "../hooks/useUUIDContext";
-import type { Action } from "../model/Action";
+import type { Action, DistinctAction } from "../model/Action";
 import type { Profile } from "../model/TreeNodeModel";
 
 export default function GameProfiles({ gameID }: { gameID: string }) {
@@ -29,7 +26,7 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 	const [urlMap, setURLMap] = useURLMapContext();
 	const [history, setHistory] = useHistoryContext();
 	const [uuid] = useUUIDContext();
-	const [intents, setIntents] = useState<Action[]>([]);
+	const [intents, setIntents] = useState<DistinctAction[]>([]);
 	const addItemCardModalRef = useRef<HTMLDialogElement | null>(null);
 
 	const [addItemCardModalListItemArray, setAddItemCardModalListItemArray] =
@@ -45,12 +42,16 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 	const handleAdd: HandleAddProfile = (
 		inputText: string,
 		date: null | undefined,
+		challenge: boolean | undefined,
 	) => {
-		const node = createProfile(inputText, tree, date, gameID);
-		dispatchTree({ type: "add", payload: [node] });
+		const node = createProfile(inputText, tree, gameID, {
+			date: date,
+			challenge: challenge,
+		});
+		dispatchTree({ type: "add", targets: [node] });
 		setIntents([
-			new Action("add", [node]),
-			new Action("toBeUpdated", [gameID]),
+			{ type: "add", targets: [node] },
+			{ type: "toBeUpdated", targets: [gameID] },
 		]);
 	};
 
@@ -60,20 +61,22 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 			const ids = identifyDeletedChildrenIDS(node, tree);
 			dispatchTree({
 				type: "delete",
-				payload: [gameID].concat(ids),
+				targets: [gameID].concat(ids),
 			});
 			setIntents([
-				new Action("delete", ids),
-				new Action("toBeUpdated", [gameID]),
+				{ type: "delete", targets: ids },
+				{ type: "toBeUpdated", targets: [gameID] },
 			]);
 		}
 	}
 
 	function handleCompletedStatus(profile: Profile, newStatus: boolean) {
-		const updatedProfile = createNewTreeNodeRef(profile);
-		updatedProfile.completed = newStatus;
-		dispatchTree({ type: "update", payload: [updatedProfile] });
-		setIntents([new Action("update", [updatedProfile])]);
+		const updatedProfile: Profile = { ...profile, completed: newStatus };
+		dispatchTree({ type: "update", targets: [updatedProfile] });
+		setIntents([
+			{ type: "update", targets: [updatedProfile] },
+			{ type: "toBeUpdated", targets: [gameID] },
+		]);
 	}
 
 	function handleToggleSetting(status: boolean, index: number) {

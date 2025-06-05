@@ -80,6 +80,7 @@ export function createProfile(
         path: path,
         challenge: false,
     };
+    deleteUndefinedValues(overrides);
     return {
         ...defaultProfile,
         ...overrides
@@ -108,6 +109,7 @@ export function createSubject(
         fullTries: 0,
         resets: 0,
     };
+    deleteUndefinedValues(overrides);
     return {
         ...defaultSubject,
         ...overrides
@@ -180,19 +182,20 @@ export function identifyDeletedChildrenIDS(node: TreeNode, tree: TreeStateType) 
 }
 
 export function getDeaths(node: DistinctTreeNode, tree: TreeStateType, mode: DeathType) {
-
+    
     function switchStatement(subject: Subject) {
+        let total = 0;
         switch (mode) {
             case "fullTries":
-                count += subject.fullTries;
+                total += subject.fullTries;
                 break;
             case "resets":
-                count += subject.fullTries;
+                total += subject.resets;
                 break;
             default:
-                count += subject.fullTries + subject.resets;
+                total += subject.fullTries + subject.resets;
         }
-        return count;
+        return total;
     }
 
     let count = 0;

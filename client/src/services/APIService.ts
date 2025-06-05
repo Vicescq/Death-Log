@@ -3,7 +3,6 @@ import type { TreeContextType } from "../contexts/treeContext";
 import { v4 as uuid4 } from "uuid";
 import type { Action } from "../model/Action";
 import type { TreeNode } from "../model/TreeNodeModel";
-import { convertOldModelToNew } from "../utils/migrations";
 
 export default class APIService {
     constructor() { };
@@ -22,10 +21,8 @@ export default class APIService {
             method: "GET",
             headers: { "Content-Type": "application/json" },
         }).then((res) => res.json()).then((value) => {
-            console.log(value);
-            // const convertedNodes = convertOldModelToNew(value);
-            // console.log("CONVERTED:", convertedNodes);
-            dispatchTree({ type: "init", targets: [] });
+            console.log("FROM DB", value);
+            dispatchTree({ type: "init", targets: value });
         })
     }
 

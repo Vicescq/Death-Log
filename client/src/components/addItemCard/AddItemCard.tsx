@@ -13,8 +13,9 @@ export default function AddItemCard({
 	const [inputText, setInputText] = useState("");
 
 	function handleAddWrapper() {
-		let date: undefined | null = undefined,
-			notable = true;
+		let date: null | undefined = undefined,
+			challenge: boolean | undefined = undefined,
+			notable: boolean | undefined = undefined;
 		modalListItemArray.forEach((li) => {
 			if (
 				li.type == "toggle" &&
@@ -22,6 +23,14 @@ export default function AddItemCard({
 				!li.enable
 			) {
 				date = null;
+			}
+
+			if (
+				li.type == "toggle" &&
+				li.toggleSetting == "challenge" &&
+				li.enable
+			) {
+				challenge = true;
 			}
 
 			if (
@@ -38,7 +47,7 @@ export default function AddItemCard({
 				handleAdd(inputText, date);
 				break;
 			case "profile":
-				handleAdd(inputText, date);
+				handleAdd(inputText, date, challenge);
 				break;
 			default:
 				handleAdd(inputText, date, notable);

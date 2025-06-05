@@ -23,15 +23,15 @@ app.post("/api/nodes/:uuid", (req, res) => {
 
     for (let i = 0; i < actionHistory.length; i++) {
         const action = actionHistory[i];
-        for (let j = 0; j < action._targets.length; j++) {
-            if (typeof action._targets[j] == "string") {
-                toDelete.push(action._targets[j]);
+        for (let j = 0; j < action.targets.length; j++) {
+            if (typeof action.targets[j] == "string") {
+                toDelete.push(action.targets[j]);
             }
             else {
-                const nodeID = action._targets[j]._id;
-                const node = JSON.stringify(action._targets[j]);
+                const nodeID = action.targets[j].id;
+                const node = JSON.stringify(action.targets[j]);
 
-                if (action._type == "add") {
+                if (action.type == "add") {
                     toAdd.push(uuid, nodeID, node);
 
                     if (toAddOrUpdateSQLHolders === "") {
@@ -42,7 +42,7 @@ app.post("/api/nodes/:uuid", (req, res) => {
                     }
                 }
 
-                else if (action._type == "update") {
+                else if (action.type == "update") {
                     toUpdate.push(node, nodeID);
                 }
             }
@@ -100,10 +100,8 @@ app.get("/api/nodes/:uuid", (req, res) => {
         }
         else {
             rows.forEach((row: any) => {
-                const node_id = row.node_id;
                 const node = row.node
-                const dataRow = { [node_id]: JSON.parse(node) };
-                data.push(dataRow);
+                data.push(JSON.parse(node));
             })
             res.json(data);
         }

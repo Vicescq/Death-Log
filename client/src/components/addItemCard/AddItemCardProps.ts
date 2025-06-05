@@ -5,11 +5,12 @@ export type HandleAddGame = (inputText: string, date: null | undefined) => void;
 export type HandleAddProfile = (
     inputText: string,
     date: null | undefined,
+    challenge: boolean | undefined,
 ) => void;
 export type HandleAddSubject = (
     inputText: string,
     date: null | undefined,
-    notable: boolean,
+    notable: boolean | undefined,
 ) => void;
 
 interface AddItemCardPropsBase {

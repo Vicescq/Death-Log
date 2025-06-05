@@ -38,7 +38,7 @@ export function ContextWrapper({ children }: { children: ReactNode }) {
 	useConsoleLogOnStateChange(history, "HISTORY: ", history);
 	useConsoleLogOnStateChange(
 		history,
-		"\nSANITIZED: ",
+		"\nSENT TO DB: ",
 		APIService.batchHistory(history),
 	);
 	useConsoleLogOnStateChange(

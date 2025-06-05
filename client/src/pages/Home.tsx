@@ -17,7 +17,7 @@ import {
 import useUpdateURLMap from "../hooks/useUpdateURLMap";
 import useUpdateHistory from "../hooks/useUpdateHistory";
 import useUUIDContext from "../hooks/useUUIDContext";
-import type { Action } from "../model/Action";
+import type { DistinctAction } from "../model/Action";
 import type { Game } from "../model/TreeNodeModel";
 import { createGame, identifyDeletedChildrenIDS } from "../utils/tree";
 
@@ -26,7 +26,7 @@ export default function Home() {
 	const [urlMap, setURLMap] = useURLMapContext();
 	const [history, setHistory] = useHistoryContext();
 	const [uuid] = useUUIDContext();
-	const [intents, setIntents] = useState<Action[]>([]);
+	const [intents, setIntents] = useState<DistinctAction[]>([]);
 	const addItemCardModalRef = useRef<HTMLDialogElement | null>(null);
 
 	const [addItemCardModalListItemArray, setAddItemCardModalListItemArray] =
@@ -41,7 +41,7 @@ export default function Home() {
 		date: null | undefined,
 	) => {
 		const node = createGame(inputText, tree, { date: date });
-		console.log(node)
+		console.log(node);
 		dispatchTree({ type: "add", targets: [node] });
 		setIntents([{ type: "add", targets: [node] }]);
 	};
