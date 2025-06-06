@@ -63,8 +63,10 @@ export default function Card({
 		tree,
 	);
 
+	// fixed "bug" where state persists to next card in line if some card got deleted
 	useEffect(() => {
 		setResetDeathTypeMode(false);
+		setInputText("");
 	}, [treeNode.id]);
 
 	return (

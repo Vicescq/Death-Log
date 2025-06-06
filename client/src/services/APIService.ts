@@ -4,7 +4,6 @@ import { v4 as uuid4 } from "uuid";
 import type { Action } from "../model/Action";
 import type { TreeNode } from "../model/TreeNodeModel";
 import TreeContextService from "./TreeContextService";
-import { migrateOldToNew } from "../utils/migrations";
 
 export default class APIService {
     constructor() { };
@@ -25,9 +24,9 @@ export default class APIService {
         }).then((res) => res.json()).then((value) => {
             console.log("FROM DB", value);
 
-            const migratedData = migrateOldToNew(value);
+            // run migrations here
 
-            const initTree = TreeContextService.initTree(tree, migratedData);
+            const initTree = TreeContextService.initTree(tree, value);
             setTree(initTree);
         })
     }

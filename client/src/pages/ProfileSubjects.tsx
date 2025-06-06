@@ -8,7 +8,7 @@ import CardWrapper from "../components/CardWrapper";
 import { useRef, useState } from "react";
 import Modal from "../components/modals/Modal";
 import ModalListItemToggle from "../components/modals/ModalListItemToggle";
-import { createSubject, identifyDeletedChildrenIDS } from "../utils/tree";
+import { createSubject } from "../utils/tree";
 import { changeToggleSettingState } from "../utils/eventHandlers";
 import {
 	createModalListItemInputEdit,
@@ -16,18 +16,15 @@ import {
 } from "../utils/ui";
 import useUpdateURLMap from "../hooks/useUpdateURLMap";
 import useUUIDContext from "../hooks/useUUIDContext";
-import type { DistinctAction } from "../model/Action";
 import type { Subject, DeathType } from "../model/TreeNodeModel";
 import TreeContextService from "../services/TreeContextService";
 import { updateActionHistory } from "../utils/history";
-import { v4 as uuidv4 } from 'uuid';
 
 export default function ProfileSubjects({ profileID }: { profileID: string }) {
 	const [tree, setTree] = useTreeContext();
 	const [urlMap, setURLMap] = useURLMapContext();
 	const [history, setHistory] = useHistoryContext();
 	const [uuid] = useUUIDContext();
-	const [intents, setIntents] = useState<DistinctAction[]>([]);
 	const addItemCardModalRef = useRef<HTMLDialogElement | null>(null);
 
 	const [addItemCardModalListItemArray, setAddItemCardModalListItemArray] =
@@ -81,8 +78,8 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 				? updatedSubject.fullTries--
 				: updatedSubject.resets--;
 		}
-		updatedSubject.fullTries < 0 ? updatedSubject.fullTries = 0 : null;
-		updatedSubject.resets < 0 ? updatedSubject.resets = 0 : null;
+		updatedSubject.fullTries < 0 ? (updatedSubject.fullTries = 0) : null;
+		updatedSubject.resets < 0 ? (updatedSubject.resets = 0) : null;
 		const { treeCopy, actions } = TreeContextService.updateNode(
 			tree,
 			updatedSubject,
