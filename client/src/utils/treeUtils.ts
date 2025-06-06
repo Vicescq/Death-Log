@@ -26,34 +26,29 @@ export function sortChildIDS(parentNode: TreeNode, tree: TreeStateType) {
         const nodeA = tree.get(a) as DistinctTreeNode;
         const nodeB = tree.get(b) as DistinctTreeNode;
 
-        if (nodeA && nodeB) {
-            if (nodeA.type == "subject" && nodeB.type == "subject") {
+        let result = 0;
 
-                let unnotableFactorA = 0;
-                let unnotableFactorB = 0;
+        function applyWeights(node: DistinctTreeNode) {
+            // unnotable -> notable -> completed unnotable -> completed notable 
 
-                if (!nodeA.notable) {
-                    unnotableFactorA += -1;
-                    if (nodeA.completed) {
-                        unnotableFactorA += 1;
-                    }
-                }
-
-                if (!nodeB.notable) {
-                    unnotableFactorB += -1;
-                    if (nodeB.completed) {
-                        unnotableFactorB += 1;
-                    }
-                }
-
-                return Number(nodeA.completed) + unnotableFactorA - (Number(nodeB.completed) + unnotableFactorB);
+            let weight = 0;
+            if (node.type == "subject") {
+                weight += !node.notable ? 100 : 0;
             }
-            return Number(nodeA.completed) - Number(nodeB.completed);
+            weight += !node.completed ? 1 : -100;
+            return weight;
+        }
+
+        const nodeAWeights = applyWeights(nodeA);
+        const nodeBWeights = applyWeights(nodeB);
+        if (nodeAWeights == nodeBWeights) {
+            result = nodeA.completed ? Date.parse(nodeB.dateEnd!) - Date.parse(nodeA.dateEnd!) : Date.parse(nodeB.dateStart) - Date.parse(nodeA.dateStart);
         }
         else {
-            return 0
-        }
+            result = nodeBWeights > nodeAWeights ? 1 : -1;
 
+        }
+        return result
     });
     return sorted
 }

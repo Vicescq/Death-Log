@@ -24,8 +24,6 @@ export default class TreeContextManager {
             }
         })
 
-        // put migration functions here if needed 
- 
         return treeCopy
     }
 

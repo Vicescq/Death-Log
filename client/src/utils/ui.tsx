@@ -5,9 +5,8 @@ import type {
 } from "../components/modals/ModalListItemTypes";
 import type { ToggleSetting } from "../components/Toggle";
 import type { TreeStateType } from "../contexts/treeContext";
-import type { DistinctTreeNode, Game, Profile, Subject } from "../model/TreeNodeModel";
+import type { DistinctTreeNode } from "../model/TreeNodeModel";
 import { getDeaths } from "./treeUtils";
-
 
 export function createModalListItemInputEdit(
 	settingLabel: string,
@@ -33,7 +32,10 @@ export function createModalListItemToggle(
 	} as ModalListItemToggleType;
 }
 
-export function createCardCSS(treeNode: DistinctTreeNode, resetDeathTypeMode: boolean) {
+export function createCardCSS(
+	treeNode: DistinctTreeNode,
+	resetDeathTypeMode: boolean,
+) {
 	const enabledCSS =
 		"bg-amber-200 border-2 rounded-2xl shadow-[5px_2px_0px_rgba(0,0,0,1)]";
 	let cardCol = "bg-zomp";
@@ -41,9 +43,15 @@ export function createCardCSS(treeNode: DistinctTreeNode, resetDeathTypeMode: bo
 		cardCol = "bg-amber-500";
 	}
 
-	const cardCSS = treeNode.completed
-		? "bg-raisinblack text-amber-200"
-		: `${cardCol} text-black`;
+	let cardCSS: string;
+	if (treeNode.type == "subject" && treeNode.completed && !treeNode.notable) {
+		cardCSS = "bg-red-800 text-amber-200";
+	} else {
+		cardCSS = treeNode.completed
+			? "bg-raisinblack text-amber-200"
+			: `${cardCol} text-black`;
+	}
+
 	const readOnlyToggleCSS = treeNode.completed ? enabledCSS : "";
 	const resetToggleCSS = resetDeathTypeMode ? enabledCSS : "";
 	const settersBtnDisplay = treeNode.completed ? "hidden" : "";
@@ -59,9 +67,12 @@ export function createCardCSS(treeNode: DistinctTreeNode, resetDeathTypeMode: bo
 	};
 }
 
-export function generateCardDeathCounts(treeNode: DistinctTreeNode, tree: TreeStateType) {
+export function generateCardDeathCounts(
+	treeNode: DistinctTreeNode,
+	tree: TreeStateType,
+) {
 	const deathCount = getDeaths(treeNode, tree, "both");
 	const fullTries = getDeaths(treeNode, tree, "fullTries");
 	const resets = getDeaths(treeNode, tree, "resets");
-	return {deathCount, fullTries, resets};
+	return { deathCount, fullTries, resets };
 }
