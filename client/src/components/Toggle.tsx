@@ -1,5 +1,4 @@
 export type ToggleSetting =
-	| "autoDate"
 	| "challenge"
 	| "notable"
 	| "boss"

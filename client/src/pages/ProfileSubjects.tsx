@@ -9,7 +9,7 @@ import { useRef, useState } from "react";
 import Modal from "../components/modals/Modal";
 import ModalListItemToggle from "../components/modals/ModalListItemToggle";
 import { createSubject } from "../utils/tree";
-import { changeToggleSettingState } from "../utils/eventHandlers";
+import { changeCompletedStatus, changeToggleSettingState } from "../utils/eventHandlers";
 import {
 	createModalListItemInputEdit,
 	createModalListItemToggle,
@@ -28,22 +28,14 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 	const addItemCardModalRef = useRef<HTMLDialogElement | null>(null);
 
 	const [addItemCardModalListItemArray, setAddItemCardModalListItemArray] =
-		useState([
-			createModalListItemToggle("AUTO-DATE", "autoDate", true),
-			createModalListItemToggle("NOTABLE", "notable", true),
-		]);
+		useState([createModalListItemToggle("NOTABLE", "notable", true)]);
 
 	const [cardModalListItemArray, setCardModalListItemArray] = useState([
 		createModalListItemInputEdit("Edit Name:", "name"),
 	]);
 
-	function handleAdd(
-		inputText: string,
-		dateStart: null | undefined,
-		notable: boolean | undefined,
-	) {
+	function handleAdd(inputText: string, notable: boolean | undefined) {
 		const node = createSubject(inputText, profileID, {
-			dateStart: dateStart,
 			notable: notable,
 		});
 		const { treeCopy, actions } = TreeContextService.addNode(tree, node);
@@ -89,11 +81,7 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 	}
 
 	function handleCompletedStatus(subject: Subject, newStatus: boolean) {
-		const updatedSubject: Subject = { ...subject, completed: newStatus };
-		const { treeCopy, actions } = TreeContextService.updateNode(
-			tree,
-			updatedSubject,
-		);
+		const {treeCopy, actions} = changeCompletedStatus(subject, newStatus, tree);
 		setTree(treeCopy);
 		setHistory(updateActionHistory(history, actions));
 	}

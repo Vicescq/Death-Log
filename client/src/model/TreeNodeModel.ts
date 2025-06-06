@@ -14,8 +14,7 @@ export type TangibleTreeNode = TreeNode & {
     name: string,
     completed: boolean
     notes: string | null
-    timeSpent: number | null // in seconds
-    dateStart: string | null,
+    dateStart: string,
     dateEnd: string | null,
 }
 

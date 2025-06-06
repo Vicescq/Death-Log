@@ -12,18 +12,9 @@ export default function AddItemCard({
 }: AddItemCardProps) {
 	const [inputText, setInputText] = useState("");
 	function handleAddWrapper() {
-		let dateStart: null | undefined = undefined,
-			challenge: boolean | undefined = undefined,
+		let challenge: boolean | undefined = undefined,
 			notable: boolean | undefined = undefined;
 		modalListItemArray.forEach((li) => {
-			if (
-				li.type == "toggle" &&
-				li.toggleSetting == "autoDate" &&
-				!li.enable
-			) {
-				dateStart = null;
-			}
-
 			if (
 				li.type == "toggle" &&
 				li.toggleSetting == "challenge" &&
@@ -43,13 +34,13 @@ export default function AddItemCard({
 
 		switch (itemType) {
 			case "game":
-				handleAdd(inputText, dateStart);
+				handleAdd(inputText);
 				break;
 			case "profile":
-				handleAdd(inputText, dateStart, challenge);
+				handleAdd(inputText, challenge);
 				break;
 			default:
-				handleAdd(inputText, dateStart, notable);
+				handleAdd(inputText, notable);
 		}
 	}
 

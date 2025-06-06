@@ -9,10 +9,9 @@ import { useRef, useState } from "react";
 import Modal from "../components/modals/Modal";
 import ModalListItemToggle from "../components/modals/ModalListItemToggle";
 import type { HandleAddGame } from "../components/addItemCard/AddItemCardProps";
-import { changeToggleSettingState } from "../utils/eventHandlers";
+import { changeCompletedStatus, changeToggleSettingState } from "../utils/eventHandlers";
 import {
 	createModalListItemInputEdit,
-	createModalListItemToggle,
 } from "../utils/ui";
 import useUpdateURLMap from "../hooks/useUpdateURLMap";
 import useUUIDContext from "../hooks/useUUIDContext";
@@ -20,7 +19,8 @@ import type { Game } from "../model/TreeNodeModel";
 import { createGame } from "../utils/tree";
 import TreeContextService from "../services/TreeContextService";
 import { updateActionHistory } from "../utils/history";
-import { ErrorBoundary, useErrorBoundary } from "react-error-boundary";
+import {  useErrorBoundary } from "react-error-boundary";
+import type { ModalListItemToggleType } from "../components/modals/ModalListItemTypes";
 
 export default function Home() {
 	const [tree, setTree] = useTreeContext();
@@ -31,24 +31,23 @@ export default function Home() {
 	const { showBoundary } = useErrorBoundary();
 
 	const [addItemCardModalListItemArray, setAddItemCardModalListItemArray] =
-		useState([createModalListItemToggle("AUTO-DATE", "autoDate", true)]);
+		useState<ModalListItemToggleType[]>([]);
 
 	const [cardModalListItemArray, setCardModalListItemArray] = useState([
 		createModalListItemInputEdit("Edit Name:", "name"),
 	]);
 
-	const handleAdd: HandleAddGame = (
-		inputText: string,
-		dateStart: null | undefined,
-	) => {
-		try{
-			const node = createGame(inputText, tree, { dateStart: dateStart });
-			const { treeCopy, actions } = TreeContextService.addNode(tree, node);
+	const handleAdd: HandleAddGame = (inputText: string) => {
+		try {
+			const node = createGame(inputText, tree, {});
+			const { treeCopy, actions } = TreeContextService.addNode(
+				tree,
+				node,
+			);
 			setTree(treeCopy);
 			setHistory(updateActionHistory(history, actions));
-		}
-		catch(err){
-			showBoundary(err)
+		} catch (err) {
+			showBoundary(err);
 		}
 	};
 
@@ -65,11 +64,7 @@ export default function Home() {
 	}
 
 	function handleCompletedStatus(game: Game, newStatus: boolean) {
-		const updatedGame: Game = { ...game, completed: newStatus };
-		const { treeCopy, actions } = TreeContextService.updateNode(
-			tree,
-			updatedGame,
-		);
+		const {treeCopy, actions} = changeCompletedStatus(game, newStatus, tree);
 		setTree(treeCopy);
 		setHistory(updateActionHistory(history, actions));
 	}

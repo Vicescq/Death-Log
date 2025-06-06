@@ -10,7 +10,7 @@ import ModalListItemToggle from "../components/modals/ModalListItemToggle";
 import { createProfile } from "../utils/tree";
 import AddItemCard from "../components/addItemCard/AddItemCard";
 import type { HandleAddProfile } from "../components/addItemCard/AddItemCardProps";
-import { changeToggleSettingState } from "../utils/eventHandlers";
+import { changeCompletedStatus, changeToggleSettingState } from "../utils/eventHandlers";
 import {
 	createModalListItemInputEdit,
 	createModalListItemToggle,
@@ -31,7 +31,6 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 
 	const [addItemCardModalListItemArray, setAddItemCardModalListItemArray] =
 		useState([
-			createModalListItemToggle("AUTO-DATE", "autoDate", true),
 			createModalListItemToggle("CHALLENGE", "challenge", false),
 		]);
 
@@ -41,11 +40,9 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 
 	const handleAdd: HandleAddProfile = (
 		inputText: string,
-		dateStart: null | undefined,
 		challenge: boolean | undefined,
 	) => {
 		const node = createProfile(inputText, tree, gameID, {
-			dateStart: dateStart,
 			challenge: challenge,
 		});
 		const { treeCopy, actions } = TreeContextService.addNode(tree, node);
@@ -66,11 +63,7 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 	}
 
 	function handleCompletedStatus(profile: Profile, newStatus: boolean) {
-		const updatedProfile: Profile = { ...profile, completed: newStatus };
-		const { treeCopy, actions } = TreeContextService.updateNode(
-			tree,
-			updatedProfile,
-		);
+		const {treeCopy, actions} = changeCompletedStatus(profile, newStatus, tree);
 		setTree(treeCopy);
 		setHistory(updateActionHistory(history, actions));
 	}
