@@ -6,7 +6,7 @@ import type {
 import type { ToggleSetting } from "../components/Toggle";
 import type { TreeStateType } from "../contexts/treeContext";
 import type { DistinctTreeNode, Game, Profile, Subject } from "../model/TreeNodeModel";
-import { getDeaths } from "./tree";
+import { getDeaths } from "./treeUtils";
 
 
 export function createModalListItemInputEdit(

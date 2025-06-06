@@ -3,7 +3,7 @@ import type { TreeContextType, TreeStateType } from "../contexts/treeContext";
 import { v4 as uuid4 } from "uuid";
 import type { Action } from "../model/Action";
 import type { TreeNode } from "../model/TreeNodeModel";
-import TreeContextService from "./TreeContextService";
+import Tree from "../features/Tree";
 
 export default class APIService {
     constructor() { };
@@ -26,7 +26,7 @@ export default class APIService {
 
             // run migrations here
 
-            const initTree = TreeContextService.initTree(tree, value);
+            const initTree = Tree.initTree(tree, value);
             setTree(initTree);
         })
     }

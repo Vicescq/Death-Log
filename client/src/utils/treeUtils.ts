@@ -1,6 +1,5 @@
 import type { TreeStateType } from "../contexts/treeContext";
-import type { RootNode, TreeNode, Game, Profile, Subject, TangibleTreeNodeParent, DistinctTreeNode, DeathType } from "../model/TreeNodeModel";
-import { v4 as uuidv4 } from 'uuid';
+import type { TreeNode, Subject, TangibleTreeNodeParent, DistinctTreeNode, DeathType } from "../model/TreeNodeModel";
 
 export function sanitizeUserEntry(inputText: string) {
     inputText = inputText.trim();
@@ -20,99 +19,6 @@ export function createNodePath(inputText: string, parentID: string, tree: TreeSt
         path = inputText.replaceAll(" ", "-");
     }
     return path;
-}
-
-export function createRootNode() {
-    const rootNode: RootNode = { type: "ROOT_NODE", id: "ROOT_NODE", childIDS: [], parentID: null };
-    return rootNode
-}
-
-export function createGame(
-    inputText: string,
-    tree: TreeStateType,
-    overrides: Partial<Game>,
-) {
-    inputText = sanitizeUserEntry(inputText);
-    const path = createNodePath(inputText, "ROOT_NODE", tree);
-    const defaultGame: Game = {
-        type: "game",
-        id: uuidv4(),
-        childIDS: [],
-        parentID: "ROOT_NODE",
-        name: inputText,
-        completed: false,
-        notes: null,
-        dateStart: new Date().toISOString(),
-        dateEnd: null,
-        path: path,
-        genre: null,
-    };
-    deleteUndefinedValues(overrides);
-    return {
-        ...defaultGame,
-        ...overrides
-    } as Game
-}
-
-export function createProfile(
-    inputText: string,
-    tree: TreeStateType,
-    parentID: string,
-    overrides: Partial<Profile>,
-) {
-    inputText = sanitizeUserEntry(inputText);
-    const path = createNodePath(inputText, parentID, tree);
-    const defaultProfile: Profile = {
-        type: "profile",
-        id: uuidv4(),
-        childIDS: [],
-        parentID: parentID,
-        name: inputText,
-        completed: false,
-        notes: null,
-        dateStart: new Date().toISOString(),
-        dateEnd: null,
-        path: path,
-        challenge: false,
-    };
-    deleteUndefinedValues(overrides);
-    return {
-        ...defaultProfile,
-        ...overrides
-    } as Profile
-}
-
-export function createSubject(
-    inputText: string,
-    parentID: string,
-    overrides: Partial<Subject>,
-) {
-    inputText = sanitizeUserEntry(inputText);
-    const defaultSubject: Subject = {
-        type: "subject",
-        id: uuidv4(),
-        childIDS: [],
-        parentID: parentID,
-        name: inputText,
-        completed: false,
-        notes: null,
-        dateStart: new Date().toISOString(),
-        dateEnd: null,
-        notable: true,
-        fullTries: 0,
-        resets: 0,
-    };
-    deleteUndefinedValues(overrides);
-    return {
-        ...defaultSubject,
-        ...overrides
-    } as Subject
-}
-
-export function createShallowCopyMap<T>(map: Map<string, T>) {
-    const objLiteralFromTree = Object.fromEntries(map);
-    const objLiteralFromTreeShallowCopy = { ...objLiteralFromTree };
-    return new Map(Object.entries(objLiteralFromTreeShallowCopy));
 }
 
 export function sortChildIDS(parentNode: TreeNode, tree: TreeStateType) {
@@ -214,8 +120,4 @@ export function getDeaths(node: DistinctTreeNode, tree: TreeStateType, mode: Dea
 
     return count;
 
-}
-
-export function deleteUndefinedValues(obj: any) {
-    Object.keys(obj).forEach((key) => obj[key] === undefined ? delete obj[key] : null);
 }

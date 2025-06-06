@@ -1,14 +1,16 @@
 import type { TreeStateType } from "../contexts/treeContext";
 import type { ActionType, ActionUpdate, DistinctAction } from "../model/Action";
-import type { RootNode, DistinctTreeNode, TreeNode } from "../model/TreeNodeModel";
-import { createRootNode, createShallowCopyMap, identifyDeletedChildrenIDS, sortChildIDS } from "../utils/tree";
+import type { RootNode, DistinctTreeNode, TreeNode, Game, Profile, Subject } from "../model/TreeNodeModel";
+import { createShallowCopyMap, deleteUndefinedValues } from "../utils/general";
+import { createNodePath, identifyDeletedChildrenIDS, sanitizeUserEntry, sortChildIDS } from "../utils/treeUtils";
+import { v4 as uuidv4 } from 'uuid';
 
-export default class TreeContextService {
+export default class Tree {
     constructor() { }
 
     static initTree(tree: TreeStateType, nodes: DistinctTreeNode[]) {
         const treeCopy = createShallowCopyMap(tree);
-        const rootNode: RootNode = createRootNode();
+        const rootNode: RootNode = Tree.createRootNode();
         treeCopy.set(rootNode.id, rootNode);
 
         nodes.forEach((node) => {
@@ -35,7 +37,7 @@ export default class TreeContextService {
         parentNodeCopy.childIDS.push(node.id);
         parentNodeCopy.childIDS = sortChildIDS(parentNodeCopy, treeCopy);
         treeCopy.set(parentNodeCopy.id, parentNodeCopy);
-        const actions = TreeContextService.createActions(node, "add", undefined, parentNodeCopy)
+        const actions = Tree.createActions(node, "add", undefined, parentNodeCopy)
         return { treeCopy, actions }
     }
 
@@ -50,7 +52,7 @@ export default class TreeContextService {
         nodeIDSToBeDeleted.forEach((id) => treeCopy.delete(id));
         treeCopy.set(parentNodeCopy.id, parentNodeCopy);
 
-        const actions = TreeContextService.createActions(node, "delete", nodeIDSToBeDeleted, parentNodeCopy);
+        const actions = Tree.createActions(node, "delete", nodeIDSToBeDeleted, parentNodeCopy);
 
         return { treeCopy, actions }
     }
@@ -63,7 +65,7 @@ export default class TreeContextService {
         parentNodeCopy.childIDS = sortChildIDS(parentNodeCopy, treeCopy);
         treeCopy.set(parentNodeCopy.id, parentNodeCopy);
 
-        const actions = TreeContextService.createActions(node, "update", undefined, parentNodeCopy);
+        const actions = Tree.createActions(node, "update", undefined, parentNodeCopy);
 
         return { treeCopy, actions }
     }
@@ -98,6 +100,93 @@ export default class TreeContextService {
         }
 
         return actions
+    }
+
+    static createRootNode() {
+        const rootNode: RootNode = { type: "ROOT_NODE", id: "ROOT_NODE", childIDS: [], parentID: null };
+        return rootNode
+    }
+    
+    static createGame(
+        inputText: string,
+        tree: TreeStateType,
+        overrides: Partial<Game>,
+    ) {
+        inputText = sanitizeUserEntry(inputText);
+        const path = createNodePath(inputText, "ROOT_NODE", tree);
+        const defaultGame: Game = {
+            type: "game",
+            id: uuidv4(),
+            childIDS: [],
+            parentID: "ROOT_NODE",
+            name: inputText,
+            completed: false,
+            notes: null,
+            dateStart: new Date().toISOString(),
+            dateEnd: null,
+            path: path,
+            genre: null,
+        };
+        deleteUndefinedValues(overrides);
+        return {
+            ...defaultGame,
+            ...overrides
+        } as Game
+    }
+    
+    static createProfile(
+        inputText: string,
+        tree: TreeStateType,
+        parentID: string,
+        overrides: Partial<Profile>,
+    ) {
+        inputText = sanitizeUserEntry(inputText);
+        const path = createNodePath(inputText, parentID, tree);
+        const defaultProfile: Profile = {
+            type: "profile",
+            id: uuidv4(),
+            childIDS: [],
+            parentID: parentID,
+            name: inputText,
+            completed: false,
+            notes: null,
+            dateStart: new Date().toISOString(),
+            dateEnd: null,
+            path: path,
+            challenge: false,
+        };
+        deleteUndefinedValues(overrides);
+        return {
+            ...defaultProfile,
+            ...overrides
+        } as Profile
+    }
+    
+    static createSubject(
+        inputText: string,
+        parentID: string,
+        overrides: Partial<Subject>,
+    ) {
+        inputText = sanitizeUserEntry(inputText);
+        const defaultSubject: Subject = {
+            type: "subject",
+            id: uuidv4(),
+            childIDS: [],
+            parentID: parentID,
+            name: inputText,
+            completed: false,
+            notes: null,
+            dateStart: new Date().toISOString(),
+            dateEnd: null,
+            notable: true,
+            fullTries: 0,
+            resets: 0,
+        };
+        deleteUndefinedValues(overrides);
+        return {
+            ...defaultSubject,
+            ...overrides
+        } as Subject
     }
 
 }

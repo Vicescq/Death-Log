@@ -1,9 +1,8 @@
 import { useEffect } from "react";
 import type { TreeStateType } from "../contexts/treeContext";
 import type { URLMapContextType, URLMapStateType } from "../contexts/urlMapContext";
-import { createShallowCopyMap } from "../utils/tree";
 import type { TangibleTreeNodeParent } from "../model/TreeNodeModel";
-
+import { createShallowCopyMap } from "../utils/general";
 
 export default function useUpdateURLMap(tree: TreeStateType, urlMap: URLMapStateType, setURLMap: URLMapContextType[1]) {
     useEffect(() => {

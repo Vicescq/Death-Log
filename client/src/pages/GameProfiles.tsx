@@ -7,7 +7,6 @@ import CardWrapper from "../components/CardWrapper";
 import { useRef, useState } from "react";
 import Modal from "../components/modals/Modal";
 import ModalListItemToggle from "../components/modals/ModalListItemToggle";
-import { createProfile } from "../utils/tree";
 import AddItemCard from "../components/addItemCard/AddItemCard";
 import type { HandleAddProfile } from "../components/addItemCard/AddItemCardProps";
 import { changeCompletedStatus, changeToggleSettingState } from "../utils/eventHandlers";
@@ -18,8 +17,8 @@ import {
 import useUpdateURLMap from "../hooks/useUpdateURLMap";
 import useUUIDContext from "../hooks/useUUIDContext";
 import type { Profile } from "../model/TreeNodeModel";
-import TreeContextService from "../services/TreeContextService";
-import { updateActionHistory } from "../utils/history";
+import Tree from "../features/Tree";
+import { updateActionHistory } from "../utils/historyUtils";
 
 export default function GameProfiles({ gameID }: { gameID: string }) {
 	const [tree, setTree] = useTreeContext();
@@ -42,10 +41,10 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 		inputText: string,
 		challenge: boolean | undefined,
 	) => {
-		const node = createProfile(inputText, tree, gameID, {
+		const node = Tree.createProfile(inputText, tree, gameID, {
 			challenge: challenge,
 		});
-		const { treeCopy, actions } = TreeContextService.addNode(tree, node);
+		const { treeCopy, actions } = Tree.addNode(tree, node);
 		setTree(treeCopy);
 		setHistory(updateActionHistory(history, actions));
 	};
@@ -53,7 +52,7 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 	function handleDelete(node: Profile) {
 		const bool = window.confirm();
 		if (bool) {
-			const { treeCopy, actions } = TreeContextService.deleteNode(
+			const { treeCopy, actions } = Tree.deleteNode(
 				tree,
 				node,
 			);

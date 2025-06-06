@@ -16,9 +16,8 @@ import {
 import useUpdateURLMap from "../hooks/useUpdateURLMap";
 import useUUIDContext from "../hooks/useUUIDContext";
 import type { Game } from "../model/TreeNodeModel";
-import { createGame } from "../utils/tree";
-import TreeContextService from "../services/TreeContextService";
-import { updateActionHistory } from "../utils/history";
+import Tree from "../features/Tree";
+import { updateActionHistory } from "../utils/historyUtils";
 import {  useErrorBoundary } from "react-error-boundary";
 import type { ModalListItemToggleType } from "../components/modals/ModalListItemTypes";
 
@@ -39,8 +38,8 @@ export default function Home() {
 
 	const handleAdd: HandleAddGame = (inputText: string) => {
 		try {
-			const node = createGame(inputText, tree, {});
-			const { treeCopy, actions } = TreeContextService.addNode(
+			const node = Tree.createGame(inputText, tree, {});
+			const { treeCopy, actions } = Tree.addNode(
 				tree,
 				node,
 			);
@@ -54,7 +53,7 @@ export default function Home() {
 	function handleDelete(node: Game) {
 		const bool = window.confirm();
 		if (bool) {
-			const { treeCopy, actions } = TreeContextService.deleteNode(
+			const { treeCopy, actions } = Tree.deleteNode(
 				tree,
 				node,
 			);

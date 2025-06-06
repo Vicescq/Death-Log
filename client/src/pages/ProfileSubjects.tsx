@@ -8,7 +8,6 @@ import CardWrapper from "../components/CardWrapper";
 import { useRef, useState } from "react";
 import Modal from "../components/modals/Modal";
 import ModalListItemToggle from "../components/modals/ModalListItemToggle";
-import { createSubject } from "../utils/tree";
 import { changeCompletedStatus, changeToggleSettingState } from "../utils/eventHandlers";
 import {
 	createModalListItemInputEdit,
@@ -17,8 +16,8 @@ import {
 import useUpdateURLMap from "../hooks/useUpdateURLMap";
 import useUUIDContext from "../hooks/useUUIDContext";
 import type { Subject, DeathType } from "../model/TreeNodeModel";
-import TreeContextService from "../services/TreeContextService";
-import { updateActionHistory } from "../utils/history";
+import Tree from "../features/Tree";
+import { updateActionHistory } from "../utils/historyUtils";
 
 export default function ProfileSubjects({ profileID }: { profileID: string }) {
 	const [tree, setTree] = useTreeContext();
@@ -35,10 +34,10 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 	]);
 
 	function handleAdd(inputText: string, notable: boolean | undefined) {
-		const node = createSubject(inputText, profileID, {
+		const node = Tree.createSubject(inputText, profileID, {
 			notable: notable,
 		});
-		const { treeCopy, actions } = TreeContextService.addNode(tree, node);
+		const { treeCopy, actions } = Tree.addNode(tree, node);
 		setTree(treeCopy);
 		setHistory(updateActionHistory(history, actions));
 	}
@@ -46,7 +45,7 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 	function handleDelete(node: Subject) {
 		const bool = window.confirm();
 		if (bool) {
-			const { treeCopy, actions } = TreeContextService.deleteNode(
+			const { treeCopy, actions } = Tree.deleteNode(
 				tree,
 				node,
 			);
@@ -72,7 +71,7 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 		}
 		updatedSubject.fullTries < 0 ? (updatedSubject.fullTries = 0) : null;
 		updatedSubject.resets < 0 ? (updatedSubject.resets = 0) : null;
-		const { treeCopy, actions } = TreeContextService.updateNode(
+		const { treeCopy, actions } = Tree.updateNode(
 			tree,
 			updatedSubject,
 		);
