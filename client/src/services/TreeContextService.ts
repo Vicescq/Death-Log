@@ -21,6 +21,9 @@ export default class TreeContextService {
                 treeCopy.set(rootNodeCopy.id, rootNodeCopy);
             }
         })
+
+        // put migration functions here if needed 
+ 
         return treeCopy
     }
 

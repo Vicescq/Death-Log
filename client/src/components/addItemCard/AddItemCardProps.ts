@@ -1,15 +1,15 @@
 import type { TreeNodeType } from "../../model/TreeNodeModel";
 import type { ModalListItemToggleType, ModalListItemInputEditType } from "../modals/ModalListItemTypes";
 
-export type HandleAddGame = (inputText: string, date: null | undefined) => void;
+export type HandleAddGame = (inputText: string, dateStart: null | undefined) => void;
 export type HandleAddProfile = (
     inputText: string,
-    date: null | undefined,
+    dateStart: null | undefined,
     challenge: boolean | undefined,
 ) => void;
 export type HandleAddSubject = (
     inputText: string,
-    date: null | undefined,
+    dateStart: null | undefined,
     notable: boolean | undefined,
 ) => void;
 

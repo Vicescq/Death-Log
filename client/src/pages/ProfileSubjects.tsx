@@ -42,11 +42,11 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 
 	function handleAdd(
 		inputText: string,
-		date: null | undefined,
+		dateStart: null | undefined,
 		notable: boolean | undefined,
 	) {
 		const node = createSubject(inputText, profileID, {
-			date: date,
+			dateStart: dateStart,
 			notable: notable,
 		});
 		const { treeCopy, actions } = TreeContextService.addNode(tree, node);
@@ -81,6 +81,8 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 				? updatedSubject.fullTries--
 				: updatedSubject.resets--;
 		}
+		updatedSubject.fullTries < 0 ? updatedSubject.fullTries = 0 : null;
+		updatedSubject.resets < 0 ? updatedSubject.resets = 0 : null;
 		const { treeCopy, actions } = TreeContextService.updateNode(
 			tree,
 			updatedSubject,

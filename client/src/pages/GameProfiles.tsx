@@ -41,11 +41,11 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 
 	const handleAdd: HandleAddProfile = (
 		inputText: string,
-		date: null | undefined,
+		dateStart: null | undefined,
 		challenge: boolean | undefined,
 	) => {
 		const node = createProfile(inputText, tree, gameID, {
-			date: date,
+			dateStart: dateStart,
 			challenge: challenge,
 		});
 		const { treeCopy, actions } = TreeContextService.addNode(tree, node);

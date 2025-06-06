@@ -11,9 +11,8 @@ export default function AddItemCard({
 	modalListItemArray,
 }: AddItemCardProps) {
 	const [inputText, setInputText] = useState("");
-
 	function handleAddWrapper() {
-		let date: null | undefined = undefined,
+		let dateStart: null | undefined = undefined,
 			challenge: boolean | undefined = undefined,
 			notable: boolean | undefined = undefined;
 		modalListItemArray.forEach((li) => {
@@ -22,7 +21,7 @@ export default function AddItemCard({
 				li.toggleSetting == "autoDate" &&
 				!li.enable
 			) {
-				date = null;
+				dateStart = null;
 			}
 
 			if (
@@ -44,18 +43,18 @@ export default function AddItemCard({
 
 		switch (itemType) {
 			case "game":
-				handleAdd(inputText, date);
+				handleAdd(inputText, dateStart);
 				break;
 			case "profile":
-				handleAdd(inputText, date, challenge);
+				handleAdd(inputText, dateStart, challenge);
 				break;
 			default:
-				handleAdd(inputText, date, notable);
+				handleAdd(inputText, dateStart, notable);
 		}
 	}
 
 	return (
-		<header className="mb-8 flex w-full flex-col gap-4 bg-amber-200 p-4 border-b-4 text-black md:w-xl md:border-4 md:border-black md:shadow-[8px_5px_0px_rgba(0,0,0,1)]">
+		<header className="mb-8 flex w-full flex-col gap-4 border-b-4 bg-amber-200 p-4 text-black md:w-xl md:border-4 md:border-black md:shadow-[8px_5px_0px_rgba(0,0,0,1)]">
 			<div className="flex gap-4">
 				<input
 					type="search"

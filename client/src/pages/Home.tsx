@@ -39,10 +39,10 @@ export default function Home() {
 
 	const handleAdd: HandleAddGame = (
 		inputText: string,
-		date: null | undefined,
+		dateStart: null | undefined,
 	) => {
 		try{
-			const node = createGame(inputText, tree, { date: date });
+			const node = createGame(inputText, tree, { dateStart: dateStart });
 			const { treeCopy, actions } = TreeContextService.addNode(tree, node);
 			setTree(treeCopy);
 			setHistory(updateActionHistory(history, actions));

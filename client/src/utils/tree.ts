@@ -40,11 +40,10 @@ export function createGame(
         childIDS: [],
         parentID: "ROOT_NODE",
         name: inputText,
-        date: new Date().toString(),
         completed: false,
         notes: null,
         timeSpent: null,
-        dateStart: null,
+        dateStart: new Date().toString(),
         dateEnd: null,
         path: path,
         genre: null,
@@ -70,11 +69,10 @@ export function createProfile(
         childIDS: [],
         parentID: parentID,
         name: inputText,
-        date: new Date().toString(),
         completed: false,
         notes: null,
         timeSpent: null,
-        dateStart: null,
+        dateStart: new Date().toString(),
         dateEnd: null,
         path: path,
         challenge: false,
@@ -98,11 +96,10 @@ export function createSubject(
         childIDS: [],
         parentID: parentID,
         name: inputText,
-        date: new Date().toString(),
         completed: false,
         notes: null,
         timeSpent: null,
-        dateStart: null,
+        dateStart: new Date().toString(),
         dateEnd: null,
         notable: true,
         fullTries: 0,
@@ -181,7 +178,7 @@ export function identifyDeletedChildrenIDS(node: TreeNode, tree: TreeStateType) 
 }
 
 export function getDeaths(node: DistinctTreeNode, tree: TreeStateType, mode: DeathType) {
-    
+
     function switchStatement(subject: Subject) {
         let total = 0;
         switch (mode) {
@@ -222,6 +219,6 @@ export function getDeaths(node: DistinctTreeNode, tree: TreeStateType, mode: Dea
 
 }
 
-export function deleteUndefinedValues(obj: any){
+export function deleteUndefinedValues(obj: any) {
     Object.keys(obj).forEach((key) => obj[key] === undefined ? delete obj[key] : null);
 }

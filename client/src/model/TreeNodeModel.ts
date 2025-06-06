@@ -12,7 +12,6 @@ export type DistinctTreeNode = Game | Profile | Subject  // for discriminant uni
 
 export type TangibleTreeNode = TreeNode & {
     name: string,
-    date: string | null,
     completed: boolean
     notes: string | null
     timeSpent: number | null // in seconds
