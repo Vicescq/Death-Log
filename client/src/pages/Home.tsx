@@ -12,6 +12,7 @@ import type { HandleAddGame } from "../components/addItemCard/AddItemCardProps";
 import { changeCompletedStatus, changeToggleSettingState } from "../utils/eventHandlers";
 import {
 	createModalListItemInputEdit,
+	createModalListItemToggle,
 } from "../utils/ui";
 import useUpdateURLMap from "../hooks/useUpdateURLMap";
 import useUUIDContext from "../hooks/useUUIDContext";
@@ -30,7 +31,7 @@ export default function Home() {
 	const { showBoundary } = useErrorBoundary();
 
 	const [addItemCardModalListItemArray, setAddItemCardModalListItemArray] =
-		useState<ModalListItemToggleType[]>([]);
+		useState([createModalListItemToggle("Reliable Date (Start)", "dateStartR", true), createModalListItemToggle("Reliable Date (End)", "dateEndR", true)]);
 
 	const [cardModalListItemArray, setCardModalListItemArray] = useState([
 		createModalListItemInputEdit("Edit Name:", "name"),

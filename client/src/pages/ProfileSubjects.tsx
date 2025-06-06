@@ -8,7 +8,10 @@ import CardWrapper from "../components/CardWrapper";
 import { useRef, useState } from "react";
 import Modal from "../components/modals/Modal";
 import ModalListItemToggle from "../components/modals/ModalListItemToggle";
-import { changeCompletedStatus, changeToggleSettingState } from "../utils/eventHandlers";
+import {
+	changeCompletedStatus,
+	changeToggleSettingState,
+} from "../utils/eventHandlers";
 import {
 	createModalListItemInputEdit,
 	createModalListItemToggle,
@@ -27,7 +30,18 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 	const addItemCardModalRef = useRef<HTMLDialogElement | null>(null);
 
 	const [addItemCardModalListItemArray, setAddItemCardModalListItemArray] =
-		useState([createModalListItemToggle("NOTABLE", "notable", true)]);
+		useState([
+			createModalListItemToggle("Notable", "notable", true),
+			createModalListItemToggle(
+				"Reliable Date (Start)",
+				"dateStartR",
+				true,
+			),
+			createModalListItemToggle("Reliable Date (End)", "dateEndR", true),
+			createModalListItemToggle("Boss", "boss", true),
+			createModalListItemToggle("Location", "location", false),
+			createModalListItemToggle("Other", "other", false)
+		]);
 
 	const [cardModalListItemArray, setCardModalListItemArray] = useState([
 		createModalListItemInputEdit("Edit Name:", "name"),
@@ -50,7 +64,9 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 				node,
 			);
 			setTree(treeCopy);
-			setHistory(HistoryContextManager.updateActionHistory(history, actions));
+			setHistory(
+				HistoryContextManager.updateActionHistory(history, actions),
+			);
 		}
 	}
 
@@ -80,7 +96,11 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 	}
 
 	function handleCompletedStatus(subject: Subject, newStatus: boolean) {
-		const {treeCopy, actions} = changeCompletedStatus(subject, newStatus, tree);
+		const { treeCopy, actions } = changeCompletedStatus(
+			subject,
+			newStatus,
+			tree,
+		);
 		setTree(treeCopy);
 		setHistory(HistoryContextManager.updateActionHistory(history, actions));
 	}

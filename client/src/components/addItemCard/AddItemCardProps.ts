@@ -4,7 +4,6 @@ import type { ModalListItemToggleType, ModalListItemInputEditType } from "../mod
 export type HandleAddGame = (inputText: string) => void;
 export type HandleAddProfile = (
     inputText: string,
-    challenge: boolean | undefined,
 ) => void;
 export type HandleAddSubject = (
     inputText: string,

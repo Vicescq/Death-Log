@@ -104,7 +104,7 @@ export default class TreeContextManager {
         const rootNode: RootNode = { type: "ROOT_NODE", id: "ROOT_NODE", childIDS: [], parentID: null };
         return rootNode
     }
-    
+
     static createGame(
         inputText: string,
         tree: TreeStateType,
@@ -123,7 +123,7 @@ export default class TreeContextManager {
             dateStart: new Date().toISOString(),
             dateEnd: null,
             path: path,
-            genre: null,
+            reliability: {dateStart: true, dateEnd: true},
         };
         deleteUndefinedValues(overrides);
         return {
@@ -131,7 +131,7 @@ export default class TreeContextManager {
             ...overrides
         } as Game
     }
-    
+
     static createProfile(
         inputText: string,
         tree: TreeStateType,
@@ -151,7 +151,7 @@ export default class TreeContextManager {
             dateStart: new Date().toISOString(),
             dateEnd: null,
             path: path,
-            challenge: false,
+            reliability: {dateStart: true, dateEnd: true},
         };
         deleteUndefinedValues(overrides);
         return {
@@ -159,7 +159,7 @@ export default class TreeContextManager {
             ...overrides
         } as Profile
     }
-    
+
     static createSubject(
         inputText: string,
         parentID: string,
@@ -179,6 +179,8 @@ export default class TreeContextManager {
             notable: true,
             fullTries: 0,
             resets: 0,
+            context: { boss: true, location: false, other: false },
+            reliability: {dateStart: true, dateEnd: true},
         };
         deleteUndefinedValues(overrides);
         return {

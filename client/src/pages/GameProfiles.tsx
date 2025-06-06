@@ -29,9 +29,7 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 	const addItemCardModalRef = useRef<HTMLDialogElement | null>(null);
 
 	const [addItemCardModalListItemArray, setAddItemCardModalListItemArray] =
-		useState([
-			createModalListItemToggle("CHALLENGE", "challenge", false),
-		]);
+		useState([createModalListItemToggle("Reliable Date (Start)", "dateStartR", true), createModalListItemToggle("Reliable Date (End)", "dateEndR", true)]);
 
 	const [cardModalListItemArray, setCardModalListItemArray] = useState([
 		createModalListItemInputEdit("Edit Name:", "name"),
@@ -39,11 +37,8 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 
 	const handleAdd: HandleAddProfile = (
 		inputText: string,
-		challenge: boolean | undefined,
 	) => {
-		const node = TreeContextManager.createProfile(inputText, tree, gameID, {
-			challenge: challenge,
-		});
+		const node = TreeContextManager.createProfile(inputText, tree, gameID, {});
 		const { treeCopy, actions } = TreeContextManager.addNode(tree, node);
 		setTree(treeCopy);
 		setHistory(HistoryContextManager.updateActionHistory(history, actions));

@@ -1,8 +1,10 @@
 export type ToggleSetting =
-	| "challenge"
 	| "notable"
 	| "boss"
-	| "location";
+	| "location"
+	| "other"
+	| "dateStartR"
+	| "dateEndR"
 
 type Props = {
 	enable: boolean;
