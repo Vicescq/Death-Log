@@ -16,8 +16,8 @@ import {
 import useUpdateURLMap from "../hooks/useUpdateURLMap";
 import useUUIDContext from "../hooks/useUUIDContext";
 import type { Subject, DeathType } from "../model/TreeNodeModel";
-import Tree from "../features/Tree";
-import { updateActionHistory } from "../utils/historyUtils";
+import TreeContextManager from "../features/TreeContextManager";
+import HistoryContextManager from "../features/HistoryContextManager";
 
 export default function ProfileSubjects({ profileID }: { profileID: string }) {
 	const [tree, setTree] = useTreeContext();
@@ -34,23 +34,23 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 	]);
 
 	function handleAdd(inputText: string, notable: boolean | undefined) {
-		const node = Tree.createSubject(inputText, profileID, {
+		const node = TreeContextManager.createSubject(inputText, profileID, {
 			notable: notable,
 		});
-		const { treeCopy, actions } = Tree.addNode(tree, node);
+		const { treeCopy, actions } = TreeContextManager.addNode(tree, node);
 		setTree(treeCopy);
-		setHistory(updateActionHistory(history, actions));
+		setHistory(HistoryContextManager.updateActionHistory(history, actions));
 	}
 
 	function handleDelete(node: Subject) {
 		const bool = window.confirm();
 		if (bool) {
-			const { treeCopy, actions } = Tree.deleteNode(
+			const { treeCopy, actions } = TreeContextManager.deleteNode(
 				tree,
 				node,
 			);
 			setTree(treeCopy);
-			setHistory(updateActionHistory(history, actions));
+			setHistory(HistoryContextManager.updateActionHistory(history, actions));
 		}
 	}
 
@@ -71,18 +71,18 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 		}
 		updatedSubject.fullTries < 0 ? (updatedSubject.fullTries = 0) : null;
 		updatedSubject.resets < 0 ? (updatedSubject.resets = 0) : null;
-		const { treeCopy, actions } = Tree.updateNode(
+		const { treeCopy, actions } = TreeContextManager.updateNode(
 			tree,
 			updatedSubject,
 		);
 		setTree(treeCopy);
-		setHistory(updateActionHistory(history, actions));
+		setHistory(HistoryContextManager.updateActionHistory(history, actions));
 	}
 
 	function handleCompletedStatus(subject: Subject, newStatus: boolean) {
 		const {treeCopy, actions} = changeCompletedStatus(subject, newStatus, tree);
 		setTree(treeCopy);
-		setHistory(updateActionHistory(history, actions));
+		setHistory(HistoryContextManager.updateActionHistory(history, actions));
 	}
 
 	function handleToggleSetting(status: boolean, index: number) {

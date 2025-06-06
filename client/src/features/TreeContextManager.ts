@@ -5,12 +5,12 @@ import { createShallowCopyMap, deleteUndefinedValues } from "../utils/general";
 import { createNodePath, identifyDeletedChildrenIDS, sanitizeUserEntry, sortChildIDS } from "../utils/treeUtils";
 import { v4 as uuidv4 } from 'uuid';
 
-export default class Tree {
+export default class TreeContextManager {
     constructor() { }
 
     static initTree(tree: TreeStateType, nodes: DistinctTreeNode[]) {
         const treeCopy = createShallowCopyMap(tree);
-        const rootNode: RootNode = Tree.createRootNode();
+        const rootNode: RootNode = TreeContextManager.createRootNode();
         treeCopy.set(rootNode.id, rootNode);
 
         nodes.forEach((node) => {
@@ -37,7 +37,7 @@ export default class Tree {
         parentNodeCopy.childIDS.push(node.id);
         parentNodeCopy.childIDS = sortChildIDS(parentNodeCopy, treeCopy);
         treeCopy.set(parentNodeCopy.id, parentNodeCopy);
-        const actions = Tree.createActions(node, "add", undefined, parentNodeCopy)
+        const actions = TreeContextManager.createActions(node, "add", undefined, parentNodeCopy)
         return { treeCopy, actions }
     }
 
@@ -52,7 +52,7 @@ export default class Tree {
         nodeIDSToBeDeleted.forEach((id) => treeCopy.delete(id));
         treeCopy.set(parentNodeCopy.id, parentNodeCopy);
 
-        const actions = Tree.createActions(node, "delete", nodeIDSToBeDeleted, parentNodeCopy);
+        const actions = TreeContextManager.createActions(node, "delete", nodeIDSToBeDeleted, parentNodeCopy);
 
         return { treeCopy, actions }
     }
@@ -65,7 +65,7 @@ export default class Tree {
         parentNodeCopy.childIDS = sortChildIDS(parentNodeCopy, treeCopy);
         treeCopy.set(parentNodeCopy.id, parentNodeCopy);
 
-        const actions = Tree.createActions(node, "update", undefined, parentNodeCopy);
+        const actions = TreeContextManager.createActions(node, "update", undefined, parentNodeCopy);
 
         return { treeCopy, actions }
     }

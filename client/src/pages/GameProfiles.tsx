@@ -17,8 +17,8 @@ import {
 import useUpdateURLMap from "../hooks/useUpdateURLMap";
 import useUUIDContext from "../hooks/useUUIDContext";
 import type { Profile } from "../model/TreeNodeModel";
-import Tree from "../features/Tree";
-import { updateActionHistory } from "../utils/historyUtils";
+import TreeContextManager from "../features/TreeContextManager";
+import HistoryContextManager from "../features/HistoryContextManager";
 
 export default function GameProfiles({ gameID }: { gameID: string }) {
 	const [tree, setTree] = useTreeContext();
@@ -41,30 +41,30 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 		inputText: string,
 		challenge: boolean | undefined,
 	) => {
-		const node = Tree.createProfile(inputText, tree, gameID, {
+		const node = TreeContextManager.createProfile(inputText, tree, gameID, {
 			challenge: challenge,
 		});
-		const { treeCopy, actions } = Tree.addNode(tree, node);
+		const { treeCopy, actions } = TreeContextManager.addNode(tree, node);
 		setTree(treeCopy);
-		setHistory(updateActionHistory(history, actions));
+		setHistory(HistoryContextManager.updateActionHistory(history, actions));
 	};
 
 	function handleDelete(node: Profile) {
 		const bool = window.confirm();
 		if (bool) {
-			const { treeCopy, actions } = Tree.deleteNode(
+			const { treeCopy, actions } = TreeContextManager.deleteNode(
 				tree,
 				node,
 			);
 			setTree(treeCopy);
-			setHistory(updateActionHistory(history, actions));
+			setHistory(HistoryContextManager.updateActionHistory(history, actions));
 		}
 	}
 
 	function handleCompletedStatus(profile: Profile, newStatus: boolean) {
 		const {treeCopy, actions} = changeCompletedStatus(profile, newStatus, tree);
 		setTree(treeCopy);
-		setHistory(updateActionHistory(history, actions));
+		setHistory(HistoryContextManager.updateActionHistory(history, actions));
 	}
 
 	function handleToggleSetting(status: boolean, index: number) {

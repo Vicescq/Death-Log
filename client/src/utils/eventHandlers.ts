@@ -1,7 +1,7 @@
 import type { ModalListItemToggleType } from "../components/modals/ModalListItemTypes";
 import type { TreeStateType } from "../contexts/treeContext";
 import type { DistinctTreeNode } from "../model/TreeNodeModel";
-import Tree from "../features/Tree";
+import TreeContextManager from "../features/TreeContextManager";
 
 export function changeToggleSettingState(addItemCardModalListItemArray: ModalListItemToggleType[], status: boolean, index: number) {
     return addItemCardModalListItemArray.map((li, i) => {
@@ -19,7 +19,7 @@ export function changeCompletedStatus(node: DistinctTreeNode, newStatus: boolean
         completed: newStatus,
         dateEnd: dateEnd,
     };
-    const { treeCopy, actions } = Tree.updateNode(
+    const { treeCopy, actions } = TreeContextManager.updateNode(
         tree,
         updatedNode,
     );

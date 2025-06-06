@@ -1,4 +1,4 @@
-import { type ReactNode, useReducer, useState } from "react";
+import { type ReactNode, useState } from "react";
 import useConsoleLogOnStateChange from "../hooks/useConsoleLogOnStateChange";
 import { type TreeStateType, TreeContext } from "./treeContext";
 import { URLMapContext, type URLMapStateType } from "./urlMapContext";
@@ -7,8 +7,8 @@ import { HistoryContext, type HistoryStateType } from "./historyContext";
 import useGetDeathLog from "../hooks/useGetDeathLog";
 import NavBar from "../components/NavBar";
 import useLoadUserID from "../hooks/useLoadUserID";
-import APIService from "../services/APIService";
 import { UUIDContext } from "./uuidContext";
+import HistoryContextManager from "../features/HistoryContextManager";
 
 export function ContextWrapper({ children }: { children: ReactNode }) {
 	const { isLoaded, userId } = useAuth();
@@ -34,7 +34,7 @@ export function ContextWrapper({ children }: { children: ReactNode }) {
 	useConsoleLogOnStateChange(
 		history,
 		"\nSENT TO DB: ",
-		APIService.batchHistory(history),
+		HistoryContextManager.batchHistory(history),
 	);
 	useConsoleLogOnStateChange(
 		history.newActionStartIndex,

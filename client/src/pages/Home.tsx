@@ -16,10 +16,10 @@ import {
 import useUpdateURLMap from "../hooks/useUpdateURLMap";
 import useUUIDContext from "../hooks/useUUIDContext";
 import type { Game } from "../model/TreeNodeModel";
-import Tree from "../features/Tree";
-import { updateActionHistory } from "../utils/historyUtils";
+import TreeContextManager from "../features/TreeContextManager";
 import {  useErrorBoundary } from "react-error-boundary";
 import type { ModalListItemToggleType } from "../components/modals/ModalListItemTypes";
+import HistoryContextManager from "../features/HistoryContextManager";
 
 export default function Home() {
 	const [tree, setTree] = useTreeContext();
@@ -38,13 +38,13 @@ export default function Home() {
 
 	const handleAdd: HandleAddGame = (inputText: string) => {
 		try {
-			const node = Tree.createGame(inputText, tree, {});
-			const { treeCopy, actions } = Tree.addNode(
+			const node = TreeContextManager.createGame(inputText, tree, {});
+			const { treeCopy, actions } = TreeContextManager.addNode(
 				tree,
 				node,
 			);
 			setTree(treeCopy);
-			setHistory(updateActionHistory(history, actions));
+			setHistory(HistoryContextManager.updateActionHistory(history, actions));
 		} catch (err) {
 			showBoundary(err);
 		}
@@ -53,19 +53,19 @@ export default function Home() {
 	function handleDelete(node: Game) {
 		const bool = window.confirm();
 		if (bool) {
-			const { treeCopy, actions } = Tree.deleteNode(
+			const { treeCopy, actions } = TreeContextManager.deleteNode(
 				tree,
 				node,
 			);
 			setTree(treeCopy);
-			setHistory(updateActionHistory(history, actions));
+			setHistory(HistoryContextManager.updateActionHistory(history, actions));
 		}
 	}
 
 	function handleCompletedStatus(game: Game, newStatus: boolean) {
 		const {treeCopy, actions} = changeCompletedStatus(game, newStatus, tree);
 		setTree(treeCopy);
-		setHistory(updateActionHistory(history, actions));
+		setHistory(HistoryContextManager.updateActionHistory(history, actions));
 	}
 
 	function handleToggleSetting(status: boolean, index: number) {

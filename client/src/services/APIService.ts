@@ -1,9 +1,6 @@
-import type { HistoryStateType } from "../contexts/historyContext";
 import type { TreeContextType, TreeStateType } from "../contexts/treeContext";
-import { v4 as uuid4 } from "uuid";
 import type { Action } from "../model/Action";
-import type { TreeNode } from "../model/TreeNodeModel";
-import Tree from "../features/Tree";
+import TreeContextManager from "../features/TreeContextManager";
 
 export default class APIService {
     constructor() { };
@@ -26,30 +23,10 @@ export default class APIService {
 
             // run migrations here
 
-            const initTree = Tree.initTree(tree, value);
+            const initTree = TreeContextManager.initTree(tree, value);
             setTree(initTree);
         })
     }
 
-    static batchHistory(history: HistoryStateType) {
-        const batchedActionHistory = history.actionHistory.slice(history.newActionStartIndex);
-        const deduplicatedUpdateActions = new Map<(string | string[]), Action>();
-        const finalizedBatchedActionHistory: Action[] = [];
-        batchedActionHistory.reverse();
-        batchedActionHistory.forEach((action) => {
-            if (action.type == "update") {
-                const node = action.targets[0] as TreeNode;
-                !deduplicatedUpdateActions.has(node.id) ? deduplicatedUpdateActions.set(node.id, action) : null;
-            }
-            else {
-                deduplicatedUpdateActions.set("__PLACEHOLDER__" + uuid4(), action);
-            }
-        })
-
-        Array.from(deduplicatedUpdateActions.entries()).reverse().forEach((([_, action]) => {
-            finalizedBatchedActionHistory.push(action);
-        }))
-
-        return finalizedBatchedActionHistory;
-    }
+    
 }
