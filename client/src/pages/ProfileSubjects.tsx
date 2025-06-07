@@ -5,23 +5,21 @@ import useURLMapContext from "../hooks/useURLMapContext";
 import useHistoryContext from "../hooks/useHistoryContext";
 import usePostDeathLog from "../hooks/usePostDeathLog";
 import CardWrapper from "../components/CardWrapper";
-import { useRef, useState } from "react";
 import Modal from "../components/modals/Modal";
 import ModalListItemToggle from "../components/modals/ModalListItemToggle";
 import {
 	changeCompletedStatus,
 	changeToggleSettingState,
 } from "../utils/eventHandlers";
-import {
-	createModalListItemInputEdit,
-	createModalListItemToggle,
-} from "../utils/ui";
 import useUpdateURLMap from "../hooks/useUpdateURLMap";
 import useUUIDContext from "../hooks/useUUIDContext";
-import type { Subject, DeathType, DistinctTreeNode } from "../model/TreeNodeModel";
+import type {
+	Subject,
+	DeathType,
+	DistinctTreeNode,
+} from "../model/TreeNodeModel";
 import TreeContextManager from "../features/TreeContextManager";
 import HistoryContextManager from "../features/HistoryContextManager";
-import type { ToggleSetting } from "../components/Toggle";
 import type { HandleAddSubject } from "../components/addItemCard/AddItemCardProps";
 import useConsoleLogOnStateChange from "../hooks/useConsoleLogOnStateChange";
 
@@ -30,25 +28,6 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 	const [urlMap, setURLMap] = useURLMapContext();
 	const [history, setHistory] = useHistoryContext();
 	const [uuid] = useUUIDContext();
-	const addItemCardModalRef = useRef<HTMLDialogElement | null>(null);
-
-	const [addItemCardModalListItemArray, setAddItemCardModalListItemArray] =
-		useState([
-			createModalListItemToggle("Notable", "notable", true),
-			createModalListItemToggle(
-				"Reliable Date (Start)",
-				"dateStartR",
-				true,
-			),
-			createModalListItemToggle("Reliable Date (End)", "dateEndR", true),
-			createModalListItemToggle("Boss", "boss", true),
-			createModalListItemToggle("Location", "location", false),
-			createModalListItemToggle("Other", "other", false),
-		]);
-
-	const [cardModalListItemArray, setCardModalListItemArray] = useState([
-		createModalListItemInputEdit("Edit Name:", "name"),
-	]);
 
 	const handleAdd: HandleAddSubject = (
 		inputText: string,
@@ -65,7 +44,7 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 			dateEndR: dateEndR,
 			boss: boss,
 			location: location,
-			other: other
+			other: other,
 		});
 		const { treeCopy, actions } = TreeContextManager.addNode(tree, node);
 		setTree(treeCopy);
@@ -121,35 +100,6 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 		setHistory(HistoryContextManager.updateActionHistory(history, actions));
 	}
 
-	function handleToggleSetting(
-		status: boolean,
-		index: number,
-		setting?: ToggleSetting,
-	) {
-		const newState = changeToggleSettingState(
-			addItemCardModalListItemArray,
-			status,
-			index,
-			setting,
-		);
-		setAddItemCardModalListItemArray(newState);
-	}
-
-	function handleCardModalInputEditChange(change: string, index: number){
-		const newState = [...cardModalListItemArray];
-		newState[index] = {...newState[index]};
-		newState[index].change = change;
-		setCardModalListItemArray(newState);
-	}
-
-	function handleCardOnEdit(subject: DistinctTreeNode) {
-		cardModalListItemArray.forEach((li, index) => {
-			if (li.targetField == "name"){
-				
-			}
-		})
-	}
-
 	function createCards() {
 		return tree.get(profileID)?.childIDS.map((nodeID, index) => {
 			const subject = tree.get(nodeID) as Subject;
@@ -158,50 +108,24 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 					key={index}
 					tree={tree}
 					treeNode={subject}
-					handleDelete={() => handleDelete(subject)}
 					handleDeathCount={(deathType, operation) =>
 						handleDeathCount(subject, deathType, operation)
 					}
 					handleCompletedStatus={(newStatus) =>
 						handleCompletedStatus(subject, newStatus)
 					}
-					modalListItemArray={cardModalListItemArray}
-					handleCardOnEdit={() =>
-						handleCardOnEdit(subject)
-					}
-					handleCardModalInputEditChange={handleCardModalInputEditChange}
+					modalSchema={"Card-Subject"}
 				/>
 			);
 		});
 	}
-	useConsoleLogOnStateChange(cardModalListItemArray, cardModalListItemArray);
+
 	useUpdateURLMap(tree, urlMap, setURLMap);
 	usePostDeathLog(uuid, history, setHistory);
 	return (
 		<>
-			<AddItemCard
-				modalRef={addItemCardModalRef}
-				itemType="subject"
-				handleAdd={handleAdd}
-				modalListItemArray={addItemCardModalListItemArray}
-			>
-				<Modal
-					modalRef={addItemCardModalRef}
-					listItems={addItemCardModalListItemArray.map(
-						(li, index) => {
-							return (
-								<ModalListItemToggle
-									key={index}
-									modalListItem={li}
-									index={index}
-									handleToggleSetting={handleToggleSetting}
-								/>
-							);
-						},
-					)}
-					utilityBtns={[]}
-				/>
-			</AddItemCard>
+			<AddItemCard pageType="Subject" modalSchema={"AddItemCard-Subject"} />
+				
 			<CardWrapper cards={createCards()} />
 		</>
 	);

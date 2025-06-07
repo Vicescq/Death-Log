@@ -1,20 +1,20 @@
-import type { ToggleSetting } from "../Toggle";
 import type { InputEditTargetField } from "./ModalListItemInputEdit";
+import type { ToggleSetting } from "./ModalListItemToggle";
 
 export type ModalListItemType = "inputEdit" | "toggle"
 
-export interface ModalListItem {
+export interface ModalListItemState {
     type: ModalListItemType
     settingLabel: string
 }
 
-export interface ModalListItemInputEditType extends ModalListItem{
+export interface ModalListItemInputEditState extends ModalListItemState{
     type: "inputEdit";
     targetField: InputEditTargetField
     change: string;
 }
 
-export interface ModalListItemToggleType extends ModalListItem {
+export interface ModalListItemToggleState extends ModalListItemState {
     type: "toggle";
     toggleSetting: ToggleSetting;
     enable: boolean;

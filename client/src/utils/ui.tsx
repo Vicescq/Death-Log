@@ -1,35 +1,38 @@
+import type { InputEditTargetField } from "../components/modals/ModalListItemInputEdit";
+import type { ToggleSetting } from "../components/modals/ModalListItemToggle";
 import type {
-	InputEditTargetField,
-	ModalListItemInputEditType,
-	ModalListItemToggleType,
-} from "../components/modals/ModalListItemTypes";
-import type { ToggleSetting } from "../components/Toggle";
+	ModalListItemInputEditState,
+	ModalListItemToggleState,
+} from "../components/modals/ModalListItemStateTypes";
 import type { TreeStateType } from "../contexts/treeContext";
 import type { DistinctTreeNode } from "../model/TreeNodeModel";
 import { getDeaths } from "./treeUtils";
+import type { ModalSchema } from "../components/modals/Modal";
 
-export function createModalListItemInputEdit(
+
+export function createModalListItemInputEditState(
 	settingLabel: string,
 	targetField: InputEditTargetField,
-) {
+): ModalListItemInputEditState {
 	return {
 		type: "inputEdit",
 		settingLabel: settingLabel,
 		targetField: targetField,
-	} as ModalListItemInputEditType;
+		change: "",
+	};
 }
 
-export function createModalListItemToggle(
+export function createModalListItemToggleState(
 	settingLabel: string,
 	toggleSetting: ToggleSetting,
 	enable: boolean,
-) {
+): ModalListItemToggleState {
 	return {
 		type: "toggle",
 		settingLabel: settingLabel,
 		toggleSetting: toggleSetting,
 		enable: enable,
-	} as ModalListItemToggleType;
+	};
 }
 
 export function createCardCSS(
@@ -75,4 +78,54 @@ export function generateCardDeathCounts(
 	const fullTries = getDeaths(treeNode, tree, "fullTries");
 	const resets = getDeaths(treeNode, tree, "resets");
 	return { deathCount, fullTries, resets };
+}
+
+export function createModalState(
+	modalSchema: ModalSchema,
+) {
+	const state: (ModalListItemInputEditState | ModalListItemToggleState)[] =
+		[];
+	switch (modalSchema) {
+		case "AddItemCard-Home":
+		case "AddItemCard-Profile":
+			state.push(
+				createModalListItemToggleState(
+					"Reliable Date (Start)",
+					"dateStartR",
+					true,
+			
+				),
+				createModalListItemToggleState(
+					"Reliable Date (End)",
+					"dateEndR",
+					true,
+				),
+			);
+			break;
+		case "AddItemCard-Subject":
+			state.push(
+				createModalListItemToggleState(
+					"Reliable Date (Start)",
+					"dateStartR",
+					true,
+			
+				),
+				createModalListItemToggleState(
+					"Reliable Date (End)",
+					"dateEndR",
+					true,
+			
+				),
+				createModalListItemToggleState("Notable", "notable", true),
+				createModalListItemToggleState("Boss", "boss", true),
+				createModalListItemToggleState("Location", "location", false),
+				createModalListItemToggleState("Other", "other", false),
+			);
+			break;
+		case "Card-Home":
+		case "Card-Profile":
+		case "Card-Subject":
+			state.push(createModalListItemInputEditState("Name:", "name"));
+	}
+	return state;
 }

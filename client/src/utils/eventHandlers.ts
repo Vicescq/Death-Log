@@ -1,11 +1,11 @@
-import type { ModalListItemToggleType } from "../components/modals/ModalListItemTypes";
+import type { ModalListItemToggleState } from "../components/modals/ModalListItemStateTypes";
 import type { TreeStateType } from "../contexts/treeContext";
 import type { DistinctTreeNode } from "../model/TreeNodeModel";
 import TreeContextManager from "../features/TreeContextManager";
 import type { ToggleSetting } from "../components/Toggle";
 import { isSubjectContext } from "./general";
 
-export function changeToggleSettingState(addItemCardModalListItemArray: ModalListItemToggleType[], newStatus: boolean, index: number, toggleSetting?: ToggleSetting) {
+export function changeToggleSettingState(addItemCardModalListItemArray: ModalListItemToggleState[], newStatus: boolean, index: number, toggleSetting?: ToggleSetting) {
 
     const updatedAddItemCardModalListItemArray = addItemCardModalListItemArray.map((li, i) => {
         if (index == i) {

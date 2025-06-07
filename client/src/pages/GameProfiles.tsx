@@ -4,19 +4,9 @@ import useURLMapContext from "../hooks/useURLMapContext";
 import useHistoryContext from "../hooks/useHistoryContext";
 import usePostDeathLog from "../hooks/usePostDeathLog";
 import CardWrapper from "../components/CardWrapper";
-import { useRef, useState } from "react";
-import Modal from "../components/modals/Modal";
-import ModalListItemToggle from "../components/modals/ModalListItemToggle";
 import AddItemCard from "../components/addItemCard/AddItemCard";
 import type { HandleAddProfile } from "../components/addItemCard/AddItemCardProps";
-import {
-	changeCompletedStatus,
-	changeToggleSettingState,
-} from "../utils/eventHandlers";
-import {
-	createModalListItemInputEdit,
-	createModalListItemToggle,
-} from "../utils/ui";
+import { changeCompletedStatus } from "../utils/eventHandlers";
 import useUpdateURLMap from "../hooks/useUpdateURLMap";
 import useUUIDContext from "../hooks/useUUIDContext";
 import type { Profile } from "../model/TreeNodeModel";
@@ -28,22 +18,6 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 	const [urlMap, setURLMap] = useURLMapContext();
 	const [history, setHistory] = useHistoryContext();
 	const [uuid] = useUUIDContext();
-
-	const addItemCardModalRef = useRef<HTMLDialogElement | null>(null);
-
-	const [addItemCardModalListItemArray, setAddItemCardModalListItemArray] =
-		useState([
-			createModalListItemToggle(
-				"Reliable Date (Start)",
-				"dateStartR",
-				true,
-			),
-			createModalListItemToggle("Reliable Date (End)", "dateEndR", true),
-		]);
-
-	const [cardModalListItemArray, setCardModalListItemArray] = useState([
-		createModalListItemInputEdit("Edit Name:", "name"),
-	]);
 
 	const handleAdd: HandleAddProfile = (
 		inputText: string,
@@ -83,15 +57,6 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 		setHistory(HistoryContextManager.updateActionHistory(history, actions));
 	}
 
-	function handleToggleSetting(status: boolean, index: number) {
-		const newState = changeToggleSettingState(
-			addItemCardModalListItemArray,
-			status,
-			index,
-		);
-		setAddItemCardModalListItemArray(newState);
-	}
-
 	function createCards() {
 		return tree.get(gameID)?.childIDS.map((nodeID, index) => {
 			const profile = tree.get(nodeID) as Profile;
@@ -100,11 +65,10 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 					key={index}
 					tree={tree}
 					treeNode={profile}
-					handleDelete={() => handleDelete(profile)}
 					handleCompletedStatus={(newStatus) =>
 						handleCompletedStatus(profile, newStatus)
 					}
-					modalListItemArray={cardModalListItemArray}
+					modalSchema={"Card-Profile"}
 				/>
 			);
 		});
@@ -115,29 +79,7 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 
 	return (
 		<>
-			<AddItemCard
-				modalRef={addItemCardModalRef}
-				itemType="profile"
-				handleAdd={handleAdd}
-				modalListItemArray={addItemCardModalListItemArray}
-			>
-				<Modal
-					modalRef={addItemCardModalRef}
-					listItems={addItemCardModalListItemArray.map(
-						(li, index) => {
-							return (
-								<ModalListItemToggle
-									key={index}
-									modalListItem={li}
-									index={index}
-									handleToggleSetting={handleToggleSetting}
-								/>
-							);
-						},
-					)}
-					utilityBtns={[]}
-				/>
-			</AddItemCard>
+			<AddItemCard pageType="Profile" modalSchema={"AddItemCard-Profile"} />
 			<CardWrapper cards={createCards()} />
 		</>
 	);

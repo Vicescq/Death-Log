@@ -1,31 +1,29 @@
 import { Link } from "react-router";
-import Toggle, { type ToggleSetting } from "../Toggle";
-import type { ModalListItemToggleType } from "./ModalListItemTypes";
+import type { ModalListItemToggleState } from "./ModalListItemStateTypes";
+import Toggle from "../Toggle";
+
+export type ToggleSetting =
+	| "notable"
+	| "boss"
+	| "location"
+	| "other"
+	| "dateStartR"
+	| "dateEndR"
 
 type Props = {
-	modalListItem: ModalListItemToggleType;
-	handleToggleSetting: (
-		status: boolean,
-		index: number,
-		setting?: ToggleSetting
-	) => void;
-	index: number;
+	state: ModalListItemToggleState
 };
 
 export default function ModalListItemToggle({
-	modalListItem,
-	handleToggleSetting,
-	index,
+	state
 }: Props) {
 	return (
 		<li className="m-2 flex gap-4 p-1">
-			<Link to="#">{modalListItem.settingLabel}</Link>
+			<Link to="#">{state.settingLabel}</Link>
 			<div className="ml-auto">
 				<Toggle
-					enable={modalListItem.enable}
-					setting={modalListItem.toggleSetting}
-					handleToggleSetting={handleToggleSetting!}
-					index={index}
+					enable={state.enable}
+					setting={state.toggleSetting}
 				/>
 			</div>
 		</li>

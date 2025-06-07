@@ -1,4 +1,4 @@
-import type { ToggleSetting } from "../components/Toggle";
+import type { ToggleSetting } from "../components/modals/ModalListItemToggle";
 
 export function createShallowCopyMap<T>(map: Map<string, T>) {
     const objLiteralFromTree = Object.fromEntries(map);
