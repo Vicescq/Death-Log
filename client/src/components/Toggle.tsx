@@ -26,7 +26,7 @@ export default function Toggle({
 	index,
 }: Props) {
 	const circleMovement = enable ? "translate-x-4" : null;
-	let circleCSS = isSubjectContext(setting) && !enable ? "bg-red-400" : "bg-white";
+	let circleCSS = isSubjectContext(setting) && enable ? "bg-black" : "bg-white";
 	let bgCSS = enable ? "bg-blue-700" : "bg-gray-700";
 
 	if(isSubjectContext(setting)){

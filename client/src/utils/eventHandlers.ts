@@ -20,7 +20,7 @@ export function changeToggleSettingState(addItemCardModalListItemArray: ModalLis
             updatedAddItemCardModalListItemArray[i] = { ...li, enable: false };
         }
 
-        // if target AND 
+        // if target AND is either game, location ... AND the user wants to disable the toggle then DO NOT let the user disable
         else if ((i == index) && isSubjectContext(li.toggleSetting) && (newStatus == false)) {
             updatedAddItemCardModalListItemArray[i] = { ...li, enable: true };
         }
