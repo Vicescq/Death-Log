@@ -16,7 +16,8 @@ export type TangibleTreeNode = TreeNode & {
     notes: string | null
     dateStart: string,
     dateEnd: string | null,
-    reliability: {dateStart: boolean, dateEnd: boolean},
+    dateStartR: boolean, 
+    dateEndR: boolean
 }
 
 export type TangibleTreeNodeParent = TangibleTreeNode & {
@@ -37,24 +38,12 @@ export type Profile = TangibleTreeNodeParent & {
     type: "profile"
 }
 
-export type Subject = TangibleTreeNode & {
+export type Subject = TangibleTreeNode  & {
     type: "subject"
     notable: boolean,
     fullTries: number,
     resets: number,
-    context: SubjectContextType
-}
-
-type SubjectContextType = {
-    boss: true
-    location: false,
-    other: false
-} | {
-    boss: false
-    location: true,
-    other: false
-} | {
-    boss: false
-    location: false,
-    other: true
+    boss: boolean /// these 3 contexts are mutually exclusive
+    location: boolean,
+    other: boolean
 }

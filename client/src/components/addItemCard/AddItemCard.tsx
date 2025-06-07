@@ -12,35 +12,58 @@ export default function AddItemCard({
 }: AddItemCardProps) {
 	const [inputText, setInputText] = useState("");
 	function handleAddWrapper() {
-		let challenge: boolean | undefined = undefined,
-			notable: boolean | undefined = undefined;
+		let notable: boolean | undefined = undefined,
+			dateStartR: boolean | undefined = undefined,
+			dateEndR: boolean | undefined = undefined,
+			boss: boolean | undefined = undefined,
+			location: boolean | undefined = undefined,
+			other: boolean | undefined = undefined;
 		modalListItemArray.forEach((li) => {
-			if (
-				li.type == "toggle" &&
-				li.toggleSetting == "challenge" &&
-				li.enable
-			) {
-				challenge = true;
-			}
-
-			if (
-				li.type == "toggle" &&
-				li.toggleSetting == "notable" &&
-				!li.enable
-			) {
-				notable = false;
+			if (li.type == "toggle") {
+				switch (li.toggleSetting) {
+					case "notable":
+						if (!li.enable) {
+							notable = false;
+						}
+						break;
+					case "dateStartR":
+						if (!li.enable) {
+							dateStartR = false;
+						}
+						break;
+					case "dateEndR":
+						if (!li.enable) {
+							dateEndR = false;
+						}
+						break;
+					case "boss":
+						if (!li.enable) {
+							boss = false;
+						}
+						break;
+					case "location":
+						if (li.enable) {
+							location = true;
+						}
+						break;
+					case "other":
+						if (li.enable) {
+							other = true;
+						}
+						break;
+				}
 			}
 		});
 
 		switch (itemType) {
 			case "game":
-				handleAdd(inputText);
+				handleAdd(inputText, dateStartR, dateEndR);
 				break;
 			case "profile":
-				handleAdd(inputText, challenge);
+				handleAdd(inputText, dateStartR, dateEndR);
 				break;
 			default:
-				handleAdd(inputText, notable);
+				handleAdd(inputText, notable, dateStartR, dateEndR, boss, location, other);
 		}
 	}
 

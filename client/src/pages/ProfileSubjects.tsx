@@ -21,6 +21,8 @@ import useUUIDContext from "../hooks/useUUIDContext";
 import type { Subject, DeathType } from "../model/TreeNodeModel";
 import TreeContextManager from "../features/TreeContextManager";
 import HistoryContextManager from "../features/HistoryContextManager";
+import type { ToggleSetting } from "../components/Toggle";
+import type { HandleAddSubject } from "../components/addItemCard/AddItemCardProps";
 
 export default function ProfileSubjects({ profileID }: { profileID: string }) {
 	const [tree, setTree] = useTreeContext();
@@ -40,21 +42,34 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 			createModalListItemToggle("Reliable Date (End)", "dateEndR", true),
 			createModalListItemToggle("Boss", "boss", true),
 			createModalListItemToggle("Location", "location", false),
-			createModalListItemToggle("Other", "other", false)
+			createModalListItemToggle("Other", "other", false),
 		]);
 
 	const [cardModalListItemArray, setCardModalListItemArray] = useState([
 		createModalListItemInputEdit("Edit Name:", "name"),
 	]);
 
-	function handleAdd(inputText: string, notable: boolean | undefined) {
+	const handleAdd: HandleAddSubject = (
+		inputText: string,
+		notable: boolean | undefined,
+		dateStartR: boolean | undefined,
+		dateEndR: boolean | undefined,
+		boss: boolean | undefined,
+		location: boolean | undefined,
+		other: boolean | undefined,
+	) => {
 		const node = TreeContextManager.createSubject(inputText, profileID, {
 			notable: notable,
+			dateStartR: dateStartR,
+			dateEndR: dateEndR,
+			boss: boss,
+			location: location,
+			other: other
 		});
 		const { treeCopy, actions } = TreeContextManager.addNode(tree, node);
 		setTree(treeCopy);
 		setHistory(HistoryContextManager.updateActionHistory(history, actions));
-	}
+	};
 
 	function handleDelete(node: Subject) {
 		const bool = window.confirm();
@@ -105,11 +120,16 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 		setHistory(HistoryContextManager.updateActionHistory(history, actions));
 	}
 
-	function handleToggleSetting(status: boolean, index: number) {
+	function handleToggleSetting(
+		status: boolean,
+		index: number,
+		setting?: ToggleSetting,
+	) {
 		const newState = changeToggleSettingState(
 			addItemCardModalListItemArray,
 			status,
 			index,
+			setting,
 		);
 		setAddItemCardModalListItemArray(newState);
 	}

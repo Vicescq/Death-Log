@@ -123,7 +123,8 @@ export default class TreeContextManager {
             dateStart: new Date().toISOString(),
             dateEnd: null,
             path: path,
-            reliability: {dateStart: true, dateEnd: true},
+            dateStartR: true, 
+            dateEndR: true,
         };
         deleteUndefinedValues(overrides);
         return {
@@ -151,7 +152,8 @@ export default class TreeContextManager {
             dateStart: new Date().toISOString(),
             dateEnd: null,
             path: path,
-            reliability: {dateStart: true, dateEnd: true},
+            dateStartR: true, 
+            dateEndR: true,
         };
         deleteUndefinedValues(overrides);
         return {
@@ -179,8 +181,11 @@ export default class TreeContextManager {
             notable: true,
             fullTries: 0,
             resets: 0,
-            context: { boss: true, location: false, other: false },
-            reliability: {dateStart: true, dateEnd: true},
+            boss: true, 
+            location: false, 
+            other: false,
+            dateStartR: true, 
+            dateEndR: true,
         };
         deleteUndefinedValues(overrides);
         return {

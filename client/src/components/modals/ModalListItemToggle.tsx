@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import Toggle from "../Toggle";
+import Toggle, { type ToggleSetting } from "../Toggle";
 import type { ModalListItemToggleType } from "./ModalListItemTypes";
 
 type Props = {
@@ -7,6 +7,7 @@ type Props = {
 	handleToggleSetting: (
 		status: boolean,
 		index: number,
+		setting?: ToggleSetting
 	) => void;
 	index: number;
 };

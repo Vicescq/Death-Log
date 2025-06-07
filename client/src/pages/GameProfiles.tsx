@@ -9,7 +9,10 @@ import Modal from "../components/modals/Modal";
 import ModalListItemToggle from "../components/modals/ModalListItemToggle";
 import AddItemCard from "../components/addItemCard/AddItemCard";
 import type { HandleAddProfile } from "../components/addItemCard/AddItemCardProps";
-import { changeCompletedStatus, changeToggleSettingState } from "../utils/eventHandlers";
+import {
+	changeCompletedStatus,
+	changeToggleSettingState,
+} from "../utils/eventHandlers";
 import {
 	createModalListItemInputEdit,
 	createModalListItemToggle,
@@ -29,7 +32,14 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 	const addItemCardModalRef = useRef<HTMLDialogElement | null>(null);
 
 	const [addItemCardModalListItemArray, setAddItemCardModalListItemArray] =
-		useState([createModalListItemToggle("Reliable Date (Start)", "dateStartR", true), createModalListItemToggle("Reliable Date (End)", "dateEndR", true)]);
+		useState([
+			createModalListItemToggle(
+				"Reliable Date (Start)",
+				"dateStartR",
+				true,
+			),
+			createModalListItemToggle("Reliable Date (End)", "dateEndR", true),
+		]);
 
 	const [cardModalListItemArray, setCardModalListItemArray] = useState([
 		createModalListItemInputEdit("Edit Name:", "name"),
@@ -37,8 +47,13 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 
 	const handleAdd: HandleAddProfile = (
 		inputText: string,
+		dateStartR: boolean | undefined,
+		dateEndR: boolean | undefined,
 	) => {
-		const node = TreeContextManager.createProfile(inputText, tree, gameID, {});
+		const node = TreeContextManager.createProfile(inputText, tree, gameID, {
+			dateStartR: dateStartR,
+			dateEndR: dateEndR,
+		});
 		const { treeCopy, actions } = TreeContextManager.addNode(tree, node);
 		setTree(treeCopy);
 		setHistory(HistoryContextManager.updateActionHistory(history, actions));
@@ -52,12 +67,18 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 				node,
 			);
 			setTree(treeCopy);
-			setHistory(HistoryContextManager.updateActionHistory(history, actions));
+			setHistory(
+				HistoryContextManager.updateActionHistory(history, actions),
+			);
 		}
 	}
 
 	function handleCompletedStatus(profile: Profile, newStatus: boolean) {
-		const {treeCopy, actions} = changeCompletedStatus(profile, newStatus, tree);
+		const { treeCopy, actions } = changeCompletedStatus(
+			profile,
+			newStatus,
+			tree,
+		);
 		setTree(treeCopy);
 		setHistory(HistoryContextManager.updateActionHistory(history, actions));
 	}

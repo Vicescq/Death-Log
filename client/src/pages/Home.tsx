@@ -9,7 +9,10 @@ import { useRef, useState } from "react";
 import Modal from "../components/modals/Modal";
 import ModalListItemToggle from "../components/modals/ModalListItemToggle";
 import type { HandleAddGame } from "../components/addItemCard/AddItemCardProps";
-import { changeCompletedStatus, changeToggleSettingState } from "../utils/eventHandlers";
+import {
+	changeCompletedStatus,
+	changeToggleSettingState,
+} from "../utils/eventHandlers";
 import {
 	createModalListItemInputEdit,
 	createModalListItemToggle,
@@ -18,7 +21,7 @@ import useUpdateURLMap from "../hooks/useUpdateURLMap";
 import useUUIDContext from "../hooks/useUUIDContext";
 import type { Game } from "../model/TreeNodeModel";
 import TreeContextManager from "../features/TreeContextManager";
-import {  useErrorBoundary } from "react-error-boundary";
+import { useErrorBoundary } from "react-error-boundary";
 import type { ModalListItemToggleType } from "../components/modals/ModalListItemTypes";
 import HistoryContextManager from "../features/HistoryContextManager";
 
@@ -31,21 +34,34 @@ export default function Home() {
 	const { showBoundary } = useErrorBoundary();
 
 	const [addItemCardModalListItemArray, setAddItemCardModalListItemArray] =
-		useState([createModalListItemToggle("Reliable Date (Start)", "dateStartR", true), createModalListItemToggle("Reliable Date (End)", "dateEndR", true)]);
+		useState([
+			createModalListItemToggle(
+				"Reliable Date (Start)",
+				"dateStartR",
+				true,
+			),
+			createModalListItemToggle("Reliable Date (End)", "dateEndR", true),
+		]);
 
 	const [cardModalListItemArray, setCardModalListItemArray] = useState([
 		createModalListItemInputEdit("Edit Name:", "name"),
 	]);
 
-	const handleAdd: HandleAddGame = (inputText: string) => {
+	const handleAdd: HandleAddGame = (
+		inputText: string,
+		dateStartR: boolean | undefined,
+		dateEndR: boolean | undefined,
+	) => {
 		try {
-			const node = TreeContextManager.createGame(inputText, tree, {});
+			const node = TreeContextManager.createGame(inputText, tree, {dateStartR: dateStartR, dateEndR: dateEndR});
 			const { treeCopy, actions } = TreeContextManager.addNode(
 				tree,
 				node,
 			);
 			setTree(treeCopy);
-			setHistory(HistoryContextManager.updateActionHistory(history, actions));
+			setHistory(
+				HistoryContextManager.updateActionHistory(history, actions),
+			);
 		} catch (err) {
 			showBoundary(err);
 		}
@@ -59,12 +75,18 @@ export default function Home() {
 				node,
 			);
 			setTree(treeCopy);
-			setHistory(HistoryContextManager.updateActionHistory(history, actions));
+			setHistory(
+				HistoryContextManager.updateActionHistory(history, actions),
+			);
 		}
 	}
 
 	function handleCompletedStatus(game: Game, newStatus: boolean) {
-		const {treeCopy, actions} = changeCompletedStatus(game, newStatus, tree);
+		const { treeCopy, actions } = changeCompletedStatus(
+			game,
+			newStatus,
+			tree,
+		);
 		setTree(treeCopy);
 		setHistory(HistoryContextManager.updateActionHistory(history, actions));
 	}
