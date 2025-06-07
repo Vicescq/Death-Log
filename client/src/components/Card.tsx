@@ -151,6 +151,7 @@ export default function Card({
 								handleChange={(inputText) =>
 									setInputText(inputText)
 								}
+								treeNode={treeNode}
 							/>
 						);
 					} else {
