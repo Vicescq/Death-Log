@@ -69,6 +69,7 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 						handleCompletedStatus(profile, newStatus)
 					}
 					modalSchema={"Card-Profile"}
+					handleDelete={() => handleDelete(profile)}
 				/>
 			);
 		});

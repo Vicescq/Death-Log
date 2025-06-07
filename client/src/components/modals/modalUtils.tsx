@@ -10,6 +10,7 @@ import { ModalUtilityButton } from "./ModalUtilityButton";
 export function createModalListItems(
 	modalState: (ModalListItemInputEditState | ModalListItemToggleState)[],
 	handleToggle?: (index: number) => void,
+	handleInputEditChange?: (inputText: string, index: number) => void
 ) {
 	return modalState.map((state, index) => {
 		if (state.type == "inputEdit") {
@@ -17,7 +18,8 @@ export function createModalListItems(
 				<ModalListItemInputEdit
 					key={index}
 					state={state}
-					placeholder=""
+					placeholder="sdasdsa"
+					handleInputEditChange={(inputText) => handleInputEditChange!(inputText, index)}
 				/>
 			);
 		} else if (state.type == "toggle") {
@@ -33,7 +35,7 @@ export function createModalListItems(
 	}) as React.JSX.Element[];
 }
 
-export function createModalUtilityButtons(modalSchema: ModalSchema) {
+export function createModalUtilityButtons(modalSchema: ModalSchema, modalRef: React.RefObject<HTMLDialogElement | null>, handleDelete?: () => void, handleEdit?: () => void) {
 	const utilityBtns: React.JSX.Element[] = [];
 	switch (modalSchema) {
 		case "Card-Home":
@@ -43,13 +45,19 @@ export function createModalUtilityButtons(modalSchema: ModalSchema) {
 				<ModalUtilityButton
 					key={1}
 					name="EDIT"
-					handleClick={() => true}
+					handleClick={() => {
+						handleEdit!();
+						modalRef.current?.close();
+					}}
 					bgCol="bg-hunyadi"
 				/>,
 				<ModalUtilityButton
 					key={2}
 					name="DELETE"
-					handleClick={() => true}
+					handleClick={() => {
+						handleDelete ? handleDelete() : console.error("DEV ERROR HANDLE DELETE MUST BE PASSED!");
+						modalRef.current?.close();
+					}}
 					bgCol="bg-red-500"
 				/>,
 			);

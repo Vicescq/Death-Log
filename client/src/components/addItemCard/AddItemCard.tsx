@@ -114,7 +114,7 @@ export default function AddItemCard({
 			<Modal
 				modalRef={modalRef}
 				modalListItems={createModalListItems(modalState, handleToggle)}
-				modalUtilityBtns={createModalUtilityButtons(modalSchema)}
+				modalUtilityBtns={createModalUtilityButtons(modalSchema, modalRef)}
 			/>
 		</header>
 	);

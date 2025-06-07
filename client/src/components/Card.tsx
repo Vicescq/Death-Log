@@ -9,8 +9,18 @@ import readonly from "../assets/readonly.svg";
 import type { TreeStateType } from "../contexts/treeContext";
 import { useEffect, useRef, useState } from "react";
 import Modal, { type ModalSchema } from "./modals/Modal";
-import { createCardCSS, generateCardDeathCounts } from "../utils/ui";
+import {
+	createCardCSS,
+	createModalState,
+	generateCardDeathCounts,
+} from "../utils/ui";
 import type { DeathType, DistinctTreeNode } from "../model/TreeNodeModel";
+import {
+	createModalListItems,
+	createModalUtilityButtons,
+} from "./modals/modalUtils";
+import type { ModalListItemDistinctState, ModalListItemInputEditState } from "./modals/ModalListItemStateTypes";
+import useConsoleLogOnStateChange from "../hooks/useConsoleLogOnStateChange";
 
 export type HandleDeathCountOperation = "add" | "subtract";
 
@@ -22,7 +32,9 @@ type Props = {
 		operation: HandleDeathCountOperation,
 	) => void;
 	handleCompletedStatus?: (newStatus: boolean) => void;
-	modalSchema: ModalSchema
+	handleDelete: () => void;
+	modalSchema: ModalSchema;
+	handleDetailsEdit?:  (modalState: ModalListItemDistinctState[]) => void;
 };
 
 export default function Card({
@@ -30,8 +42,11 @@ export default function Card({
 	treeNode,
 	handleDeathCount,
 	handleCompletedStatus,
+	handleDelete,
 	modalSchema,
+	handleDetailsEdit,
 }: Props) {
+	const [modalState, setModalState] = useState(createModalState(modalSchema));
 	const modalRef = useRef<HTMLDialogElement | null>(null);
 	const [resetDeathTypeMode, setResetDeathTypeMode] = useState(false);
 	const deathType: DeathType = resetDeathTypeMode ? "resets" : "fullTries";
@@ -48,10 +63,21 @@ export default function Card({
 		tree,
 	);
 
+	function handleInputEditChange(inputText: string, index: number){
+		const modalStateCopy = [...modalState];
+		modalStateCopy[index] = {...modalStateCopy[index]};
+		const inputEditState =  modalStateCopy[index] as ModalListItemInputEditState;
+		inputEditState.change = inputText;
+		modalStateCopy[index] = inputEditState;
+		setModalState(modalStateCopy);
+	}
+
 	// fixed "bug" where state persists to next card in line if some card got deleted
 	useEffect(() => {
 		setResetDeathTypeMode(false);
 	}, [treeNode.id]);
+
+	useConsoleLogOnStateChange(modalState, modalState)
 
 	return (
 		<div
@@ -120,7 +146,15 @@ export default function Card({
 					}}
 				/>
 			</div>
-			<Modal modalRef={modalRef} modalSchema={modalSchema} />
+			<Modal
+				modalRef={modalRef}
+				modalListItems={createModalListItems(modalState, undefined, handleInputEditChange)}
+				modalUtilityBtns={createModalUtilityButtons(
+					modalSchema,
+					modalRef,
+					handleDelete, () => handleDetailsEdit!(modalState)
+				)}
+			/>
 		</div>
 	);
 }

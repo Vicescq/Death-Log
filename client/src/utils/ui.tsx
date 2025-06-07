@@ -1,6 +1,7 @@
 import type { InputEditTargetField } from "../components/modals/ModalListItemInputEdit";
 import type { ToggleSetting } from "../components/modals/ModalListItemToggle";
 import type {
+	ModalListItemDistinctState,
 	ModalListItemInputEditState,
 	ModalListItemToggleState,
 } from "../components/modals/ModalListItemStateTypes";
@@ -83,7 +84,7 @@ export function generateCardDeathCounts(
 export function createModalState(
 	modalSchema: ModalSchema,
 ) {
-	const state: (ModalListItemInputEditState | ModalListItemToggleState)[] =
+	const state: ModalListItemDistinctState[] =
 		[];
 	switch (modalSchema) {
 		case "AddItemCard-Home":

@@ -5,23 +5,14 @@ import useURLMapContext from "../hooks/useURLMapContext";
 import useHistoryContext from "../hooks/useHistoryContext";
 import usePostDeathLog from "../hooks/usePostDeathLog";
 import CardWrapper from "../components/CardWrapper";
-import Modal from "../components/modals/Modal";
-import ModalListItemToggle from "../components/modals/ModalListItemToggle";
-import {
-	changeCompletedStatus,
-	changeToggleSettingState,
-} from "../utils/eventHandlers";
+import { changeCompletedStatus } from "../utils/eventHandlers";
 import useUpdateURLMap from "../hooks/useUpdateURLMap";
 import useUUIDContext from "../hooks/useUUIDContext";
-import type {
-	Subject,
-	DeathType,
-	DistinctTreeNode,
-} from "../model/TreeNodeModel";
+import type { Subject, DeathType } from "../model/TreeNodeModel";
 import TreeContextManager from "../features/TreeContextManager";
 import HistoryContextManager from "../features/HistoryContextManager";
 import type { HandleAddSubject } from "../components/addItemCard/AddItemCardProps";
-import useConsoleLogOnStateChange from "../hooks/useConsoleLogOnStateChange";
+import type { ModalListItemDistinctState } from "../components/modals/ModalListItemStateTypes";
 
 export default function ProfileSubjects({ profileID }: { profileID: string }) {
 	const [tree, setTree] = useTreeContext();
@@ -100,6 +91,18 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 		setHistory(HistoryContextManager.updateActionHistory(history, actions));
 	}
 
+	function handleDetailsEdit(subject: Subject, modalState: ModalListItemDistinctState[]){
+		const subjectCopy = {...subject};
+		modalState.forEach((state) => {
+			if (state.type == "inputEdit"){
+				subjectCopy.name = state.change != "" ? state.change : subjectCopy.name
+ 			}
+		})
+		const {treeCopy, actions} = TreeContextManager.updateNode(tree, subjectCopy!);
+		setTree(treeCopy);
+		setHistory(HistoryContextManager.updateActionHistory(history, actions));
+	}
+
 	function createCards() {
 		return tree.get(profileID)?.childIDS.map((nodeID, index) => {
 			const subject = tree.get(nodeID) as Subject;
@@ -114,7 +117,9 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 					handleCompletedStatus={(newStatus) =>
 						handleCompletedStatus(subject, newStatus)
 					}
+					handleDelete={() => handleDelete(subject)}
 					modalSchema={"Card-Subject"}
+					handleDetailsEdit={(modalState) => handleDetailsEdit(subject, modalState)}
 				/>
 			);
 		});
@@ -124,8 +129,12 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 	usePostDeathLog(uuid, history, setHistory);
 	return (
 		<>
-			<AddItemCard pageType="Subject" modalSchema={"AddItemCard-Subject"} handleAdd={handleAdd}/>
-				
+			<AddItemCard
+				pageType="Subject"
+				modalSchema={"AddItemCard-Subject"}
+				handleAdd={handleAdd}
+			/>
+
 			<CardWrapper cards={createCards()} />
 		</>
 	);

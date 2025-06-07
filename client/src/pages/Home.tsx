@@ -80,6 +80,7 @@ export default function Home() {
 						handleCompletedStatus(game, newStatus)
 					}
 					modalSchema={"Card-Home"}
+					handleDelete={() => handleDelete(game)}
 				/>
 			);
 		});
