@@ -1,3 +1,5 @@
+import { isSubjectContext } from "../utils/general";
+
 export type ToggleSetting =
 	| "notable"
 	| "boss"
@@ -23,8 +25,13 @@ export default function Toggle({
 	handleToggleSetting,
 	index,
 }: Props) {
-	const circleCSS = enable ? "translate-x-4" : null;
-	const bgCSS = enable ? "bg-blue-700" : "bg-gray-700";
+	const circleMovement = enable ? "translate-x-4" : null;
+	let circleCSS = isSubjectContext(setting) && !enable ? "bg-red-400" : "bg-white";
+	let bgCSS = enable ? "bg-blue-700" : "bg-gray-700";
+
+	if(isSubjectContext(setting)){
+		bgCSS = enable ? "bg-red-600" : "bg-gray-900";
+	}
 
 	return (
 		<button
@@ -32,7 +39,7 @@ export default function Toggle({
 			onClick={() => handleToggleSetting(!enable, index, setting)}
 		>
 			<div
-				className={`${circleCSS} h-4 w-4 transform rounded-full bg-white transition duration-300 ease-in-out`}
+				className={`${circleMovement} h-4 w-4 transform rounded-full  ${circleCSS} transition duration-300 ease-in-out`}
 			></div>
 		</button>
 	);

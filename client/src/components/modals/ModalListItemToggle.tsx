@@ -18,7 +18,7 @@ export default function ModalListItemToggle({
 	index,
 }: Props) {
 	return (
-		<li className="m-2 flex gap-4">
+		<li className="m-2 flex gap-4 p-1">
 			<Link to="#">{modalListItem.settingLabel}</Link>
 			<div className="ml-auto">
 				<Toggle

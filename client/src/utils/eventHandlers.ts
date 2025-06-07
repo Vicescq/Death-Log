@@ -3,12 +3,9 @@ import type { TreeStateType } from "../contexts/treeContext";
 import type { DistinctTreeNode } from "../model/TreeNodeModel";
 import TreeContextManager from "../features/TreeContextManager";
 import type { ToggleSetting } from "../components/Toggle";
+import { isSubjectContext } from "./general";
 
 export function changeToggleSettingState(addItemCardModalListItemArray: ModalListItemToggleType[], newStatus: boolean, index: number, toggleSetting?: ToggleSetting) {
-
-    function isSubjectContext(setting: ToggleSetting) {
-        return setting == "boss" || setting == "location" || setting == "other"
-    }
 
     const updatedAddItemCardModalListItemArray = addItemCardModalListItemArray.map((li, i) => {
         if (index == i) {
