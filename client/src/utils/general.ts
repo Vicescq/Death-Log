@@ -10,6 +10,6 @@ export function deleteUndefinedValues(obj: any) {
     Object.keys(obj).forEach((key) => obj[key] === undefined ? delete obj[key] : null);
 }
 
-export function isSubjectContext(setting: ToggleSetting) {
+export function isSubjectContext(setting: ToggleSetting | undefined) {
     return setting == "boss" || setting == "location" || setting == "other"
 }

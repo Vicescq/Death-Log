@@ -79,7 +79,7 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 
 	return (
 		<>
-			<AddItemCard pageType="Profile" modalSchema={"AddItemCard-Profile"} />
+			<AddItemCard pageType="Profile" modalSchema={"AddItemCard-Profile"} handleAdd={handleAdd}/>
 			<CardWrapper cards={createCards()} />
 		</>
 	);

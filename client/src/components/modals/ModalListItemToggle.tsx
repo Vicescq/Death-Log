@@ -12,10 +12,13 @@ export type ToggleSetting =
 
 type Props = {
 	state: ModalListItemToggleState
+	index: number;
+	handleToggle: () => void
 };
 
 export default function ModalListItemToggle({
-	state
+	state,
+	handleToggle
 }: Props) {
 	return (
 		<li className="m-2 flex gap-4 p-1">
@@ -24,6 +27,7 @@ export default function ModalListItemToggle({
 				<Toggle
 					enable={state.enable}
 					setting={state.toggleSetting}
+					handleToggle={handleToggle}
 				/>
 			</div>
 		</li>

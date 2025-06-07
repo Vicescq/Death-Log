@@ -1,8 +1,4 @@
-import type { TreeNodeType } from "../../model/TreeNodeModel";
-import type {
-    ModalListItemToggleState,
-    ModalListItemInputEditState,
-} from "../modals/ModalListItemStateTypes";
+import type { ModalSchema } from "../modals/Modal";
 
 export type HandleAddGame = (
     inputText: string,
@@ -25,27 +21,22 @@ export type HandleAddSubject = (
 ) => void;
 
 interface AddItemCardPropsBase {
-    children: React.JSX.Element;
-    itemType: TreeNodeType;
-    modalRef: React.RefObject<HTMLDialogElement | null>;
-    modalListItemArray: (
-        | ModalListItemToggleState
-        | ModalListItemInputEditState
-    )[];
+    pageType: "Game" | "Profile" | "Subject";
+    modalSchema: ModalSchema;
 }
 
 interface AddItemCardGameProps extends AddItemCardPropsBase {
-    itemType: "game";
+    pageType: "Game";
     handleAdd: HandleAddGame;
 }
 
 interface AddItemCardProfileProps extends AddItemCardPropsBase {
-    itemType: "profile";
+    pageType: "Profile";
     handleAdd: HandleAddProfile;
 }
 
 interface AddItemCardSubjectProps extends AddItemCardPropsBase {
-    itemType: "subject";
+    pageType: "Subject";
     handleAdd: HandleAddSubject;
 }
 

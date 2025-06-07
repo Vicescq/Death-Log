@@ -2,6 +2,7 @@ import type { InputEditTargetField } from "./ModalListItemInputEdit";
 import type { ToggleSetting } from "./ModalListItemToggle";
 
 export type ModalListItemType = "inputEdit" | "toggle"
+export type ModalListItemDistinctState = ModalListItemInputEditState | ModalListItemToggleState;
 
 export interface ModalListItemState {
     type: ModalListItemType

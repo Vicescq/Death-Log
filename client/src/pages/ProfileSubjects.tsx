@@ -124,7 +124,7 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 	usePostDeathLog(uuid, history, setHistory);
 	return (
 		<>
-			<AddItemCard pageType="Subject" modalSchema={"AddItemCard-Subject"} />
+			<AddItemCard pageType="Subject" modalSchema={"AddItemCard-Subject"} handleAdd={handleAdd}/>
 				
 			<CardWrapper cards={createCards()} />
 		</>

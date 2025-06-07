@@ -90,7 +90,7 @@ export default function Home() {
 
 	return (
 		<>
-			<AddItemCard pageType="Game" modalSchema={"AddItemCard-Home"} />
+			<AddItemCard pageType="Game" modalSchema={"AddItemCard-Home"} handleAdd={handleAdd}/>
 
 			<CardWrapper cards={createCards()} />
 		</>
