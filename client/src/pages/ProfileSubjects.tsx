@@ -18,11 +18,12 @@ import {
 } from "../utils/ui";
 import useUpdateURLMap from "../hooks/useUpdateURLMap";
 import useUUIDContext from "../hooks/useUUIDContext";
-import type { Subject, DeathType } from "../model/TreeNodeModel";
+import type { Subject, DeathType, DistinctTreeNode } from "../model/TreeNodeModel";
 import TreeContextManager from "../features/TreeContextManager";
 import HistoryContextManager from "../features/HistoryContextManager";
 import type { ToggleSetting } from "../components/Toggle";
 import type { HandleAddSubject } from "../components/addItemCard/AddItemCardProps";
+import useConsoleLogOnStateChange from "../hooks/useConsoleLogOnStateChange";
 
 export default function ProfileSubjects({ profileID }: { profileID: string }) {
 	const [tree, setTree] = useTreeContext();
@@ -134,7 +135,20 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 		setAddItemCardModalListItemArray(newState);
 	}
 
-	function handleDetailsSetting(subject: Subject, inputText: string) {}
+	function handleCardModalInputEditChange(change: string, index: number){
+		const newState = [...cardModalListItemArray];
+		newState[index] = {...newState[index]};
+		newState[index].change = change;
+		setCardModalListItemArray(newState);
+	}
+
+	function handleCardOnEdit(subject: DistinctTreeNode) {
+		cardModalListItemArray.forEach((li, index) => {
+			if (li.targetField == "name"){
+				
+			}
+		})
+	}
 
 	function createCards() {
 		return tree.get(profileID)?.childIDS.map((nodeID, index) => {
@@ -152,14 +166,15 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 						handleCompletedStatus(subject, newStatus)
 					}
 					modalListItemArray={cardModalListItemArray}
-					handleDetailsSettingSubmit={(inputText) =>
-						handleDetailsSetting(subject, inputText)
+					handleCardOnEdit={() =>
+						handleCardOnEdit(subject)
 					}
+					handleCardModalInputEditChange={handleCardModalInputEditChange}
 				/>
 			);
 		});
 	}
-
+	useConsoleLogOnStateChange(cardModalListItemArray, cardModalListItemArray);
 	useUpdateURLMap(tree, urlMap, setURLMap);
 	usePostDeathLog(uuid, history, setHistory);
 	return (

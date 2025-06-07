@@ -17,7 +17,7 @@ import ModalListItemInputEdit from "./modals/ModalListItemInputEdit";
 import ModalListItemToggle from "./modals/ModalListItemToggle";
 import { ModalUtilityButton } from "./modals/ModalUtilityButton";
 import { createCardCSS, generateCardDeathCounts } from "../utils/ui";
-import type { DeathType, DistinctTreeNode } from "../model/TreeNodeModel";
+import type { DeathType, DistinctTreeNode, Subject } from "../model/TreeNodeModel";
 
 export type HandleDeathCountOperation = "add" | "subtract";
 
@@ -34,7 +34,8 @@ type Props = {
 		| ModalListItemToggleType
 		| ModalListItemInputEditType
 	)[];
-	handleDetailsSettingSubmit?: (inputText: string) => void;
+	handleCardOnEdit?: () => void;
+	handleCardModalInputEditChange?: (change: string, index: number) => void,
 };
 
 export default function Card({
@@ -44,10 +45,10 @@ export default function Card({
 	handleCompletedStatus,
 	handleDelete,
 	modalListItemArray,
-	handleDetailsSettingSubmit,
+	handleCardOnEdit,
+	handleCardModalInputEditChange
 }: Props) {
 	const modalRef = useRef<HTMLDialogElement | null>(null);
-	const [inputText, setInputText] = useState("");
 	const [resetDeathTypeMode, setResetDeathTypeMode] = useState(false);
 	const deathType: DeathType = resetDeathTypeMode ? "resets" : "fullTries";
 	const {
@@ -63,10 +64,11 @@ export default function Card({
 		tree,
 	);
 
+
+
 	// fixed "bug" where state persists to next card in line if some card got deleted
 	useEffect(() => {
 		setResetDeathTypeMode(false);
-		setInputText("");
 	}, [treeNode.id]);
 
 	return (
@@ -147,11 +149,9 @@ export default function Card({
 							<ModalListItemInputEdit
 								key={index}
 								modalListItem={li}
-								index={index}
-								handleChange={(inputText) =>
-									setInputText(inputText)
-								}
 								treeNode={treeNode}
+								handleCardModalInputEditChange={handleCardModalInputEditChange!}
+								index={index}
 							/>
 						);
 					} else {
@@ -170,7 +170,7 @@ export default function Card({
 						key={0}
 						name={"EDIT"}
 						handleClick={() => {
-							handleDetailsSettingSubmit!(inputText);
+							handleCardOnEdit!();
 							modalRef.current?.close();
 						}}
 						bgCol="bg-hunyadi"
