@@ -1,6 +1,6 @@
 import type { TreeStateType } from "../../contexts/treeContext";
 import type { DistinctTreeNode } from "../../model/TreeNodeModel";
-import { getDeaths } from "../../utils/treeUtils";
+import { getDeaths } from "../../features/treeUtils";
 
 export function createCardCSS(
     treeNode: DistinctTreeNode,
