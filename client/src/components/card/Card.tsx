@@ -19,8 +19,8 @@ import type {
 	ModalListItemDistinctState,
 	ModalListItemInputEditState,
 } from "../modals/ModalListItemStateTypes";
-import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
 import { createCardCSS, generateCardDeathCounts } from "./cardUtils";
+import cardHandlers from "./cardHandlers";
 
 export type HandleDeathCountOperation = "add" | "subtract";
 
@@ -49,6 +49,7 @@ export default function Card({
 	const [modalState, setModalState] = useState(createModalState(modalSchema));
 	const modalRef = useRef<HTMLDialogElement | null>(null);
 	const [resetDeathTypeMode, setResetDeathTypeMode] = useState(false);
+	
 	const deathType: DeathType = resetDeathTypeMode ? "resets" : "fullTries";
 	const {
 		cardCSS,
@@ -57,29 +58,17 @@ export default function Card({
 		settersBtnDisplay,
 		readOnlyEnabledCSS,
 	} = createCardCSS(treeNode, resetDeathTypeMode);
-
 	const { deathCount, fullTries, resets } = generateCardDeathCounts(
 		treeNode,
 		tree,
 	);
 
-	function handleInputEditChange(inputText: string, index: number) {
-		const modalStateCopy = [...modalState];
-		modalStateCopy[index] = { ...modalStateCopy[index] };
-		const inputEditState = modalStateCopy[
-			index
-		] as ModalListItemInputEditState;
-		inputEditState.change = inputText;
-		modalStateCopy[index] = inputEditState;
-		setModalState(modalStateCopy);
-	}
+	const {handleInputEditChange} = cardHandlers(modalState, setModalState);
 
 	// fixed "bug" where state persists to next card in line if some card got deleted
 	useEffect(() => {
 		setResetDeathTypeMode(false);
 	}, [treeNode.id]);
-
-	useConsoleLogOnStateChange(modalState, modalState);
 
 	return (
 		<div

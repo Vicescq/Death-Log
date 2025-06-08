@@ -20,27 +20,11 @@ export type HandleAddSubject = (
     other: boolean |  undefined
 ) => void;
 
-interface AddItemCardPropsBase {
-    pageType: "Game" | "Profile" | "Subject";
+export interface AddItemCardProps {
+    pageType: AddItemCardPageType;
     modalSchema: ModalSchema;
+    handleAdd: HandleAddTypes
 }
 
-interface AddItemCardGameProps extends AddItemCardPropsBase {
-    pageType: "Game";
-    handleAdd: HandleAddGame;
-}
-
-interface AddItemCardProfileProps extends AddItemCardPropsBase {
-    pageType: "Profile";
-    handleAdd: HandleAddProfile;
-}
-
-interface AddItemCardSubjectProps extends AddItemCardPropsBase {
-    pageType: "Subject";
-    handleAdd: HandleAddSubject;
-}
-
-export type AddItemCardProps =
-    | AddItemCardGameProps
-    | AddItemCardProfileProps
-    | AddItemCardSubjectProps;
+export type HandleAddTypes = HandleAddGame | HandleAddProfile | HandleAddSubject;
+export type AddItemCardPageType = "Game" | "Profile" | "Subject";
