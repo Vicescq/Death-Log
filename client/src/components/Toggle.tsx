@@ -4,7 +4,7 @@ import type { ToggleSetting } from "./modals/ModalListItemToggle";
 type Props = {
 	enable: boolean;
 	handleToggle: () => void;
-	setting?: ToggleSetting;
+	setting: ToggleSetting;
 };
 
 export default function Toggle({ enable, setting, handleToggle }: Props) {

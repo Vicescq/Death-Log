@@ -1,3 +1,4 @@
+import { isSubjectContext } from "../../utils/general";
 import type {
 	ModalListItemDistinctState,
 	ModalListItemToggleState,
@@ -73,16 +74,34 @@ export default function addItemCardHandlers(
 
 	function handleToggle(index: number) {
 		const newModalState = [...modalState];
+
 		let newModalToggleState = newModalState[
 			index
-		] as ModalListItemToggleState;
-		newModalToggleState = {
-			...newModalToggleState,
-			enable: !newModalToggleState.enable,
-		} as ModalListItemToggleState;
-		newModalState[index] = newModalToggleState;
-		setModalState(newModalState);
-	}
+		] as ModalListItemToggleState; // assume its a toggle state to remove ts errors
 
+		if (!isSubjectContext(newModalToggleState.toggleSetting)) {
+			newModalToggleState = {
+				...newModalToggleState,
+				enable: !newModalToggleState.enable,
+			} as ModalListItemToggleState;
+			newModalState[index] = newModalToggleState;
+		}
+
+		else {
+			// hardcoded positions! last index == other, 2nd last == location, 3rd last == boss
+			for (let i = newModalState.length - 1; i > newModalState.length - 4; i--){
+				let toggleState = newModalState[i] as ModalListItemToggleState;
+				if (index == i && !toggleState.enable){
+					toggleState = {...toggleState, enable: true};
+				}
+				else if (index != i && toggleState.enable){
+					toggleState = {...toggleState, enable: false};
+				}
+				newModalState[i] = toggleState;
+			}
+		}
+		setModalState(newModalState);
+
+	}
 	return { handleAddWrapper, handleToggle };
 }

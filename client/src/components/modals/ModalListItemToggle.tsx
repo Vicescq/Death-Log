@@ -10,6 +10,8 @@ export type ToggleSetting =
 	| "dateStartR"
 	| "dateEndR"
 
+export const ToggleSettingSubjectContexts = ["boss", "location", "other"] as const;
+
 type Props = {
 	state: ModalListItemToggleState
 	index: number;
