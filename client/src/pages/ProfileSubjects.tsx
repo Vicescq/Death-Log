@@ -1,107 +1,23 @@
-import Card, { type HandleDeathCountOperation } from "../components/Card";
+import Card from "../components/Card";
 import AddItemCard from "../components/addItemCard/AddItemCard";
-import useTreeContext from "../hooks/useTreeContext";
-import useURLMapContext from "../hooks/useURLMapContext";
-import useHistoryContext from "../hooks/useHistoryContext";
 import usePostDeathLog from "../hooks/usePostDeathLog";
 import CardWrapper from "../components/CardWrapper";
-import { changeCompletedStatus } from "../utils/eventHandlers";
 import useUpdateURLMap from "../hooks/useUpdateURLMap";
-import useUUIDContext from "../hooks/useUUIDContext";
-import type { Subject, DeathType } from "../model/TreeNodeModel";
-import TreeContextManager from "../features/TreeContextManager";
-import HistoryContextManager from "../features/HistoryContextManager";
-import type { HandleAddSubject } from "../components/addItemCard/AddItemCardProps";
-import type { ModalListItemDistinctState } from "../components/modals/ModalListItemStateTypes";
+import type { Subject } from "../model/TreeNodeModel";
+import useMainPageContexts from "../hooks/useMainPageContexts";
+import profileSubjectsHandlers from "./ProfileSubjects/profileSubjectsHandlers";
 
 export default function ProfileSubjects({ profileID }: { profileID: string }) {
-	const [tree, setTree] = useTreeContext();
-	const [urlMap, setURLMap] = useURLMapContext();
-	const [history, setHistory] = useHistoryContext();
-	const [uuid] = useUUIDContext();
+	const { tree, setTree, urlMap, setURLMap, history, setHistory, uuid } =
+		useMainPageContexts();
 
-	const handleAdd: HandleAddSubject = (
-		inputText: string,
-		notable: boolean | undefined,
-		dateStartR: boolean | undefined,
-		dateEndR: boolean | undefined,
-		boss: boolean | undefined,
-		location: boolean | undefined,
-		other: boolean | undefined,
-	) => {
-		const node = TreeContextManager.createSubject(inputText, profileID, {
-			notable: notable,
-			dateStartR: dateStartR,
-			dateEndR: dateEndR,
-			boss: boss,
-			location: location,
-			other: other,
-		});
-		const { treeCopy, actions } = TreeContextManager.addNode(tree, node);
-		setTree(treeCopy);
-		setHistory(HistoryContextManager.updateActionHistory(history, actions));
-	};
-
-	function handleDelete(node: Subject) {
-		const bool = window.confirm();
-		if (bool) {
-			const { treeCopy, actions } = TreeContextManager.deleteNode(
-				tree,
-				node,
-			);
-			setTree(treeCopy);
-			setHistory(
-				HistoryContextManager.updateActionHistory(history, actions),
-			);
-		}
-	}
-
-	function handleDeathCount(
-		subject: Subject,
-		deathType: DeathType,
-		operation: HandleDeathCountOperation,
-	) {
-		let updatedSubject: Subject = { ...subject };
-		if (operation == "add") {
-			deathType == "fullTries"
-				? updatedSubject.fullTries++
-				: updatedSubject.resets++;
-		} else {
-			deathType == "fullTries"
-				? updatedSubject.fullTries--
-				: updatedSubject.resets--;
-		}
-		updatedSubject.fullTries < 0 ? (updatedSubject.fullTries = 0) : null;
-		updatedSubject.resets < 0 ? (updatedSubject.resets = 0) : null;
-		const { treeCopy, actions } = TreeContextManager.updateNode(
-			tree,
-			updatedSubject,
-		);
-		setTree(treeCopy);
-		setHistory(HistoryContextManager.updateActionHistory(history, actions));
-	}
-
-	function handleCompletedStatus(subject: Subject, newStatus: boolean) {
-		const { treeCopy, actions } = changeCompletedStatus(
-			subject,
-			newStatus,
-			tree,
-		);
-		setTree(treeCopy);
-		setHistory(HistoryContextManager.updateActionHistory(history, actions));
-	}
-
-	function handleDetailsEdit(subject: Subject, modalState: ModalListItemDistinctState[]){
-		const subjectCopy = {...subject};
-		modalState.forEach((state) => {
-			if (state.type == "inputEdit"){
-				subjectCopy.name = state.change != "" ? state.change : subjectCopy.name
- 			}
-		})
-		const {treeCopy, actions} = TreeContextManager.updateNode(tree, subjectCopy!);
-		setTree(treeCopy);
-		setHistory(HistoryContextManager.updateActionHistory(history, actions));
-	}
+	const {
+		handleAdd,
+		handleDelete,
+		handleCompletedStatus,
+		handleDeathCount,
+		handleDetailsEdit,
+	} = profileSubjectsHandlers(tree, setTree, history, setHistory, profileID);
 
 	function createCards() {
 		return tree.get(profileID)?.childIDS.map((nodeID, index) => {
@@ -119,7 +35,9 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 					}
 					handleDelete={() => handleDelete(subject)}
 					modalSchema={"Card-Subject"}
-					handleDetailsEdit={(modalState) => handleDetailsEdit(subject, modalState)}
+					handleDetailsEdit={(modalState) =>
+						handleDetailsEdit(subject, modalState)
+					}
 				/>
 			);
 		});

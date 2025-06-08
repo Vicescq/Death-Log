@@ -4,7 +4,7 @@ import usePostDeathLog from "../../hooks/usePostDeathLog";
 import CardWrapper from "../../components/CardWrapper";
 import useUpdateURLMap from "../../hooks/useUpdateURLMap";
 import type { Game } from "../../model/TreeNodeModel";
-import useHomeStates from "./useHomeStates";
+import useMainPageContexts from "../../hooks/useMainPageContexts";
 import homePageHandlers from "./homePageHandlers";
 
 export default function Home() {
@@ -17,7 +17,7 @@ export default function Home() {
 		setHistory,
 		uuid,
 		showBoundary,
-	} = useHomeStates();
+	} = useMainPageContexts();
 	const { handleAdd, handleDelete, handleCompletedStatus } = homePageHandlers(
 		tree,
 		setTree,
