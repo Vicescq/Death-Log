@@ -1,6 +1,6 @@
-import Card from "../../components/Card";
+import Card from "../../components/card/Card";
 import usePostDeathLog from "../../hooks/usePostDeathLog";
-import CardWrapper from "../../components/CardWrapper";
+import CardWrapper from "../../components/card/CardWrapper";
 import AddItemCard from "../../components/addItemCard/AddItemCard";
 import useUpdateURLMap from "../../hooks/useUpdateURLMap";
 import type { Profile } from "../../model/TreeNodeModel";

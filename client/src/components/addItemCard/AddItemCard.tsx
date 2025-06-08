@@ -2,9 +2,9 @@ import { useRef, useState } from "react";
 import gear from "../../assets/gear.svg";
 import filter from "../../assets/filter.svg";
 import Modal from "../modals/Modal";
-import { createModalState } from "../../utils/ui";
 import {
 	createModalListItems,
+	createModalState,
 	createModalUtilityButtons,
 } from "../modals/modalUtils";
 import type { ModalListItemToggleState } from "../modals/ModalListItemStateTypes";

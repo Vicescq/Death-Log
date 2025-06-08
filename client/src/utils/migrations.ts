@@ -1,7 +1,7 @@
 import type { TreeStateType } from "../contexts/treeContext";
 import type { ActionUpdate } from "../model/Action";
 import type { DistinctTreeNode } from "../model/TreeNodeModel";
-import { createShallowCopyMap } from "./treeUtils";
+import { createShallowCopyMap } from "./general";
 
 export function updateDB(tree: TreeStateType) {
     const treeCopy = createShallowCopyMap(tree);

@@ -1,26 +1,26 @@
 import { NavLink } from "react-router";
-import skull from "../assets/skull.svg";
-import add from "../assets/add.svg";
-import minus from "../assets/minus.svg";
-import step_into from "../assets/step_into.svg";
-import details from "../assets/details.svg";
-import reset from "../assets/reset.svg";
-import readonly from "../assets/readonly.svg";
-import type { TreeStateType } from "../contexts/treeContext";
+import skull from "../../assets/skull.svg";
+import add from "../../assets/add.svg";
+import minus from "../../assets/minus.svg";
+import step_into from "../../assets/step_into.svg";
+import details from "../../assets/details.svg";
+import reset from "../../assets/reset.svg";
+import readonly from "../../assets/readonly.svg";
+import type { TreeStateType } from "../../contexts/treeContext";
 import { useEffect, useRef, useState } from "react";
-import Modal, { type ModalSchema } from "./modals/Modal";
-import {
-	createCardCSS,
-	createModalState,
-	generateCardDeathCounts,
-} from "../utils/ui";
-import type { DeathType, DistinctTreeNode } from "../model/TreeNodeModel";
+import Modal, { type ModalSchema } from "../modals/Modal";
+import type { DeathType, DistinctTreeNode } from "../../model/TreeNodeModel";
 import {
 	createModalListItems,
+	createModalState,
 	createModalUtilityButtons,
-} from "./modals/modalUtils";
-import type { ModalListItemDistinctState, ModalListItemInputEditState } from "./modals/ModalListItemStateTypes";
-import useConsoleLogOnStateChange from "../hooks/useConsoleLogOnStateChange";
+} from "../modals/modalUtils";
+import type {
+	ModalListItemDistinctState,
+	ModalListItemInputEditState,
+} from "../modals/ModalListItemStateTypes";
+import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
+import { createCardCSS, generateCardDeathCounts } from "./cardUtils";
 
 export type HandleDeathCountOperation = "add" | "subtract";
 
@@ -34,7 +34,7 @@ type Props = {
 	handleCompletedStatus?: (newStatus: boolean) => void;
 	handleDelete: () => void;
 	modalSchema: ModalSchema;
-	handleDetailsEdit?:  (modalState: ModalListItemDistinctState[]) => void;
+	handleDetailsEdit?: (modalState: ModalListItemDistinctState[]) => void;
 };
 
 export default function Card({
@@ -63,10 +63,12 @@ export default function Card({
 		tree,
 	);
 
-	function handleInputEditChange(inputText: string, index: number){
+	function handleInputEditChange(inputText: string, index: number) {
 		const modalStateCopy = [...modalState];
-		modalStateCopy[index] = {...modalStateCopy[index]};
-		const inputEditState =  modalStateCopy[index] as ModalListItemInputEditState;
+		modalStateCopy[index] = { ...modalStateCopy[index] };
+		const inputEditState = modalStateCopy[
+			index
+		] as ModalListItemInputEditState;
 		inputEditState.change = inputText;
 		modalStateCopy[index] = inputEditState;
 		setModalState(modalStateCopy);
@@ -77,7 +79,7 @@ export default function Card({
 		setResetDeathTypeMode(false);
 	}, [treeNode.id]);
 
-	useConsoleLogOnStateChange(modalState, modalState)
+	useConsoleLogOnStateChange(modalState, modalState);
 
 	return (
 		<div
@@ -148,11 +150,16 @@ export default function Card({
 			</div>
 			<Modal
 				modalRef={modalRef}
-				modalListItems={createModalListItems(modalState, undefined, handleInputEditChange)}
+				modalListItems={createModalListItems(
+					modalState,
+					undefined,
+					handleInputEditChange,
+				)}
 				modalUtilityBtns={createModalUtilityButtons(
 					modalSchema,
 					modalRef,
-					handleDelete, () => handleDetailsEdit!(modalState)
+					handleDelete,
+					() => handleDetailsEdit!(modalState),
 				)}
 			/>
 		</div>

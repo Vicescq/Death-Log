@@ -1,5 +1,5 @@
 import type { HandleAddSubject } from "../../components/addItemCard/AddItemCardProps";
-import type { HandleDeathCountOperation } from "../../components/Card";
+import type { HandleDeathCountOperation } from "../../components/card/Card";
 import type { ModalListItemDistinctState } from "../../components/modals/ModalListItemStateTypes";
 import type { HistoryStateType, HistoryContextType } from "../../contexts/historyContext";
 import type { TreeStateType, TreeContextType } from "../../contexts/treeContext";

@@ -1,8 +1,8 @@
 import { useParams } from "react-router";
 import GameProfiles from "../pages/GameProfiles/GameProfiles";
-import ProfileSubjects from "../pages/ProfileSubjects";
 import { ForceError } from "../pages/ErrorPage";
 import useURLMapContext from "../contexts/useURLMapContext";
+import ProfileSubjects from "../pages/ProfileSubjects/ProfileSubjects";
 
 export default function URLRouter() {
 	let component: React.JSX.Element;

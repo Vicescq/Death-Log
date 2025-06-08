@@ -1,34 +1,6 @@
-import type { ModalListItemToggleState } from "../components/modals/ModalListItemStateTypes";
 import type { TreeStateType } from "../contexts/treeContext";
 import type { DistinctTreeNode } from "../model/TreeNodeModel";
 import TreeContextManager from "../features/TreeContextManager";
-import type { ToggleSetting } from "../components/Toggle";
-import { isSubjectContext } from "./general";
-
-export function changeToggleSettingState(addItemCardModalListItemArray: ModalListItemToggleState[], newStatus: boolean, index: number, toggleSetting?: ToggleSetting) {
-
-    const updatedAddItemCardModalListItemArray = addItemCardModalListItemArray.map((li, i) => {
-        if (index == i) {
-            li = { ...li, enable: newStatus }
-        }
-        return li;
-    })
-
-    updatedAddItemCardModalListItemArray.forEach((li, i) => {
-        // if li is NOT the current target AND li is either game, location ... AND target in question is either game, location ... then turn it off
-        if ((i != index) && isSubjectContext(li.toggleSetting) && isSubjectContext(updatedAddItemCardModalListItemArray[index].toggleSetting)) {
-            updatedAddItemCardModalListItemArray[i] = { ...li, enable: false };
-        }
-
-        // if target AND is either game, location ... AND the user wants to disable the toggle then DO NOT let the user disable
-        else if ((i == index) && isSubjectContext(li.toggleSetting) && (newStatus == false)) {
-            updatedAddItemCardModalListItemArray[i] = { ...li, enable: true };
-        }
-    })
-
-    return updatedAddItemCardModalListItemArray
-}
-
 
 export function changeCompletedStatus(node: DistinctTreeNode, newStatus: boolean, tree: TreeStateType) {
     const dateEnd = newStatus ? new Date().toISOString() : null;

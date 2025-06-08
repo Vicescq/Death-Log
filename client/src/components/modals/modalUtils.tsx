@@ -1,11 +1,62 @@
 import type { ModalSchema } from "./Modal";
-import ModalListItemInputEdit from "./ModalListItemInputEdit";
+import ModalListItemInputEdit, { type InputEditTargetField } from "./ModalListItemInputEdit";
 import type {
+	ModalListItemDistinctState,
 	ModalListItemInputEditState,
 	ModalListItemToggleState,
 } from "./ModalListItemStateTypes";
-import ModalListItemToggle from "./ModalListItemToggle";
+import ModalListItemToggle, { type ToggleSetting } from "./ModalListItemToggle";
 import { ModalUtilityButton } from "./ModalUtilityButton";
+
+export function createModalState(
+	modalSchema: ModalSchema,
+) {
+	const state: ModalListItemDistinctState[] =
+		[];
+	switch (modalSchema) {
+		case "AddItemCard-Home":
+		case "AddItemCard-Profile":
+			state.push(
+				createModalListItemToggleState(
+					"Reliable Date (Start)",
+					"dateStartR",
+					true,
+			
+				),
+				createModalListItemToggleState(
+					"Reliable Date (End)",
+					"dateEndR",
+					true,
+				),
+			);
+			break;
+		case "AddItemCard-Subject":
+			state.push(
+				createModalListItemToggleState(
+					"Reliable Date (Start)",
+					"dateStartR",
+					true,
+			
+				),
+				createModalListItemToggleState(
+					"Reliable Date (End)",
+					"dateEndR",
+					true,
+			
+				),
+				createModalListItemToggleState("Notable", "notable", true),
+				createModalListItemToggleState("Boss", "boss", true),
+				createModalListItemToggleState("Location", "location", false),
+				createModalListItemToggleState("Other", "other", false),
+			);
+			break;
+		case "Card-Home":
+		case "Card-Profile":
+		case "Card-Subject":
+			state.push(createModalListItemInputEditState("Name:", "name"));
+	}
+	return state;
+}
 
 export function createModalListItems(
 	modalState: (ModalListItemInputEditState | ModalListItemToggleState)[],
@@ -64,4 +115,29 @@ export function createModalUtilityButtons(modalSchema: ModalSchema, modalRef: Re
 			break;
 	}
 	return utilityBtns;
+}
+
+export function createModalListItemInputEditState(
+	settingLabel: string,
+	targetField: InputEditTargetField,
+): ModalListItemInputEditState {
+	return {
+		type: "inputEdit",
+		settingLabel: settingLabel,
+		targetField: targetField,
+		change: "",
+	};
+}
+
+export function createModalListItemToggleState(
+	settingLabel: string,
+	toggleSetting: ToggleSetting,
+	enable: boolean,
+): ModalListItemToggleState {
+	return {
+		type: "toggle",
+		settingLabel: settingLabel,
+		toggleSetting: toggleSetting,
+		enable: enable,
+	};
 }
