@@ -1,6 +1,6 @@
 import { useParams } from "react-router";
 import GameProfiles from "../pages/GameProfiles/GameProfiles";
-import ProfileSubjects from "../pages/ProfileSubjects/ProfileSubjects";
+import ProfileSubjects from "../pages/ProfileSubjects";
 import { ForceError } from "../pages/ErrorPage";
 import useURLMapContext from "../contexts/useURLMapContext";
 
