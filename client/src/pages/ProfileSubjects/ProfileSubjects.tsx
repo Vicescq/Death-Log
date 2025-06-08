@@ -51,6 +51,8 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 				pageType="Subject"
 				modalSchema={"AddItemCard-Subject"}
 				handleAdd={handleAdd}
+				tree={tree}
+				parentID={profileID}
 			/>
 
 			<CardWrapper cards={createCards()} />

@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import gear from "../../assets/gear.svg";
 import filter from "../../assets/filter.svg";
 import Modal from "../modals/Modal";
@@ -9,15 +9,18 @@ import {
 } from "../modals/modalUtils";
 import type { AddItemCardProps } from "./AddItemCardProps";
 import addItemCardHandlers from "./addItemCardHandlers";
-import AlertModal from "../modals/AlertModal";
+import AlertModal, { type Alert } from "../modals/AlertModal";
 
 export default function AddItemCard({
 	pageType,
 	modalSchema,
 	handleAdd,
+	tree,
+	parentID
 }: AddItemCardProps) {
 	const [modalState, setModalState] = useState(createModalState(modalSchema));
 	const [inputText, setInputText] = useState("");
+	const [alert, setAlert] = useState<Alert>({msg: "No alerts.", isAlert: false});
 	const modalRef = useRef<HTMLDialogElement>(null);
 	const alertModalRef = useRef<HTMLDialogElement>(null);
 
@@ -27,7 +30,16 @@ export default function AddItemCard({
 		pageType,
 		inputText,
 		setModalState,
+		tree,
+		parentID
 	);
+
+	useEffect(() => {
+		if (alert.isAlert){
+			alertModalRef.current?.showModal();
+			console.log(alert)
+		}
+	}, [alert]);
 
 	return (
 		<header className="mb-8 flex w-full flex-col gap-4 border-b-4 bg-amber-200 p-4 text-black md:w-xl md:border-4 md:border-black md:shadow-[8px_5px_0px_rgba(0,0,0,1)]">
@@ -53,8 +65,8 @@ export default function AddItemCard({
 						try{
 							handleAddWrapper();
 						}
-						catch{
-							alertModalRef.current?.showModal();
+						catch(e: any){
+							setAlert({msg: e.message, isAlert: true})
 						}
 					}}
 				>
@@ -72,7 +84,7 @@ export default function AddItemCard({
 					modalRef,
 				)}
 			/>
-			<AlertModal modalRef={alertModalRef} />
+			<AlertModal modalRef={alertModalRef} msg={alert.msg}/>
 		</header>
 	);
 }

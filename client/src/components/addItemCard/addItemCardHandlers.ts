@@ -1,3 +1,4 @@
+import type { TreeStateType } from "../../contexts/treeContext";
 import { sanitizeUserEntry } from "../../features/treeUtils";
 import { isSubjectContext } from "../../utils/general";
 import type {
@@ -19,6 +20,8 @@ export default function addItemCardHandlers(
 	setModalState: React.Dispatch<
 		React.SetStateAction<ModalListItemDistinctState[]>
 	>,
+	tree: TreeStateType,
+	parentID: string
 ) {
 	function handleAddWrapper() {
 		let notable,
@@ -52,7 +55,7 @@ export default function addItemCardHandlers(
 		});
 
 
-		inputText = sanitizeUserEntry(inputText);
+		inputText = sanitizeUserEntry(inputText, tree, parentID);
 		switch (pageType) {
 			case "Game":
 				const handleAddGame = handleAdd as HandleAddGame;
@@ -92,13 +95,13 @@ export default function addItemCardHandlers(
 
 		else {
 			// hardcoded positions! last index == other, 2nd last == location, 3rd last == boss
-			for (let i = newModalState.length - 1; i > newModalState.length - 4; i--){
+			for (let i = newModalState.length - 1; i > newModalState.length - 4; i--) {
 				let toggleState = newModalState[i] as ModalListItemToggleState;
-				if (index == i && !toggleState.enable){
-					toggleState = {...toggleState, enable: true};
+				if (index == i && !toggleState.enable) {
+					toggleState = { ...toggleState, enable: true };
 				}
-				else if (index != i && toggleState.enable){
-					toggleState = {...toggleState, enable: false};
+				else if (index != i && toggleState.enable) {
+					toggleState = { ...toggleState, enable: false };
 				}
 				newModalState[i] = toggleState;
 			}

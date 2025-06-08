@@ -2,7 +2,7 @@ import type { TreeStateType } from "../contexts/treeContext";
 import type { ActionType, ActionUpdate, DistinctAction } from "../model/Action";
 import type { RootNode, DistinctTreeNode, TreeNode, Game, Profile, Subject } from "../model/TreeNodeModel";
 import { createShallowCopyMap, deleteUndefinedValues } from "../utils/general";
-import { createNodePath, identifyDeletedChildrenIDS, sanitizeUserEntry, sortChildIDS } from "./treeUtils";
+import { createNodePath, identifyDeletedChildrenIDS, sortChildIDS } from "./treeUtils";
 import { v4 as uuidv4 } from 'uuid';
 
 export default class TreeContextManager {

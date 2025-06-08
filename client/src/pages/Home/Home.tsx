@@ -53,6 +53,8 @@ export default function Home() {
 				pageType="Game"
 				modalSchema={"AddItemCard-Home"}
 				handleAdd={handleAdd}
+				tree={tree}
+				parentID="ROOT_NODE"
 			/>
 
 			<CardWrapper cards={createCards()} />

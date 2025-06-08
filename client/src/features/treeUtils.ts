@@ -1,11 +1,15 @@
 import type { TreeStateType } from "../contexts/treeContext";
 import type { TreeNode, Subject, TangibleTreeNodeParent, DistinctTreeNode, DeathType } from "../model/TreeNodeModel";
 
-export function sanitizeUserEntry(inputText: string) {
+export function sanitizeUserEntry(inputText: string, tree: TreeStateType, parentID: string) {
     inputText = inputText.trim();
     if (inputText.includes("?") || inputText == "") {
-        throw new Error("Invalid string!");
+        throw new Error("Invalid symbols are found!");
     }
+    if(!isNodeNameUnique(tree, parentID, inputText)){
+        throw new Error("Name has to be unique!")
+    }
+
     return inputText;
 }
 
@@ -114,5 +118,12 @@ export function getDeaths(node: DistinctTreeNode, tree: TreeStateType, mode: Dea
     }
 
     return count;
+}
 
+export function isNodeNameUnique(tree: TreeStateType, parentID: string, name: string){
+    const siblingNames: string[] = tree.get(parentID)!.childIDS.map((id) => {
+        const distinctNode = tree.get(id)! as DistinctTreeNode;
+        return distinctNode.name;
+    })
+    return !siblingNames.includes(name);
 }

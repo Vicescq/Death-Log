@@ -41,6 +41,8 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 				pageType="Profile"
 				modalSchema={"AddItemCard-Profile"}
 				handleAdd={handleAdd}
+				tree={tree}
+				parentID={gameID}
 			/>
 			<CardWrapper cards={createCards()} />
 		</>
