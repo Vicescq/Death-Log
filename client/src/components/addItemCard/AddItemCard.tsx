@@ -9,6 +9,7 @@ import {
 } from "../modals/modalUtils";
 import type { AddItemCardProps } from "./AddItemCardProps";
 import addItemCardHandlers from "./addItemCardHandlers";
+import AlertModal from "../modals/AlertModal";
 
 export default function AddItemCard({
 	pageType,
@@ -18,8 +19,15 @@ export default function AddItemCard({
 	const [modalState, setModalState] = useState(createModalState(modalSchema));
 	const [inputText, setInputText] = useState("");
 	const modalRef = useRef<HTMLDialogElement>(null);
+	const alertModalRef = useRef<HTMLDialogElement>(null);
 
-	const {handleAddWrapper, handleToggle} = addItemCardHandlers(modalState, handleAdd, pageType, inputText, setModalState);
+	const { handleAddWrapper, handleToggle } = addItemCardHandlers(
+		modalState,
+		handleAdd,
+		pageType,
+		inputText,
+		setModalState,
+	);
 
 	return (
 		<header className="mb-8 flex w-full flex-col gap-4 border-b-4 bg-amber-200 p-4 text-black md:w-xl md:border-4 md:border-black md:shadow-[8px_5px_0px_rgba(0,0,0,1)]">
@@ -41,7 +49,14 @@ export default function AddItemCard({
 			<div className="flex gap-4">
 				<button
 					className="bg-zomp w-full rounded-2xl border-4 text-2xl font-bold shadow-[4px_2px_0px_rgba(0,0,0,1)]"
-					onClick={() => handleAddWrapper()}
+					onClick={() => {
+						try{
+							handleAddWrapper();
+						}
+						catch{
+							alertModalRef.current?.showModal();
+						}
+					}}
 				>
 					Add {pageType}
 				</button>
@@ -52,8 +67,12 @@ export default function AddItemCard({
 			<Modal
 				modalRef={modalRef}
 				modalListItems={createModalListItems(modalState, handleToggle)}
-				modalUtilityBtns={createModalUtilityButtons(modalSchema, modalRef)}
+				modalUtilityBtns={createModalUtilityButtons(
+					modalSchema,
+					modalRef,
+				)}
 			/>
+			<AlertModal modalRef={alertModalRef} />
 		</header>
 	);
 }

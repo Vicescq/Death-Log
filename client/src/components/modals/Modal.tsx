@@ -1,3 +1,5 @@
+import { ModalUtilityButton } from "./ModalUtilityButton";
+
 export type ModalSchema =
 	| "AddItemCard-Home"
 	| "AddItemCard-Profile"
@@ -12,8 +14,11 @@ type Props = {
 	modalUtilityBtns: React.JSX.Element[];
 };
 
-export default function Modal({ modalRef, modalListItems, modalUtilityBtns}: Props) {
-	
+export default function Modal({
+	modalRef,
+	modalListItems,
+	modalUtilityBtns,
+}: Props) {
 	return (
 		<dialog
 			ref={modalRef}
@@ -22,12 +27,11 @@ export default function Modal({ modalRef, modalListItems, modalUtilityBtns}: Pro
 			<div className="flex flex-col gap-2">
 				<ul className="flex flex-col">{modalListItems}</ul>
 				{modalUtilityBtns}
-				<button
-					className="border- rounded-2xl border-4 bg-amber-200 p-2 font-bold shadow-[4px_4px_0px_rgba(0,0,0,1)] outline-0"
-					onClick={() => modalRef.current?.close()}
-				>
-					CLOSE
-				</button>
+				<ModalUtilityButton
+					name="CLOSE"
+					handleClick={() => modalRef.current?.close()}
+					bgCol="bg-amber-200"
+				/>
 			</div>
 		</dialog>
 	);

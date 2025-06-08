@@ -24,22 +24,19 @@ export default function homePageHandlers(
         dateStartR: boolean | undefined,
         dateEndR: boolean | undefined,
     ) => {
-        try {
-            const node = TreeContextManager.createGame(inputText, tree, {
-                dateStartR: dateStartR,
-                dateEndR: dateEndR,
-            });
-            const { treeCopy, actions } = TreeContextManager.addNode(
-                tree,
-                node,
-            );
-            setTree(treeCopy);
-            setHistory(
-                HistoryContextManager.updateActionHistory(history, actions),
-            );
-        } catch (err) {
-            showBoundary(err);
-        }
+
+        const node = TreeContextManager.createGame(inputText, tree, {
+            dateStartR: dateStartR,
+            dateEndR: dateEndR,
+        });
+        const { treeCopy, actions } = TreeContextManager.addNode(
+            tree,
+            node,
+        );
+        setTree(treeCopy);
+        setHistory(
+            HistoryContextManager.updateActionHistory(history, actions),
+        );
     };
 
     function handleDelete(node: Game) {

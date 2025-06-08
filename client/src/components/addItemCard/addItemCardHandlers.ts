@@ -1,3 +1,4 @@
+import { sanitizeUserEntry } from "../../features/treeUtils";
 import { isSubjectContext } from "../../utils/general";
 import type {
 	ModalListItemDistinctState,
@@ -50,6 +51,8 @@ export default function addItemCardHandlers(
 			}
 		});
 
+
+		inputText = sanitizeUserEntry(inputText);
 		switch (pageType) {
 			case "Game":
 				const handleAddGame = handleAdd as HandleAddGame;

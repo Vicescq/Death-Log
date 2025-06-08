@@ -110,7 +110,6 @@ export default class TreeContextManager {
         tree: TreeStateType,
         overrides: Partial<Game>,
     ) {
-        inputText = sanitizeUserEntry(inputText);
         const path = createNodePath(inputText, "ROOT_NODE", tree);
         const defaultGame: Game = {
             type: "game",
@@ -139,7 +138,6 @@ export default class TreeContextManager {
         parentID: string,
         overrides: Partial<Profile>,
     ) {
-        inputText = sanitizeUserEntry(inputText);
         const path = createNodePath(inputText, parentID, tree);
         const defaultProfile: Profile = {
             type: "profile",
@@ -167,7 +165,6 @@ export default class TreeContextManager {
         parentID: string,
         overrides: Partial<Subject>,
     ) {
-        inputText = sanitizeUserEntry(inputText);
         const defaultSubject: Subject = {
             type: "subject",
             id: uuidv4(),
