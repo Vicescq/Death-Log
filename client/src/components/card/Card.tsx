@@ -17,7 +17,6 @@ import {
 } from "../modals/modalUtils";
 import type {
 	ModalListItemDistinctState,
-	ModalListItemInputEditState,
 } from "../modals/ModalListItemStateTypes";
 import { createCardCSS, generateCardDeathCounts } from "./cardUtils";
 import cardHandlers from "./cardHandlers";

@@ -1,5 +1,7 @@
 import type { ModalSchema } from "./Modal";
-import ModalListItemInputEdit, { type InputEditTargetField } from "./ModalListItemInputEdit";
+import ModalListItemInputEdit, {
+	type InputEditTargetField,
+} from "./ModalListItemInputEdit";
 import type {
 	ModalListItemDistinctState,
 	ModalListItemInputEditState,
@@ -8,11 +10,8 @@ import type {
 import ModalListItemToggle, { type ToggleSetting } from "./ModalListItemToggle";
 import { ModalUtilityButton } from "./ModalUtilityButton";
 
-export function createModalState(
-	modalSchema: ModalSchema,
-) {
-	const state: ModalListItemDistinctState[] =
-		[];
+export function createModalState(modalSchema: ModalSchema) {
+	const state: ModalListItemDistinctState[] = [];
 	switch (modalSchema) {
 		case "AddItemCard-Home":
 		case "AddItemCard-Profile":
@@ -21,7 +20,6 @@ export function createModalState(
 					"Reliable Date (Start)",
 					"dateStartR",
 					true,
-			
 				),
 				createModalListItemToggleState(
 					"Reliable Date (End)",
@@ -36,13 +34,11 @@ export function createModalState(
 					"Reliable Date (Start)",
 					"dateStartR",
 					true,
-			
 				),
 				createModalListItemToggleState(
 					"Reliable Date (End)",
 					"dateEndR",
 					true,
-			
 				),
 				createModalListItemToggleState("Notable", "notable", true),
 				createModalListItemToggleState("Boss", "boss", true),
@@ -53,7 +49,21 @@ export function createModalState(
 		case "Card-Home":
 		case "Card-Profile":
 		case "Card-Subject":
-			state.push(createModalListItemInputEditState("Name:", "name"));
+			state.push(
+				createModalListItemInputEditState("Name:", "name"),
+				createModalListItemInputEditState("Date (Start):", "dateStart"),
+				createModalListItemInputEditState("Date (End):", "dateEnd"),
+				createModalListItemToggleState(
+					"Reliable Date (Start)",
+					"dateStartR",
+					true,
+				),
+				createModalListItemToggleState(
+					"Reliable Date (End)",
+					"dateEndR",
+					true,
+				),
+			);
 	}
 	return state;
 }
@@ -61,7 +71,7 @@ export function createModalState(
 export function createModalListItems(
 	modalState: (ModalListItemInputEditState | ModalListItemToggleState)[],
 	handleToggle?: (index: number) => void,
-	handleInputEditChange?: (inputText: string, index: number) => void
+	handleInputEditChange?: (inputText: string, index: number) => void,
 ) {
 	return modalState.map((state, index) => {
 		if (state.type == "inputEdit") {
@@ -70,7 +80,9 @@ export function createModalListItems(
 					key={index}
 					state={state}
 					placeholder="sdasdsa"
-					handleInputEditChange={(inputText) => handleInputEditChange!(inputText, index)}
+					handleInputEditChange={(inputText) =>
+						handleInputEditChange!(inputText, index)
+					}
 				/>
 			);
 		} else if (state.type == "toggle") {
@@ -86,7 +98,12 @@ export function createModalListItems(
 	}) as React.JSX.Element[];
 }
 
-export function createModalUtilityButtons(modalSchema: ModalSchema, modalRef: React.RefObject<HTMLDialogElement | null>, handleDelete?: () => void, handleEdit?: () => void) {
+export function createModalUtilityButtons(
+	modalSchema: ModalSchema,
+	modalRef: React.RefObject<HTMLDialogElement | null>,
+	handleDelete?: () => void,
+	handleEdit?: () => void,
+) {
 	const utilityBtns: React.JSX.Element[] = [];
 	switch (modalSchema) {
 		case "Card-Home":
@@ -106,7 +123,11 @@ export function createModalUtilityButtons(modalSchema: ModalSchema, modalRef: Re
 					key={2}
 					name="DELETE"
 					handleClick={() => {
-						handleDelete ? handleDelete() : console.error("DEV ERROR HANDLE DELETE MUST BE PASSED!");
+						handleDelete
+							? handleDelete()
+							: console.error(
+									"DEV ERROR HANDLE DELETE MUST BE PASSED!",
+								);
 						modalRef.current?.close();
 					}}
 					bgCol="bg-red-500"
