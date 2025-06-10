@@ -15,4 +15,8 @@ export default class Database {
         }
         return Database._instance
     }
+
+    public static execute(){
+        
+    }
 }
