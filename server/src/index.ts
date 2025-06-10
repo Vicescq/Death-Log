@@ -1,11 +1,13 @@
 import express from "express";
+import { Client } from "pg"
 import Database from "./Database.js";
-import cookieParser from "cookie-parser";
 
 
 const app = express();
 const port = 3000;
 
+// const client = new Client();
+// await client.connect();
 
 app.use(express.json({ limit: '50mb' }));
 
@@ -106,6 +108,8 @@ app.get("/api/nodes/:uuid", (req, res) => {
             res.json(data);
         }
     })
+
+
 });
 
 app.listen(port, () => {
