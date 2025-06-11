@@ -15,16 +15,15 @@ const client = await pool.connect();
 app.use(express.json({ limit: '50mb' }));
 
 
-app.post("/api/nodes/:uuid", (req, res) => {
+app.post("/api/nodes/:uuid", async (req, res) => {
     const toAdd = [];
     const toDelete = [];
     const toUpdate = [];
 
     const actionHistory = req.body;
-    console.log(actionHistory)
     const uuid = req.params.uuid;
     console.log(JSON.stringify(actionHistory, null, 4));
-    let toAddOrUpdateSQLHolders = "";
+    let toAddSQLHolder = "";
 
     for (let i = 0; i < actionHistory.length; i++) {
         const action = actionHistory[i];
@@ -39,11 +38,11 @@ app.post("/api/nodes/:uuid", (req, res) => {
                 if (action.type == "add") {
                     toAdd.push(uuid, nodeID, node);
 
-                    if (toAddOrUpdateSQLHolders === "") {
-                        toAddOrUpdateSQLHolders = "(?, ?, ?)";
+                    if (toAddSQLHolder === "") {
+                        toAddSQLHolder = `($${j+1}, $${j + 2}, $${j + 3})`;
                     }
                     else {
-                        toAddOrUpdateSQLHolders += ", (?, ?, ?)";
+                        toAddSQLHolder += `, ($${j+1}, $${j + 2}, $${j + 3})`;
                     }
                 }
 
@@ -51,37 +50,43 @@ app.post("/api/nodes/:uuid", (req, res) => {
                     toUpdate.push(node, nodeID);
                 }
             }
-
         }
     }
 
-
     if (toAdd.length > 0) {
-        const sqlAddorUpdate = `
-            INSERT OR IGNORE INTO nodes (uuid, node_id, node)
-            VALUES ${toAddOrUpdateSQLHolders}
+        const sqlAdd = `
+            INSERT INTO nodes (uuid, node_id, node)
+            VALUES ${toAddSQLHolder}
         `;
-        Database.instance.run(sqlAddorUpdate, [...toAdd], ((err) => err ? console.log(err) : null));
+        const query = {
+            text: sqlAdd,
+            values: [...toAdd],
+        }
+        console.log(toAddSQLHolder, [...toAdd])
+        await client.query(query, (err) => err ? console.log(err) : null)
     }
 
     if (toDelete.length > 0) {
-        const placeholders = toDelete.map(() => '?').join(', ');
-        const sqlDelete = `DELETE FROM nodes WHERE uuid = ? AND node_id IN (${placeholders})`;
-        Database.instance.run(sqlDelete, [uuid, ...toDelete], ((err) => err ? console.log(err) : null));
+        const placeholders = toDelete.map((_, i) => `$${i+2}`).join(', ');
+        const sqlDelete = `DELETE FROM nodes WHERE uuid = $1 AND node_id IN (${placeholders})`;
+        const query = {
+            text: sqlDelete,
+            values: [uuid, ...toDelete],
+        };
+        await client.query(query, (err) => err ? console.log(err) : null);
     }
 
     if (toUpdate.length > 0) {
-        const sql = `
+        const sqlUpdate = `
             UPDATE nodes
-            SET node = ?
-            WHERE node_id = ? 
+            SET node = $1
+            WHERE node_id = $2 
         `
         let j = 1
         for (let i = 0; i < toUpdate.length - 1; i++) {
-            Database.instance.run(sql, [toUpdate[i], toUpdate[j]], ((err) => err ? console.log(err) : null))
-            j++
+            await client.query(sqlUpdate, [toUpdate[i], toUpdate[j]], (err) => err ? console.log(err) : null)
+            j++;
         }
-
     }
 
     console.log("PROCESSED:", req.body);
