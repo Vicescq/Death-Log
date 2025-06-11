@@ -22,6 +22,7 @@ app.post("/api/nodes/:uuid", async (req, res) => {
     const uuid = req.params.uuid;
     console.log(JSON.stringify(actionHistory, null, 4));
     let toAddSQLHolder = "";
+    let toAddParamIndex = 1;
 
     for (let i = 0; i < actionHistory.length; i++) {
         const action = actionHistory[i];
@@ -37,11 +38,12 @@ app.post("/api/nodes/:uuid", async (req, res) => {
                     toAdd.push(uuid, nodeID, node);
 
                     if (toAddSQLHolder === "") {
-                        toAddSQLHolder = `($${j+1}, $${j + 2}, $${j + 3})`;
+                        toAddSQLHolder = `($${toAddParamIndex}, $${toAddParamIndex + 1}, $${toAddParamIndex + 2})`;
                     }
                     else {
-                        toAddSQLHolder += `, ($${j+1}, $${j + 2}, $${j + 3})`;
+                        toAddSQLHolder += `, ($${toAddParamIndex}, $${toAddParamIndex + 1}, $${toAddParamIndex + 2})`;
                     }
+                    toAddParamIndex += 3
                 }
 
                 else if (action.type == "update") {
@@ -65,7 +67,7 @@ app.post("/api/nodes/:uuid", async (req, res) => {
     }
 
     if (toDelete.length > 0) {
-        const placeholders = toDelete.map((_, i) => `$${i+2}`).join(', ');
+        const placeholders = toDelete.map((_, i) => `$${i + 2}`).join(', ');
         const sqlDelete = `DELETE FROM nodes WHERE uuid = $1 AND node_id IN (${placeholders})`;
         const query = {
             text: sqlDelete,
