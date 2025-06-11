@@ -1,13 +1,16 @@
+import "dotenv/config.js";
 import express from "express";
-import { Client } from "pg"
+import { Pool } from "pg"
 import Database from "./Database.js";
-
+import { text } from "stream/consumers";
 
 const app = express();
 const port = 3000;
 
-// const client = new Client();
-// await client.connect();
+const pool = new Pool({
+    connectionString: process.env.URL
+});
+const client = await pool.connect();
 
 app.use(express.json({ limit: '50mb' }));
 
@@ -85,31 +88,28 @@ app.post("/api/nodes/:uuid", (req, res) => {
     res.status(200).send("Success!");
 });
 
-app.get("/api/nodes/:uuid", (req, res) => {
+app.get("/api/nodes/:uuid", async (req, res) => {
+
     const uuid = req.params.uuid;
     res.set("content-type", "application/json");
-
-    let data: any[] = [];
     const sql = `
-        SELECT node_id, node
+        SELECT node
         FROM nodes
-        WHERE uuid = ?
+        WHERE uuid = $1
     `
-    Database.instance.all(sql, [uuid], (err, rows) => {
+    const query = {
+        text: sql,
+        values: [uuid],
+        rowMode: "array",
+    }
+    await client.query(query, (err, rows) => {
         if (err) {
-            console.log(err)
-            throw err;
+            console.log(err);
         }
         else {
-            rows.forEach((row: any) => {
-                const node = row.node
-                data.push(JSON.parse(node));
-            })
-            res.json(data);
+            res.json(rows.rows.map((row) => JSON.parse(row[0])));
         }
-    })
-
-
+    });
 });
 
 app.listen(port, () => {
