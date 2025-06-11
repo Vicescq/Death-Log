@@ -1,8 +1,6 @@
 import "dotenv/config.js";
 import express from "express";
 import { Pool } from "pg"
-import Database from "./Database.js";
-import { text } from "stream/consumers";
 
 const app = express();
 const port = 3000;
