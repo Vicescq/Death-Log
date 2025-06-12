@@ -1,5 +1,5 @@
 import type { TreeStateType } from "../contexts/treeContext";
-import type { ActionType, ActionUpdate, DistinctAction } from "../model/Action";
+import type { Action, ActionType, ActionUpdate } from "../model/Action";
 import type { RootNode, DistinctTreeNode, TreeNode, Game, Profile, Subject } from "../model/TreeNodeModel";
 import { createShallowCopyMap, deleteUndefinedValues } from "../utils/general";
 import { createNodePath, identifyDeletedChildrenIDS, sortChildIDS } from "./treeUtils";
@@ -69,7 +69,7 @@ export default class TreeContextManager {
     }
 
     static createActions(node: DistinctTreeNode, actionType: ActionType, nodeIDSToBeDeleted?: string[], updatedParent?: TreeNode) {
-        let actions: DistinctAction[];
+        let actions: Action[];
         if (node.type == "game") {
             switch (actionType) {
                 case "add":

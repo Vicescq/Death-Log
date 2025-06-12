@@ -1,27 +1,28 @@
 import Dexie, { type EntityTable, type Table } from 'dexie';
-import type { TreeNode } from './model/TreeNodeModel';
+import type { DistinctTreeNode } from './model/TreeNodeModel';
 
-interface User {
-    id: number;
-    uuid: string;
-    email: string;
+export type CurrentUser = {
+    uuid: string,
 }
 
-interface Node {
-    uuid: string;
-    node_id: string;
-    node: TreeNode,
+export type User = {
+    uuid: string,
+    email: string,
 }
 
-const db = new Dexie('DeathLogDB') as Dexie & {
-    users: Table<User, 'id'>,
+export type Node = {
+    uuid: string,
+    node_id: string,
+    node: DistinctTreeNode,
+}
+
+export const db = new Dexie('DeathLogDB') as Dexie & {
+    users: Table<User, 'uuid'>,
     nodes: Table<Node, 'node_id'>
 };
 
 db.version(1).stores({
-    users: "++id, &uuid, email",
+    currentUser: "&uuid",
+    users: "&uuid, email",
     nodes: "&node_id, uuid"
 });
-
-export type { User, Node };
-export { db };

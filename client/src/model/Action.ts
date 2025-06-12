@@ -2,24 +2,19 @@ import type { DistinctTreeNode } from "./TreeNodeModel";
 
 export type ActionType = "add" | "delete" | "update";
 
-export type Action = {
-    type: ActionType,
-    targets: (DistinctTreeNode | string)[],
-}
+export type Action = ActionAdd | ActionDelete | ActionUpdate;
 
-export type DistinctAction = ActionAdd | ActionDelete | ActionUpdate;
-
-export type ActionAdd = Action & {
+export type ActionAdd = {
     type: "add",
     targets: DistinctTreeNode[] // len 1
 }
 
-export type ActionDelete = Action & {
+export type ActionDelete = {
     type: "delete",
     targets: string[]
 }
 
-export type ActionUpdate = Action & {
+export type ActionUpdate = {
     type: "update",
     targets: DistinctTreeNode[] // len 1
 }
