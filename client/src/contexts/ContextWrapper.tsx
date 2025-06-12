@@ -9,6 +9,7 @@ import NavBar from "../components/NavBar";
 import useLoadUserID from "../hooks/useLoadUserID";
 import { UUIDContext } from "./uuidContext";
 import HistoryContextManager from "../features/HistoryContextManager";
+import IndexedDBService from "../services/IndexedDBService";
 
 export function ContextWrapper({ children }: { children: ReactNode }) {
 	const { isLoaded, userId } = useAuth();

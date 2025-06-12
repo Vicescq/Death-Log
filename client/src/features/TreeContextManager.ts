@@ -46,7 +46,7 @@ export default class TreeContextManager {
         const parentNode = treeCopy.get(node.parentID!)!;
         const parentNodeCopy: TreeNode = { ...parentNode, childIDS: [...parentNode.childIDS] };
         parentNodeCopy.childIDS = parentNodeCopy.childIDS.filter((id) => id != node.id);
-        const nodeIDSToBeDeleted = identifyDeletedChildrenIDS(node, tree);;
+        const nodeIDSToBeDeleted = identifyDeletedChildrenIDS(node, tree);
         nodeIDSToBeDeleted.forEach((id) => treeCopy.delete(id));
         treeCopy.set(parentNodeCopy.id, parentNodeCopy);
 

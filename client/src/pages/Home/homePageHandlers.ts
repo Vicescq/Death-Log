@@ -7,9 +7,12 @@ import type {
     TreeContextType,
     TreeStateType,
 } from "../../contexts/treeContext";
+import type { UUIDStateType } from "../../contexts/uuidContext";
 import HistoryContextManager from "../../features/HistoryContextManager";
 import TreeContextManager from "../../features/TreeContextManager";
+import type { ActionAdd, ActionDelete } from "../../model/Action";
 import type { Game } from "../../model/TreeNodeModel";
+import IndexedDBService from "../../services/IndexedDBService";
 import { changeCompletedStatus } from "../../utils/eventHandlers";
 
 export default function homePageHandlers(
@@ -18,6 +21,7 @@ export default function homePageHandlers(
     history: HistoryStateType,
     setHistory: HistoryContextType[1],
     showBoundary: (error: any) => void,
+    uuid: UUIDStateType
 ) {
     const handleAdd: HandleAddGame = (
         inputText: string,
@@ -37,6 +41,10 @@ export default function homePageHandlers(
         setHistory(
             HistoryContextManager.updateActionHistory(history, actions),
         );
+        if (typeof uuid == "string") {
+            const addAction = actions[0] as ActionAdd
+            IndexedDBService.addNode(addAction, uuid);
+        }
     };
 
     function handleDelete(node: Game) {
@@ -50,6 +58,11 @@ export default function homePageHandlers(
             setHistory(
                 HistoryContextManager.updateActionHistory(history, actions),
             );
+
+            if (typeof uuid == "string") {
+                const deleteAction = actions[0] as ActionDelete
+                IndexedDBService.deleteNodes(deleteAction, uuid);
+            }
         }
     }
 

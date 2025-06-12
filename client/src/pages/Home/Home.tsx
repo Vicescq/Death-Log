@@ -24,6 +24,7 @@ export default function Home() {
 		history,
 		setHistory,
 		showBoundary,
+		uuid
 	);
 
 	function createCards() {
