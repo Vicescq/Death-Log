@@ -119,13 +119,11 @@ app.get("/api/nodes/:uuid", async (req, res) => {
 app.post("/api/register/", async (res, req) => {
     const user = res.body;
     const sql = `SELECT email from users WHERE email = $1`;
-    try{
-        const result = await client.query(sql, [user.email]);
-        console.log(result)
-    }
+    const result = await client.query(sql, [user.email]);
+    console.log(result)
+
 })
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`);
 });
- 
