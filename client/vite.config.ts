@@ -11,10 +11,11 @@ export default defineConfig({
     react(),
     tailwindcss(),
     VitePWA({
-      devOptions: {
-        enabled: true
-      },
       registerType: "autoUpdate",
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+        navigateFallback: '/index.html',
+      },
       manifest: {
         name: "DeathLog",
         short_name: 'DeathLog',
@@ -33,8 +34,6 @@ export default defineConfig({
           }
         ]
       },
-      injectRegister: 'auto',
-      useCredentials: true
     })
   ],
   server: {

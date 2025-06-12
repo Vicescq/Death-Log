@@ -1,4 +1,4 @@
-import { type ReactNode, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import useConsoleLogOnStateChange from "../hooks/useConsoleLogOnStateChange";
 import { type TreeStateType, TreeContext } from "./treeContext";
 import { URLMapContext, type URLMapStateType } from "./urlMapContext";
@@ -56,6 +56,10 @@ export function ContextWrapper({ children }: { children: ReactNode }) {
 			</TreeContext.Provider>
 		);
 	} else {
-		return <NavBar />;
+		return (
+			<>
+				<NavBar />
+			</>
+		);
 	}
 }
