@@ -14,21 +14,12 @@ import ErrorPage, { ForceError } from "./pages/ErrorPage.tsx";
 import Root from "./pages/Root.tsx";
 import URLRouter from "./components/URLRouter.tsx";
 import { ContextWrapper } from "./contexts/ContextWrapper.tsx";
-import { ClerkProvider } from "@clerk/clerk-react";
-
-// clerk setup
-const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
-if (!PUBLISHABLE_KEY) {
-	throw new Error("Missing Publishable Key");
-}
 
 createRoot(document.getElementById("root")!).render(
 	<StrictMode>
-		<ClerkProvider publishableKey={PUBLISHABLE_KEY}>
 			<HashRouter>
 				<ContextWrapper children={<AppRoutes />} />
 			</HashRouter>
-		</ClerkProvider>
 	</StrictMode>,
 );
 

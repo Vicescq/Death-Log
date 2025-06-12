@@ -8,7 +8,7 @@ import useMainPageContexts from "../../hooks/useMainPageContexts";
 import profileSubjectsHandlers from "./profileSubjectsHandlers";
 
 export default function ProfileSubjects({ profileID }: { profileID: string }) {
-	const { tree, setTree, urlMap, setURLMap, history, setHistory, uuid } =
+	const { tree, setTree, urlMap, setURLMap, history, setHistory} =
 		useMainPageContexts();
 
 	const {
@@ -44,7 +44,7 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 	}
 
 	useUpdateURLMap(tree, urlMap, setURLMap);
-	usePostDeathLog(uuid, history, setHistory);
+	// usePostDeathLog(uuid, history, setHistory);
 	return (
 		<>
 			<AddItemCard

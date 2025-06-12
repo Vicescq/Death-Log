@@ -8,7 +8,7 @@ import useMainPageContexts from "../../hooks/useMainPageContexts";
 import gameProfileHandlers from "./gameProfileHandlers";
 
 export default function GameProfiles({ gameID }: { gameID: string }) {
-	const { tree, setTree, urlMap, setURLMap, history, setHistory, uuid } =
+	const { tree, setTree, urlMap, setURLMap, history, setHistory} =
 		useMainPageContexts();
 
 	const { handleAdd, handleDelete, handleCompletedStatus } =
@@ -33,7 +33,7 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 	}
 
 	useUpdateURLMap(tree, urlMap, setURLMap);
-	usePostDeathLog(uuid, history, setHistory);
+	// usePostDeathLog(uuid, history, setHistory);
 
 	return (
 		<>

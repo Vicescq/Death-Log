@@ -1,5 +1,6 @@
 CREATE TABLE users (
     email TEXT PRIMARY KEY,
-    password TEXT,
-    registered_at TEXT DEFAULT CURRENT_TIMESTAMP
+    password TEXT NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    role VARCHAR(20) NOT NULL DEFAULT 'REGULAR'
 );

@@ -21,7 +21,6 @@ export default function homePageHandlers(
     history: HistoryStateType,
     setHistory: HistoryContextType[1],
     showBoundary: (error: any) => void,
-    uuid: UUIDStateType
 ) {
     const handleAdd: HandleAddGame = (
         inputText: string,
@@ -41,10 +40,10 @@ export default function homePageHandlers(
         setHistory(
             HistoryContextManager.updateActionHistory(history, actions),
         );
-        if (typeof uuid == "string") {
-            const addAction = actions[0] as ActionAdd
-            IndexedDBService.addNode(addAction, uuid);
-        }
+        // if (typeof uuid == "string") {
+        //     const addAction = actions[0] as ActionAdd
+        //     IndexedDBService.addNode(addAction, uuid);
+        // }
     };
 
     function handleDelete(node: Game) {
@@ -59,10 +58,10 @@ export default function homePageHandlers(
                 HistoryContextManager.updateActionHistory(history, actions),
             );
 
-            if (typeof uuid == "string") {
-                const deleteAction = actions[0] as ActionDelete
-                IndexedDBService.deleteNodes(deleteAction, uuid);
-            }
+            // if (typeof uuid == "string") {
+            //     const deleteAction = actions[0] as ActionDelete
+            //     IndexedDBService.deleteNodes(deleteAction, uuid);
+            // }
         }
     }
 

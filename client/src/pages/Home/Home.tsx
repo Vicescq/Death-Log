@@ -15,7 +15,6 @@ export default function Home() {
 		setURLMap,
 		history,
 		setHistory,
-		uuid,
 		showBoundary,
 	} = useMainPageContexts();
 	const { handleAdd, handleDelete, handleCompletedStatus } = homePageHandlers(
@@ -24,7 +23,6 @@ export default function Home() {
 		history,
 		setHistory,
 		showBoundary,
-		uuid
 	);
 
 	function createCards() {
@@ -46,7 +44,7 @@ export default function Home() {
 	}
 
 	useUpdateURLMap(tree, urlMap, setURLMap);
-	usePostDeathLog(uuid, history, setHistory);
+	// usePostDeathLog(uuid, history, setHistory);
 
 	return (
 		<>

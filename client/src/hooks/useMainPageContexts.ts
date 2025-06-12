@@ -8,7 +8,6 @@ export default function useMainPageContexts() {
     const [tree, setTree] = useTreeContext();
     const [urlMap, setURLMap] = useURLMapContext();
     const [history, setHistory] = useHistoryContext();
-    const [uuid] = useUUIDContext();
     const { showBoundary } = useErrorBoundary();
-    return {tree, setTree, urlMap, setURLMap, history, setHistory, uuid, showBoundary}
+    return {tree, setTree, urlMap, setURLMap, history, setHistory, showBoundary}
 }

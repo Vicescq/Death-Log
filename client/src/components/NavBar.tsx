@@ -1,13 +1,6 @@
 import { NavLink } from "react-router";
 import grimpReaper from "../assets/grim-reaper.png";
-import {
-	SignedIn,
-	SignedOut,
-	SignInButton,
-	UserButton,
-} from "@clerk/clerk-react";
 import info from "../assets/info.svg";
-
 
 export default function NavBar() {
 	
@@ -23,18 +16,6 @@ export default function NavBar() {
 					<NavLink to="/">
 						<img src={info} className="max-w-8" />
 					</NavLink>
-				</li>
-				<li>
-					<SignedOut>
-						<SignInButton />
-					</SignedOut>
-				</li>
-				<li className="ml-auto">
-					<SignedIn>
-						<UserButton
-							appearance={{ elements: { rootBox: "m-2" } }}
-						/>
-					</SignedIn>
 				</li>
 			</ul>
 		</nav>
