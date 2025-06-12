@@ -1,7 +1,7 @@
 import type { TreeStateType } from "../contexts/treeContext";
 import type { TreeNode, Subject, TangibleTreeNodeParent, DistinctTreeNode, DeathType } from "../model/TreeNodeModel";
 
-export function sanitizeUserEntry(inputText: string, tree: TreeStateType, parentID: string) {
+export function sanitizeTreeNodeEntry(inputText: string, tree: TreeStateType, parentID: string) {
     inputText = inputText.trim();
     if (inputText.includes("?") || inputText == "") {
         throw new Error("Invalid symbols are found!");

@@ -96,7 +96,7 @@ app.post("/api/nodes/:uuid", async (req, res) => {
 app.get("/api/nodes/:uuid", async (req, res) => {
 
     const uuid = req.params.uuid;
-    res.set("content-type", "application/json");
+
     const sql = `
         SELECT node
         FROM nodes
@@ -107,16 +107,25 @@ app.get("/api/nodes/:uuid", async (req, res) => {
         values: [uuid],
         rowMode: "array",
     }
-    await client.query(query, (err, rows) => {
-        if (err) {
-            console.log(err);
-        }
-        else {
-            res.json(rows.rows.map((row) => JSON.parse(row[0])));
-        }
-    });
+    try {
+        const rows = await client.query(query);
+        res.json(rows.rows.map((row) => JSON.parse(row[0])));
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ error: 'Database error' });
+    };
 });
+
+app.post("/api/register/", async (res, req) => {
+    const user = res.body;
+    const sql = `SELECT email from users WHERE email = $1`;
+    try{
+        const result = await client.query(sql, [user.email]);
+        console.log(result)
+    }
+})
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`);
 });
+ 

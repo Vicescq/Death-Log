@@ -1,7 +1,11 @@
-export default function AuthPage(){
-    return (
-        <div className="flex m-auto">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime iste veniam, facere dicta tempora culpa molestias eos nisi aut placeat perspiciatis maiores inventore est voluptatum fuga numquam? Non, mollitia eaque.
-        </div>
-    )
+import Register from "../components/Register";
+import SignIn from "../components/SignIn";
+
+export default function AuthPage() {
+	return (
+		<div className="m-auto flex flex-col gap-10">
+			<Register />
+			<SignIn />
+		</div>
+	);
 }

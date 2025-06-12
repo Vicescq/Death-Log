@@ -1,5 +1,5 @@
 import type { TreeStateType } from "../../contexts/treeContext";
-import { sanitizeUserEntry } from "../../features/treeUtils";
+import { sanitizeTreeNodeEntry } from "../../features/treeUtils";
 import { isSubjectContext } from "../../utils/general";
 import type {
 	ModalListItemDistinctState,
@@ -55,7 +55,7 @@ export default function addItemCardHandlers(
 		});
 
 
-		inputText = sanitizeUserEntry(inputText, tree, parentID);
+		inputText = sanitizeTreeNodeEntry(inputText, tree, parentID);
 		switch (pageType) {
 			case "Game":
 				const handleAddGame = handleAdd as HandleAddGame;
