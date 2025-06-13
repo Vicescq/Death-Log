@@ -4,14 +4,14 @@ import { type TreeStateType, TreeContext } from "./treeContext";
 import { URLMapContext, type URLMapStateType } from "./urlMapContext";
 import { HistoryContext, type HistoryStateType } from "./historyContext";
 import useGetDeathLog from "../hooks/useGetDeathLog";
-import NavBar from "../components/NavBar";
-import useLoadUserID from "../hooks/useLoadUserID";
-import { UUIDContext } from "./uuidContext";
 import HistoryContextManager from "../features/HistoryContextManager";
 import IndexedDBService from "../services/IndexedDBService";
+import { onAuthStateChanged, type User } from "firebase/auth";
+import { UserContext, type UserContextType } from "./userContext";
+import { auth } from "../firebase-config";
+import useLoadUserSession from "../hooks/useLoadUserSession";
 
 export function ContextWrapper({ children }: { children: ReactNode }) {
-
 	const [tree, setTree] = useState<TreeStateType>(new Map());
 
 	const [urlMap, setURLMap] = useState<URLMapStateType>(new Map());
@@ -22,7 +22,8 @@ export function ContextWrapper({ children }: { children: ReactNode }) {
 	} as HistoryStateType;
 	const [history, setHistory] = useState<HistoryStateType>(initHistory);
 
-	// useLoadUserID(isLoaded, userId, setUUID);
+	const [user, setUser] = useState<User | null>(null);
+
 	// useGetDeathLog(uuid, tree, setTree);
 
 	useConsoleLogOnStateChange(tree, "TREE: ", tree);
@@ -38,14 +39,19 @@ export function ContextWrapper({ children }: { children: ReactNode }) {
 		"INDEX:",
 		history.newActionStartIndex,
 	);
-		return (
-			<TreeContext.Provider value={[tree, setTree]}>
-				<URLMapContext.Provider value={[urlMap, setURLMap]}>
-					<HistoryContext.Provider value={[history, setHistory]}>
-							{children}
-					</HistoryContext.Provider>
-				</URLMapContext.Provider>
-			</TreeContext.Provider>
-		);
-	
+	useConsoleLogOnStateChange(user, "USER:", user);
+
+	useLoadUserSession(setUser);
+
+	return (
+		<TreeContext.Provider value={[tree, setTree]}>
+			<URLMapContext.Provider value={[urlMap, setURLMap]}>
+				<HistoryContext.Provider value={[history, setHistory]}>
+					<UserContext.Provider value={[user, setUser]}>
+						{children}
+					</UserContext.Provider>
+				</HistoryContext.Provider>
+			</URLMapContext.Provider>
+		</TreeContext.Provider>
+	);
 }

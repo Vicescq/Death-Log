@@ -1,50 +1,40 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { auth } from "../firebase-config";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import APIService from "../services/APIService";
-
-
+import { useNavigate } from "react-router";
+import useUserContext from "../contexts/useUserContext";
 
 export default function SignIn() {
-	const [username, setUsername] = useState("");
-	const [password, setPassword] = useState("");
-	
+
 	async function handleSignIn() {
 		const provider = new GoogleAuthProvider();
-		try{
+		try {
 			const userCreds = await signInWithPopup(auth, provider);
-			if (userCreds.user.email){
-				APIService.signInUser(userCreds.user)
+			if (userCreds.user) {
+				APIService.signInUser(userCreds.user);
+				// setUser(userCreds.user);
 			}
 			console.log(userCreds);
-		}
-		catch(error){
+		} catch (error) {
 			console.error(error);
 		}
-
 	}
 
 	return (
-		<form action="#">
-			<span>Signin: </span>
-			<input
-				type="text"
-				placeholder="email"
-				className="border-2"
-				onChange={(e) => setUsername(e.target.value)}
-			/>
-			<input
-				type="text"
-				placeholder="password"
-				className="border-2"
-				onChange={(e) => setPassword(e.target.value)}
-			/>
+		<div className="flex flex-col gap-4 text-black">
 			<button
-				className="rounded-2xl border-4"
+				className="bg-indianred min-w-40 rounded-2xl border-4 border-black p-1 font-bold shadow-[4px_4px_0px_rgba(0,0,0,1)] sm:min-w-80"
 				onClick={() => handleSignIn()}
 			>
-				SUBMIT
+				GOOGLE SIGN IN
 			</button>
-		</form>
+			<button
+				className="bg-hunyadi min-w-40 rounded-2xl border-4 border-black p-1 font-bold shadow-[4px_4px_0px_rgba(0,0,0,1)] sm:min-w-80"
+				onClick={() => 1}
+			>
+				CONTINUE AS GUEST
+			</button>
+		</div>
 	);
 }

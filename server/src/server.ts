@@ -113,40 +113,6 @@ app.get("/api/nodes/:uuid", async (req, res) => {
     }
 });
 
-app.post("/api/register/", async (req, res) => {
-    try {
-        const user = req.body;
-        console.log(user);
-        if (validateRegisterInfo(user, req)) {
-            const result = await client.query(
-                `SELECT username from users WHERE username = $1`,
-                [user.username],
-            );
-            if (result.rowCount != null && result.rowCount > 0) {
-                res.sendStatus(409); // duplicate
-            } else {
-                await client.query(
-                    `
-                    INSERT INTO users(username, password)
-                    VALUES ($1, $2)
-                    `,
-                    [user.username, user.password],
-                );
-                
-                console.log(req.session)
-                res.sendStatus(200); // good to go
-
-            }
-        } else {
-            res.sendStatus(403); // non json or invalid syntax for email & password
-        }
-    } catch (error) {
-        console.error(error);
-        res.status(500);
-        res.send("Internal Server Error Occured!");
-    }
-});
-
 app.post("/api/signin/", async (req, res) => {
     try{
         const email = req.body.email;
@@ -154,7 +120,7 @@ app.post("/api/signin/", async (req, res) => {
         if (!result.rowCount){
             client.query("INSERT INTO users(email) VALUES ($1)", [email]);
             console.log("SUCCESS")
-               
+
         }
         else{
             console.log("DUPLICATE!")
