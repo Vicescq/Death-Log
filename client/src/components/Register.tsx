@@ -1,9 +1,10 @@
 import { useState } from "react";
+import APIService from "../services/APIService";
 
 export default function Register() {
     // dont forget to validate inputs
 
-	const [email, setEmail] = useState("");
+	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
 	return (
 		<form >
@@ -12,7 +13,7 @@ export default function Register() {
 				type="text"
 				placeholder="email"
 				className="border-2"
-				onChange={(e) => setEmail(e.target.value)}
+				onChange={(e) => setUsername(e.target.value)}
 			/>
 			<input
 				type="text"
@@ -20,7 +21,7 @@ export default function Register() {
 				className="border-2"
 				onChange={(e) => setPassword(e.target.value)}
 			/>
-			<button className="rounded-2xl border-4" onClick={() => console.log(email, password, 1)}>
+			<button className="rounded-2xl border-4" onClick={() => APIService.registerUser({username: username, password: password})}>
 				SUBMIT
 			</button>
 		</form>

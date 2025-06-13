@@ -1,17 +1,28 @@
 import "dotenv/config.js";
 import express from "express";
-import { Pool } from "pg"
+import { Pool } from "pg";
+import session from "express-session";
+import { validateRegisterInfo } from "./utils/authUtils.js";
 
 const app = express();
 const port = 3000;
 
 const pool = new Pool({
-    connectionString: process.env.DATABASE_URL
+    connectionString: process.env.DATABASE_URL,
 });
 const client = await pool.connect();
 
-app.use(express.json({ limit: '50mb' }));
-
+app.use(express.json({ limit: "50mb" }));
+app.use(
+    session({
+        secret: process.env.SESSION_SECRET!,
+        saveUninitialized: false,
+        resave: false,
+        cookie: {
+            maxAge: 1000 * 60 * 60,
+        },
+    }),
+);
 
 app.post("/api/nodes/:uuid", async (req, res) => {
     const toAdd = [];
@@ -29,8 +40,7 @@ app.post("/api/nodes/:uuid", async (req, res) => {
         for (let j = 0; j < action.targets.length; j++) {
             if (typeof action.targets[j] == "string") {
                 toDelete.push(action.targets[j]);
-            }
-            else {
+            } else {
                 const nodeID = action.targets[j].id;
                 const node = JSON.stringify(action.targets[j]);
 
@@ -39,14 +49,11 @@ app.post("/api/nodes/:uuid", async (req, res) => {
 
                     if (toAddSQLHolder === "") {
                         toAddSQLHolder = `($${toAddParamIndex}, $${toAddParamIndex + 1}, $${toAddParamIndex + 2})`;
-                    }
-                    else {
+                    } else {
                         toAddSQLHolder += `, ($${toAddParamIndex}, $${toAddParamIndex + 1}, $${toAddParamIndex + 2})`;
                     }
-                    toAddParamIndex += 3
-                }
-
-                else if (action.type == "update") {
+                    toAddParamIndex += 3;
+                } else if (action.type == "update") {
                     toUpdate.push(node, nodeID);
                 }
             }
@@ -61,19 +68,19 @@ app.post("/api/nodes/:uuid", async (req, res) => {
         const query = {
             text: sqlAdd,
             values: [...toAdd],
-        }
-        console.log(toAddSQLHolder, [...toAdd])
-        await client.query(query, (err) => err ? console.log(err) : null)
+        };
+        console.log(toAddSQLHolder, [...toAdd]);
+        await client.query(query, (err) => (err ? console.log(err) : null));
     }
 
     if (toDelete.length > 0) {
-        const placeholders = toDelete.map((_, i) => `$${i + 2}`).join(', ');
+        const placeholders = toDelete.map((_, i) => `$${i + 2}`).join(", ");
         const sqlDelete = `DELETE FROM nodes WHERE uuid = $1 AND node_id IN (${placeholders})`;
         const query = {
             text: sqlDelete,
             values: [uuid, ...toDelete],
         };
-        await client.query(query, (err) => err ? console.log(err) : null);
+        await client.query(query, (err) => (err ? console.log(err) : null));
     }
 
     if (toUpdate.length > 0) {
@@ -81,10 +88,12 @@ app.post("/api/nodes/:uuid", async (req, res) => {
             UPDATE nodes
             SET node = $1
             WHERE node_id = $2 
-        `
-        let j = 1
+        `;
+        let j = 1;
         for (let i = 0; i < toUpdate.length - 1; i++) {
-            await client.query(sqlUpdate, [toUpdate[i], toUpdate[j]], (err) => err ? console.log(err) : null)
+            await client.query(sqlUpdate, [toUpdate[i], toUpdate[j]], (err) =>
+                err ? console.log(err) : null,
+            );
             j++;
         }
     }
@@ -94,34 +103,68 @@ app.post("/api/nodes/:uuid", async (req, res) => {
 });
 
 app.get("/api/nodes/:uuid", async (req, res) => {
-
     const uuid = req.params.uuid;
 
     const sql = `
         SELECT node
         FROM nodes
         WHERE uuid = $1
-    `
+    `;
     const query = {
         text: sql,
         values: [uuid],
         rowMode: "array",
-    }
+    };
     try {
         const rows = await client.query(query);
         res.json(rows.rows.map((row) => JSON.parse(row[0])));
     } catch (err) {
         console.log(err);
-        res.status(500).json({ error: 'Database error' });
-    };
+        res.status(500).json({ error: "Database error" });
+    }
 });
 
-app.post("/api/register/", async (res, req) => {
-    const user = res.body;
-    const sql = `SELECT email from users WHERE email = $1`;
-    const result = await client.query(sql, [user.email]);
-    console.log(result)
+app.post("/api/register/", async (req, res) => {
+    try {
+        const user = req.body;
+        console.log(user);
+        if (validateRegisterInfo(user, req)) {
+            const result = await client.query(
+                `SELECT username from users WHERE username = $1`,
+                [user.username],
+            );
+            if (result.rowCount != null && result.rowCount > 0) {
+                res.sendStatus(409); // duplicate
+            } else {
+                await client.query(
+                    `
+                    INSERT INTO users(username, password)
+                    VALUES ($1, $2)
+                    `,
+                    [user.username, user.password],
+                );
+                
+                console.log(req.session)
+                res.sendStatus(200); // good to go
 
+            }
+        } else {
+            res.sendStatus(403); // non json or invalid syntax for email & password
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500);
+        res.send("Internal Server Error Occured!");
+    }
+});
+
+app.post("/api/signin/", async (req, res) => {
+    console.log(req.session)
+    // if session -> 
+});
+
+app.get("/api/auth_check", async (req, res) => {
+    // if session -> then approve user is actually signed in
 })
 
 app.listen(port, () => {

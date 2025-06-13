@@ -2,6 +2,11 @@ import type { TreeContextType, TreeStateType } from "../contexts/treeContext";
 import type { Action } from "../model/Action";
 import TreeContextManager from "../features/TreeContextManager";
 
+type User = {
+    username: string,
+    password: string
+}
+
 export default class APIService {
     constructor() { };
 
@@ -28,5 +33,19 @@ export default class APIService {
         })
     }
 
-    
+    static async registerUser(user: User) {
+        await fetch("/api/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(user)
+        })
+    }
+
+    static async signInUser(user: User) {
+        await fetch("/api/signin", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(user)
+        })
+    }
 }
