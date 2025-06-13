@@ -1,11 +1,7 @@
 import type { TreeContextType, TreeStateType } from "../contexts/treeContext";
 import type { Action } from "../model/Action";
 import TreeContextManager from "../features/TreeContextManager";
-
-type User = {
-    username: string,
-    password: string
-}
+import type { User } from "firebase/auth";
 
 export default class APIService {
     constructor() { };
@@ -30,14 +26,6 @@ export default class APIService {
 
             const initTree = TreeContextManager.initTree(tree, value);
             setTree(initTree);
-        })
-    }
-
-    static async registerUser(user: User) {
-        await fetch("/api/register", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(user)
         })
     }
 

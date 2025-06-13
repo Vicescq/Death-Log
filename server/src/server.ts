@@ -1,7 +1,6 @@
 import "dotenv/config.js";
 import express from "express";
 import { Pool } from "pg";
-import session from "express-session";
 import { validateRegisterInfo } from "./utils/authUtils.js";
 
 const app = express();
@@ -13,16 +12,6 @@ const pool = new Pool({
 const client = await pool.connect();
 
 app.use(express.json({ limit: "50mb" }));
-app.use(
-    session({
-        secret: process.env.SESSION_SECRET!,
-        saveUninitialized: false,
-        resave: false,
-        cookie: {
-            maxAge: 1000 * 60 * 60,
-        },
-    }),
-);
 
 app.post("/api/nodes/:uuid", async (req, res) => {
     const toAdd = [];
@@ -159,13 +148,23 @@ app.post("/api/register/", async (req, res) => {
 });
 
 app.post("/api/signin/", async (req, res) => {
-    console.log(req.session)
-    // if session -> 
+    try{
+        const email = req.body.email;
+        const result = await client.query("SELECT email FROM users WHERE email = $1", [email]);
+        if (!result.rowCount){
+            client.query("INSERT INTO users(email) VALUES ($1)", [email]);
+            console.log("SUCCESS")
+               
+        }
+        else{
+            console.log("DUPLICATE!")
+        }
+    }
+    catch(error){
+        console.error(error);
+        res.sendStatus(500);
+    }
 });
-
-app.get("/api/auth_check", async (req, res) => {
-    // if session -> then approve user is actually signed in
-})
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`);
