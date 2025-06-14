@@ -10,7 +10,7 @@ export default function Root() {
 		<>
 			<NavBar />
 			<div className="mb-10 flex flex-col items-center justify-center gap-4 md:mt-10">
-				{!user ? <Start /> : <Outlet />}
+				<Outlet />
 			</div>
 		</>
 	);

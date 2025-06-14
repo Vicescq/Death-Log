@@ -22,8 +22,4 @@ export default class IndexedDBService {
         await db.currentUser.clear();
         db.currentUser.add({email: email});
     }
-
-    static async signOutCurrentUser(){
-        await db.currentUser.clear();
-    }
 }

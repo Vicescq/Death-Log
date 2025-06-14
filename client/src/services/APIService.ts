@@ -30,9 +30,9 @@ export default class APIService {
     }
 
     static async signInUser(user: User, token: string) {
-        await fetch("/api/signin", {
+        fetch("/api/signin", {
             method: "POST",
-            headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token},
+            headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
             body: JSON.stringify(user)
         });
     }

@@ -14,12 +14,13 @@ import ErrorPage, { ForceError } from "./pages/ErrorPage.tsx";
 import Root from "./pages/Root.tsx";
 import URLRouter from "./components/URLRouter.tsx";
 import { ContextWrapper } from "./contexts/ContextWrapper.tsx";
+import Start from "./pages/Start.tsx";
 
 createRoot(document.getElementById("root")!).render(
 	<StrictMode>
-			<HashRouter>
-				<ContextWrapper children={<AppRoutes />} />
-			</HashRouter>
+		<HashRouter>
+			<ContextWrapper children={<AppRoutes />} />
+		</HashRouter>
 	</StrictMode>,
 );
 
@@ -32,17 +33,19 @@ function AppRoutes() {
 		>
 			<Routes>
 				<Route path="/" element={<Root />}>
-					<Route index element={<Home />} />
-					<Route path=":gameName" element={<URLRouter />} />
+					<Route index element={<Start />} />
+					<Route path="death-log" element={<Home />} />
+					<Route path="death-log/:gameName" element={<URLRouter />} />
 					<Route
-						path=":gameName/:profileName"
+						path="death-log/:gameName/:profileName"
 						element={<URLRouter />}
 					/>
 					<Route
-						path=":gameName/:profileName/*"
+						path="death-log/:gameName/:profileName/*"
 						element={<ForceError msg={"URL NOT FOUND!"} />}
 					/>
 				</Route>
+				<Route path="/lan" />
 			</Routes>
 		</ErrorBoundary>
 	);
