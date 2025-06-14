@@ -7,7 +7,11 @@ import useGetDeathLog from "../hooks/useGetDeathLog";
 import HistoryContextManager from "../features/HistoryContextManager";
 import IndexedDBService from "../services/IndexedDBService";
 import { onAuthStateChanged, type User } from "firebase/auth";
-import { UserContext, type UserContextType } from "./userContext";
+import {
+	UserContext,
+	type UserContextType,
+	type UserStateType,
+} from "./userContext";
 import { auth } from "../firebase-config";
 import useLoadUserSession from "../hooks/useLoadUserSession";
 
@@ -22,7 +26,7 @@ export function ContextWrapper({ children }: { children: ReactNode }) {
 	} as HistoryStateType;
 	const [history, setHistory] = useState<HistoryStateType>(initHistory);
 
-	const [user, setUser] = useState<User | null>(null);
+	const [user, setUser] = useState<UserStateType>(null);
 
 	// useGetDeathLog(uuid, tree, setTree);
 

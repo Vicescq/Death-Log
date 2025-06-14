@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import { auth } from "../firebase-config";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import APIService from "../services/APIService";
-import { useNavigate } from "react-router";
 import IndexedDBService from "../services/IndexedDBService";
+import useUserContext from "../contexts/useUserContext";
 
 export default function SignIn() {
-
+	const [user, setUser] = useUserContext();
 	async function handleSignIn() {
 		const provider = new GoogleAuthProvider();
 		try {
@@ -32,7 +32,9 @@ export default function SignIn() {
 			</button>
 			<button
 				className="bg-hunyadi min-w-40 rounded-2xl border-4 border-black p-1 font-bold shadow-[4px_4px_0px_rgba(0,0,0,1)] sm:min-w-80"
-				onClick={() => 1}
+				onClick={() => {
+					setUser("__LOCAL__");
+				}}
 			>
 				CONTINUE AS GUEST
 			</button>

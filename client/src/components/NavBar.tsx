@@ -4,6 +4,7 @@ import info from "../assets/info.svg";
 import { auth } from "../firebase-config";
 import useUserContext from "../contexts/useUserContext";
 import profile from "../assets/profile.svg";
+import home from "../assets/home.svg";
 import IndexedDBService from "../services/IndexedDBService";
 
 export default function NavBar() {
@@ -12,17 +13,18 @@ export default function NavBar() {
 	return (
 		<nav className="bg-zomp border-b-4 border-b-black px-2 text-black">
 			<ul className="flex">
-				<li className="m-2">
+				<li className="">
+					<img src={grimpReaper} className="m-2 max-w-8" />
+				</li>
+				<li>
 					<NavLink to="/">
-						<img src={grimpReaper} className="max-w-8" />
+						<img src={home} className="m-2 max-w-8" />
 					</NavLink>
 				</li>
-				<li className="m-2">
-					<NavLink to="/">
-						<img src={info} className="max-w-8" />
-					</NavLink>
+				<li>
+					<img src={info} className="m-2 max-w-8" />
 				</li>
-				{user ? (
+				{user && user != "__LOCAL__" ? (
 					<li className="my-auto ml-auto">
 						<button
 							onClick={() => {
