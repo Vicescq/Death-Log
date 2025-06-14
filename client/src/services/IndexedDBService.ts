@@ -1,5 +1,5 @@
 import { db } from "../db";
-import type { Action, ActionAdd, ActionDelete } from "../model/Action";
+import type { Action, ActionAdd, ActionDelete, ActionUpdate } from "../model/Action";
 
 export default class IndexedDBService {
     constructor() { }
@@ -9,12 +9,21 @@ export default class IndexedDBService {
         await db.nodes.add({ email: email, node_id: addedNode.id, node: addedNode });
     }
 
-    static async deleteNodes(action: ActionDelete, uuid: string) {
+    static async deleteNodes(action: ActionDelete, email: string) {
         const ids = action.targets as "node_id"[];
         await db.nodes.bulkDelete(ids);
     }
 
-    static async updateNode(action: Action, uuid: string) {
+    static async updateNode(action: ActionUpdate, email: string) {
 
+    }
+
+    static async updateCurrentUser(email: string){
+        await db.currentUser.clear();
+        db.currentUser.add({email: email});
+    }
+
+    static async signOutCurrentUser(){
+        await db.currentUser.clear();
     }
 }

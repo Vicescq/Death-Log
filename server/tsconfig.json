@@ -4,6 +4,8 @@
     "outDir": "dist",
     "module": "NodeNext",
     "moduleResolution": "nodenext",
+    "resolveJsonModule": true,
+    "esModuleInterop": true
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]

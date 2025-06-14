@@ -27,3 +27,4 @@ app.db
 .env
 dev-dist
 backups/*
+serviceAccountKey.json

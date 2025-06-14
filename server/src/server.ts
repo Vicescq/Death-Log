@@ -1,7 +1,9 @@
 import "dotenv/config.js";
 import express from "express";
 import { Pool } from "pg";
-import { validateRegisterInfo } from "./utils/authUtils.js";
+import { applicationDefault, initializeApp } from 'firebase-admin/app';
+import { verifyToken } from "./middleware.js";
+
 
 const app = express();
 const port = 3000;
@@ -12,6 +14,7 @@ const pool = new Pool({
 const client = await pool.connect();
 
 app.use(express.json({ limit: "50mb" }));
+app.use(verifyToken);
 
 app.post("/api/nodes/:uuid", async (req, res) => {
     const toAdd = [];

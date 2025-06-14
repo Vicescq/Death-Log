@@ -3,7 +3,7 @@ import { auth } from "../firebase-config";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import APIService from "../services/APIService";
 import { useNavigate } from "react-router";
-import useUserContext from "../contexts/useUserContext";
+import IndexedDBService from "../services/IndexedDBService";
 
 export default function SignIn() {
 
@@ -11,9 +11,10 @@ export default function SignIn() {
 		const provider = new GoogleAuthProvider();
 		try {
 			const userCreds = await signInWithPopup(auth, provider);
-			if (userCreds.user) {
-				APIService.signInUser(userCreds.user);
-				// setUser(userCreds.user);
+			if (userCreds.user && userCreds.user.email) {
+				const token = await userCreds.user.getIdToken();
+				IndexedDBService.updateCurrentUser(userCreds.user.email);
+				APIService.signInUser(userCreds.user, token);
 			}
 			console.log(userCreds);
 		} catch (error) {

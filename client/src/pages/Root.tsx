@@ -2,10 +2,10 @@ import { Outlet } from "react-router";
 import NavBar from "../components/NavBar";
 import useUserContext from "../contexts/useUserContext";
 import Start from "./Start";
+import { useEffect, useState } from "react";
 
 export default function Root() {
 	const [user, setUser] = useUserContext();
-
 	return (
 		<>
 			<NavBar />
