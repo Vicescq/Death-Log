@@ -15,14 +15,14 @@ import type { Game } from "../../model/TreeNodeModel";
 import IndexedDBService from "../../services/IndexedDBService";
 import { changeCompletedStatus } from "../../utils/eventHandlers";
 
-export default function homePageHandlers(
+export default function gamesPageHandlers(
     tree: TreeStateType,
     setTree: TreeContextType[1],
     history: HistoryStateType,
     setHistory: HistoryContextType[1],
     showBoundary: (error: any) => void,
 ) {
-    const handleAdd: HandleAddGame = (
+    const handleAdd: HandleAddGame = async (
         inputText: string,
         dateStartR: boolean | undefined,
         dateEndR: boolean | undefined,
@@ -36,14 +36,17 @@ export default function homePageHandlers(
             tree,
             node,
         );
-        setTree(treeCopy);
-        setHistory(
-            HistoryContextManager.updateActionHistory(history, actions),
-        );
-        // if (typeof uuid == "string") {
-        //     const addAction = actions[0] as ActionAdd
-        //     IndexedDBService.addNode(addAction, uuid);
-        // }
+        try{
+            const actionAdd = actions[0] as ActionAdd;
+            IndexedDBService.addNode(actionAdd, await IndexedDBService.getCurrentUser())
+            setTree(treeCopy);
+            setHistory(
+                HistoryContextManager.updateActionHistory(history, actions),
+            );
+        }
+        catch(error){
+            console.error(error)
+        }
     };
 
     function handleDelete(node: Game) {

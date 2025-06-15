@@ -190,5 +190,4 @@ export default class TreeContextManager {
             ...overrides
         } as Subject
     }
-
 }

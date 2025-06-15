@@ -3,10 +3,7 @@ import useConsoleLogOnStateChange from "../hooks/useConsoleLogOnStateChange";
 import { type TreeStateType, TreeContext } from "./treeContext";
 import { URLMapContext, type URLMapStateType } from "./urlMapContext";
 import { HistoryContext, type HistoryStateType } from "./historyContext";
-import useGetDeathLog from "../hooks/useGetDeathLog";
 import HistoryContextManager from "../features/HistoryContextManager";
-import IndexedDBService from "../services/IndexedDBService";
-import { onAuthStateChanged, type User } from "firebase/auth";
 import {
 	UserContext,
 	type UserContextType,
@@ -14,8 +11,11 @@ import {
 } from "./userContext";
 import { auth } from "../firebase-config";
 import useLoadUserSession from "../hooks/useLoadUserSession";
+import useGetDeathLog from "../hooks/useGetDeathLog";
+import useUpdateURLMap from "../hooks/useUpdateURLMap";
 
 export function ContextWrapper({ children }: { children: ReactNode }) {
+	const [loading, setLoading] = useState(true);
 	const [tree, setTree] = useState<TreeStateType>(new Map());
 
 	const [urlMap, setURLMap] = useState<URLMapStateType>(new Map());
@@ -28,7 +28,7 @@ export function ContextWrapper({ children }: { children: ReactNode }) {
 
 	const [user, setUser] = useState<UserStateType>(null);
 
-	// useGetDeathLog(uuid, tree, setTree);
+	
 
 	useConsoleLogOnStateChange(tree, "TREE: ", tree);
 	useConsoleLogOnStateChange(urlMap, "URL MAP: ", urlMap);
@@ -46,6 +46,8 @@ export function ContextWrapper({ children }: { children: ReactNode }) {
 	useConsoleLogOnStateChange(user, "USER:", user);
 
 	useLoadUserSession(setUser);
+	useGetDeathLog(tree, setTree, user);
+	useUpdateURLMap(tree, urlMap, setURLMap);
 
 	return (
 		<TreeContext.Provider value={[tree, setTree]}>

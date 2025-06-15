@@ -8,7 +8,7 @@ import {
 	HashRouter,
 } from "react-router";
 import "./index.css";
-import Home from "./pages/Home/Home.tsx";
+import GamesPage from "./pages/GamesPage/GamesPage.tsx";
 import { ErrorBoundary } from "react-error-boundary";
 import ErrorPage, { ForceError } from "./pages/ErrorPage.tsx";
 import Root from "./pages/Root.tsx";
@@ -34,7 +34,7 @@ function AppRoutes() {
 			<Routes>
 				<Route path="/" element={<Root />}>
 					<Route index element={<Start />} />
-					<Route path="death-log" element={<Home />} />
+					<Route path="death-log" element={<GamesPage />} />
 					<Route path="death-log/:gameName" element={<URLRouter />} />
 					<Route
 						path="death-log/:gameName/:profileName"

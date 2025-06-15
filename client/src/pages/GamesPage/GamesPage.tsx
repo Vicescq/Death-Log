@@ -5,9 +5,11 @@ import CardWrapper from "../../components/card/CardWrapper";
 import useUpdateURLMap from "../../hooks/useUpdateURLMap";
 import type { Game } from "../../model/TreeNodeModel";
 import useMainPageContexts from "../../hooks/useMainPageContexts";
-import homePageHandlers from "./homePageHandlers";
+import gamesPageHandlers from "./gamesPageHandlers";
+import IndexedDBService from "../../services/IndexedDBService";
+import useGetDeathLog from "../../hooks/useGetDeathLog";
 
-export default function Home() {
+export default function GamesPage() {
 	const {
 		tree,
 		setTree,
@@ -16,8 +18,10 @@ export default function Home() {
 		history,
 		setHistory,
 		showBoundary,
+		user,
+		setUser
 	} = useMainPageContexts();
-	const { handleAdd, handleDelete, handleCompletedStatus } = homePageHandlers(
+	const { handleAdd, handleDelete, handleCompletedStatus } = gamesPageHandlers(
 		tree,
 		setTree,
 		history,
@@ -43,9 +47,9 @@ export default function Home() {
 		});
 	}
 
-	useUpdateURLMap(tree, urlMap, setURLMap);
-	// usePostDeathLog(uuid, history, setHistory);
-
+	
+	useGetDeathLog(tree, setTree, user);
+	
 	return (
 		<>
 			<AddItemCard

@@ -5,10 +5,17 @@ import APIService from "../services/APIService";
 import IndexedDBService from "../services/IndexedDBService";
 import useUserContext from "../contexts/useUserContext";
 import { useNavigate } from "react-router";
+import useTreeContext from "../contexts/useTreeContext";
+import { createShallowCopyMap } from "../utils/general";
+import useLoadUserSession from "../hooks/useLoadUserSession";
+import useUpdateURLMap from "../hooks/useUpdateURLMap";
+import useURLMapContext from "../contexts/useURLMapContext";
 
 export default function SignIn() {
 	const navigate = useNavigate();
 	const [user, setUser] = useUserContext();
+	const [tree, setTree] = useTreeContext();
+	const [urlMap, setURLMap] = useURLMapContext();
 
 	async function handleSignIn() {
 		const provider = new GoogleAuthProvider();
@@ -25,6 +32,17 @@ export default function SignIn() {
 			console.error(error);
 		}
 	}
+
+	async function handleSignOut() {
+		// try catch here?
+		// setUser("__LOCAL__");
+		auth.signOut().catch((e) => console.error(e));
+		IndexedDBService.updateCurrentUser("__LOCAL__");
+		navigate("/death-log");
+		// maybe add alertmodal warning that will alert user they will get signed out
+	}
+
+	useUpdateURLMap(tree, urlMap, setURLMap);
 
 	return (
 		<div className="flex flex-col gap-4 text-black">
@@ -46,14 +64,7 @@ export default function SignIn() {
 
 			<button
 				className="bg-hunyadi min-w-40 rounded-2xl border-4 border-black p-1 font-bold shadow-[4px_4px_0px_rgba(0,0,0,1)] sm:min-w-80"
-				onClick={() => {
-					// try catch here?
-					// setUser("__LOCAL__");
-					auth.signOut().catch((e) => console.error(e));
-					IndexedDBService.updateCurrentUser("__LOCAL__");
-					navigate("/death-log");
-					// maybe add alertmodal warning that will alert user they will get signed out
-				}}
+				onClick={() => handleSignOut()}
 			>
 				CONTINUE AS GUEST
 			</button>
