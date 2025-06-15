@@ -16,6 +16,6 @@ export function changeCompletedStatus(node: DistinctTreeNode, newStatus: boolean
     return { treeCopy, actions };
 }
 
-export function changeToggle(){
-    
+export function changeToggle() {
+
 }

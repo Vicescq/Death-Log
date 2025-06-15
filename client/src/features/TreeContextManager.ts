@@ -8,23 +8,23 @@ import { v4 as uuidv4 } from 'uuid';
 export default class TreeContextManager {
     constructor() { }
 
-    static initTree(tree: TreeStateType, nodes: DistinctTreeNode[]) {
-        const treeCopy = createShallowCopyMap(tree);
+    static initTree(nodes: DistinctTreeNode[]) {
+        const newTree: TreeStateType = new Map();
         const rootNode: RootNode = TreeContextManager.createRootNode();
-        treeCopy.set(rootNode.id, rootNode);
+        newTree.set(rootNode.id, rootNode);
 
         nodes.forEach((node) => {
-            treeCopy.set(node.id, node);
+            newTree.set(node.id, node);
             if (node.type == "game") {
-                const rootNode = treeCopy.get(node.parentID!) as RootNode;
+                const rootNode = newTree.get(node.parentID!) as RootNode;
                 const rootNodeCopy: RootNode = { ...rootNode, childIDS: [...rootNode.childIDS] };
                 rootNodeCopy.childIDS.push(node.id);
-                rootNodeCopy.childIDS = sortChildIDS(rootNodeCopy, treeCopy);
-                treeCopy.set(rootNodeCopy.id, rootNodeCopy);
+                rootNodeCopy.childIDS = sortChildIDS(rootNodeCopy, newTree);
+                newTree.set(rootNodeCopy.id, rootNodeCopy);
             }
         })
 
-        return treeCopy
+        return newTree
     }
 
     static addNode(tree: TreeStateType, node: DistinctTreeNode) {

@@ -13,6 +13,17 @@ export default function NavBar() {
 	const navigate = useNavigate();
 	const [user] = useUserContext();
 
+	async function handleSignOut() {
+		try {
+			await auth.signOut();
+
+			navigate("/");
+		} catch (error) {
+			console.error(error);
+		}
+		// maybe add alertmodal warning that will alert user they will get signed out
+	}
+
 	return (
 		<nav className="bg-zomp border-b-4 border-b-black px-2 text-black">
 			<ul className="flex">
@@ -26,14 +37,7 @@ export default function NavBar() {
 				</li>
 				{user ? (
 					<li className="my-auto ml-auto">
-						<button
-							onClick={() => {
-								// try catch maybe?
-								auth.signOut().catch((e) => console.error(e)); // updates react state
-								IndexedDBService.updateCurrentUser("__LOCAL__"); // updates cached user
-								navigate("/");
-							}}
-						>
+						<button onClick={() => handleSignOut()}>
 							SIGN OUT
 						</button>
 					</li>

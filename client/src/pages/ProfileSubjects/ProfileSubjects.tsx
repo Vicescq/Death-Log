@@ -2,7 +2,6 @@ import Card from "../../components/card/Card";
 import AddItemCard from "../../components/addItemCard/AddItemCard";
 import usePostDeathLog from "../../hooks/usePostDeathLog";
 import CardWrapper from "../../components/card/CardWrapper";
-import useUpdateURLMap from "../../hooks/useUpdateURLMap";
 import type { Subject } from "../../model/TreeNodeModel";
 import useMainPageContexts from "../../hooks/useMainPageContexts";
 import profileSubjectsHandlers from "./profileSubjectsHandlers";
@@ -43,8 +42,6 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 		});
 	}
 
-	useUpdateURLMap(tree, urlMap, setURLMap);
-	// usePostDeathLog(uuid, history, setHistory);
 	return (
 		<>
 			<AddItemCard

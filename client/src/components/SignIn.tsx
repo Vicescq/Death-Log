@@ -6,9 +6,6 @@ import IndexedDBService from "../services/IndexedDBService";
 import useUserContext from "../contexts/useUserContext";
 import { useNavigate } from "react-router";
 import useTreeContext from "../contexts/useTreeContext";
-import { createShallowCopyMap } from "../utils/general";
-import useLoadUserSession from "../hooks/useLoadUserSession";
-import useUpdateURLMap from "../hooks/useUpdateURLMap";
 import useURLMapContext from "../contexts/useURLMapContext";
 
 export default function SignIn() {
@@ -20,29 +17,24 @@ export default function SignIn() {
 	async function handleSignIn() {
 		const provider = new GoogleAuthProvider();
 		try {
-			const userCreds = await signInWithPopup(auth, provider);
-			if (userCreds.user && userCreds.user.email) {
-				const token = await userCreds.user.getIdToken();
-				IndexedDBService.updateCurrentUser(userCreds.user.email);
-				APIService.signInUser(userCreds.user, token);
-				navigate("/death-log");
-			}
-			console.log(userCreds);
+			await signInWithPopup(auth, provider);
+			navigate("/death-log");
+
 		} catch (error) {
 			console.error(error);
 		}
 	}
 
 	async function handleSignOut() {
-		// try catch here?
-		// setUser("__LOCAL__");
-		auth.signOut().catch((e) => console.error(e));
-		IndexedDBService.updateCurrentUser("__LOCAL__");
-		navigate("/death-log");
+		try{
+			await auth.signOut();
+			navigate("/death-log");
+		}
+		catch (error){
+			console.error(error);
+		}
 		// maybe add alertmodal warning that will alert user they will get signed out
 	}
-
-	useUpdateURLMap(tree, urlMap, setURLMap);
 
 	return (
 		<div className="flex flex-col gap-4 text-black">

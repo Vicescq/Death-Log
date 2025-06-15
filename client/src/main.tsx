@@ -45,7 +45,7 @@ function AppRoutes() {
 						element={<ForceError msg={"URL NOT FOUND!"} />}
 					/>
 				</Route>
-				<Route path="/lan" />
+				<Route />
 			</Routes>
 		</ErrorBoundary>
 	);

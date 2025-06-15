@@ -2,7 +2,6 @@ import Card from "../../components/card/Card";
 import usePostDeathLog from "../../hooks/usePostDeathLog";
 import CardWrapper from "../../components/card/CardWrapper";
 import AddItemCard from "../../components/addItemCard/AddItemCard";
-import useUpdateURLMap from "../../hooks/useUpdateURLMap";
 import type { Profile } from "../../model/TreeNodeModel";
 import useMainPageContexts from "../../hooks/useMainPageContexts";
 import gameProfileHandlers from "./gameProfileHandlers";
@@ -32,7 +31,7 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 		});
 	}
 
-	useUpdateURLMap(tree, urlMap, setURLMap);
+
 	// usePostDeathLog(uuid, history, setHistory);
 
 	return (
