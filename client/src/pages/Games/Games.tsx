@@ -1,13 +1,11 @@
 import Card from "../../components/card/Card";
 import AddItemCard from "../../components/addItemCard/AddItemCard";
-import usePostDeathLog from "../../hooks/usePostDeathLog";
 import CardWrapper from "../../components/card/CardWrapper";
 import type { Game } from "../../model/TreeNodeModel";
 import useMainPageContexts from "../../hooks/useMainPageContexts";
-import gamesPageHandlers from "./gamesPageHandlers";
-import IndexedDBService from "../../services/IndexedDBService";
+import gamesHandlers from "./gamesHandlers";
 
-export default function GamesPage() {
+export default function Games() {
 	const {
 		tree,
 		setTree,
@@ -15,12 +13,11 @@ export default function GamesPage() {
 		setURLMap,
 		history,
 		setHistory,
-		showBoundary,
 		user,
 		setUser,
 	} = useMainPageContexts();
 	const { handleAdd, handleDelete, handleCompletedStatus } =
-		gamesPageHandlers(tree, setTree, history, setHistory, urlMap, setURLMap);
+		gamesHandlers(tree, setTree, history, setHistory, urlMap, setURLMap);
 
 	function createCards() {
 		return tree.get("ROOT_NODE")?.childIDS.map((nodeID, index) => {

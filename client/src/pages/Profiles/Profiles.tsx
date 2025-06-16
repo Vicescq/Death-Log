@@ -3,14 +3,21 @@ import CardWrapper from "../../components/card/CardWrapper";
 import AddItemCard from "../../components/addItemCard/AddItemCard";
 import type { Profile } from "../../model/TreeNodeModel";
 import useMainPageContexts from "../../hooks/useMainPageContexts";
-import gameProfileHandlers from "./gameProfileHandlers";
+import profilesHandlers from "./profilesHandlers";
 
-export default function GameProfiles({ gameID }: { gameID: string }) {
-	const { tree, setTree, urlMap, setURLMap, history, setHistory} =
+export default function Profiles({ gameID }: { gameID: string }) {
+	const { tree, setTree, urlMap, setURLMap, history, setHistory } =
 		useMainPageContexts();
 
-	const { handleAdd, handleDelete, handleCompletedStatus } =
-		gameProfileHandlers(tree, setTree, history, setHistory, gameID, urlMap, setURLMap);
+	const { handleAdd, handleDelete, handleCompletedStatus } = profilesHandlers(
+		tree,
+		setTree,
+		history,
+		setHistory,
+		gameID,
+		urlMap,
+		setURLMap,
+	);
 
 	function createCards() {
 		return tree.get(gameID)?.childIDS.map((nodeID, index) => {
@@ -29,7 +36,6 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 			);
 		});
 	}
-
 
 	return (
 		<>

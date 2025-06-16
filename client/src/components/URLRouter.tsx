@@ -1,8 +1,8 @@
 import { useParams } from "react-router";
-import GameProfiles from "../pages/GameProfiles/GameProfiles";
+import Profiles from "../pages/Profiles/Profiles";
 import { ForceError } from "../pages/ErrorPage";
 import useURLMapContext from "../contexts/useURLMapContext";
-import ProfileSubjects from "../pages/ProfileSubjects/ProfileSubjects";
+import Subjects from "../pages/Subjects/Subjects";
 
 export default function URLRouter() {
 	let component: React.JSX.Element;
@@ -26,10 +26,10 @@ export default function URLRouter() {
 
 	switch (pathArray.length) {
 		case 1:
-			component = <GameProfiles gameID={id!} />;
+			component = <Profiles gameID={id!} />;
 			break;
 		case 2:
-			component = <ProfileSubjects profileID={id!} />;
+			component = <Subjects profileID={id!} />;
 			break;
 		default:
 			component = <ForceError msg={"URL NOT FOUND!"} />;

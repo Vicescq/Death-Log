@@ -8,7 +8,7 @@ import URLMapContextManager from "../../features/URLMapContextManager";
 import type { Profile, TangibleTreeNodeParent } from "../../model/TreeNodeModel";
 import IndexedDBService from "../../services/IndexedDBService";
 
-export default function gameProfileHandlers(
+export default function profilesHandlers(
     tree: TreeStateType,
     setTree: TreeContextType[1],
     history: HistoryStateType,

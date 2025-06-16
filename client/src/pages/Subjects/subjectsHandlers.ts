@@ -3,15 +3,12 @@ import type { HandleDeathCountOperation } from "../../components/card/Card";
 import type { ModalListItemDistinctState } from "../../components/modals/ModalListItemStateTypes";
 import type { HistoryStateType, HistoryContextType } from "../../contexts/historyContext";
 import type { TreeStateType, TreeContextType } from "../../contexts/treeContext";
-import type { URLMapStateType, URLMapContextType } from "../../contexts/urlMapContext";
 import HistoryContextManager from "../../features/HistoryContextManager";
 import TreeContextManager from "../../features/TreeContextManager";
-import URLMapContextManager from "../../features/URLMapContextManager";
-import type { ActionAdd, ActionDelete, ActionUpdate } from "../../model/Action";
 import type { Subject, DeathType } from "../../model/TreeNodeModel";
 import IndexedDBService from "../../services/IndexedDBService";
 
-export default function profileSubjectsHandlers(tree: TreeStateType,
+export default function subjectsHandlers(tree: TreeStateType,
     setTree: TreeContextType[1],
     history: HistoryStateType,
     setHistory: HistoryContextType[1],

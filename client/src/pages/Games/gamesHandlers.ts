@@ -8,15 +8,13 @@ import type {
     TreeStateType,
 } from "../../contexts/treeContext";
 import type { URLMapContextType, URLMapStateType } from "../../contexts/urlMapContext";
-import type { UUIDStateType } from "../../contexts/uuidContext";
 import HistoryContextManager from "../../features/HistoryContextManager";
 import TreeContextManager from "../../features/TreeContextManager";
 import URLMapContextManager from "../../features/URLMapContextManager";
-import type { ActionAdd, ActionDelete, ActionUpdate } from "../../model/Action";
 import type { Game, TangibleTreeNodeParent } from "../../model/TreeNodeModel";
 import IndexedDBService from "../../services/IndexedDBService";
 
-export default function gamesPageHandlers(
+export default function gamesHandlers(
     tree: TreeStateType,
     setTree: TreeContextType[1],
     history: HistoryStateType,

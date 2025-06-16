@@ -1,12 +1,11 @@
 import Card from "../../components/card/Card";
 import AddItemCard from "../../components/addItemCard/AddItemCard";
-import usePostDeathLog from "../../hooks/usePostDeathLog";
 import CardWrapper from "../../components/card/CardWrapper";
 import type { Subject } from "../../model/TreeNodeModel";
 import useMainPageContexts from "../../hooks/useMainPageContexts";
-import profileSubjectsHandlers from "./profileSubjectsHandlers";
+import subjectsHandlers from "./subjectsHandlers";
 
-export default function ProfileSubjects({ profileID }: { profileID: string }) {
+export default function Subjects({ profileID }: { profileID: string }) {
 	const { tree, setTree, urlMap, setURLMap, history, setHistory } =
 		useMainPageContexts();
 
@@ -16,13 +15,7 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 		handleCompletedStatus,
 		handleDeathCount,
 		handleDetailsEdit,
-	} = profileSubjectsHandlers(
-		tree,
-		setTree,
-		history,
-		setHistory,
-		profileID,
-	);
+	} = subjectsHandlers(tree, setTree, history, setHistory, profileID);
 
 	function createCards() {
 		return tree.get(profileID)?.childIDS.map((nodeID, index) => {
