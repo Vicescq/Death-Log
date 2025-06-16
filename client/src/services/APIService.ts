@@ -1,33 +1,38 @@
 import type { User } from "firebase/auth";
+import type { DistinctTreeNode } from "../model/TreeNodeModel";
 
 export default class APIService {
     constructor() { };
 
-    static addNode() {
+    static async addNodes(email: string, token: string, nodes: DistinctTreeNode[]) {
+        fetch(`/api/nodes/${email}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+            body: JSON.stringify(nodes)
+        })
+    }
+
+    static deleteNodes() {
 
     }
 
-    static deleteNode() {
+    static updateNodes() {
 
     }
 
-    static updateNode() {
+    static addURLS() {
 
     }
 
-    static addURL(){
+    static deleteURLS() {
 
     }
 
-    static deleteURL(){
-
-    }
-    
-    static getNodes(){
+    static getNodes() {
 
     }
 
-    static getURLMappings(){
+    static getURLMappings() {
 
     }
 

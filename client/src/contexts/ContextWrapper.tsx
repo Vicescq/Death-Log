@@ -9,6 +9,7 @@ import {
 	type UserStateType,
 } from "./userContext";
 import useAuthObserver from "../hooks/useAuthObserver";
+import useSyncDeathLog from "../hooks/useSyncDeathLog";
 
 
 export function ContextWrapper({ children }: { children: ReactNode }) {
@@ -27,7 +28,7 @@ export function ContextWrapper({ children }: { children: ReactNode }) {
 	useConsoleLogOnStateChange(
 		history,
 		"\nSENT TO DB: ",
-		HistoryContextManager.batchHistoryUpdates(history),
+		HistoryContextManager.batchHistory(history),
 	);
 	useConsoleLogOnStateChange(
 		history.newActionStartIndex,
@@ -37,6 +38,7 @@ export function ContextWrapper({ children }: { children: ReactNode }) {
 	useConsoleLogOnStateChange(user, "USER:", user);
 
 	useAuthObserver(setUser, setTree, setHistory, setURLMap);
+	useSyncDeathLog(user, history, setHistory);
 
 	return (
 		<TreeContext.Provider value={[tree, setTree]}>

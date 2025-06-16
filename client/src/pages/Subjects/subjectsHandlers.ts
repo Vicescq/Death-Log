@@ -141,7 +141,7 @@ export default function subjectsHandlers(tree: TreeStateType,
         const updatedSubject = { ...subject };
         modalState.forEach((state) => {
             if (state.type == "inputEdit") {
-                updatedSubject.name = state.change != "" ? state.change : updatedSubject.name
+                updatedSubject.name = state.change != "" ? state.change : updatedSubject.name;
             }
         })
 

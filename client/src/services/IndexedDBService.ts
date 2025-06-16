@@ -23,15 +23,15 @@ export default class IndexedDBService {
     }
 
     static async addURL(node: TangibleTreeNodeParent, email: string) {
-        await db.urlMaps.add({ node_id: node.id, email: email, mapping: { path: node.path, node_id: node.id } });
+        await db.urlMappings.add({ node_id: node.id, email: email, mapping: { path: node.path, node_id: node.id } });
     }
 
     static async deleteURLS(ids: string[]) {
-        await db.urlMaps.bulkDelete(ids);
+        await db.urlMappings.bulkDelete(ids);
     }
 
     static async getURLMappings(email: string) {
-        const rows = await db.urlMaps.where("email").equals(email).toArray();
+        const rows = await db.urlMappings.where("email").equals(email).toArray();
         const urlMappings = rows.map((urlMapping) => { return urlMapping.mapping });
         return urlMappings;
     }

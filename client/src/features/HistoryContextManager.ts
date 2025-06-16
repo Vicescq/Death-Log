@@ -1,14 +1,14 @@
 import type { HistoryStateType } from "../contexts/historyContext";
 import type { Action } from "../model/Action";
 import { v4 as uuid4 } from "uuid";
-import type { TreeNode } from "../model/TreeNodeModel";
+import type { DistinctTreeNode, TreeNode } from "../model/TreeNodeModel";
 
 export default class HistoryContextManager {
     static updateActionHistory(history: HistoryStateType, actions: Action[]) {
         return { ...history, actionHistory: [...history.actionHistory, ...actions] } as HistoryStateType;
     }
 
-    static batchHistoryUpdates(history: HistoryStateType) {
+    static batchHistory(history: HistoryStateType) {
         const batchedActionHistory = history.actionHistory.slice(history.newActionStartIndex);
         const deduplicatedUpdateActions = new Map<(string | string[]), Action>();
         const finalizedBatchedActionHistory: Action[] = [];
@@ -33,5 +33,24 @@ export default class HistoryContextManager {
     static updateNewActionStartIndex(history: HistoryStateType){
         const updatedHistory: HistoryStateType = { ...history, newActionStartIndex: history.actionHistory.length };
         return updatedHistory
+    }
+
+    static filterAffectedNodes(history: HistoryStateType){
+        const addedNodes: DistinctTreeNode[] = [];
+        const deletedNodes: string[][] = [];
+        const updatedNodes: DistinctTreeNode[] = [];
+        history.actionHistory.forEach((action) => {
+            switch(action.type){
+                case "add":
+                    addedNodes.push(action.targets);
+                    break;
+                case "delete":
+                    deletedNodes.push(action.targets);
+                    break;
+                default:
+                    updatedNodes.push(action.targets);
+            }
+        })
+        return {addedNodes, deletedNodes, updatedNodes};
     }
 }

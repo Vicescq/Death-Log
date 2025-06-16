@@ -4,10 +4,10 @@ import { auth } from "../firebase-config";
 import type { UserContextType } from "../contexts/userContext";
 import TreeContextManager from "../features/TreeContextManager";
 import IndexedDBService from "../services/IndexedDBService";
-import type { TreeContextType, TreeStateType } from "../contexts/treeContext";
+import type { TreeContextType } from "../contexts/treeContext";
 import type { HistoryContextType } from "../contexts/historyContext";
 import APIService from "../services/APIService";
-import { URLMapContext, type URLMapContextType } from "../contexts/urlMapContext";
+import { type URLMapContextType } from "../contexts/urlMapContext";
 import URLMapContextManager from "../features/URLMapContextManager";
 
 export default function useAuthObserver(setUser: UserContextType[1], setTree: TreeContextType[1], setHistory: HistoryContextType[1], setURLMap: URLMapContextType[1]) {
@@ -20,6 +20,7 @@ export default function useAuthObserver(setUser: UserContextType[1], setTree: Tr
                         const token = await user.getIdToken();
                         if (user.email) {
                             localStorage.setItem("email", user.email);
+                            await APIService.signInUser(user, token);
 
                             const nodes = await IndexedDBService.getNodes(user.email);
                             const urlMappings = await IndexedDBService.getURLMappings(user.email);
