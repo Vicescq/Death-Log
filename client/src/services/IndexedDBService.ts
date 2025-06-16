@@ -8,7 +8,7 @@ export default class IndexedDBService {
         await db.nodes.add({ email: email, node_id: node.id, node: node });
     }
 
-    static async deleteNodes(ids: string[]) {
+    static async deleteNode(ids: string[]) {
         await db.nodes.bulkDelete(ids);
     }
 

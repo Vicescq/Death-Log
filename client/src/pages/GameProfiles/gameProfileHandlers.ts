@@ -68,7 +68,7 @@ export default function gameProfileHandlers(
 
             // db's
             try {
-                IndexedDBService.deleteNodes(actionDelete.targets);
+                IndexedDBService.deleteNode(actionDelete.targets);
                 IndexedDBService.updateNode(actionUpdate.targets, localStorage.getItem("email")!);
                 IndexedDBService.deleteURLS(actionDelete.targets);
             } catch (error) {

@@ -74,7 +74,7 @@ export default function gamesPageHandlers(
 
             // db's
             try {
-                IndexedDBService.deleteNodes(action.targets);
+                IndexedDBService.deleteNode(action.targets);
                 IndexedDBService.deleteURLS(action.targets);
 
             } catch (error) {

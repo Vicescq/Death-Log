@@ -27,7 +27,7 @@ export function ContextWrapper({ children }: { children: ReactNode }) {
 	useConsoleLogOnStateChange(
 		history,
 		"\nSENT TO DB: ",
-		HistoryContextManager.batchHistory(history),
+		HistoryContextManager.batchHistoryUpdates(history),
 	);
 	useConsoleLogOnStateChange(
 		history.newActionStartIndex,

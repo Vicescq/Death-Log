@@ -69,7 +69,7 @@ export default function profileSubjectsHandlers(tree: TreeStateType,
 
             // db's
             try {
-                IndexedDBService.deleteNodes(actionDelete.targets);
+                IndexedDBService.deleteNode(actionDelete.targets);
                 IndexedDBService.updateNode(actionUpdate.targets, localStorage.getItem("email")!);
             } catch (error) {
                 console.error(error);
