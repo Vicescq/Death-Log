@@ -9,25 +9,25 @@ export default class HistoryContextManager {
     }
 
     static batchHistory(history: HistoryStateType) {
-        const batchedActionHistory = history.actionHistory.slice(history.newActionStartIndex);
-        const deduplicatedUpdateActions = new Map<(string | string[]), Action>();
-        const finalizedBatchedActionHistory: Action[] = [];
-        batchedActionHistory.reverse();
-        batchedActionHistory.forEach((action) => {
-            if (action.type == "update") {
-                const node = action.targets[0] as TreeNode;
-                !deduplicatedUpdateActions.has(node.id) ? deduplicatedUpdateActions.set(node.id, action) : null;
-            }
-            else {
-                deduplicatedUpdateActions.set("__PLACEHOLDER__" + uuid4(), action);
-            }
-        })
+        // const batchedActionHistory = history.actionHistory.slice(history.newActionStartIndex);
+        // const deduplicatedUpdateActions = new Map<(string | string[]), Action>();
+        // const finalizedBatchedActionHistory: Action[] = [];
+        // batchedActionHistory.reverse();
+        // batchedActionHistory.forEach((action) => {
+        //     if (action.type == "update") {
+        //         const node = action.targets[0] as TreeNode;
+        //         !deduplicatedUpdateActions.has(node.id) ? deduplicatedUpdateActions.set(node.id, action) : null;
+        //     }
+        //     else {
+        //         deduplicatedUpdateActions.set("__PLACEHOLDER__" + uuid4(), action);
+        //     }
+        // })
 
-        Array.from(deduplicatedUpdateActions.entries()).reverse().forEach((([_, action]) => {
-            finalizedBatchedActionHistory.push(action);
-        }))
+        // Array.from(deduplicatedUpdateActions.entries()).reverse().forEach((([_, action]) => {
+        //     finalizedBatchedActionHistory.push(action);
+        // }))
 
-        return finalizedBatchedActionHistory;
+        // return finalizedBatchedActionHistory;
     }
 
     static updateNewActionStartIndex(history: HistoryStateType){

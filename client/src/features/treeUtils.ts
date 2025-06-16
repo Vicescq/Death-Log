@@ -57,7 +57,7 @@ export function sortChildIDS(parentNode: TreeNode, tree: TreeStateType) {
     return sorted
 }
 
-export function identifyDeletedChildrenIDS(node: TreeNode, tree: TreeStateType) {
+export function identifyDeletedSelfAndChildrenIDS(node: TreeNode, tree: TreeStateType) {
     const idsToBeDeleted: string[] = [];
 
     function deleteSelfAndChildren(node: TreeNode) {

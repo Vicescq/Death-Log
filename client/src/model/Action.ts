@@ -6,7 +6,7 @@ export type Action = ActionAdd | ActionDelete | ActionUpdate;
 
 export type ActionAdd = {
     type: "add",
-    targets: DistinctTreeNode[] // len 1
+    targets: DistinctTreeNode
 }
 
 export type ActionDelete = {
@@ -16,5 +16,5 @@ export type ActionDelete = {
 
 export type ActionUpdate = {
     type: "update",
-    targets: DistinctTreeNode[] // len 1
+    targets: DistinctTreeNode
 }

@@ -8,7 +8,7 @@ import HistoryContextManager from "../../features/HistoryContextManager";
 import TreeContextManager from "../../features/TreeContextManager";
 import URLMapContextManager from "../../features/URLMapContextManager";
 import type { ActionAdd, ActionDelete, ActionUpdate } from "../../model/Action";
-import type { Subject, DeathType, TangibleTreeNodeParent } from "../../model/TreeNodeModel";
+import type { Subject, DeathType } from "../../model/TreeNodeModel";
 import IndexedDBService from "../../services/IndexedDBService";
 
 export default function profileSubjectsHandlers(tree: TreeStateType,
@@ -37,20 +37,22 @@ export default function profileSubjectsHandlers(tree: TreeStateType,
         });
 
         // memory data structures
-        const { treeCopy, actions } = TreeContextManager.addNode(tree, node);
-        const actionAdd = actions[0] as ActionAdd;
-        const actionUpdate = actions[1] as ActionUpdate;
-        const updatedHistory = HistoryContextManager.updateActionHistory(history, actions);
+        const { updatedTree: updatedTreeIP, action: actionAdd } = TreeContextManager.addNode(
+            tree,
+            node,
+        );
+        const { updatedTree, action: actionUpdate } = TreeContextManager.updateNodeParent(node, updatedTreeIP, "add");
+        const updatedHistory = HistoryContextManager.updateActionHistory(history, [actionAdd, actionUpdate]);
 
         // db's
         try {
-            IndexedDBService.addNode(actionAdd.targets[0], localStorage.getItem("email")!);
-            IndexedDBService.updateNode(actionUpdate.targets[0], localStorage.getItem("email")!);
+            IndexedDBService.addNode(actionAdd.targets, localStorage.getItem("email")!);
+            IndexedDBService.updateNode(actionUpdate.targets, localStorage.getItem("email")!);
         } catch (error) {
             console.error(error);
         }
 
-        setTree(treeCopy);
+        setTree(updatedTree);
         setHistory(updatedHistory);
     };
 
@@ -58,23 +60,22 @@ export default function profileSubjectsHandlers(tree: TreeStateType,
         const bool = window.confirm();
         if (bool) {
             // memory data structures
-            const { treeCopy, actions } = TreeContextManager.deleteNode(
+            const { updatedTree: updatedTreeIP, action: actionDelete } = TreeContextManager.deleteNode(
                 tree,
                 node,
             );
-            const actionDelete = actions[0] as ActionDelete;
-            const actionUpdate = actions[1] as ActionUpdate;
-            const updatedHistory = HistoryContextManager.updateActionHistory(history, actions);
+            const { updatedTree, action: actionUpdate } = TreeContextManager.updateNodeParent(node, updatedTreeIP, "delete");
+            const updatedHistory = HistoryContextManager.updateActionHistory(history, [actionDelete, actionUpdate]);
 
             // db's
             try {
                 IndexedDBService.deleteNodes(actionDelete.targets);
-                IndexedDBService.updateNode(actionUpdate.targets[0], localStorage.getItem("email")!);
+                IndexedDBService.updateNode(actionUpdate.targets, localStorage.getItem("email")!);
             } catch (error) {
                 console.error(error);
             }
 
-            setTree(treeCopy);
+            setTree(updatedTree);
             setHistory(updatedHistory);
         }
     }
@@ -98,74 +99,73 @@ export default function profileSubjectsHandlers(tree: TreeStateType,
         updatedSubject.resets < 0 ? (updatedSubject.resets = 0) : null;
 
         // memory data structures
-        const { treeCopy, actions } = TreeContextManager.updateNode(
+        const { updatedTree: updatedTreeIP, action: actionUpdateSelf } = TreeContextManager.updateNode(
             tree,
             updatedSubject,
         );
-        const actionUpdate = actions[0] as ActionUpdate;
-        const actionUpdateParent = actions[1] as ActionUpdate;
-        const updatedHistory = HistoryContextManager.updateActionHistory(history, actions);
+        const { updatedTree, action: actionUpdateParent } = TreeContextManager.updateNodeParent(updatedSubject, updatedTreeIP, "update");
+        const updatedHistory = HistoryContextManager.updateActionHistory(history, [actionUpdateSelf, actionUpdateParent]);
 
         // db's
         try {
-            IndexedDBService.updateNode(actionUpdate.targets[0], localStorage.getItem("email")!);
-            IndexedDBService.updateNode(actionUpdateParent.targets[0], localStorage.getItem("email")!);
+            IndexedDBService.updateNode(actionUpdateSelf.targets, localStorage.getItem("email")!);
+            IndexedDBService.updateNode(actionUpdateParent.targets, localStorage.getItem("email")!);
         } catch (error) {
             console.error(error);
         }
 
-        setTree(treeCopy);
+        setTree(updatedTree);
         setHistory(updatedHistory);
     }
 
     function handleCompletedStatus(subject: Subject, newStatus: boolean) {
         // memory data structures
-        const { treeCopy, actions } = TreeContextManager.updateNodeCompletion(
+        const { updatedTree: updatedTreeIP, action: actionUpdateSelf } = TreeContextManager.updateNodeCompletion(
             subject,
             newStatus,
             tree,
         );
-        const actionUpdate = actions[0] as ActionUpdate;
-        const actionUpdateParent = actions[1] as ActionUpdate;
-        const updatedHistory = HistoryContextManager.updateActionHistory(history, actions);
+        const { updatedTree, action: actionUpdateParent } = TreeContextManager.updateNodeParent(subject, updatedTreeIP, "update");
+        const updatedHistory = HistoryContextManager.updateActionHistory(history, [actionUpdateSelf, actionUpdateParent]);
 
         // db's
         try {
-            IndexedDBService.updateNode(actionUpdate.targets[0], localStorage.getItem("email")!);
-            IndexedDBService.updateNode(actionUpdateParent.targets[0], localStorage.getItem("email")!);
-
+            IndexedDBService.updateNode(actionUpdateSelf.targets, localStorage.getItem("email")!);
+            IndexedDBService.updateNode(actionUpdateParent.targets, localStorage.getItem("email")!);
         } catch (error) {
             console.error(error);
         }
 
-        setTree(treeCopy);
+        setTree(updatedTree);
         setHistory(updatedHistory);
     }
 
     function handleDetailsEdit(subject: Subject, modalState: ModalListItemDistinctState[]) {
-        const subjectCopy = { ...subject };
+        const updatedSubject = { ...subject };
         modalState.forEach((state) => {
             if (state.type == "inputEdit") {
-                subjectCopy.name = state.change != "" ? state.change : subjectCopy.name
+                updatedSubject.name = state.change != "" ? state.change : updatedSubject.name
             }
         })
 
         // memory data structures
-        const { treeCopy, actions } = TreeContextManager.updateNode(tree, subjectCopy!);
-        const actionUpdate = actions[0] as ActionUpdate;
-        const actionUpdateParent = actions[1] as ActionUpdate;
+        const { updatedTree: updatedTreeIP, action: actionUpdateSelf } = TreeContextManager.updateNode(
+            tree,
+            updatedSubject,
+        );
+        const { updatedTree, action: actionUpdateParent } = TreeContextManager.updateNodeParent(subject, updatedTreeIP, "update");
+        const updatedHistory = HistoryContextManager.updateActionHistory(history, [actionUpdateSelf, actionUpdateParent]);
 
         // db's
         try {
-            IndexedDBService.updateNode(actionUpdate.targets[0], localStorage.getItem("email")!);
-            IndexedDBService.updateNode(actionUpdateParent.targets[0], localStorage.getItem("email")!);
-
+            IndexedDBService.updateNode(actionUpdateSelf.targets, localStorage.getItem("email")!);
+            IndexedDBService.updateNode(actionUpdateParent.targets, localStorage.getItem("email")!);
         } catch (error) {
             console.error(error);
         }
 
-        setTree(treeCopy);
-        setHistory(HistoryContextManager.updateActionHistory(history, actions));
+        setTree(updatedTree);
+        setHistory(updatedHistory);
     }
 
     return { handleAdd, handleDelete, handleCompletedStatus, handleDeathCount, handleDetailsEdit };

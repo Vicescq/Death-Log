@@ -36,25 +36,25 @@ export default function gamesPageHandlers(
         });
 
         // memory data structures
-        const { treeCopy, actions } = TreeContextManager.addNode(
+        const { updatedTree: updatedTreeIP, action } = TreeContextManager.addNode(
             tree,
             node,
         );
-        const actionAdd = actions[0] as ActionAdd;
-        const tangibleParentNode = actionAdd.targets[0] as TangibleTreeNodeParent;
+        const { updatedTree } = TreeContextManager.updateNodeParent(node, updatedTreeIP, "add");
+        const tangibleParentNode = action.targets as TangibleTreeNodeParent;
         const updatedURLMap = URLMapContextManager.addURL(urlMap, tangibleParentNode);
-        const updatedHistory = HistoryContextManager.updateActionHistory(history, actions);
+        const updatedHistory = HistoryContextManager.updateActionHistory(history, [action]);
 
         // db's
         try {
-            IndexedDBService.addNode(actionAdd.targets[0], localStorage.getItem("email")!);
+            IndexedDBService.addNode(action.targets, localStorage.getItem("email")!);
             IndexedDBService.addURL(tangibleParentNode, localStorage.getItem("email")!);
         }
         catch (error) {
             console.error(error);
         }
 
-        setTree(treeCopy);
+        setTree(updatedTree);
         setURLMap(updatedURLMap);
         setHistory(updatedHistory);
     };
@@ -64,24 +64,24 @@ export default function gamesPageHandlers(
         if (bool) {
 
             // memory data structures
-            const { treeCopy, actions } = TreeContextManager.deleteNode(
+            const { updatedTree: updatedTreeIP, action } = TreeContextManager.deleteNode(
                 tree,
                 node,
             );
-            const actionDelete = actions[0] as ActionDelete;
-            const updatedURLMap = URLMapContextManager.deleteURL(urlMap, actionDelete.targets);
-            const updatedHistory = HistoryContextManager.updateActionHistory(history, actions);
+            const { updatedTree } = TreeContextManager.updateNodeParent(node, updatedTreeIP, "delete");
+            const updatedURLMap = URLMapContextManager.deleteURL(urlMap, action.targets);
+            const updatedHistory = HistoryContextManager.updateActionHistory(history, [action]);
 
             // db's
             try {
-                IndexedDBService.deleteNodes(actionDelete.targets);
-                IndexedDBService.deleteURLS(actionDelete.targets);
+                IndexedDBService.deleteNodes(action.targets);
+                IndexedDBService.deleteURLS(action.targets);
 
             } catch (error) {
                 console.error(error);
             }
 
-            setTree(treeCopy);
+            setTree(updatedTree);
             setURLMap(updatedURLMap);
             setHistory(updatedHistory);
         }
@@ -90,23 +90,23 @@ export default function gamesPageHandlers(
     function handleCompletedStatus(game: Game, newStatus: boolean) {
 
         // memory data structures
-        const { treeCopy, actions } = TreeContextManager.updateNodeCompletion(
+        const { updatedTree: updatedTreeIP, action } = TreeContextManager.updateNodeCompletion(
             game,
             newStatus,
             tree,
         );
-        const updatedHistory = HistoryContextManager.updateActionHistory(history, actions);
+        const { updatedTree } = TreeContextManager.updateNodeParent(game, updatedTreeIP, "update");
+        const updatedHistory = HistoryContextManager.updateActionHistory(history, [action]);
 
         // db's
         try {
-            const actionUpdate = actions[0] as ActionUpdate;
-            IndexedDBService.updateNode(actionUpdate.targets[0], localStorage.getItem("email")!);
+            IndexedDBService.updateNode(action.targets, localStorage.getItem("email")!);
 
         } catch (error) {
             console.error(error);
         }
 
-        setTree(treeCopy);
+        setTree(updatedTree);
         setHistory(updatedHistory);
     }
 
