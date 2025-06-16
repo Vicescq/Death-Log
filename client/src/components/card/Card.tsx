@@ -88,7 +88,7 @@ export default function Card({
 
 			<div className="ml-auto flex flex-col gap-2">
 				{!(treeNode.type == "subject") ? (
-					<NavLink to={`/${treeNode.path}`}>
+					<NavLink to={`/death-log/${treeNode.path}`}>
 						<img
 							className={`w-9 ${readOnlyEnabledCSS}`}
 							src={step_into}

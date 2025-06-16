@@ -122,7 +122,7 @@ export default class TreeContextManager {
             dateStart: new Date().toISOString(),
             dateEnd: null,
             path: path,
-            dateStartR: true, 
+            dateStartR: true,
             dateEndR: true,
         };
         deleteUndefinedValues(overrides);
@@ -150,7 +150,7 @@ export default class TreeContextManager {
             dateStart: new Date().toISOString(),
             dateEnd: null,
             path: path,
-            dateStartR: true, 
+            dateStartR: true,
             dateEndR: true,
         };
         deleteUndefinedValues(overrides);
@@ -178,10 +178,10 @@ export default class TreeContextManager {
             notable: true,
             fullTries: 0,
             resets: 0,
-            boss: true, 
-            location: false, 
+            boss: true,
+            location: false,
             other: false,
-            dateStartR: true, 
+            dateStartR: true,
             dateEndR: true,
         };
         deleteUndefinedValues(overrides);
@@ -189,5 +189,19 @@ export default class TreeContextManager {
             ...defaultSubject,
             ...overrides
         } as Subject
+    }
+
+    static updateNodeCompletion(node: DistinctTreeNode, newStatus: boolean, tree: TreeStateType) {
+        const dateEnd = newStatus ? new Date().toISOString() : null;
+        const updatedNode: DistinctTreeNode = {
+            ...node,
+            completed: newStatus,
+            dateEnd: dateEnd,
+        };
+        const { treeCopy, actions } = TreeContextManager.updateNode(
+            tree,
+            updatedNode,
+        );
+        return { treeCopy, actions };
     }
 }

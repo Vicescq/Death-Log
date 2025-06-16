@@ -3,7 +3,7 @@ import type { DistinctTreeNode } from './model/TreeNodeModel';
 import type { URLMapStateType } from './contexts/urlMapContext';
 
 export type URLMapping = {
-    id: number
+    node_id: string,
     email: string,
     mapping: {path: string, node_id: string},
 }
@@ -15,11 +15,11 @@ export type Node = {
 }
 
 export const db = new Dexie('DeathLogDB') as Dexie & {
-    nodes: Table<Node, 'node_id'>
-    urlMaps: EntityTable<URLMapping, 'id'>
+    nodes: Table<Node, string>
+    urlMaps: Table<URLMapping, string>
 };
 
 db.version(1).stores({
     nodes: "&node_id, email",
-    urlMaps: "++id, email",
+    urlMaps: "&node_id, email",
 });

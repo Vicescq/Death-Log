@@ -1,6 +1,4 @@
-import type { URLMapStateType } from "../contexts/urlMapContext";
 import { db } from "../db";
-import type { Action, ActionAdd, ActionDelete, ActionUpdate } from "../model/Action";
 import type { DistinctTreeNode, TangibleTreeNodeParent } from "../model/TreeNodeModel";
 
 export default class IndexedDBService {
@@ -10,13 +8,12 @@ export default class IndexedDBService {
         await db.nodes.add({ email: email, node_id: node.id, node: node });
     }
 
-    static async deleteNodes(action: ActionDelete, email: string) {
-        const ids = action.targets as "node_id"[];
+    static async deleteNodes(ids: string[]) {
         await db.nodes.bulkDelete(ids);
     }
 
-    static async updateNode(action: ActionUpdate, email: string) {
-
+    static async updateNode(node: DistinctTreeNode, email: string) {
+        await db.nodes.update(node.id, {email: email, node_id: node.id, node: node});
     }
 
     static async getNodes(email: string) {
@@ -26,7 +23,11 @@ export default class IndexedDBService {
     }
 
     static async addURL(node: TangibleTreeNodeParent, email: string) {
-        await db.urlMaps.add({ email: email, mapping: { path: node.path, node_id: node.id } });
+        await db.urlMaps.add({ node_id: node.id, email: email, mapping: { path: node.path, node_id: node.id } });
+    }
+
+    static async deleteURLS(ids: string[]) {
+        await db.urlMaps.bulkDelete(ids);
     }
 
     static async getURLMappings(email: string) {

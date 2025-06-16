@@ -7,7 +7,7 @@ import useMainPageContexts from "../../hooks/useMainPageContexts";
 import profileSubjectsHandlers from "./profileSubjectsHandlers";
 
 export default function ProfileSubjects({ profileID }: { profileID: string }) {
-	const { tree, setTree, urlMap, setURLMap, history, setHistory} =
+	const { tree, setTree, urlMap, setURLMap, history, setHistory } =
 		useMainPageContexts();
 
 	const {
@@ -16,7 +16,13 @@ export default function ProfileSubjects({ profileID }: { profileID: string }) {
 		handleCompletedStatus,
 		handleDeathCount,
 		handleDetailsEdit,
-	} = profileSubjectsHandlers(tree, setTree, history, setHistory, profileID);
+	} = profileSubjectsHandlers(
+		tree,
+		setTree,
+		history,
+		setHistory,
+		profileID,
+	);
 
 	function createCards() {
 		return tree.get(profileID)?.childIDS.map((nodeID, index) => {

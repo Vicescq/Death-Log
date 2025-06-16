@@ -12,10 +12,9 @@ import type { UUIDStateType } from "../../contexts/uuidContext";
 import HistoryContextManager from "../../features/HistoryContextManager";
 import TreeContextManager from "../../features/TreeContextManager";
 import URLMapContextManager from "../../features/URLMapContextManager";
-import type { ActionAdd, ActionDelete } from "../../model/Action";
+import type { ActionAdd, ActionDelete, ActionUpdate } from "../../model/Action";
 import type { Game, TangibleTreeNodeParent } from "../../model/TreeNodeModel";
 import IndexedDBService from "../../services/IndexedDBService";
-import { changeCompletedStatus } from "../../utils/eventHandlers";
 
 export default function gamesPageHandlers(
     tree: TreeStateType,
@@ -25,7 +24,7 @@ export default function gamesPageHandlers(
     urlMap: URLMapStateType,
     setURLMap: URLMapContextType[1]
 ) {
-    const handleAdd: HandleAddGame = async (
+    const handleAdd: HandleAddGame = (
         inputText: string,
         dateStartR: boolean | undefined,
         dateEndR: boolean | undefined,
@@ -42,9 +41,9 @@ export default function gamesPageHandlers(
             node,
         );
         const actionAdd = actions[0] as ActionAdd;
-        const tangibleParentNode = actionAdd.targets[0] as TangibleTreeNodeParent
+        const tangibleParentNode = actionAdd.targets[0] as TangibleTreeNodeParent;
         const updatedURLMap = URLMapContextManager.addURL(urlMap, tangibleParentNode);
-        const updatedHistory = HistoryContextManager.updateActionHistory(history, actions)
+        const updatedHistory = HistoryContextManager.updateActionHistory(history, actions);
 
         // db's
         try {
@@ -52,7 +51,7 @@ export default function gamesPageHandlers(
             IndexedDBService.addURL(tangibleParentNode, localStorage.getItem("email")!);
         }
         catch (error) {
-            console.error(error)
+            console.error(error);
         }
 
         setTree(treeCopy);
@@ -63,30 +62,52 @@ export default function gamesPageHandlers(
     function handleDelete(node: Game) {
         const bool = window.confirm();
         if (bool) {
+
+            // memory data structures
             const { treeCopy, actions } = TreeContextManager.deleteNode(
                 tree,
                 node,
             );
-            setTree(treeCopy);
-            setHistory(
-                HistoryContextManager.updateActionHistory(history, actions),
-            );
+            const actionDelete = actions[0] as ActionDelete;
+            const updatedURLMap = URLMapContextManager.deleteURL(urlMap, actionDelete.targets);
+            const updatedHistory = HistoryContextManager.updateActionHistory(history, actions);
 
-            // if (typeof uuid == "string") {
-            //     const deleteAction = actions[0] as ActionDelete
-            //     IndexedDBService.deleteNodes(deleteAction, uuid);
-            // }
+            // db's
+            try {
+                IndexedDBService.deleteNodes(actionDelete.targets);
+                IndexedDBService.deleteURLS(actionDelete.targets);
+
+            } catch (error) {
+                console.error(error);
+            }
+
+            setTree(treeCopy);
+            setURLMap(updatedURLMap);
+            setHistory(updatedHistory);
         }
     }
 
     function handleCompletedStatus(game: Game, newStatus: boolean) {
-        const { treeCopy, actions } = changeCompletedStatus(
+
+        // memory data structures
+        const { treeCopy, actions } = TreeContextManager.updateNodeCompletion(
             game,
             newStatus,
             tree,
         );
+        const updatedHistory = HistoryContextManager.updateActionHistory(history, actions);
+
+        // db's
+        try {
+            const actionUpdate = actions[0] as ActionUpdate;
+            IndexedDBService.updateNode(actionUpdate.targets[0], localStorage.getItem("email")!);
+
+        } catch (error) {
+            console.error(error);
+        }
+
         setTree(treeCopy);
-        setHistory(HistoryContextManager.updateActionHistory(history, actions));
+        setHistory(updatedHistory);
     }
 
     return { handleAdd, handleDelete, handleCompletedStatus };

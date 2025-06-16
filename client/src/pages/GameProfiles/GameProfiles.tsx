@@ -1,5 +1,4 @@
 import Card from "../../components/card/Card";
-import usePostDeathLog from "../../hooks/usePostDeathLog";
 import CardWrapper from "../../components/card/CardWrapper";
 import AddItemCard from "../../components/addItemCard/AddItemCard";
 import type { Profile } from "../../model/TreeNodeModel";
@@ -11,7 +10,7 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 		useMainPageContexts();
 
 	const { handleAdd, handleDelete, handleCompletedStatus } =
-		gameProfileHandlers(tree, setTree, history, setHistory, gameID);
+		gameProfileHandlers(tree, setTree, history, setHistory, gameID, urlMap, setURLMap);
 
 	function createCards() {
 		return tree.get(gameID)?.childIDS.map((nodeID, index) => {
@@ -31,8 +30,6 @@ export default function GameProfiles({ gameID }: { gameID: string }) {
 		});
 	}
 
-
-	// usePostDeathLog(uuid, history, setHistory);
 
 	return (
 		<>
