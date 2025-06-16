@@ -1,1 +1,0 @@
-Was used during sqlite development and early adoption of postgres

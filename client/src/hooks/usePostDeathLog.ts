@@ -9,7 +9,7 @@ export default function usePostDeathLog(uuid: UUIDStateType, history: HistorySta
     useEffect(() => {
         const interval = setTimeout(() => {
             if (history.actionHistory.slice(history.newActionStartIndex).length > 0) {
-                APIService.postDeathLog(uuid!, HistoryContextManager.batchHistoryUpdates(history));
+                
                 setHistory(HistoryContextManager.updateNewActionStartIndex(history));
             }
         }, 3000);

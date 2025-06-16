@@ -1,5 +1,0 @@
-CREATE TABLE users (
-    uuid TEXT PRIMARY KEY,
-    email TEXT UNIQUE NOT NULL,
-    registered_at TEXT DEFAULT CURRENT_TIMESTAMP
-);

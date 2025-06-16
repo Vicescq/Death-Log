@@ -13,7 +13,7 @@ export default class IndexedDBService {
     }
 
     static async updateNode(node: DistinctTreeNode, email: string) {
-        await db.nodes.update(node.id, {email: email, node_id: node.id, node: node});
+        await db.nodes.update(node.id, { email: email, node_id: node.id, node: node });
     }
 
     static async getNodes(email: string) {
