@@ -17,10 +17,10 @@ export default function useAuthObserver(setUser: UserContextType[1], setTree: Tr
                 if (user) {
                     console.log("SIGNED IN!");
                     (async () => {
-                        const token = await user.getIdToken();
+                        // const token = await user.getIdToken();
                         if (user.email) {
-                            localStorage.setItem("email", user.email);
-                            await APIService.signInUser(user, token);
+                            // localStorage.setItem("email", user.email);
+                            // await APIService.signInUser(user, token);
 
                             const nodes = await IndexedDBService.getNodes(user.email);
                             const urlMappings = await IndexedDBService.getURLMappings(user.email);

@@ -1,27 +1,42 @@
 import type { User } from "firebase/auth";
 import type { DistinctTreeNode } from "../model/TreeNodeModel";
+import type { URLMapping } from "../db";
 
 export default class APIService {
     constructor() { };
 
     static async addNodes(email: string, token: string, nodes: DistinctTreeNode[]) {
-        fetch(`/api/nodes/${email}`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
-            body: JSON.stringify(nodes)
-        })
+        if (nodes.length > 0) {
+            fetch(`/api/nodes/${email}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+                body: JSON.stringify(nodes)
+            })
+        }
     }
 
-    static deleteNodes() {
-
+    static deleteNodes(email: string, token: string, ids: string[][]) {
+        if (ids.length > 0) {
+            fetch(`/api/nodes/${email}`, {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+                body: JSON.stringify(ids)
+            })
+        }
     }
 
     static updateNodes() {
 
     }
 
-    static addURLS() {
-
+    static addURLS(email: string, token: string, mappings: URLMapping["mapping"][]) {
+        if (mappings.length > 0) {
+            fetch(`/api/urlmappings/${email}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+                body: JSON.stringify(mappings)
+            })
+        }
     }
 
     static deleteURLS() {

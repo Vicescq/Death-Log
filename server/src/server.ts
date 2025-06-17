@@ -38,14 +38,86 @@ app.post("/api/nodes/:email", async (req, res) => {
             INSERT INTO nodes (email, node_id, node)
             VALUES ${placeholders}
         `
-        console.log(placeholders, records, sql);
         await client.query(sql, records);
     }
     catch (error) {
         console.error(error);
+        res.sendStatus(500);
     }
 });
 
+app.delete("/api/nodes/:email", async (req, res) => {
+    try {
+        const email = req.params.email;
+        const toBeDeletedIDS: any[][] = req.body;
+        const records: any[] = [];
+        let placeholders = "";
+        let placeholderIndex = 1;
+
+        // flatten
+        toBeDeletedIDS.forEach((deletedIDSSubArr) => {
+            records.push(...deletedIDSSubArr);
+        })
+
+        records.forEach((_, i) => {
+            if (i == records.length - 1) {
+                placeholders += `$${++placeholderIndex}`;
+            }
+            else {
+                placeholders += `$${++placeholderIndex}, `;
+            }
+        });
+        records.unshift(email);
+
+        const sql = `
+            DELETE FROM nodes WHERE email = $1 AND node_id in (${placeholders})
+        `
+        console.log(sql, records)
+        await client.query(sql, records);
+    }
+    catch (error) {
+        console.error(error);
+        res.sendStatus(500);
+    }
+})
+
+app.post("/api/urlmappings/:email", async (req, res) => {
+    try {
+        const email = req.params.email;
+        const mappings: any[] = req.body;
+        const records: any[] = [];
+        let placeholders = "";
+        let placeholderIndex = 0;
+        mappings.forEach((mapping, i) => {
+            records.push(email, mapping.node_id, mapping);
+            if (i == mappings.length - 1) {
+                placeholders += `($${++placeholderIndex}, $${++placeholderIndex}, $${++placeholderIndex})`
+            }
+            else {
+                placeholders += `($${++placeholderIndex}, $${++placeholderIndex}, $${++placeholderIndex}), `
+            }
+        })
+
+        const sql = `
+            INSERT INTO urlmappings (email, node_id, mapping)
+            VALUES ${placeholders}
+        `
+        await client.query(sql, records);
+    }
+    catch (error) {
+        console.error(error);
+        res.sendStatus(500);
+    }
+})
+
+app.delete("/api/urlmappings/:email", async (req, res) => {
+    try {
+        const email = req.params.email;
+    }
+    catch (error) {
+
+    }
+})
 
 app.post("/api/signin/", async (req, res) => {
     try {
@@ -65,6 +137,8 @@ app.post("/api/signin/", async (req, res) => {
         res.sendStatus(500);
     }
 });
+
+
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`);
@@ -135,7 +209,7 @@ app.listen(port, () => {
 //         const sqlUpdate = `
 //             UPDATE nodes
 //             SET node = $1
-//             WHERE node_id = $2 
+//             WHERE node_id = $2
 //         `;
 //         let j = 1;
 //         for (let i = 0; i < toUpdate.length - 1; i++) {

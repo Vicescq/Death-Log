@@ -9,7 +9,8 @@ export default class HistoryContextManager {
     }
 
     static batchHistory(history: HistoryStateType) {
-        const batchedActionHistory = history.actionHistory.slice(history.newActionStartIndex);
+        const historyCopy = {...history};
+        const batchedActionHistory = historyCopy.actionHistory.slice(historyCopy.newActionStartIndex);
         const deduplicatedUpdateActions = new Map<(string | string[]), Action>();
         const finalizedBatchedActionHistory: Action[] = [];
         batchedActionHistory.reverse();
@@ -26,8 +27,8 @@ export default class HistoryContextManager {
         Array.from(deduplicatedUpdateActions.entries()).reverse().forEach((([_, action]) => {
             finalizedBatchedActionHistory.push(action);
         }))
-
-        return finalizedBatchedActionHistory;
+        historyCopy.actionHistory = finalizedBatchedActionHistory;
+        return historyCopy;
     }
 
     static updateNewActionStartIndex(history: HistoryStateType){
