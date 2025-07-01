@@ -43,12 +43,12 @@ export type Subject = TangibleTreeNode & {
     notable: boolean,
     fullTries: number,
     resets: number,
-    
-    // composite: boolean,
-    
-    // relations: string[],
 
-    /// these 3 contexts are mutually exclusive
+    reoccurring: boolean,
+    composite: boolean,
+    compositeRelations: string[],
+
+    // these 3 contexts are mutually exclusive
     boss: boolean,
     location: boolean,
     other: boolean

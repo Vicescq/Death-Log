@@ -162,6 +162,9 @@ export default class TreeContextManager {
             other: false,
             dateStartR: true,
             dateEndR: true,
+            composite: false,
+            compositeRelations: [],
+            reoccurring: false,
         };
         deleteUndefinedValues(overrides);
         return {
