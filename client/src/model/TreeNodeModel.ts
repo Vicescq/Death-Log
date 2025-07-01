@@ -45,6 +45,7 @@ export type Subject = TangibleTreeNode & {
     resets: number,
     
     // composite: boolean,
+    
     // relations: string[],
 
     /// these 3 contexts are mutually exclusive
