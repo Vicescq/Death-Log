@@ -15,6 +15,7 @@ import Root from "./pages/Root.tsx";
 import URLRouter from "./components/URLRouter.tsx";
 import { ContextWrapper } from "./contexts/ContextWrapper.tsx";
 import Start from "./pages/Start.tsx";
+import UtilityPage from "./pages/UtilityPage.tsx";
 
 createRoot(document.getElementById("root")!).render(
 	<StrictMode>
@@ -44,6 +45,7 @@ function AppRoutes() {
 						path="death-log/:gameName/:profileName/*"
 						element={<ForceError msg={"URL NOT FOUND!"} />}
 					/>
+					<Route path="utility" element={<UtilityPage />} />
 				</Route>
 				<Route />
 			</Routes>

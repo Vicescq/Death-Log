@@ -35,6 +35,11 @@ export default function NavBar() {
 				<li>
 					<img src={info} className="m-2 max-w-8" />
 				</li>
+				<li>
+					<NavLink to="/utility">
+						<img src="" alt="" />
+					</NavLink>
+				</li>
 				{user && navigator.onLine ? (
 					<li className="my-auto ml-auto">
 						<button onClick={() => handleSignOut()}>
