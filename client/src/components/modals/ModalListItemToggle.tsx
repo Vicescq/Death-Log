@@ -9,21 +9,24 @@ export type ToggleSetting =
 	| "other"
 	| "dateStartR"
 	| "dateEndR"
+	| "composite"
+	| "reoccurring";
 
-export const ToggleSettingSubjectContexts = ["boss", "location", "other"] as const;
+export const ToggleSettingSubjectContexts = [
+	"boss",
+	"location",
+	"other",
+] as const;
 
 type Props = {
-	state: ModalListItemToggleState
+	state: ModalListItemToggleState;
 	index: number;
-	handleToggle: () => void
+	handleToggle: () => void;
 };
 
-export default function ModalListItemToggle({
-	state,
-	handleToggle
-}: Props) {
+export default function ModalListItemToggle({ state, handleToggle }: Props) {
 	return (
-		<li className="m-2 flex gap-4 items-center">
+		<li className="m-2 flex items-center gap-4">
 			<span className="mr-auto">{state.settingLabel}</span>
 			<div className="ml-auto">
 				<Toggle

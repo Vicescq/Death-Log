@@ -24,12 +24,16 @@ export default function addItemCardHandlers(
 	parentID: string
 ) {
 	function handleAddWrapper() {
+
+		// setting to undefined and letting createSubject set default vals 
 		let notable,
 			dateStartR,
 			dateEndR,
 			boss,
 			location,
-			other = undefined;
+			other,
+			composite,
+			reoccurring = undefined
 
 		modalState.forEach((state) => {
 			if (state.type == "toggle") {
@@ -50,6 +54,12 @@ export default function addItemCardHandlers(
 				}
 				if (state.toggleSetting == "other" && state.enable) {
 					other = true;
+				}
+				if (state.toggleSetting == "composite" && state.enable) {
+					composite = true;
+				}
+				if (state.toggleSetting == "reoccurring" && state.enable) {
+					reoccurring = true;
 				}
 			}
 		});
@@ -74,6 +84,8 @@ export default function addItemCardHandlers(
 					boss,
 					location,
 					other,
+					composite,
+					reoccurring
 				);
 		}
 	}

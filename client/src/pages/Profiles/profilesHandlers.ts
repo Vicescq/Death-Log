@@ -19,9 +19,9 @@ export default function profilesHandlers(
 ) {
 
     const handleAdd: HandleAddProfile = (
-        inputText: string,
-        dateStartR: boolean | undefined,
-        dateEndR: boolean | undefined,
+        inputText,
+        dateStartR,
+        dateEndR,
     ) => {
 
         const node = TreeContextManager.createProfile(inputText, tree, gameID, {

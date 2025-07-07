@@ -41,6 +41,8 @@ export function createModalState(modalSchema: ModalSchema) {
 					true,
 				),
 				createModalListItemToggleState("Notable", "notable", true),
+				createModalListItemToggleState("Composite", "composite", false),
+				createModalListItemToggleState("Reoccurring", "reoccurring", false),
 				createModalListItemToggleState("Boss", "boss", true),
 				createModalListItemToggleState("Location", "location", false),
 				createModalListItemToggleState("Other", "other", false),

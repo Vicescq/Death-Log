@@ -17,8 +17,10 @@ export type HandleAddSubject = (
     dateStartR: boolean | undefined,
     dateEndR: boolean | undefined,
     boss: boolean | undefined,
-    location: boolean | undefined ,
-    other: boolean |  undefined
+    location: boolean | undefined,
+    other: boolean | undefined,
+    composite: boolean | undefined,
+    reoccurring: boolean | undefined,
 ) => void;
 
 export interface AddItemCardProps {

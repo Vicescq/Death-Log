@@ -16,13 +16,15 @@ export default function subjectsHandlers(tree: TreeStateType,
 ) {
 
     const handleAdd: HandleAddSubject = (
-        inputText: string,
-        notable: boolean | undefined,
-        dateStartR: boolean | undefined,
-        dateEndR: boolean | undefined,
-        boss: boolean | undefined,
-        location: boolean | undefined,
-        other: boolean | undefined,
+        inputText,
+        notable,
+        dateStartR,
+        dateEndR,
+        boss,
+        location,
+        other,
+        composite,
+        reoccurring,
     ) => {
         const node = TreeContextManager.createSubject(inputText, profileID, {
             notable: notable,
@@ -31,6 +33,8 @@ export default function subjectsHandlers(tree: TreeStateType,
             boss: boss,
             location: location,
             other: other,
+            composite: composite,
+            reoccurring: reoccurring,
         });
 
         // memory data structures

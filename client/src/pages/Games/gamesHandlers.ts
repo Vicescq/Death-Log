@@ -23,9 +23,9 @@ export default function gamesHandlers(
     setURLMap: URLMapContextType[1]
 ) {
     const handleAdd: HandleAddGame = (
-        inputText: string,
-        dateStartR: boolean | undefined,
-        dateEndR: boolean | undefined,
+        inputText,
+        dateStartR,
+        dateEndR,
     ) => {
 
         const node = TreeContextManager.createGame(inputText, tree, {
