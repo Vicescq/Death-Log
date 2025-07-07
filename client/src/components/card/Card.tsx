@@ -15,9 +15,7 @@ import {
 	createModalState,
 	createModalUtilityButtons,
 } from "../modals/modalUtils";
-import type {
-	ModalListItemDistinctState,
-} from "../modals/ModalListItemStateTypes";
+import type { ModalListItemDistinctState } from "../modals/ModalListItemStateTypes";
 import { createCardCSS, generateCardDeathCounts } from "./cardUtils";
 import cardHandlers from "./cardHandlers";
 
@@ -48,21 +46,18 @@ export default function Card({
 	const [modalState, setModalState] = useState(createModalState(modalSchema));
 	const modalRef = useRef<HTMLDialogElement | null>(null);
 	const [resetDeathTypeMode, setResetDeathTypeMode] = useState(false);
-	
+
 	const deathType: DeathType = resetDeathTypeMode ? "resets" : "fullTries";
-	const {
-		cardCSS,
-		readOnlyToggleCSS,
-		resetToggleCSS,
-		settersBtnDisplay,
-		readOnlyEnabledCSS,
-	} = createCardCSS(treeNode, resetDeathTypeMode);
+
+	const { cardCSS, settersCSS, highlightingCSS, resetToggleHighlightingCSS } =
+		createCardCSS(treeNode, resetDeathTypeMode);
+
 	const { deathCount, fullTries, resets } = generateCardDeathCounts(
 		treeNode,
 		tree,
 	);
 
-	const {handleInputEditChange} = cardHandlers(modalState, setModalState);
+	const { handleInputEditChange } = cardHandlers(modalState, setModalState);
 
 	// fixed "bug" where state persists to next card in line if some card got deleted
 	useEffect(() => {
@@ -90,7 +85,7 @@ export default function Card({
 				{!(treeNode.type == "subject") ? (
 					<NavLink to={`/death-log/${treeNode.path}`}>
 						<img
-							className={`w-9 ${readOnlyEnabledCSS}`}
+							className={`w-9 ${highlightingCSS}`}
 							src={step_into}
 							alt=""
 						/>
@@ -98,13 +93,13 @@ export default function Card({
 				) : (
 					<>
 						<img
-							className={`w-9 cursor-pointer ${settersBtnDisplay}`}
+							className={`w-9 cursor-pointer ${settersCSS}`}
 							src={add}
 							alt=""
 							onClick={() => handleDeathCount!(deathType, "add")}
 						/>
 						<img
-							className={`w-9 cursor-pointer ${settersBtnDisplay}`}
+							className={`w-9 cursor-pointer ${settersCSS}`}
 							src={minus}
 							alt=""
 							onClick={() =>
@@ -112,7 +107,7 @@ export default function Card({
 							}
 						/>
 						<img
-							className={`w-9 cursor-pointer ${settersBtnDisplay} ${resetToggleCSS}`}
+							className={`w-9 cursor-pointer ${settersCSS} ${resetToggleHighlightingCSS}`}
 							src={reset}
 							alt=""
 							onClick={() => {
@@ -122,13 +117,13 @@ export default function Card({
 					</>
 				)}
 				<img
-					className={`w-9 cursor-pointer ${readOnlyEnabledCSS}`}
+					className={`w-9 cursor-pointer ${highlightingCSS}`}
 					src={details}
 					alt=""
 					onClick={() => modalRef.current!.showModal()}
 				/>
 				<img
-					className={`w-9 cursor-pointer ${readOnlyToggleCSS}`}
+					className={`w-9 cursor-pointer ${highlightingCSS}`}
 					src={readonly}
 					alt=""
 					onClick={() => {
