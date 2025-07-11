@@ -5,7 +5,7 @@ export default class IndexedDBService {
     constructor() { }
 
     static async addNode(node: DistinctTreeNode, email: string) {
-        await db.nodes.add({ email: email, node_id: node.id, node: node });
+        await db.nodes.add({ email: email, node_id: node.id, node: node, created_at: new Date().toISOString() });
     }
 
     static async deleteNode(ids: string[]) {
@@ -23,7 +23,7 @@ export default class IndexedDBService {
     }
 
     static async addURL(node: TangibleTreeNodeParent, email: string) {
-        await db.urlMappings.add({ node_id: node.id, email: email, mapping: { path: node.path, node_id: node.id } });
+        await db.urlMappings.add({ node_id: node.id, email: email, mapping: { path: node.path, node_id: node.id }, created_at: new Date().toISOString() });
     }
 
     static async deleteURLS(ids: string[]) {
