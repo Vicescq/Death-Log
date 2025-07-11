@@ -1,6 +1,5 @@
 import type { TreeStateType } from "../../contexts/treeContext";
 import { sanitizeTreeNodeEntry } from "../../features/treeUtils";
-import { isSubjectContext } from "../../utils/general";
 import type {
 	ModalListItemDistinctState,
 	ModalListItemToggleState,
@@ -37,9 +36,6 @@ export default function addItemCardHandlers(
 
 		modalState.forEach((state) => {
 			if (state.type == "toggle") {
-				if (state.toggleSetting == "notable" && !state.enable) {
-					notable = false;
-				}
 				if (state.toggleSetting == "dateStartR" && !state.enable) {
 					dateStartR = false;
 				}
@@ -78,7 +74,6 @@ export default function addItemCardHandlers(
 			case "Subject":
 				handleAdd(
 					inputText,
-					notable,
 					dateStartR,
 					dateEndR,
 					boss,
@@ -97,27 +92,13 @@ export default function addItemCardHandlers(
 			index
 		] as ModalListItemToggleState; // assume its a toggle state to remove ts errors
 
-		if (!isSubjectContext(newModalToggleState.toggleSetting)) {
-			newModalToggleState = {
-				...newModalToggleState,
-				enable: !newModalToggleState.enable,
-			} as ModalListItemToggleState;
-			newModalState[index] = newModalToggleState;
-		}
 
-		else {
-			// hardcoded positions! last index == other, 2nd last == location, 3rd last == boss
-			for (let i = newModalState.length - 1; i > newModalState.length - 4; i--) {
-				let toggleState = newModalState[i] as ModalListItemToggleState;
-				if (index == i && !toggleState.enable) {
-					toggleState = { ...toggleState, enable: true };
-				}
-				else if (index != i && toggleState.enable) {
-					toggleState = { ...toggleState, enable: false };
-				}
-				newModalState[i] = toggleState;
-			}
-		}
+		newModalToggleState = {
+			...newModalToggleState,
+			enable: !newModalToggleState.enable,
+		} as ModalListItemToggleState;
+		newModalState[index] = newModalToggleState;
+
 		setModalState(newModalState);
 
 	}

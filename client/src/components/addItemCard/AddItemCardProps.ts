@@ -13,7 +13,6 @@ export type HandleAddProfile = (
 ) => void;
 export type HandleAddSubject = (
     inputText: string,
-    notable: boolean | undefined,
     dateStartR: boolean | undefined,
     dateEndR: boolean | undefined,
     boss: boolean | undefined,

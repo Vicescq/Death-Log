@@ -1,8 +1,9 @@
+import type { OptionDataValue } from "../SelectDropDown";
 import type { InputEditTargetField } from "./ModalListItemInputEdit";
 import type { ToggleSetting } from "./ModalListItemToggle";
 
-export type ModalListItemType = "inputEdit" | "toggle"
-export type ModalListItemDistinctState = ModalListItemInputEditState | ModalListItemToggleState;
+export type ModalListItemType = "inputEdit" | "toggle" | "dropDown"
+export type ModalListItemDistinctState = ModalListItemInputEditState | ModalListItemToggleState | ModalListItemDropDownState;
 
 export interface ModalListItemState {
     type: ModalListItemType
@@ -21,3 +22,7 @@ export interface ModalListItemToggleState extends ModalListItemState {
     enable: boolean;
 }
 
+export interface ModalListItemDropDownState extends ModalListItemState {
+    type: "dropDown";
+    selected: OptionDataValue;
+}

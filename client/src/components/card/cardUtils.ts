@@ -16,47 +16,27 @@ export function createCardCSS(
         reoccurringCSS = "hidden";
     }
 
-
     const cardCSSConfig = {
         default: "bg-zomp text-black",
         completed: "bg-raisinblack text-amber-200",
-        unotable: "bg-amber-500 text-black",
         composite: "bg-cyan-800 text-black",
         reoccurring: "bg-lime-300 text-black",
     }
 
-    let cardCSS = "";
+    let cardCSS = cardCSSConfig.default;
 
     if (treeNode.type == "subject") {
-        if (!treeNode.notable && !treeNode.completed) {
-            cardCSS = cardCSSConfig.unotable;
-        }
-        else if (treeNode.composite && !treeNode.completed) {
+        if (treeNode.composite) {
             cardCSS = cardCSSConfig.composite;
         }
         else if (treeNode.reoccurring) {
             cardCSS = cardCSSConfig.reoccurring;
         }
-        else {
-            if (!treeNode.completed) {
-                cardCSS = cardCSSConfig.default;
-            }
-            if (treeNode.completed) {
-                cardCSS = cardCSSConfig.completed;
-            }
-        }
     }
 
-    else {
-        if (!treeNode.completed) {
-            cardCSS = cardCSSConfig.default;
-        }
-        if (treeNode.completed) {
-            cardCSS = cardCSSConfig.completed;
-        }
+    if (treeNode.completed) {
+        cardCSS = cardCSSConfig.completed;
     }
-
-
 
     return { cardCSS, settersCSS, highlightingCSS, resetToggleHighlightingCSS, reoccurringCSS }
 }

@@ -1,22 +1,11 @@
-import { Link } from "react-router";
 import type { ModalListItemToggleState } from "./ModalListItemStateTypes";
 import Toggle from "../Toggle";
 
 export type ToggleSetting =
-	| "notable"
-	| "boss"
-	| "location"
-	| "other"
 	| "dateStartR"
 	| "dateEndR"
 	| "composite"
 	| "reoccurring";
-
-export const ToggleSettingSubjectContexts = [
-	"boss",
-	"location",
-	"other",
-] as const;
 
 type Props = {
 	state: ModalListItemToggleState;

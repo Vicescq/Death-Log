@@ -154,7 +154,6 @@ export default class TreeContextManager {
             notes: null,
             dateStart: new Date().toISOString(),
             dateEnd: null,
-            notable: true,
             fullTries: 0,
             resets: 0,
             boss: true,

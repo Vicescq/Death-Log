@@ -4,6 +4,7 @@ import ModalListItemInputEdit, {
 } from "./ModalListItemInputEdit";
 import type {
 	ModalListItemDistinctState,
+	ModalListItemDropDownState,
 	ModalListItemInputEditState,
 	ModalListItemToggleState,
 } from "./ModalListItemStateTypes";
@@ -40,12 +41,12 @@ export function createModalState(modalSchema: ModalSchema) {
 					"dateEndR",
 					true,
 				),
-				createModalListItemToggleState("Notable", "notable", true),
 				createModalListItemToggleState("Composite", "composite", false),
-				createModalListItemToggleState("Reoccurring", "reoccurring", false),
-				createModalListItemToggleState("Boss", "boss", true),
-				createModalListItemToggleState("Location", "location", false),
-				createModalListItemToggleState("Other", "other", false),
+				createModalListItemToggleState(
+					"Reoccurring",
+					"reoccurring",
+					false,
+				),
 			);
 			break;
 		case "Card-Home":
@@ -71,7 +72,7 @@ export function createModalState(modalSchema: ModalSchema) {
 }
 
 export function createModalListItems(
-	modalState: (ModalListItemInputEditState | ModalListItemToggleState)[],
+	modalState: ModalListItemDistinctState[],
 	handleToggle?: (index: number) => void,
 	handleInputEditChange?: (inputText: string, index: number) => void,
 ) {

@@ -40,7 +40,6 @@ export type Profile = TangibleTreeNodeParent & {
 
 export type Subject = TangibleTreeNode & {
     type: "subject"
-    notable: boolean,
     fullTries: number,
     resets: number,
 

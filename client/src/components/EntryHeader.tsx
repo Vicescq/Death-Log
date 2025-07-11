@@ -1,7 +1,9 @@
-export default function EntryHeader(){
-    return(
-    <header className="sm:text-8xl text-6xl underline text-amber-200 m-auto">
-        DeathLog
-    </header>
-    )
+import SelectDropDown from "./SelectDropDown";
+
+export default function EntryHeader() {
+	return (
+		<header className="m-auto text-6xl text-amber-200 underline sm:text-8xl">
+			DeathLog
+		</header>
+	);
 }

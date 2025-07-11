@@ -1,4 +1,3 @@
-import { isSubjectContext } from "../utils/general";
 import type { ToggleSetting } from "./modals/ModalListItemToggle";
 
 type Props = {
@@ -9,15 +8,7 @@ type Props = {
 
 export default function Toggle({ enable, setting, handleToggle }: Props) {
 	const circleMovement = enable ? "translate-x-4" : null;
-	let circleCSS =
-		isSubjectContext(setting) && enable
-			? "bg-black"
-			: "bg-white";
 	let bgCSS = enable ? "bg-blue-700" : "bg-gray-700";
-
-	if (isSubjectContext(setting)) {
-		bgCSS = enable ? "bg-red-600" : "bg-gray-900";
-	}
 
 	return (
 		<button
@@ -25,7 +16,7 @@ export default function Toggle({ enable, setting, handleToggle }: Props) {
 			onClick={() => handleToggle()}
 		>
 			<div
-				className={`${circleMovement} h-4 w-4 transform rounded-full ${circleCSS} transition duration-300 ease-in-out`}
+				className={`${circleMovement} h-4 w-4 transform rounded-full bg-white transition duration-300 ease-in-out`}
 			></div>
 		</button>
 	);

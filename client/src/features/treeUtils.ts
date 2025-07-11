@@ -33,13 +33,12 @@ export function sortChildIDS(parentNode: TreeNode, tree: TreeStateType) {
         let result = 0;
 
         function applyWeights(node: DistinctTreeNode) {
-            // unnotable -> notable -> completed
-
+            // non complete-> completed
             let weight = 0;
             if (node.completed) {
                 weight = -100;
             }
-            else if (node.type == "subject" && !node.notable) {
+            else {
                 weight = 100;
             }
             return weight;

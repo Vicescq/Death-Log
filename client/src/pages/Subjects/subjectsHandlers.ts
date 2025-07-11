@@ -17,7 +17,6 @@ export default function subjectsHandlers(tree: TreeStateType,
 
     const handleAdd: HandleAddSubject = (
         inputText,
-        notable,
         dateStartR,
         dateEndR,
         boss,
@@ -27,7 +26,6 @@ export default function subjectsHandlers(tree: TreeStateType,
         reoccurring,
     ) => {
         const node = TreeContextManager.createSubject(inputText, profileID, {
-            notable: notable,
             dateStartR: dateStartR,
             dateEndR: dateEndR,
             boss: boss,
