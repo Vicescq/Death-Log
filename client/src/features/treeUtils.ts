@@ -6,7 +6,7 @@ export function sanitizeTreeNodeEntry(inputText: string, tree: TreeStateType, pa
     if (inputText.includes("?") || inputText == "") {
         throw new Error("Invalid symbols are found!");
     }
-    if(!isNodeNameUnique(tree, parentID, inputText)){
+    if (!isNodeNameUnique(tree, parentID, inputText)) {
         throw new Error("Name has to be unique!")
     }
 
@@ -33,13 +33,15 @@ export function sortChildIDS(parentNode: TreeNode, tree: TreeStateType) {
         let result = 0;
 
         function applyWeights(node: DistinctTreeNode) {
-            // unnotable -> notable -> completed unnotable -> completed notable 
+            // unnotable -> notable -> completed
 
             let weight = 0;
-            if (node.type == "subject") {
-                weight += !node.notable ? 100 : 0;
+            if (node.completed) {
+                weight = -100;
             }
-            weight += !node.completed ? 1 : -100;
+            else if (node.type == "subject" && !node.notable) {
+                weight = 100;
+            }
             return weight;
         }
 
@@ -120,7 +122,7 @@ export function getDeaths(node: DistinctTreeNode, tree: TreeStateType, mode: Dea
     return count;
 }
 
-export function isNodeNameUnique(tree: TreeStateType, parentID: string, name: string){
+export function isNodeNameUnique(tree: TreeStateType, parentID: string, name: string) {
     const siblingNames: string[] = tree.get(parentID)!.childIDS.map((id) => {
         const distinctNode = tree.get(id)! as DistinctTreeNode;
         return distinctNode.name;

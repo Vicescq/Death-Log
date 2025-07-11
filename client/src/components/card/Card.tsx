@@ -49,7 +49,7 @@ export default function Card({
 
 	const deathType: DeathType = resetDeathTypeMode ? "resets" : "fullTries";
 
-	const { cardCSS, settersCSS, highlightingCSS, resetToggleHighlightingCSS } =
+	const { cardCSS, settersCSS, highlightingCSS, resetToggleHighlightingCSS, reoccurringCSS } =
 		createCardCSS(treeNode, resetDeathTypeMode);
 
 	const { deathCount, fullTries, resets } = generateCardDeathCounts(
@@ -123,7 +123,7 @@ export default function Card({
 					onClick={() => modalRef.current!.showModal()}
 				/>
 				<img
-					className={`w-9 cursor-pointer ${highlightingCSS}`}
+					className={`w-9 cursor-pointer ${highlightingCSS} ${reoccurringCSS}`}
 					src={readonly}
 					alt=""
 					onClick={() => {
