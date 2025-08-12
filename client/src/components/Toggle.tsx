@@ -3,10 +3,9 @@ import type { ToggleSetting } from "./modals/ModalListItemToggle";
 type Props = {
 	enable: boolean;
 	handleToggle: () => void;
-	setting: ToggleSetting;
 };
 
-export default function Toggle({ enable, setting, handleToggle }: Props) {
+export default function Toggle({ enable, handleToggle }: Props) {
 	const circleMovement = enable ? "translate-x-4" : null;
 	let bgCSS = enable ? "bg-blue-700" : "bg-gray-700";
 

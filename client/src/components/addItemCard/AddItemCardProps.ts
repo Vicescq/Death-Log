@@ -24,9 +24,6 @@ export type HandleAddSubject = (
 
 export interface AddItemCardProps {
     pageType: AddItemCardPageType;
-    modalSchema: ModalSchema;
-    handleAdd: HandleAddTypes
-    tree: TreeStateType
     parentID: string
 }
 

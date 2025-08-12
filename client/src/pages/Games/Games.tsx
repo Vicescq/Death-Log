@@ -43,9 +43,6 @@ export default function Games() {
 		<>
 			<AddItemCard
 				pageType="Game"
-				modalSchema={"AddItemCard-Home"}
-				handleAdd={handleAdd}
-				tree={tree}
 				parentID="ROOT_NODE"
 			/>
 

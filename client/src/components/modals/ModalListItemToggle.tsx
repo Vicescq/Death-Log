@@ -20,7 +20,6 @@ export default function ModalListItemToggle({ state, handleToggle }: Props) {
 			<div className="ml-auto">
 				<Toggle
 					enable={state.enable}
-					setting={state.toggleSetting}
 					handleToggle={handleToggle}
 				/>
 			</div>
