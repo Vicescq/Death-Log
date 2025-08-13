@@ -43,7 +43,7 @@ export default function Games() {
 		<>
 			<AddItemCard
 				pageType="Game"
-				parentID="ROOT_NODE"
+				handleAdd={handleAdd}
 			/>
 
 			<CardWrapper cards={createCards()} />

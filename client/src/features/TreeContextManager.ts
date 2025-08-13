@@ -104,7 +104,6 @@ export default class TreeContextManager {
             dateStartR: true,
             dateEndR: true,
         };
-        deleteUndefinedValues(overrides);
         return {
             ...defaultGame,
             ...overrides

@@ -1,4 +1,4 @@
-import type { HandleAddProfile } from "../../components/addItemCard/AddItemCardProps";
+import type { HandleAddProfile } from "../../components/addItemCard/AddItemCardTypes";
 import type { HistoryStateType, HistoryContextType } from "../../contexts/historyContext";
 import type { TreeStateType, TreeContextType } from "../../contexts/treeContext";
 import type { URLMapContextType, URLMapStateType } from "../../contexts/urlMapContext";

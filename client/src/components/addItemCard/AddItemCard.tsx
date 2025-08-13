@@ -2,39 +2,54 @@ import { useEffect, useRef, useState } from "react";
 import gear from "../../assets/gear.svg";
 import filter from "../../assets/filter.svg";
 import Modal from "../modals/Modal";
-import type { AddItemCardProps } from "./AddItemCardProps";
-import AddItemCardModalBody from "./AddItemCardModalBody";
+import type {
+	AddItemCardPageType,
+	HandleAddGame,
+	HandleAddProfile,
+	HandleAddSubject,
+	HandleAddTypes,
+} from "./AddItemCardTypes";
+import AddItemCardModalBody, {
+	type AddItemCardModalBodyState,
+} from "./AddItemCardModalBody";
 
-export default function AddItemCard({
-	pageType,
-	parentID
-}: AddItemCardProps) {
-	// const [modalState, setModalState] = useState(createModalState(modalSchema));
-	// const [inputText, setInputText] = useState("");
-	
-	// const [alert, setAlert] = useState<Alert>({msg: "No alerts.", isAlert: false});
-	// const alertModalRef = useRef<HTMLDialogElement>(null);
+type Props = {
+	pageType: AddItemCardPageType;
+	handleAdd: HandleAddTypes;
+};
 
-	const modalState = useState()
+export default function AddItemCard({ pageType, handleAdd }: Props) {
+	const [settingState, setSettingState] = useState<AddItemCardModalBodyState>(
+		{
+			"Reliable Date (Start)": true,
+			"Reliable Date (End)": true,
+		},
+	);
 	const modalRef = useRef<HTMLDialogElement>(null);
-	
 
-	// const { handleAddWrapper, handleToggle } = addItemCardHandlers(
-	// 	modalState,
-	// 	handleAdd,
-	// 	pageType,
-	// 	inputText,
-	// 	setModalState,
-	// 	tree,
-	// 	parentID
-	// );
+	function handleAddWrapper() {
+		switch (pageType) {
+			case "Game":
+				const handleAddGame = handleAdd as HandleAddGame;
+				handleAddGame(params)
+				break;
+			case "Profile":
+				const handleAddProfile = handleAdd as HandleAddProfile;
+				break;
+			case "Subject":
+				const handleAddSubject = handleAdd as HandleAddSubject;
+				break;
+		}
+	}
 
-	// useEffect(() => {
-	// 	if (alert.isAlert){
-	// 		alertModalRef.current?.showModal();
-	// 		console.log(alert)
-	// 	}
-	// }, [alert]);
+	function handleModalToggle(
+		addItemCardModalBodyStateKey: keyof AddItemCardModalBodyState,
+	) {
+		const settingStateShallow = { ...settingState };
+		settingStateShallow[addItemCardModalBodyStateKey] =
+			!settingStateShallow[addItemCardModalBodyStateKey];
+		setSettingState(settingStateShallow);
+	}
 
 	return (
 		<header className="mb-8 flex w-full flex-col gap-4 border-b-4 bg-amber-200 p-4 text-black md:w-xl md:border-4 md:border-black md:shadow-[8px_5px_0px_rgba(0,0,0,1)]">
@@ -42,7 +57,6 @@ export default function AddItemCard({
 				<input
 					type="search"
 					className="w-full rounded-xl border-2 p-1 shadow-[8px_5px_0px_rgba(0,0,0,1)]"
-					// onChange={(e) => setInputText(e.target.value)}
 				/>
 				<button className="bg-zomp ml-auto border-4 text-2xl font-bold shadow-[4px_2px_0px_rgba(0,0,0,1)]">
 					<img
@@ -55,15 +69,8 @@ export default function AddItemCard({
 			</div>
 			<div className="flex gap-4">
 				<button
+					onClick={() => true}
 					className="bg-zomp w-full rounded-2xl border-4 text-2xl font-bold shadow-[4px_2px_0px_rgba(0,0,0,1)]"
-					// onClick={() => {
-					// 	try{
-					// 		handleAddWrapper();
-					// 	}
-					// 	catch(e: any){
-					// 		setAlert({msg: e.message, isAlert: true})
-					// 	}
-					// }}
 				>
 					Add {pageType}
 				</button>
@@ -73,7 +80,13 @@ export default function AddItemCard({
 			</div>
 			<Modal
 				modalRef={modalRef}
-				modalBody={<AddItemCardModalBody itemState={{"Date Reliability (Start)": true, "Date Reliability (End)": true}}/>}
+				modalBody={
+					<AddItemCardModalBody
+						settingState={settingState}
+						handleModalToggle={handleModalToggle}
+						pageType={pageType}
+					/>
+				}
 			/>
 		</header>
 	);

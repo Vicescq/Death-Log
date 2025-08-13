@@ -1,4 +1,4 @@
-import type { HandleAddGame } from "../../components/addItemCard/AddItemCardProps";
+import type { HandleAddGame } from "../../components/addItemCard/AddItemCardTypes";
 import type {
     HistoryContextType,
     HistoryStateType,
@@ -13,6 +13,7 @@ import TreeContextManager from "../../features/TreeContextManager";
 import URLMapContextManager from "../../features/URLMapContextManager";
 import type { Game, TangibleTreeNodeParent } from "../../model/TreeNodeModel";
 import IndexedDBService from "../../services/IndexedDBService";
+import { deleteUndefinedValues } from "../../utils/general";
 
 export default function gamesHandlers(
     tree: TreeStateType,
@@ -27,11 +28,9 @@ export default function gamesHandlers(
         dateStartR,
         dateEndR,
     ) => {
-
-        const node = TreeContextManager.createGame(inputText, tree, {
-            dateStartR: dateStartR,
-            dateEndR: dateEndR,
-        });
+        const overrides = { dateStartR, dateEndR };
+        deleteUndefinedValues(overrides);
+        const node = TreeContextManager.createGame(inputText, tree, overrides);
 
         // memory data structures
         const { updatedTree: updatedTreeIP, action } = TreeContextManager.addNode(
