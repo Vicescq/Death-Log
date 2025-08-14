@@ -48,7 +48,7 @@ export type Subject = TangibleTreeNode & {
     compositeRelations: string[],
 
     // these 3 contexts are mutually exclusive
-    boss: boolean,
-    location: boolean,
-    other: boolean
+    // boss: boolean,
+    // location: boolean,
+    // other: boolean
 }

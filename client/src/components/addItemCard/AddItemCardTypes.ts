@@ -2,25 +2,32 @@ import type { Game, Profile, Subject } from "../../model/TreeNodeModel";
 
 export type HandleAddGame = (
     inputText: string,
-    dateStartR?: boolean,
-    dateEndR?: boolean,
+    overrides: Partial<Game>
 ) => void;
 export type HandleAddProfile = (
     inputText: string,
-    dateStartR?: boolean,
-    dateEndR?: boolean,
+    overrides: Partial<Profile>
 ) => void;
 export type HandleAddSubject = (
     inputText: string,
-    dateStartR?: boolean,
-    dateEndR?: boolean,
-    boss?: boolean,
-    location?: boolean,
-    other?: boolean,
-    composite?: boolean,
-    reoccurring?: boolean,
+    overrides: Partial<Subject>
 ) => void;
 
-export type HandleAddTypes = HandleAddGame | HandleAddProfile | HandleAddSubject;
-export type AddItemCardPageType = "Game" | "Profile" | "Subject"; 
-export type HandleAddTrioParams = Partial<Game> | Partial<Profile> | Partial<Subject>
+type x = Partial<Subject>
+
+export type AddItemCardModalStateGame = {
+    dateStartR: boolean,
+    dateEndR: boolean
+}
+
+export type AddItemCardModalStateProfile = {
+    dateStartR: boolean,
+    dateEndR: boolean
+}
+
+export type AddItemCardModalStateSubject = {
+    dateStartR: boolean,
+    dateEndR: boolean,
+    reoccuring: boolean,
+    composite: boolean
+}

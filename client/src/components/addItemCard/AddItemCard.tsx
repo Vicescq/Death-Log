@@ -3,52 +3,69 @@ import gear from "../../assets/gear.svg";
 import filter from "../../assets/filter.svg";
 import Modal from "../modals/Modal";
 import type {
-	AddItemCardPageType,
+	AddItemCardModalStateGame,
+	AddItemCardModalStateProfile,
+	AddItemCardModalStateSubject,
 	HandleAddGame,
 	HandleAddProfile,
 	HandleAddSubject,
-	HandleAddTypes,
 } from "./AddItemCardTypes";
-import AddItemCardModalBody, {
-	type AddItemCardModalBodyState,
-} from "./AddItemCardModalBody";
+import AddItemCardModalBody from "./AddItemCardModalBody";
 
-type Props = {
-	pageType: AddItemCardPageType;
-	handleAdd: HandleAddTypes;
+type GameProps = {
+	pageType: "Game";
+	handleAdd: HandleAddGame;
 };
 
+type ProfileProps = {
+	pageType: "Profile";
+	handleAdd: HandleAddProfile;
+};
+
+type SubjectProps = {
+	pageType: "Subject";
+	handleAdd: HandleAddSubject;
+};
+
+type Props = GameProps | ProfileProps | SubjectProps;
+
 export default function AddItemCard({ pageType, handleAdd }: Props) {
-	const [settingState, setSettingState] = useState<AddItemCardModalBodyState>(
-		{
-			"Reliable Date (Start)": true,
-			"Reliable Date (End)": true,
-		},
-	);
+	const [inputText, setInputText] = useState("");
+
+	const [addItemCardGameModalState, setAddItemCardGameModalState] =
+		useState<AddItemCardModalStateGame>({
+			dateStartR: true,
+			dateEndR: true,
+		});
+
+	const [addItemCardProfileModalState, setAddItemCardProfileModalState] =
+		useState<AddItemCardModalStateProfile>({
+			dateStartR: true,
+			dateEndR: true,
+		});
+
+	const [addItemCardSubjectModalState, setAddItemCardSubjectModalState] =
+		useState<AddItemCardModalStateSubject>({
+			dateStartR: true,
+			dateEndR: true,
+			reoccuring: false,
+			composite: false,
+		});
+
 	const modalRef = useRef<HTMLDialogElement>(null);
 
 	function handleAddWrapper() {
 		switch (pageType) {
 			case "Game":
-				const handleAddGame = handleAdd as HandleAddGame;
-				handleAddGame(params)
+				handleAdd(inputText, {});
 				break;
 			case "Profile":
-				const handleAddProfile = handleAdd as HandleAddProfile;
+				handleAdd(inputText, {});
 				break;
 			case "Subject":
-				const handleAddSubject = handleAdd as HandleAddSubject;
+				handleAdd(inputText, {});
 				break;
 		}
-	}
-
-	function handleModalToggle(
-		addItemCardModalBodyStateKey: keyof AddItemCardModalBodyState,
-	) {
-		const settingStateShallow = { ...settingState };
-		settingStateShallow[addItemCardModalBodyStateKey] =
-			!settingStateShallow[addItemCardModalBodyStateKey];
-		setSettingState(settingStateShallow);
 	}
 
 	return (
@@ -69,7 +86,7 @@ export default function AddItemCard({ pageType, handleAdd }: Props) {
 			</div>
 			<div className="flex gap-4">
 				<button
-					onClick={() => true}
+					onClick={() => handleAddWrapper()}
 					className="bg-zomp w-full rounded-2xl border-4 text-2xl font-bold shadow-[4px_2px_0px_rgba(0,0,0,1)]"
 				>
 					Add {pageType}
@@ -81,11 +98,40 @@ export default function AddItemCard({ pageType, handleAdd }: Props) {
 			<Modal
 				modalRef={modalRef}
 				modalBody={
-					<AddItemCardModalBody
-						settingState={settingState}
-						handleModalToggle={handleModalToggle}
-						pageType={pageType}
-					/>
+					pageType == "Game" ? (
+						<AddItemCardModalBody
+							pageType={pageType}
+							state={addItemCardGameModalState}
+							handleModalToggle={(key) =>
+								setAddItemCardGameModalState((prev) => ({
+									...prev,
+									[key]: !prev[key],
+								}))
+							}
+						/>
+					) : pageType == "Profile" ? (
+						<AddItemCardModalBody
+							pageType={pageType}
+							state={addItemCardProfileModalState}
+							handleModalToggle={(key) =>
+								setAddItemCardProfileModalState((prev) => ({
+									...prev,
+									[key]: !prev[key],
+								}))
+							}
+						/>
+					) : (
+						<AddItemCardModalBody
+							pageType={pageType}
+							state={addItemCardSubjectModalState}
+							handleModalToggle={(key) =>
+								setAddItemCardSubjectModalState((prev) => ({
+									...prev,
+									[key]: !prev[key],
+								}))
+							}
+						/>
+					)
 				}
 			/>
 		</header>

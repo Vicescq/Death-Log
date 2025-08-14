@@ -1,35 +1,52 @@
 import Toggle from "../Toggle";
-import type { AddItemCardPageType } from "./AddItemCardTypes";
+import type {
+	AddItemCardModalStateGame,
+	AddItemCardModalStateProfile,
+	AddItemCardModalStateSubject,
+} from "./AddItemCardTypes";
 
-export type AddItemCardModalBodyState = {
-	"Reliable Date (Start)": boolean,
-	"Reliable Date (End)": boolean,
-}
-
-type Props = {
-	settingState: AddItemCardModalBodyState,
-	handleModalToggle: (addItemCardModalBodyStateKey: keyof AddItemCardModalBodyState) => void,
-	pageType: AddItemCardPageType
+type GameProps = {
+	pageType: "Game";
+	state: AddItemCardModalStateGame;
+	handleModalToggle: (key: keyof AddItemCardModalStateGame) => void;
 };
 
-export default function AddItemCardModalBody({settingState, handleModalToggle, pageType}: Props) {
+type ProfileProps = {
+	pageType: "Profile";
+	state: AddItemCardModalStateProfile;
+	handleModalToggle: (key: keyof AddItemCardModalStateProfile) => void;
+};
+
+type SubjectProps = {
+	pageType: "Subject";
+	state: AddItemCardModalStateSubject;
+	handleModalToggle: (key: keyof AddItemCardModalStateSubject) => void
+};
+
+type Props = GameProps | ProfileProps | SubjectProps;
+
+export default function AddItemCardModalBody({
+	handleModalToggle,
+	state
+}: Props) {
+	
 	return (
 		<ul className="flex flex-col gap-2">
+			
 			<li className="flex gap-2">
 				<span className="mr-auto">Reliable Date (Start)</span>
-				<Toggle 
-					enable={settingState["Reliable Date (Start)"]}
-					handleToggle={() => handleModalToggle("Reliable Date (Start)")}
+				<Toggle
+					enable={state["dateStartR"]}
+					handleToggle={() => handleModalToggle("dateStartR")}
 				/>
 			</li>
-            <li className="flex gap-2">
+			<li className="flex gap-2">
 				<span className="mr-auto">Reliable Date (End)</span>
 				<Toggle
-					enable={settingState["Reliable Date (End)"]}
-					handleToggle={() => handleModalToggle("Reliable Date (End)")}
+					enable={state["dateEndR"]}
+					handleToggle={() => handleModalToggle("dateEndR")}
 				/>
 			</li>
 		</ul>
 	);
 }
- 
