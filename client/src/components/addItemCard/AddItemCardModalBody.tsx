@@ -1,9 +1,9 @@
 import Toggle from "../Toggle";
 import type {
-	AddItemCardModalStateGame,
-	AddItemCardModalStateProfile,
-	AddItemCardModalStateSubject,
-} from "./AddItemCardTypes";
+    AddItemCardModalStateGame,
+    AddItemCardModalStateProfile,
+    AddItemCardModalStateSubject
+} from "../Modal";
 
 type GameProps = {
 	pageType: "Game";

@@ -8,56 +8,70 @@ import reset from "../../assets/reset.svg";
 import readonly from "../../assets/readonly.svg";
 import type { TreeStateType } from "../../contexts/treeContext";
 import { useEffect, useRef, useState } from "react";
-import Modal, { type ModalSchema } from "../modals/Modal";
 import type { DeathType, DistinctTreeNode } from "../../model/TreeNodeModel";
-import {
-	createModalListItems,
-	createModalState,
-	createModalUtilityButtons,
-} from "../modals/modalUtils";
-import type { ModalListItemDistinctState } from "../modals/ModalListItemStateTypes";
 import { createCardCSS, generateCardDeathCounts } from "./cardUtils";
-import cardHandlers from "./cardHandlers";
-
-export type HandleDeathCountOperation = "add" | "subtract";
+import CardModalBody from "./CardModalBody";
+import Modal, {
+	type CardModalStateGame,
+	type CardModalStateProfile,
+	type CardModalStateSubject,
+} from "../Modal";
 
 type Props = {
-	tree: TreeStateType;
+	pageType: "Game" | "Profile" | "Subject";
 	treeNode: DistinctTreeNode;
-	handleDeathCount?: (
-		deathType: DeathType,
-		operation: HandleDeathCountOperation,
-	) => void;
-	handleCompletedStatus?: (newStatus: boolean) => void;
-	handleDelete: () => void;
-	modalSchema: ModalSchema;
-	handleDetailsEdit?: (modalState: ModalListItemDistinctState[]) => void;
+	tree: TreeStateType;
 };
 
-export default function Card({
-	tree,
-	treeNode,
-	handleDeathCount,
-	handleCompletedStatus,
-	handleDelete,
-	modalSchema,
-	handleDetailsEdit,
-}: Props) {
-	const [modalState, setModalState] = useState(createModalState(modalSchema));
+export default function Card({ pageType, treeNode, tree }: Props) {
 	const modalRef = useRef<HTMLDialogElement | null>(null);
 	const [resetDeathTypeMode, setResetDeathTypeMode] = useState(false);
 
+	const [cardModalStateGame, setCardModalStateGame] =
+		useState<CardModalStateGame>({
+			dateStartR: true,
+			dateEndR: true,
+		});
+
+	const [cardModalStateProfile, setCardModalStateProfile] =
+		useState<CardModalStateProfile>({
+			dateStartR: true,
+			dateEndR: true,
+		});
+
+	const [cardModalStateSubject, setCardModalStateSubject] =
+		useState<CardModalStateSubject>({
+			dateStartR: true,
+			dateEndR: true,
+			reoccuring: false,
+			composite: false,
+		});
+
 	const deathType: DeathType = resetDeathTypeMode ? "resets" : "fullTries";
 
-	const { cardCSS, settersCSS, highlightingCSS, resetToggleHighlightingCSS, reoccurringCSS } =
-		createCardCSS(treeNode, resetDeathTypeMode);
+	const {
+		cardCSS,
+		settersCSS,
+		highlightingCSS,
+		resetToggleHighlightingCSS,
+		reoccurringCSS,
+	} = createCardCSS(treeNode, resetDeathTypeMode);
 
 	const { deathCount, fullTries, resets } = generateCardDeathCounts(
 		treeNode,
 		tree,
 	);
 
-	const { handleInputEditChange } = cardHandlers(modalState, setModalState);
+	function handleInputEditChange(inputText: string, index: number) {
+		// const modalStateCopy = [...modalState];
+		// modalStateCopy[index] = { ...modalStateCopy[index] };
+		// const inputEditState = modalStateCopy[
+		//     index
+		// ] as ModalListItemInputEditState;
+		// inputEditState.change = inputText;
+		// modalStateCopy[index] = inputEditState;
+		// setModalState(modalStateCopy);
+	}
 
 	// fixed "bug" where state persists to next card in line if some card got deleted
 	useEffect(() => {
@@ -96,23 +110,23 @@ export default function Card({
 							className={`w-9 cursor-pointer ${settersCSS}`}
 							src={add}
 							alt=""
-							onClick={() => handleDeathCount!(deathType, "add")}
+							// onClick={() => handleDeathCount!(deathType, "add")}
 						/>
 						<img
 							className={`w-9 cursor-pointer ${settersCSS}`}
 							src={minus}
 							alt=""
-							onClick={() =>
-								handleDeathCount!(deathType, "subtract")
-							}
+							// onClick={() =>
+							// 	handleDeathCount!(deathType, "subtract")
+							// }
 						/>
 						<img
 							className={`w-9 cursor-pointer ${settersCSS} ${resetToggleHighlightingCSS}`}
 							src={reset}
 							alt=""
-							onClick={() => {
-								setResetDeathTypeMode((prev) => !prev);
-							}}
+							// onClick={() => {
+							// 	setResetDeathTypeMode((prev) => !prev);
+							// }}
 						/>
 					</>
 				)}
@@ -126,24 +140,49 @@ export default function Card({
 					className={`w-9 cursor-pointer ${highlightingCSS} ${reoccurringCSS}`}
 					src={readonly}
 					alt=""
-					onClick={() => {
-						handleCompletedStatus!(!treeNode.completed);
-					}}
+					// onClick={() => {
+					// 	handleCompletedStatus!(!treeNode.completed);
+					// }}
 				/>
 			</div>
 			<Modal
 				modalRef={modalRef}
-				modalListItems={createModalListItems(
-					modalState,
-					undefined,
-					handleInputEditChange,
-				)}
-				modalUtilityBtns={createModalUtilityButtons(
-					modalSchema,
-					modalRef,
-					handleDelete,
-					() => handleDetailsEdit!(modalState),
-				)}
+				modalBody={
+					pageType == "Game" ? (
+						<CardModalBody
+							pageType={pageType}
+							state={cardModalStateGame}
+							handleModalToggle={(key) =>
+								setCardModalStateGame((prev) => ({
+									...prev,
+									[key]: !prev[key],
+								}))
+							}
+						/>
+					) : pageType == "Profile" ? (
+						<CardModalBody
+							pageType={pageType}
+							state={cardModalStateProfile}
+							handleModalToggle={(key) =>
+								setCardModalStateProfile((prev) => ({
+									...prev,
+									[key]: !prev[key],
+								}))
+							}
+						/>
+					) : (
+						<CardModalBody
+							pageType={pageType}
+							state={cardModalStateSubject}
+							handleModalToggle={(key) =>
+								setCardModalStateSubject((prev) => ({
+									...prev,
+									[key]: !prev[key],
+								}))
+							}
+						/>
+					)
+				}
 			/>
 		</div>
 	);

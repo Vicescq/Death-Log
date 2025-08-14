@@ -1,5 +1,6 @@
 export type TreeNodeType = "game" | "profile" | "subject" | "ROOT_NODE";
 export type DeathType = "both" | "fullTries" | "resets";
+export type DeathCountOperation = "add" | "subtract";
 
 export type TreeNode = {
     type: TreeNodeType,
@@ -52,3 +53,4 @@ export type Subject = TangibleTreeNode & {
     // location: boolean,
     // other: boolean
 }
+

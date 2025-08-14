@@ -12,22 +12,3 @@ export type HandleAddSubject = (
     inputText: string,
     overrides: Partial<Subject>
 ) => void;
-
-type x = Partial<Subject>
-
-export type AddItemCardModalStateGame = {
-    dateStartR: boolean,
-    dateEndR: boolean
-}
-
-export type AddItemCardModalStateProfile = {
-    dateStartR: boolean,
-    dateEndR: boolean
-}
-
-export type AddItemCardModalStateSubject = {
-    dateStartR: boolean,
-    dateEndR: boolean,
-    reoccuring: boolean,
-    composite: boolean
-}

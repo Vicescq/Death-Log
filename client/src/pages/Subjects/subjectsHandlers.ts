@@ -1,5 +1,5 @@
 import type { HandleAddSubject } from "../../components/addItemCard/AddItemCardTypes";
-import type { HandleDeathCountOperation } from "../../components/card/Card";
+import type { DeathCountOperation } from "../../model/TreeNodeModel";
 import type { ModalListItemDistinctState } from "../../components/modals/ModalListItemStateTypes";
 import type { HistoryStateType, HistoryContextType } from "../../contexts/historyContext";
 import type { TreeStateType, TreeContextType } from "../../contexts/treeContext";
@@ -82,7 +82,7 @@ export default function subjectsHandlers(tree: TreeStateType,
     function handleDeathCount(
         subject: Subject,
         deathType: DeathType,
-        operation: HandleDeathCountOperation,
+        operation: DeathCountOperation,
     ) {
         let updatedSubject: Subject = { ...subject };
         if (operation == "add") {

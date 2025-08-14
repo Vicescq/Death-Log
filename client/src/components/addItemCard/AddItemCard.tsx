@@ -1,15 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 import gear from "../../assets/gear.svg";
 import filter from "../../assets/filter.svg";
-import Modal from "../modals/Modal";
+import Modal from "../Modal";
 import type {
-	AddItemCardModalStateGame,
-	AddItemCardModalStateProfile,
-	AddItemCardModalStateSubject,
 	HandleAddGame,
 	HandleAddProfile,
 	HandleAddSubject,
 } from "./AddItemCardTypes";
+import type {
+    AddItemCardModalStateGame,
+    AddItemCardModalStateProfile,
+    AddItemCardModalStateSubject
+} from "../Modal";
 import AddItemCardModalBody from "./AddItemCardModalBody";
 
 type GameProps = {

@@ -131,11 +131,7 @@ export default function Games() {
 					key={index}
 					tree={tree}
 					treeNode={game}
-					handleCompletedStatus={(newStatus) =>
-						handleCompletedStatus(game, newStatus)
-					}
-					modalSchema={"Card-Home"}
-					handleDelete={() => handleDelete(game)}
+					pageType="Game"
 				/>
 			);
 		});
