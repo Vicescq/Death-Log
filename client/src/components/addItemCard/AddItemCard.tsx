@@ -57,13 +57,13 @@ export default function AddItemCard({ pageType, handleAdd }: Props) {
 	function handleAddWrapper() {
 		switch (pageType) {
 			case "Game":
-				handleAdd(inputText, {});
+				handleAdd(inputText, addItemCardGameModalState);
 				break;
 			case "Profile":
-				handleAdd(inputText, {});
+				handleAdd(inputText, addItemCardProfileModalState);
 				break;
 			case "Subject":
-				handleAdd(inputText, {});
+				handleAdd(inputText, addItemCardSubjectModalState);
 				break;
 		}
 	}
@@ -74,6 +74,7 @@ export default function AddItemCard({ pageType, handleAdd }: Props) {
 				<input
 					type="search"
 					className="w-full rounded-xl border-2 p-1 shadow-[8px_5px_0px_rgba(0,0,0,1)]"
+					onChange={(e) => setInputText(e.target.value)}
 				/>
 				<button className="bg-zomp ml-auto border-4 text-2xl font-bold shadow-[4px_2px_0px_rgba(0,0,0,1)]">
 					<img

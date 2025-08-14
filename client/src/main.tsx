@@ -8,7 +8,7 @@ import {
 	HashRouter,
 } from "react-router";
 import "./index.css";
-import Games from "./pages/Games/Games.tsx";
+import Games from "./pages/Games.tsx";
 import { ErrorBoundary } from "react-error-boundary";
 import ErrorPage, { ForceError } from "./pages/ErrorPage.tsx";
 import Root from "./pages/Root.tsx";
