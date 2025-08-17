@@ -6,19 +6,19 @@ import type {
 } from "../Modal";
 
 type GameProps = {
-	pageType: "Game";
+	pageType: "game";
 	state: AddItemCardModalStateGame;
 	handleModalToggle: (key: keyof AddItemCardModalStateGame) => void;
 };
 
 type ProfileProps = {
-	pageType: "Profile";
+	pageType: "profile";
 	state: AddItemCardModalStateProfile;
 	handleModalToggle: (key: keyof AddItemCardModalStateProfile) => void;
 };
 
 type SubjectProps = {
-	pageType: "Subject";
+	pageType: "subject";
 	state: AddItemCardModalStateSubject;
 	handleModalToggle: (key: keyof AddItemCardModalStateSubject) => void
 };

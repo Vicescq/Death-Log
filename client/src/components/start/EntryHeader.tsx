@@ -1,4 +1,4 @@
-import SelectDropDown from "./SelectDropDown";
+import SelectDropDown from "../SelectDropDown";
 
 export default function EntryHeader() {
 	return (

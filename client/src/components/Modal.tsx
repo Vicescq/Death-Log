@@ -1,6 +1,7 @@
 type Props = {
 	modalRef: React.RefObject<HTMLDialogElement | null>;
 	modalBody: React.JSX.Element;
+	handleEditedCardModal?: (clickedBtn: "SAVE" | "CLOSE") => void;
 };
 
 export type AddItemCardModalStateGame = {
@@ -21,23 +22,30 @@ export type AddItemCardModalStateSubject = {
 };
 
 export type CardModalStateGame = {
+	name: string;
 	dateStartR: boolean;
 	dateEndR: boolean;
 };
 
 export type CardModalStateProfile = {
+	name: string;
 	dateStartR: boolean;
 	dateEndR: boolean;
 };
 
 export type CardModalStateSubject = {
+	name: string;
 	dateStartR: boolean;
 	dateEndR: boolean;
 	reoccuring: boolean;
 	composite: boolean;
 };
 
-export default function Modal({ modalRef, modalBody }: Props) {
+export default function Modal({
+	modalRef,
+	modalBody,
+	handleEditedCardModal,
+}: Props) {
 	return (
 		<dialog
 			ref={modalRef}
@@ -47,7 +55,10 @@ export default function Modal({ modalRef, modalBody }: Props) {
 				{modalBody}
 				<button
 					className="rounded-2xl border-4 bg-red-500 p-2 font-bold shadow-[4px_4px_0px_rgba(0,0,0,1)]"
-					onClick={() => modalRef.current?.close()!}
+					onClick={() => {
+						handleEditedCardModal?.("CLOSE");
+						modalRef.current?.close()!;
+					}}
 				>
 					CLOSE
 				</button>

@@ -1,6 +1,6 @@
 
-import EntryHeader from "../components/EntryHeader";
-import SignIn from "../components/SignIn";
+import EntryHeader from "../components/start/EntryHeader";
+import SignIn from "../components/start/SignIn";
 
 export default function Start() {
 	return (

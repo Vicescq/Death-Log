@@ -1,7 +1,11 @@
 import Card from "../components/card/Card";
 import AddItemCard from "../components/addItemCard/AddItemCard";
 import CardWrapper from "../components/card/CardWrapper";
-import type { Game, TangibleTreeNodeParent } from "../model/TreeNodeModel";
+import type {
+	DistinctTreeNode,
+	Game,
+	TangibleTreeNodeParent,
+} from "../model/TreeNodeModel";
 import useMainPageContexts from "../hooks/useMainPageContexts";
 import HistoryContextManager from "../features/HistoryContextManager";
 import TreeContextManager from "../features/TreeContextManager";
@@ -20,8 +24,8 @@ export default function Games() {
 		setUser,
 	} = useMainPageContexts();
 
-	function handleAdd(inputText: string, overrides: Partial<Game>){
-		console.log(overrides)
+	function handleAdd(inputText: string, overrides: Partial<Game>) {
+		console.log(overrides);
 		const node = TreeContextManager.createGame(inputText, tree, overrides);
 
 		// memory data structures
@@ -59,9 +63,9 @@ export default function Games() {
 		setTree(updatedTree);
 		setURLMap(updatedURLMap);
 		setHistory(updatedHistory);
-	};
+	}
 
-	function handleDelete(node: Game) {
+	function handleDelete(node: DistinctTreeNode) {
 		const bool = window.confirm();
 		if (bool) {
 			// memory data structures
@@ -95,12 +99,12 @@ export default function Games() {
 		}
 	}
 
-	function handleCompletedStatus(game: Game, newStatus: boolean) {
+	function handleCompletedStatus(node: DistinctTreeNode, newStatus: boolean) {
 		// memory data structures
 		const { updatedTree: updatedTreeIP, action } =
-			TreeContextManager.updateNodeCompletion(game, newStatus, tree);
+			TreeContextManager.updateNodeCompletion(node, newStatus, tree);
 		const { updatedTree } = TreeContextManager.updateNodeParent(
-			game,
+			node,
 			updatedTreeIP,
 			"update",
 		);
@@ -121,6 +125,7 @@ export default function Games() {
 
 		setTree(updatedTree);
 		setHistory(updatedHistory);
+		console.log("dsadasdsaasdasdsadasdas")
 	}
 
 	function createCards() {
@@ -131,7 +136,8 @@ export default function Games() {
 					key={index}
 					tree={tree}
 					treeNode={game}
-					pageType="Game"
+					handleDelete={handleDelete}
+					handleCompletedStatus={() => handleCompletedStatus(game, !game.completed)}
 				/>
 			);
 		});
@@ -141,7 +147,7 @@ export default function Games() {
 
 	return (
 		<>
-			<AddItemCard pageType="Game" handleAdd={handleAdd} />
+			<AddItemCard pageType="game" handleAdd={handleAdd} />
 
 			<CardWrapper cards={createCards()} />
 		</>

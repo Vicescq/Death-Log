@@ -8,44 +8,41 @@ import reset from "../../assets/reset.svg";
 import readonly from "../../assets/readonly.svg";
 import type { TreeStateType } from "../../contexts/treeContext";
 import { useEffect, useRef, useState } from "react";
-import type { DeathType, DistinctTreeNode } from "../../model/TreeNodeModel";
-import { createCardCSS, generateCardDeathCounts } from "./cardUtils";
+import type {
+	DeathType,
+	DistinctTreeNode,
+} from "../../model/TreeNodeModel";
+import {
+	createCardCSS,
+	createCardModalGameState,
+	createCardModalProfileState,
+	createCardModalSubjectState,
+	generateCardDeathCounts,
+} from "./cardUtils";
 import CardModalBody from "./CardModalBody";
 import Modal, {
 	type CardModalStateGame,
 	type CardModalStateProfile,
 	type CardModalStateSubject,
 } from "../Modal";
+import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
 
 type Props = {
-	pageType: "Game" | "Profile" | "Subject";
 	treeNode: DistinctTreeNode;
 	tree: TreeStateType;
+	handleDelete: (node: DistinctTreeNode) => void;
+	handleCompletedStatus: () => void;
 };
 
-export default function Card({ pageType, treeNode, tree }: Props) {
+export default function Card({
+	treeNode,
+	tree,
+	handleDelete,
+	handleCompletedStatus,
+}: Props) {
 	const modalRef = useRef<HTMLDialogElement | null>(null);
+	const [editedModalState, setEditedModalState] = useState(false);
 	const [resetDeathTypeMode, setResetDeathTypeMode] = useState(false);
-
-	const [cardModalStateGame, setCardModalStateGame] =
-		useState<CardModalStateGame>({
-			dateStartR: true,
-			dateEndR: true,
-		});
-
-	const [cardModalStateProfile, setCardModalStateProfile] =
-		useState<CardModalStateProfile>({
-			dateStartR: true,
-			dateEndR: true,
-		});
-
-	const [cardModalStateSubject, setCardModalStateSubject] =
-		useState<CardModalStateSubject>({
-			dateStartR: true,
-			dateEndR: true,
-			reoccuring: false,
-			composite: false,
-		});
 
 	const deathType: DeathType = resetDeathTypeMode ? "resets" : "fullTries";
 
@@ -62,15 +59,78 @@ export default function Card({ pageType, treeNode, tree }: Props) {
 		tree,
 	);
 
-	function handleInputEditChange(inputText: string, index: number) {
-		// const modalStateCopy = [...modalState];
-		// modalStateCopy[index] = { ...modalStateCopy[index] };
-		// const inputEditState = modalStateCopy[
-		//     index
-		// ] as ModalListItemInputEditState;
-		// inputEditState.change = inputText;
-		// modalStateCopy[index] = inputEditState;
-		// setModalState(modalStateCopy);
+	let cardModalState: React.JSX.Element;
+	if (treeNode.type == "game") {
+		const [cardModalStateGame, setCardModalStateGame] =
+			useState<CardModalStateGame>(createCardModalGameState(treeNode));
+		cardModalState = (
+			<CardModalBody
+				pageType={treeNode.type}
+				state={cardModalStateGame}
+				handleModalToggle={(key) => {
+					setCardModalStateGame((prev) => ({
+						...prev,
+						[key]: !prev[key],
+					}));
+					setEditedModalState(true);
+				}}
+				handleDelete={() => {
+					handleDelete(treeNode);
+					modalRef.current?.close();
+				}}
+				handleEditedCardModal={handleEditedCardModal}
+			/>
+		);
+	} else if (treeNode.type == "profile") {
+		const [cardModalStateProfile, setCardModalStateProfile] =
+			useState<CardModalStateProfile>(createCardModalProfileState(treeNode));
+		cardModalState = (
+			<CardModalBody
+				pageType={treeNode.type}
+				state={cardModalStateProfile}
+				handleModalToggle={(key) => {
+					setCardModalStateProfile((prev) => ({
+						...prev,
+						[key]: !prev[key],
+					}));
+					setEditedModalState(true);
+				}}
+				handleDelete={() => {
+					handleDelete(treeNode);
+					modalRef.current?.close();
+				}}
+				handleEditedCardModal={handleEditedCardModal}
+			/>
+		);
+	} else {
+		const [cardModalStateSubject, setCardModalStateSubject] =
+			useState<CardModalStateSubject>(createCardModalSubjectState(treeNode));
+		cardModalState = (
+			<CardModalBody
+				pageType={treeNode.type}
+				state={cardModalStateSubject}
+				handleModalToggle={(key) => {
+					setCardModalStateSubject((prev) => ({
+						...prev,
+						[key]: !prev[key],
+					}));
+					setEditedModalState(true);
+				}}
+				handleDelete={() => {
+					handleDelete(treeNode);
+					modalRef.current?.close();
+				}}
+				handleEditedCardModal={handleEditedCardModal}
+			/>
+		);
+	}
+
+	function handleEditedCardModal(clickedBtn: "SAVE" | "CLOSE") {
+		if (editedModalState && clickedBtn == "CLOSE") {
+			
+		} else if (clickedBtn == "SAVE") {
+			setEditedModalState(false);
+		}
 	}
 
 	// fixed "bug" where state persists to next card in line if some card got deleted
@@ -134,56 +194,16 @@ export default function Card({ pageType, treeNode, tree }: Props) {
 					className={`w-9 cursor-pointer ${highlightingCSS}`}
 					src={details}
 					alt=""
-					onClick={() => modalRef.current!.showModal()}
+					onClick={() => modalRef.current?.showModal()}
 				/>
 				<img
 					className={`w-9 cursor-pointer ${highlightingCSS} ${reoccurringCSS}`}
 					src={readonly}
 					alt=""
-					// onClick={() => {
-					// 	handleCompletedStatus!(!treeNode.completed);
-					// }}
+					onClick={handleCompletedStatus}
 				/>
 			</div>
-			<Modal
-				modalRef={modalRef}
-				modalBody={
-					pageType == "Game" ? (
-						<CardModalBody
-							pageType={pageType}
-							state={cardModalStateGame}
-							handleModalToggle={(key) =>
-								setCardModalStateGame((prev) => ({
-									...prev,
-									[key]: !prev[key],
-								}))
-							}
-						/>
-					) : pageType == "Profile" ? (
-						<CardModalBody
-							pageType={pageType}
-							state={cardModalStateProfile}
-							handleModalToggle={(key) =>
-								setCardModalStateProfile((prev) => ({
-									...prev,
-									[key]: !prev[key],
-								}))
-							}
-						/>
-					) : (
-						<CardModalBody
-							pageType={pageType}
-							state={cardModalStateSubject}
-							handleModalToggle={(key) =>
-								setCardModalStateSubject((prev) => ({
-									...prev,
-									[key]: !prev[key],
-								}))
-							}
-						/>
-					)
-				}
-			/>
+			<Modal modalRef={modalRef} modalBody={cardModalState} />
 		</div>
 	);
 }

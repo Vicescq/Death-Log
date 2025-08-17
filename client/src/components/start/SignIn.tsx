@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { auth } from "../firebase-config";
+import { auth } from "../../firebase-config";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import APIService from "../services/APIService";
-import IndexedDBService from "../services/IndexedDBService";
-import useUserContext from "../contexts/useUserContext";
+import APIService from "../../services/APIService";
+import IndexedDBService from "../../services/IndexedDBService";
+import useUserContext from "../../contexts/useUserContext";
 import { useNavigate } from "react-router";
-import useTreeContext from "../contexts/useTreeContext";
-import useURLMapContext from "../contexts/useURLMapContext";
+import useTreeContext from "../../contexts/useTreeContext";
+import useURLMapContext from "../../contexts/useURLMapContext";
 
 export default function SignIn() {
 	const navigate = useNavigate();
