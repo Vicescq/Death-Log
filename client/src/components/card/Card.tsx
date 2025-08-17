@@ -8,10 +8,7 @@ import reset from "../../assets/reset.svg";
 import readonly from "../../assets/readonly.svg";
 import type { TreeStateType } from "../../contexts/treeContext";
 import { useEffect, useRef, useState } from "react";
-import type {
-	DeathType,
-	DistinctTreeNode,
-} from "../../model/TreeNodeModel";
+import type { DeathType, DistinctTreeNode } from "../../model/TreeNodeModel";
 import {
 	createCardCSS,
 	createCardModalGameState,
@@ -60,6 +57,7 @@ export default function Card({
 	);
 
 	let cardModalState: React.JSX.Element;
+	let handleEditedCardModal: () => void;
 	if (treeNode.type == "game") {
 		const [cardModalStateGame, setCardModalStateGame] =
 			useState<CardModalStateGame>(createCardModalGameState(treeNode));
@@ -78,12 +76,22 @@ export default function Card({
 					handleDelete(treeNode);
 					modalRef.current?.close();
 				}}
-				handleEditedCardModal={handleEditedCardModal}
+				handleEditedCardModal={() => {
+					setEditedModalState(false);
+				}}
 			/>
 		);
+		handleEditedCardModal = () => {
+			editedModalState
+				? setCardModalStateGame(createCardModalGameState(treeNode))
+				: null;
+			setEditedModalState(false);
+		};
 	} else if (treeNode.type == "profile") {
 		const [cardModalStateProfile, setCardModalStateProfile] =
-			useState<CardModalStateProfile>(createCardModalProfileState(treeNode));
+			useState<CardModalStateProfile>(
+				createCardModalProfileState(treeNode),
+			);
 		cardModalState = (
 			<CardModalBody
 				pageType={treeNode.type}
@@ -99,12 +107,24 @@ export default function Card({
 					handleDelete(treeNode);
 					modalRef.current?.close();
 				}}
-				handleEditedCardModal={handleEditedCardModal}
+				handleEditedCardModal={() => {
+					setEditedModalState(false);
+				}}
 			/>
 		);
+		handleEditedCardModal = () => {
+			editedModalState
+				? setCardModalStateProfile(
+						createCardModalProfileState(treeNode),
+					)
+				: null;
+			setEditedModalState(false);
+		};
 	} else {
 		const [cardModalStateSubject, setCardModalStateSubject] =
-			useState<CardModalStateSubject>(createCardModalSubjectState(treeNode));
+			useState<CardModalStateSubject>(
+				createCardModalSubjectState(treeNode),
+			);
 		cardModalState = (
 			<CardModalBody
 				pageType={treeNode.type}
@@ -120,17 +140,19 @@ export default function Card({
 					handleDelete(treeNode);
 					modalRef.current?.close();
 				}}
-				handleEditedCardModal={handleEditedCardModal}
+				handleEditedCardModal={() => {
+					setEditedModalState(false);
+				}}
 			/>
 		);
-	}
-
-	function handleEditedCardModal(clickedBtn: "SAVE" | "CLOSE") {
-		if (editedModalState && clickedBtn == "CLOSE") {
-			
-		} else if (clickedBtn == "SAVE") {
+		handleEditedCardModal = () => {
+			editedModalState
+				? setCardModalStateSubject(
+						createCardModalSubjectState(treeNode),
+					)
+				: null;
 			setEditedModalState(false);
-		}
+		};
 	}
 
 	// fixed "bug" where state persists to next card in line if some card got deleted
@@ -203,7 +225,11 @@ export default function Card({
 					onClick={handleCompletedStatus}
 				/>
 			</div>
-			<Modal modalRef={modalRef} modalBody={cardModalState} />
+			<Modal
+				modalRef={modalRef}
+				modalBody={cardModalState}
+				handleEditedCardModal={handleEditedCardModal}
+			/>
 		</div>
 	);
 }
