@@ -1,11 +1,7 @@
 import Card from "../components/card/Card";
 import AddItemCard from "../components/addItemCard/AddItemCard";
 import CardWrapper from "../components/card/CardWrapper";
-import type {
-	DistinctTreeNode,
-	Game,
-	TangibleTreeNodeParent,
-} from "../model/TreeNodeModel";
+import type { DistinctTreeNode, Game } from "../model/TreeNodeModel";
 import useMainPageContexts from "../hooks/useMainPageContexts";
 import HistoryContextManager from "../features/HistoryContextManager";
 import TreeContextManager from "../features/TreeContextManager";
@@ -36,10 +32,9 @@ export default function Games() {
 			updatedTreeIP,
 			"add",
 		);
-		const tangibleParentNode = action.targets as TangibleTreeNodeParent;
 		const updatedURLMap = URLMapContextManager.addURL(
 			urlMap,
-			tangibleParentNode,
+			action.targets,
 		);
 		const updatedHistory = HistoryContextManager.updateActionHistory(
 			history,
@@ -53,7 +48,7 @@ export default function Games() {
 				localStorage.getItem("email")!,
 			);
 			IndexedDBService.addURL(
-				tangibleParentNode,
+				action.targets,
 				localStorage.getItem("email")!,
 			);
 		} catch (error) {
@@ -99,6 +94,35 @@ export default function Games() {
 		}
 	}
 
+	function handleEdit(node: DistinctTreeNode, overrides: Partial<Game>) {
+		if (node.type == "game") {
+			const editedNode = TreeContextManager.createGame(node.name, tree, {
+				...overrides,
+			});
+
+			// in memory
+			const { updatedTree: updatedTreeIP, action: actionUpdateSelf } =
+				TreeContextManager.updateNode(tree, editedNode);
+			const { updatedTree: updatedTree, action: actionUpdateParent } =
+				TreeContextManager.updateNodeParent(
+					editedNode,
+					updatedTreeIP,
+					"update",
+				);
+			const updatedHistory = HistoryContextManager.updateActionHistory(
+				history,
+				[actionUpdateSelf, actionUpdateParent],
+			);
+
+			// db's
+
+			setTree(updatedTree);
+			setHistory(updatedHistory);
+		} else {
+			throw new Error("DEV ERROR!");
+		}
+	}
+
 	function handleCompletedStatus(node: DistinctTreeNode, newStatus: boolean) {
 		// memory data structures
 		const { updatedTree: updatedTreeIP, action } =
@@ -125,7 +149,7 @@ export default function Games() {
 
 		setTree(updatedTree);
 		setHistory(updatedHistory);
-		console.log("dsadasdsaasdasdsadasdas")
+		console.log("dsadasdsaasdasdsadasdas");
 	}
 
 	function createCards() {
@@ -135,9 +159,12 @@ export default function Games() {
 				<Card
 					key={index}
 					tree={tree}
-					treeNode={game}
+					node={game}
 					handleDelete={handleDelete}
-					handleCompletedStatus={() => handleCompletedStatus(game, !game.completed)}
+					handleCompletedStatus={() =>
+						handleCompletedStatus(game, !game.completed)
+					}
+					handleEdit={(overrides) => handleEdit(game, overrides)}
 				/>
 			);
 		});

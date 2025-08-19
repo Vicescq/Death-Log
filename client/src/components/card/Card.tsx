@@ -8,7 +8,7 @@ import reset from "../../assets/reset.svg";
 import readonly from "../../assets/readonly.svg";
 import type { TreeStateType } from "../../contexts/treeContext";
 import { useEffect, useRef, useState } from "react";
-import type { DeathType, DistinctTreeNode } from "../../model/TreeNodeModel";
+import type { DeathType, DistinctTreeNode, Game, Profile, Subject } from "../../model/TreeNodeModel";
 import {
 	createCardCSS,
 	createCardModalGameState,
@@ -24,19 +24,30 @@ import Modal, {
 } from "../Modal";
 import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
 
+type GameProps = {
+	node: Game;
+	tree: TreeStateType;
+	handleDelete: (node: Game) => void;
+	handleCompletedStatus: () => void;
+	handleEdit: (overrides: Partial<Game>) => void;
+}
+
 type Props = {
-	treeNode: DistinctTreeNode;
+	node: DistinctTreeNode;
 	tree: TreeStateType;
 	handleDelete: (node: DistinctTreeNode) => void;
 	handleCompletedStatus: () => void;
+	handleEdit: (overrides: Partial<DistinctTreeNode>) => void;
 };
 
 export default function Card({
-	treeNode,
+	node,
 	tree,
 	handleDelete,
 	handleCompletedStatus,
+	handleEdit
 }: Props) {
+	
 	const modalRef = useRef<HTMLDialogElement | null>(null);
 	const [editedModalState, setEditedModalState] = useState(false);
 	const [resetDeathTypeMode, setResetDeathTypeMode] = useState(false);
@@ -49,21 +60,22 @@ export default function Card({
 		highlightingCSS,
 		resetToggleHighlightingCSS,
 		reoccurringCSS,
-	} = createCardCSS(treeNode, resetDeathTypeMode);
+	} = createCardCSS(node, resetDeathTypeMode);
 
 	const { deathCount, fullTries, resets } = generateCardDeathCounts(
-		treeNode,
+		node,
 		tree,
 	);
 
 	let cardModalState: React.JSX.Element;
 	let handleEditedCardModal: () => void;
-	if (treeNode.type == "game") {
+	if (node.type == "game") {
+		
 		const [cardModalStateGame, setCardModalStateGame] =
-			useState<CardModalStateGame>(createCardModalGameState(treeNode));
+			useState<CardModalStateGame>(createCardModalGameState(node));
 		cardModalState = (
 			<CardModalBody
-				pageType={treeNode.type}
+				pageType={node.type}
 				state={cardModalStateGame}
 				handleModalToggle={(key) => {
 					setCardModalStateGame((prev) => ({
@@ -73,28 +85,29 @@ export default function Card({
 					setEditedModalState(true);
 				}}
 				handleDelete={() => {
-					handleDelete(treeNode);
+					handleDelete(node);
 					modalRef.current?.close();
 				}}
 				handleEditedCardModal={() => {
 					setEditedModalState(false);
 				}}
+				handleEdit={handleEdit}
 			/>
 		);
 		handleEditedCardModal = () => {
 			editedModalState
-				? setCardModalStateGame(createCardModalGameState(treeNode))
+				? setCardModalStateGame(createCardModalGameState(node))
 				: null;
 			setEditedModalState(false);
 		};
-	} else if (treeNode.type == "profile") {
+	} else if (node.type == "profile") {
 		const [cardModalStateProfile, setCardModalStateProfile] =
 			useState<CardModalStateProfile>(
-				createCardModalProfileState(treeNode),
+				createCardModalProfileState(node),
 			);
 		cardModalState = (
 			<CardModalBody
-				pageType={treeNode.type}
+				pageType={node.type}
 				state={cardModalStateProfile}
 				handleModalToggle={(key) => {
 					setCardModalStateProfile((prev) => ({
@@ -104,18 +117,19 @@ export default function Card({
 					setEditedModalState(true);
 				}}
 				handleDelete={() => {
-					handleDelete(treeNode);
+					handleDelete(node);
 					modalRef.current?.close();
 				}}
 				handleEditedCardModal={() => {
 					setEditedModalState(false);
 				}}
+				handleEdit={handleEdit}
 			/>
 		);
 		handleEditedCardModal = () => {
 			editedModalState
 				? setCardModalStateProfile(
-						createCardModalProfileState(treeNode),
+						createCardModalProfileState(node),
 					)
 				: null;
 			setEditedModalState(false);
@@ -123,11 +137,11 @@ export default function Card({
 	} else {
 		const [cardModalStateSubject, setCardModalStateSubject] =
 			useState<CardModalStateSubject>(
-				createCardModalSubjectState(treeNode),
+				createCardModalSubjectState(node),
 			);
 		cardModalState = (
 			<CardModalBody
-				pageType={treeNode.type}
+				pageType={node.type}
 				state={cardModalStateSubject}
 				handleModalToggle={(key) => {
 					setCardModalStateSubject((prev) => ({
@@ -137,18 +151,19 @@ export default function Card({
 					setEditedModalState(true);
 				}}
 				handleDelete={() => {
-					handleDelete(treeNode);
+					handleDelete(node);
 					modalRef.current?.close();
 				}}
 				handleEditedCardModal={() => {
 					setEditedModalState(false);
 				}}
+				handleEdit={handleEdit}
 			/>
 		);
 		handleEditedCardModal = () => {
 			editedModalState
 				? setCardModalStateSubject(
-						createCardModalSubjectState(treeNode),
+						createCardModalSubjectState(node),
 					)
 				: null;
 			setEditedModalState(false);
@@ -158,7 +173,7 @@ export default function Card({
 	// fixed "bug" where state persists to next card in line if some card got deleted
 	useEffect(() => {
 		setResetDeathTypeMode(false);
-	}, [treeNode.id]);
+	}, [node.id]);
 
 	return (
 		<div
@@ -173,13 +188,13 @@ export default function Card({
 				</div>
 
 				<div className="mt-auto rounded-xl text-2xl">
-					<p className="line-clamp-4 break-words">{treeNode.name}</p>
+					<p className="line-clamp-4 break-words">{node.name}</p>
 				</div>
 			</div>
 
 			<div className="ml-auto flex flex-col gap-2">
-				{!(treeNode.type == "subject") ? (
-					<NavLink to={`/death-log/${treeNode.path}`}>
+				{!(node.type == "subject") ? (
+					<NavLink to={`/death-log/${node.path}`}>
 						<img
 							className={`w-9 ${highlightingCSS}`}
 							src={step_into}

@@ -1,5 +1,5 @@
 import type { URLMapStateType } from "../contexts/urlMapContext";
-import type { TangibleTreeNodeParent } from "../model/TreeNodeModel";
+import type { DistinctTreeNode } from "../model/TreeNodeModel";
 import { createShallowCopyMap } from "../utils/general";
 
 export default class URLMapContextManager {
@@ -13,7 +13,7 @@ export default class URLMapContextManager {
         return newURLMap;
     }
 
-    static addURL(urlMap: URLMapStateType, node: TangibleTreeNodeParent) {
+    static addURL(urlMap: URLMapStateType, node: DistinctTreeNode) {
         const urlMapCopy = createShallowCopyMap(urlMap);
         urlMapCopy.set(node.path, node.id);
         return urlMapCopy;

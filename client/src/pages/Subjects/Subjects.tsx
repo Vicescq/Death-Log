@@ -24,7 +24,7 @@ export default function Subjects({ profileID }: { profileID: string }) {
 				<Card
 					key={index}
 					tree={tree}
-					treeNode={subject}
+					node={subject}
 					handleDeathCount={(deathType, operation) =>
 						handleDeathCount(subject, deathType, operation)
 					}
@@ -44,8 +44,7 @@ export default function Subjects({ profileID }: { profileID: string }) {
 	return (
 		<>
 			<AddItemCard
-				pageType="Subject"
-				modalSchema={"AddItemCard-Subject"}
+				pageType="subject"
 				handleAdd={handleAdd}
 				tree={tree}
 				parentID={profileID}

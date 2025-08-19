@@ -4,39 +4,21 @@ type Props = {
 	handleEditedCardModal?: () => void;
 };
 
-export type AddItemCardModalStateGame = {
-	dateStartR: boolean;
-	dateEndR: boolean;
-};
-
-export type AddItemCardModalStateProfile = {
-	dateStartR: boolean;
-	dateEndR: boolean;
-};
-
 export type AddItemCardModalStateSubject = {
-	dateStartR: boolean;
-	dateEndR: boolean;
 	reoccuring: boolean;
 	composite: boolean;
 };
 
 export type CardModalStateGame = {
 	name: string;
-	dateStartR: boolean;
-	dateEndR: boolean;
 };
 
 export type CardModalStateProfile = {
 	name: string;
-	dateStartR: boolean;
-	dateEndR: boolean;
 };
 
 export type CardModalStateSubject = {
 	name: string;
-	dateStartR: boolean;
-	dateEndR: boolean;
 	reoccuring: boolean;
 	composite: boolean;
 };

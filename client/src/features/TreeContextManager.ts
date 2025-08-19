@@ -101,8 +101,6 @@ export default class TreeContextManager {
             dateStart: new Date().toISOString(),
             dateEnd: null,
             path: path,
-            dateStartR: true,
-            dateEndR: true,
         };
         return {
             ...defaultGame,
@@ -128,8 +126,6 @@ export default class TreeContextManager {
             dateStart: new Date().toISOString(),
             dateEnd: null,
             path: path,
-            dateStartR: true,
-            dateEndR: true,
         };
         deleteUndefinedValues(overrides);
         return {
@@ -155,11 +151,11 @@ export default class TreeContextManager {
             dateEnd: null,
             fullTries: 0,
             resets: 0,
-            dateStartR: true,
-            dateEndR: true,
             composite: false,
             compositeRelations: [],
             reoccurring: false,
+            path: "",
+            subjectContext: "boss"
         };
         deleteUndefinedValues(overrides);
         return {

@@ -1,51 +1,29 @@
 import Toggle from "../Toggle";
 import type {
-    AddItemCardModalStateGame,
-    AddItemCardModalStateProfile,
-    AddItemCardModalStateSubject
+	AddItemCardModalStateSubject,
 } from "../Modal";
+import SelectDropdown from "../SelectDropDown";
 
-type GameProps = {
-	pageType: "game";
-	state: AddItemCardModalStateGame;
-	handleModalToggle: (key: keyof AddItemCardModalStateGame) => void;
-};
-
-type ProfileProps = {
-	pageType: "profile";
-	state: AddItemCardModalStateProfile;
-	handleModalToggle: (key: keyof AddItemCardModalStateProfile) => void;
+type GameProfileProps = {
+	pageType: "gameORprofile"
+	state?: never;
+	handleModalToggle?: never
 };
 
 type SubjectProps = {
 	pageType: "subject";
 	state: AddItemCardModalStateSubject;
-	handleModalToggle: (key: keyof AddItemCardModalStateSubject) => void
+	handleModalToggle: (key: keyof AddItemCardModalStateSubject) => void;
 };
 
-type Props = GameProps | ProfileProps | SubjectProps;
+type Props = GameProfileProps | SubjectProps;
 
-export default function AddItemCardModalBody({
-	handleModalToggle,
-	state
-}: Props) {
-	
+export default function AddItemCardModalBody({ state }: Props) {
 	return (
 		<ul className="flex flex-col gap-2">
-			
-			<li className="flex gap-2">
-				<span className="mr-auto">Reliable Date (Start)</span>
-				<Toggle
-					enable={state["dateStartR"]}
-					handleToggle={() => handleModalToggle("dateStartR")}
-				/>
-			</li>
-			<li className="flex gap-2">
-				<span className="mr-auto">Reliable Date (End)</span>
-				<Toggle
-					enable={state["dateEndR"]}
-					handleToggle={() => handleModalToggle("dateEndR")}
-				/>
+			<li className="flex gap-2 items-center">
+				
+				
 			</li>
 		</ul>
 	);

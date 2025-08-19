@@ -7,11 +7,7 @@ import type {
 	HandleAddProfile,
 	HandleAddSubject,
 } from "./AddItemCardTypes";
-import type {
-	AddItemCardModalStateGame,
-	AddItemCardModalStateProfile,
-	AddItemCardModalStateSubject,
-} from "../Modal";
+import type { AddItemCardModalStateSubject } from "../Modal";
 import AddItemCardModalBody from "./AddItemCardModalBody";
 
 type GameProps = {
@@ -33,41 +29,38 @@ type Props = GameProps | ProfileProps | SubjectProps;
 
 export default function AddItemCard({ pageType, handleAdd }: Props) {
 	const [inputText, setInputText] = useState("");
-
-	const [addItemCardGameModalState, setAddItemCardGameModalState] =
-		useState<AddItemCardModalStateGame>({
-			dateStartR: true,
-			dateEndR: true,
-		});
-
-	const [addItemCardProfileModalState, setAddItemCardProfileModalState] =
-		useState<AddItemCardModalStateProfile>({
-			dateStartR: true,
-			dateEndR: true,
-		});
-
-	const [addItemCardSubjectModalState, setAddItemCardSubjectModalState] =
-		useState<AddItemCardModalStateSubject>({
-			dateStartR: true,
-			dateEndR: true,
-			reoccuring: false,
-			composite: false,
-		});
-
 	const modalRef = useRef<HTMLDialogElement>(null);
 
-	function handleAddWrapper() {
-		switch (pageType) {
-			case "game":
-				handleAdd(inputText, addItemCardGameModalState);
-				break;
-			case "profile":
-				handleAdd(inputText, addItemCardProfileModalState);
-				break;
-			case "subject":
-				handleAdd(inputText, addItemCardSubjectModalState);
-				break;
-		}
+	let addItemCardModalBody: React.JSX.Element;
+	let handleAddWrapper: () => void;
+	if (pageType == "game" || pageType == "profile") {
+		addItemCardModalBody = (
+			<AddItemCardModalBody pageType="gameORprofile" />
+		);
+		handleAddWrapper = () => {
+			handleAdd(inputText, {});
+		};
+	} else {
+		const [addItemCardSubjectModalState, setAddItemCardSubjectModalState] =
+			useState<AddItemCardModalStateSubject>({
+				reoccuring: false,
+				composite: false,
+			});
+		addItemCardModalBody = (
+			<AddItemCardModalBody
+				pageType="subject"
+				state={addItemCardSubjectModalState}
+				handleModalToggle={(key) =>
+					setAddItemCardSubjectModalState((prev) => ({
+						...prev,
+						[key]: !prev[key],
+					}))
+				}
+			/>
+		);
+		handleAddWrapper = () => {
+			handleAdd(inputText, addItemCardSubjectModalState);
+		};
 	}
 
 	return (
@@ -78,14 +71,21 @@ export default function AddItemCard({ pageType, handleAdd }: Props) {
 					className="w-full rounded-xl border-2 p-1 shadow-[8px_5px_0px_rgba(0,0,0,1)]"
 					onChange={(e) => setInputText(e.target.value)}
 				/>
-				<button className="bg-zomp ml-auto border-4 text-2xl font-bold shadow-[4px_2px_0px_rgba(0,0,0,1)]">
-					<img
-						src={gear}
-						alt=""
-						className="w-10"
-						onClick={() => modalRef.current?.showModal()}
-					/>
-				</button>
+
+				{pageType == "game" || pageType == "profile" ? (
+					<button className="bg-zomp ml-auto border-4 text-2xl font-bold shadow-[4px_2px_0px_rgba(0,0,0,1)]">
+						<img src={filter} alt="" className="w-10" />
+					</button>
+				) : (
+					<button className="bg-zomp ml-auto border-4 text-2xl font-bold shadow-[4px_2px_0px_rgba(0,0,0,1)]">
+						<img
+							src={gear}
+							alt=""
+							className="w-10"
+							onClick={() => modalRef.current?.showModal()}
+						/>
+					</button>
+				)}
 			</div>
 			<div className="flex gap-4">
 				<button
@@ -94,49 +94,13 @@ export default function AddItemCard({ pageType, handleAdd }: Props) {
 				>
 					Add {pageType}
 				</button>
-				<button className="bg-zomp ml-auto border-4 text-2xl font-bold shadow-[4px_2px_0px_rgba(0,0,0,1)]">
-					<img src={filter} alt="" className="w-10" />
-				</button>
+				{pageType == "subject" ? (
+					<button className="bg-zomp ml-auto border-4 text-2xl font-bold shadow-[4px_2px_0px_rgba(0,0,0,1)]">
+						<img src={filter} alt="" className="w-10" />
+					</button>
+				) : null}
 			</div>
-			<Modal
-				modalRef={modalRef}
-				modalBody={
-					pageType == "game" ? (
-						<AddItemCardModalBody
-							pageType={pageType}
-							state={addItemCardGameModalState}
-							handleModalToggle={(key) =>
-								setAddItemCardGameModalState((prev) => ({
-									...prev,
-									[key]: !prev[key],
-								}))
-							}
-						/>
-					) : pageType == "profile" ? (
-						<AddItemCardModalBody
-							pageType={pageType}
-							state={addItemCardProfileModalState}
-							handleModalToggle={(key) =>
-								setAddItemCardProfileModalState((prev) => ({
-									...prev,
-									[key]: !prev[key],
-								}))
-							}
-						/>
-					) : (
-						<AddItemCardModalBody
-							pageType={pageType}
-							state={addItemCardSubjectModalState}
-							handleModalToggle={(key) =>
-								setAddItemCardSubjectModalState((prev) => ({
-									...prev,
-									[key]: !prev[key],
-								}))
-							}
-						/>
-					)
-				}
-			/>
+			<Modal modalRef={modalRef} modalBody={addItemCardModalBody} />
 		</header>
 	);
 }

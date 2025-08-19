@@ -26,7 +26,7 @@ export default function Profiles({ gameID }: { gameID: string }) {
 				<Card
 					key={index}
 					tree={tree}
-					treeNode={profile}
+					node={profile}
 					handleCompletedStatus={(newStatus) =>
 						handleCompletedStatus(profile, newStatus)
 					}
@@ -40,7 +40,7 @@ export default function Profiles({ gameID }: { gameID: string }) {
 	return (
 		<>
 			<AddItemCard
-				pageType="Profile"
+				pageType="profile"
 				modalSchema={"AddItemCard-Profile"}
 				handleAdd={handleAdd}
 				tree={tree}
