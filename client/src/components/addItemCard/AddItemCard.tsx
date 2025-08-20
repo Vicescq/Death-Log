@@ -31,6 +31,13 @@ export default function AddItemCard({ pageType, handleAdd }: Props) {
 	const [inputText, setInputText] = useState("");
 	const modalRef = useRef<HTMLDialogElement>(null);
 
+	// only for the subject case
+	const [addItemCardSubjectModalState, setAddItemCardSubjectModalState] =
+		useState<AddItemCardModalStateSubject>({
+			reoccuring: false,
+			composite: false,
+		});
+
 	let addItemCardModalBody: React.JSX.Element;
 	let handleAddWrapper: () => void;
 	if (pageType == "game" || pageType == "profile") {
@@ -41,11 +48,6 @@ export default function AddItemCard({ pageType, handleAdd }: Props) {
 			handleAdd(inputText);
 		};
 	} else {
-		const [addItemCardSubjectModalState, setAddItemCardSubjectModalState] =
-			useState<AddItemCardModalStateSubject>({
-				reoccuring: false,
-				composite: false,
-			});
 		addItemCardModalBody = (
 			<AddItemCardModalBody
 				pageType="subject"
@@ -67,7 +69,7 @@ export default function AddItemCard({ pageType, handleAdd }: Props) {
 		<header className="mb-8 flex w-full flex-col gap-4 border-b-4 bg-amber-200 p-4 font-semibold text-black md:w-xl md:border-4 md:border-black md:shadow-[8px_5px_0px_rgba(0,0,0,1)]">
 			<div className="flex gap-4">
 				<input
-					type="search"
+					type="text"
 					className="w-full rounded-xl border-2 p-1 shadow-[8px_5px_0px_rgba(0,0,0,1)]"
 					onChange={(e) => setInputText(e.target.value)}
 				/>

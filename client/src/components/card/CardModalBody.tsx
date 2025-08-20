@@ -3,31 +3,32 @@ import type { CardModalStateGame } from "./CardTypes";
 import type { CardModalStateProfile, CardModalStateSubject } from "./CardTypes";
 import SelectDropdown from "../SelectDropDown";
 import Toggle from "../Toggle";
+import { useState } from "react";
 
 type GameProps = {
 	pageType: "game";
 	state: CardModalStateGame;
 	handleDelete: () => void;
-	handleEditedCardModal: (clickedBtn: "SAVE" | "CLOSE") => void;
+	handleIsModalEdited: () => void;
 	handleEdit: (overrides: CardModalStateGame) => void;
-	handleModalToggle?: never
+	handleModalToggle?: never;
 };
 
 type ProfileProps = {
 	pageType: "profile";
 	state: CardModalStateProfile;
 	handleDelete: () => void;
-	handleEditedCardModal: (clickedBtn: "SAVE" | "CLOSE") => void;
+	handleIsModalEdited: () => void;
 	handleEdit: (overrides: CardModalStateProfile) => void;
-	handleModalToggle?: never
+	handleModalToggle?: never;
 };
 
 type SubjectProps = {
 	pageType: "subject";
-	state: CardModalStateProfile;
+	state: CardModalStateSubject;
 	handleModalToggle: (key: keyof CardModalStateSubject) => void;
 	handleDelete: () => void;
-	handleEditedCardModal: (clickedBtn: "SAVE" | "CLOSE") => void;
+	handleIsModalEdited: () => void;
 	handleEdit: (overrides: CardModalStateSubject) => void;
 };
 
@@ -37,10 +38,11 @@ export default function CardModalBody({
 	pageType,
 	state,
 	handleDelete,
-	handleEditedCardModal,
+	handleIsModalEdited,
 	handleEdit,
-	handleModalToggle
+	handleModalToggle,
 }: Props) {
+	const [title, setTitle] = useState(state.name);
 	return (
 		<ul className="flex flex-col gap-2">
 			<li className="flex items-center gap-2">
@@ -48,12 +50,14 @@ export default function CardModalBody({
 				<input
 					type="text"
 					className="rounded-2xl border-4 p-1 shadow-[4px_4px_0px_rgba(0,0,0,1)]"
+					placeholder={title ? title : state.name}
+					onChange={(e) => setTitle(e.currentTarget.value)}
 				/>
 			</li>
 
 			<button
 				className="bg-hunyadi rounded-2xl border-4 p-2 font-bold shadow-[4px_4px_0px_rgba(0,0,0,1)]"
-				onClick={() => handleEditedCardModal("SAVE")}
+				onClick={() => handleIsModalEdited()}
 			>
 				SAVE
 			</button>

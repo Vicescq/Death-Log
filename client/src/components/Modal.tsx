@@ -1,13 +1,13 @@
 type Props = {
 	modalRef: React.RefObject<HTMLDialogElement | null>;
 	modalBody: React.JSX.Element;
-	handleEditedCardModal?: () => void;
+	handleIsModalEdited?: () => void;
 };
 
 export default function Modal({
 	modalRef,
 	modalBody,
-	handleEditedCardModal,
+	handleIsModalEdited,
 }: Props) {
 	return (
 		<dialog
@@ -19,7 +19,7 @@ export default function Modal({
 				<button
 					className="rounded-2xl border-4 bg-red-500 p-2 font-bold shadow-[4px_4px_0px_rgba(0,0,0,1)]"
 					onClick={() => {
-						handleEditedCardModal?.();
+						handleIsModalEdited?.();
 						modalRef.current?.close()!;
 					}}
 				>

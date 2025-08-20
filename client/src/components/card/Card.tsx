@@ -8,13 +8,7 @@ import reset from "../../assets/reset.svg";
 import readonly from "../../assets/readonly.svg";
 import type { TreeStateType } from "../../contexts/treeContext";
 import React, { useEffect, useRef, useState } from "react";
-import type {
-	DeathType,
-	DistinctTreeNode,
-	Game,
-	Profile,
-	Subject,
-} from "../../model/TreeNodeModel";
+import type { DeathType, DistinctTreeNode } from "../../model/TreeNodeModel";
 import {
 	createCardCSS,
 	createCardModalState,
@@ -50,7 +44,7 @@ export default function Card({
 	handleEdit,
 }: Props) {
 	const modalRef = useRef<HTMLDialogElement | null>(null);
-	const [editedModalState, setEditedModalState] = useState(false);
+	const [isModalEdited, setIsModalEdited] = useState(false);
 	const [resetDeathTypeMode, setResetDeathTypeMode] = useState(false);
 
 	const [modalState, setModalState] = useState(createCardModalState(node));
@@ -79,7 +73,10 @@ export default function Card({
 					state={modalStateGame}
 					pageType={node.type}
 					handleDelete={() => handleDelete(node)}
-					handleEditedCardModal={() => setEditedModalState(true)}
+					handleIsModalEdited={() => {
+						setIsModalEdited(true);
+						const x = 1;
+					}}
 					handleEdit={handleEdit}
 				/>
 			);
@@ -91,7 +88,7 @@ export default function Card({
 					state={modalStateProfile}
 					pageType={node.type}
 					handleDelete={() => handleDelete(node)}
-					handleEditedCardModal={() => setEditedModalState(true)}
+					handleIsModalEdited={() => setIsModalEdited(true)}
 					handleEdit={handleEdit}
 				/>
 			);
@@ -104,7 +101,7 @@ export default function Card({
 					state={modalStateSubject}
 					pageType={node.type}
 					handleDelete={() => handleDelete(node)}
-					handleEditedCardModal={() => setEditedModalState(true)}
+					handleIsModalEdited={() => setIsModalEdited(true)}
 					handleEdit={handleEdit}
 					handleModalToggle={(key) =>
 						setModalState((prev: CardModalStateSubject) => ({
@@ -187,7 +184,11 @@ export default function Card({
 					onClick={handleCompletedStatus}
 				/>
 			</div>
-			<Modal modalRef={modalRef} modalBody={cardModalBody} />
+			<Modal
+				modalRef={modalRef}
+				modalBody={cardModalBody}
+				handleIsModalEdited={() => setIsModalEdited(true)}
+			/>
 		</div>
 	);
 }
