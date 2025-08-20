@@ -1,12 +1,12 @@
-import type { AddItemCardModalStateSubject } from "../components/addItemCard/AddItemCardTypes";
-import type { CardModalStateGame } from "../components/card/CardTypes";
-import type { CardModalStateProfile, CardModalStateSubject } from "../components/card/CardTypes";
-import type { TreeStateType } from "../contexts/treeContext";
-import type { Action, ActionAdd, ActionDelete, ActionType, ActionUpdate } from "../model/Action";
-import type { RootNode, DistinctTreeNode, TreeNode, Game, Profile, Subject } from "../model/TreeNodeModel";
-import { createShallowCopyMap, deleteUndefinedValues } from "../utils/general";
-import { createNodePath, identifyDeletedSelfAndChildrenIDS, sortChildIDS } from "./treeUtils";
+import type { AddItemCardModalStateSubject } from "../../components/addItemCard/AddItemCardTypes";
+import type { CardModalStateGame } from "../../components/card/CardTypes";
+import type { CardModalStateProfile, CardModalStateSubject } from "../../components/card/CardTypes";
+import type { TreeStateType } from "../treeContext";
+import type { Action, ActionAdd, ActionDelete, ActionType, ActionUpdate } from "../../model/Action";
+import type { RootNode, DistinctTreeNode, TreeNode, Game, Profile, Subject } from "../../model/TreeNodeModel";
+import { createShallowCopyMap, deleteUndefinedValues } from "../../utils/general";
 import { v4 as uuidv4 } from 'uuid';
+import { sortChildIDS, identifyDeletedSelfAndChildrenIDS, createNodePath } from "./treeUtils";
 
 export default class TreeContextManager {
     constructor() { }

@@ -1,7 +1,7 @@
-import type { HistoryStateType } from "../contexts/historyContext";
-import type { Action } from "../model/Action";
+import type { HistoryStateType } from "../historyContext";
+import type { Action } from "../../model/Action";
 import { v4 as uuid4 } from "uuid";
-import type { DistinctTreeNode, TreeNode } from "../model/TreeNodeModel";
+import type { DistinctTreeNode, TreeNode } from "../../model/TreeNodeModel";
 
 export default class HistoryContextManager {
     static updateActionHistory(history: HistoryStateType, actions: Action[]) {

@@ -1,5 +1,5 @@
-import type { TreeStateType } from "../contexts/treeContext";
-import type { TreeNode, Subject, DistinctTreeNode, DeathType, TangibleTreeNode } from "../model/TreeNodeModel";
+import type { TreeStateType } from "../treeContext";
+import type { TreeNode, Subject, DistinctTreeNode, DeathType, TangibleTreeNode } from "../../model/TreeNodeModel";
 
 export function sanitizeTreeNodeEntry(inputText: string, tree: TreeStateType, parentID: string) {
     inputText = inputText.trim();

@@ -3,8 +3,8 @@ import type { DeathCountOperation } from "../../model/TreeNodeModel";
 import type { ModalListItemDistinctState } from "../../components/modals/ModalListItemStateTypes";
 import type { HistoryStateType, HistoryContextType } from "../../contexts/historyContext";
 import type { TreeStateType, TreeContextType } from "../../contexts/treeContext";
-import HistoryContextManager from "../../features/HistoryContextManager";
-import TreeContextManager from "../../features/TreeContextManager";
+import HistoryContextManager from "../../contexts/managers/HistoryContextManager";
+import TreeContextManager from "../../contexts/managers/TreeContextManager";
 import type { Subject, DeathType } from "../../model/TreeNodeModel";
 import IndexedDBService from "../../services/IndexedDBService";
 

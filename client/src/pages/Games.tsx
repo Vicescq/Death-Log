@@ -3,14 +3,15 @@ import AddItemCard from "../components/addItemCard/AddItemCard";
 import CardWrapper from "../components/card/CardWrapper";
 import type { DistinctTreeNode, Game } from "../model/TreeNodeModel";
 import useMainPageContexts from "../hooks/useMainPageContexts";
-import HistoryContextManager from "../features/HistoryContextManager";
-import TreeContextManager from "../features/TreeContextManager";
-import URLMapContextManager from "../features/URLMapContextManager";
+import HistoryContextManager from "../contexts/managers/HistoryContextManager";
+import TreeContextManager from "../contexts/managers/TreeContextManager";
+import URLMapContextManager from "../contexts/managers/URLMapContextManager";
 import IndexedDBService from "../services/IndexedDBService";
 import type { CardModalStateGame } from "../components/card/CardTypes";
 import Modal from "../components/modal/Modal";
+import { useRef, useState } from "react";
+import { sanitizeTreeNodeEntry } from "../contexts/managers/treeUtils";
 import AlertModalBody from "../components/modal/AlertModalBody";
-import { useRef } from "react";
 
 export default function Games() {
 	const {
@@ -23,29 +24,32 @@ export default function Games() {
 		user,
 		setUser,
 	} = useMainPageContexts();
-const modalRef = useRef<HTMLDialogElement | null>(null);
+
+	const modalRef = useRef<HTMLDialogElement | null>(null);
+	const [alert, setAlert] = useState("");
+
 	function handleAdd(inputText: string) {
-		const node = TreeContextManager.createGame(inputText, tree);
-
-		// memory data structures
-		const { updatedTree: updatedTreeIP, action } =
-			TreeContextManager.addNode(tree, node);
-		const { updatedTree } = TreeContextManager.updateNodeParent(
-			node,
-			updatedTreeIP,
-			"add",
-		);
-		const updatedURLMap = URLMapContextManager.addURL(
-			urlMap,
-			action.targets,
-		);
-		const updatedHistory = HistoryContextManager.updateActionHistory(
-			history,
-			[action],
-		);
-
-		// db's
 		try {
+			sanitizeTreeNodeEntry(inputText, tree, "ROOT_NODE");
+			const node = TreeContextManager.createGame(inputText, tree);
+			// memory data structures
+			const { updatedTree: updatedTreeIP, action } =
+				TreeContextManager.addNode(tree, node);
+			const { updatedTree } = TreeContextManager.updateNodeParent(
+				node,
+				updatedTreeIP,
+				"add",
+			);
+			const updatedURLMap = URLMapContextManager.addURL(
+				urlMap,
+				action.targets,
+			);
+			const updatedHistory = HistoryContextManager.updateActionHistory(
+				history,
+				[action],
+			);
+
+			// db's
 			IndexedDBService.addNode(
 				action.targets,
 				localStorage.getItem("email")!,
@@ -54,13 +58,18 @@ const modalRef = useRef<HTMLDialogElement | null>(null);
 				action.targets,
 				localStorage.getItem("email")!,
 			);
-		} catch (error) {
-			console.error(error);
-		}
 
-		setTree(updatedTree);
-		setURLMap(updatedURLMap);
-		setHistory(updatedHistory);
+			setTree(updatedTree);
+			setURLMap(updatedURLMap);
+			setHistory(updatedHistory);
+		} catch (e) {
+			if (e instanceof Error) {
+				setAlert(e.message);
+				modalRef.current?.showModal();
+			} else {
+				// db stuff
+			}
+		}
 	}
 
 	function handleDelete(node: DistinctTreeNode) {
@@ -101,33 +110,48 @@ const modalRef = useRef<HTMLDialogElement | null>(null);
 		node: DistinctTreeNode,
 		overrides: CardModalStateGame,
 	) {
-		if (node.type == "game") {
-			const editedNode = TreeContextManager.createGame(node.name, tree, {
-				...overrides,
-			});
-			editedNode.id = node.id;
-
-			// in memory
-			const { updatedTree: updatedTreeIP, action: actionUpdateSelf } =
-				TreeContextManager.updateNode(tree, editedNode);
-			const { updatedTree: updatedTree, action: actionUpdateParent } =
-				TreeContextManager.updateNodeParent(
-					editedNode,
-					updatedTreeIP,
-					"update",
+		try {
+			if (node.type == "game") {
+				const editedNode = TreeContextManager.createGame(
+					node.name,
+					tree,
+					{
+						...overrides,
+					},
 				);
-			const updatedHistory = HistoryContextManager.updateActionHistory(
-				history,
-				[actionUpdateSelf, actionUpdateParent],
-			);
+				editedNode.id = node.id;
+				sanitizeTreeNodeEntry(editedNode.name, tree, "ROOT_NODE");
 
-			// db's
-			/////////
+				// in memory
+				const { updatedTree: updatedTreeIP, action: actionUpdateSelf } =
+					TreeContextManager.updateNode(tree, editedNode);
+				const { updatedTree: updatedTree, action: actionUpdateParent } =
+					TreeContextManager.updateNodeParent(
+						editedNode,
+						updatedTreeIP,
+						"update",
+					);
+				const updatedHistory =
+					HistoryContextManager.updateActionHistory(history, [
+						actionUpdateSelf,
+						actionUpdateParent,
+					]);
 
-			setTree(updatedTree);
-			setHistory(updatedHistory);
-		} else {
-			throw new Error("DEV ERROR!");
+				// db's
+				/////////
+
+				setTree(updatedTree);
+				setHistory(updatedHistory);
+			} else {
+				throw new Error("DEV ERROR!");
+			}
+		} catch (e) {
+			if (e instanceof Error) {
+				setAlert(e.message);
+				modalRef.current?.showModal();
+			} else {
+				// db stuff
+			}
 		}
 	}
 
@@ -185,12 +209,12 @@ const modalRef = useRef<HTMLDialogElement | null>(null);
 	return (
 		<>
 			<AddItemCard pageType="game" handleAdd={handleAdd} />
-			<button onClick={() => modalRef.current?.showModal()}>dsdsadsad</button>
 			<CardWrapper cards={createCards()} />
-			<Modal modalRef={modalRef} isAlertModal={true} modalBody={<AlertModalBody alert={{
-				msg: "",
-				isAlert: false
-			}}/>} />
+			<Modal
+				modalRef={modalRef}
+				isAlertModal={true}
+				modalBody={<AlertModalBody msg={alert} />}
+			/>
 		</>
 	);
 }

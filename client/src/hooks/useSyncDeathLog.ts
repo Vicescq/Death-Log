@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import type { HistoryContextType, HistoryStateType } from "../contexts/historyContext";
 import APIService from "../services/APIService";
-import HistoryContextManager from "../features/HistoryContextManager";
+import HistoryContextManager from "../contexts/managers/HistoryContextManager";
 import type { UserStateType } from "../contexts/userContext";
 import type { URLMapping } from "../db";
 import type { TangibleTreeNodeParent } from "../model/TreeNodeModel";

@@ -1,6 +1,6 @@
-import type { URLMapStateType } from "../contexts/urlMapContext";
-import type { DistinctTreeNode } from "../model/TreeNodeModel";
-import { createShallowCopyMap } from "../utils/general";
+import type { URLMapStateType } from "../urlMapContext";
+import type { DistinctTreeNode } from "../../model/TreeNodeModel";
+import { createShallowCopyMap } from "../../utils/general";
 
 export default class URLMapContextManager {
     constructor() { }

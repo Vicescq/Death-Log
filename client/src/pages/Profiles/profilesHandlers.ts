@@ -2,9 +2,9 @@ import type { HandleAddProfile } from "../../components/addItemCard/AddItemCardT
 import type { HistoryStateType, HistoryContextType } from "../../contexts/historyContext";
 import type { TreeStateType, TreeContextType } from "../../contexts/treeContext";
 import type { URLMapContextType, URLMapStateType } from "../../contexts/urlMapContext";
-import HistoryContextManager from "../../features/HistoryContextManager";
-import TreeContextManager from "../../features/TreeContextManager";
-import URLMapContextManager from "../../features/URLMapContextManager";
+import HistoryContextManager from "../../contexts/managers/HistoryContextManager";
+import TreeContextManager from "../../contexts/managers/TreeContextManager";
+import URLMapContextManager from "../../contexts/managers/URLMapContextManager";
 import type { Profile, TangibleTreeNodeParent } from "../../model/TreeNodeModel";
 import IndexedDBService from "../../services/IndexedDBService";
 

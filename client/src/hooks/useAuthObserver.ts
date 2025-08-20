@@ -2,13 +2,13 @@ import { onAuthStateChanged } from "firebase/auth";
 import { useEffect } from "react";
 import { auth } from "../firebase-config";
 import type { UserContextType } from "../contexts/userContext";
-import TreeContextManager from "../features/TreeContextManager";
+import TreeContextManager from "../contexts/managers/TreeContextManager";
 import IndexedDBService from "../services/IndexedDBService";
 import type { TreeContextType } from "../contexts/treeContext";
 import type { HistoryContextType } from "../contexts/historyContext";
 import APIService from "../services/APIService";
 import { type URLMapContextType } from "../contexts/urlMapContext";
-import URLMapContextManager from "../features/URLMapContextManager";
+import URLMapContextManager from "../contexts/managers/URLMapContextManager";
 
 export default function useAuthObserver(setUser: UserContextType[1], setTree: TreeContextType[1], setHistory: HistoryContextType[1], setURLMap: URLMapContextType[1]) {
     useEffect(() => {

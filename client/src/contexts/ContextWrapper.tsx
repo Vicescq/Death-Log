@@ -3,7 +3,7 @@ import useConsoleLogOnStateChange from "../hooks/useConsoleLogOnStateChange";
 import { type TreeStateType, TreeContext } from "./treeContext";
 import { URLMapContext, type URLMapStateType } from "./urlMapContext";
 import { HistoryContext, type HistoryStateType } from "./historyContext";
-import HistoryContextManager from "../features/HistoryContextManager";
+import HistoryContextManager from "./managers/HistoryContextManager";
 import {
 	UserContext,
 	type UserStateType,
