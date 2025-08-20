@@ -11,3 +11,4 @@ export type CardModalStateSubject = {
     reoccurring: boolean;
     composite: boolean;
 };
+

@@ -8,7 +8,13 @@ import reset from "../../assets/reset.svg";
 import readonly from "../../assets/readonly.svg";
 import type { TreeStateType } from "../../contexts/treeContext";
 import React, { useEffect, useRef, useState } from "react";
-import type { DeathType, DistinctTreeNode } from "../../model/TreeNodeModel";
+import type {
+	DeathType,
+	DistinctTreeNode,
+	Game,
+	Profile,
+	Subject,
+} from "../../model/TreeNodeModel";
 import {
 	createCardCSS,
 	createCardModalState,
@@ -23,28 +29,44 @@ import type {
 import Modal from "../Modal";
 import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
 
-type Props = {
-	node: DistinctTreeNode;
+type GameProps = {
+	node: Game;
+	pageType: "game";
 	tree: TreeStateType;
 	handleDelete: (node: DistinctTreeNode) => void;
 	handleCompletedStatus: () => void;
-	handleEdit: (
-		overrides:
-			| CardModalStateGame
-			| CardModalStateProfile
-			| CardModalStateSubject,
-	) => void;
+	handleModalSave: (overrides: CardModalStateGame) => void;
 };
+
+type ProfileProps = {
+	node: Profile;
+	pageType: "profile";
+	tree: TreeStateType;
+	handleDelete: (node: DistinctTreeNode) => void;
+	handleCompletedStatus: () => void;
+	handleModalSave: (overrides: CardModalStateProfile) => void;
+};
+
+type SubjectProps = {
+	node: Subject;
+	pageType: "subject";
+	tree: TreeStateType;
+	handleDelete: (node: DistinctTreeNode) => void;
+	handleCompletedStatus: () => void;
+	handleModalSave: (overrides: CardModalStateSubject) => void;
+};
+
+type Props = GameProps | ProfileProps | SubjectProps;
 
 export default function Card({
 	node,
 	tree,
 	handleDelete,
 	handleCompletedStatus,
-	handleEdit,
+	handleModalSave,
 }: Props) {
 	const modalRef = useRef<HTMLDialogElement | null>(null);
-	const [isModalEdited, setIsModalEdited] = useState(false);
+	const [clickedModalSave, setClickedModalSave] = useState(false);
 	const [resetDeathTypeMode, setResetDeathTypeMode] = useState(false);
 
 	const [modalState, setModalState] = useState(createCardModalState(node));
@@ -73,11 +95,8 @@ export default function Card({
 					state={modalStateGame}
 					pageType={node.type}
 					handleDelete={() => handleDelete(node)}
-					handleIsModalEdited={() => {
-						setIsModalEdited(true);
-						const x = 1;
-					}}
-					handleEdit={handleEdit}
+					handleModalEdit={handleModalEdit}
+					handleModalSave={handleModalSave}
 				/>
 			);
 			break;
@@ -88,8 +107,7 @@ export default function Card({
 					state={modalStateProfile}
 					pageType={node.type}
 					handleDelete={() => handleDelete(node)}
-					handleIsModalEdited={() => setIsModalEdited(true)}
-					handleEdit={handleEdit}
+					handleModalEdit={handleModalEdit}
 				/>
 			);
 			break;
@@ -101,18 +119,28 @@ export default function Card({
 					state={modalStateSubject}
 					pageType={node.type}
 					handleDelete={() => handleDelete(node)}
-					handleIsModalEdited={() => setIsModalEdited(true)}
-					handleEdit={handleEdit}
-					handleModalToggle={(key) =>
-						setModalState((prev: CardModalStateSubject) => ({
-							...prev,
-							[key]: !prev[key],
-						}))
-					}
+					handleModalEdit={handleModalEdit}
 				/>
 			);
 			break;
 	}
+
+	function handleModalEdit(
+		newState:
+			| CardModalStateGame
+			| CardModalStateProfile
+			| CardModalStateSubject,
+	) {
+		if (node.type == "game") {
+			const gameState = newState as CardModalStateGame;
+			setModalState((prev: CardModalStateGame) => ({
+				...prev,
+				name: gameState.name,
+			}));
+		}
+	}
+
+	useConsoleLogOnStateChange(modalState, modalState);
 
 	// fixed "bug" where state persists to next card in line if some card got deleted
 	useEffect(() => {
@@ -184,11 +212,7 @@ export default function Card({
 					onClick={handleCompletedStatus}
 				/>
 			</div>
-			<Modal
-				modalRef={modalRef}
-				modalBody={cardModalBody}
-				handleIsModalEdited={() => setIsModalEdited(true)}
-			/>
+			<Modal modalRef={modalRef} modalBody={cardModalBody} />
 		</div>
 	);
 }

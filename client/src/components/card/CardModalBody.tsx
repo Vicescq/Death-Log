@@ -9,27 +9,24 @@ type GameProps = {
 	pageType: "game";
 	state: CardModalStateGame;
 	handleDelete: () => void;
-	handleIsModalEdited: () => void;
-	handleEdit: (overrides: CardModalStateGame) => void;
-	handleModalToggle?: never;
+	handleModalEdit: (state: CardModalStateGame) => void;
+	handleModalSave: (overrides: CardModalStateGame) => void;
 };
 
 type ProfileProps = {
 	pageType: "profile";
 	state: CardModalStateProfile;
 	handleDelete: () => void;
-	handleIsModalEdited: () => void;
-	handleEdit: (overrides: CardModalStateProfile) => void;
-	handleModalToggle?: never;
+	handleModalEdit: (state: CardModalStateProfile) => void;
+	handleModalSave: (overrides: CardModalStateProfile) => void;
 };
 
 type SubjectProps = {
 	pageType: "subject";
 	state: CardModalStateSubject;
-	handleModalToggle: (key: keyof CardModalStateSubject) => void;
 	handleDelete: () => void;
-	handleIsModalEdited: () => void;
-	handleEdit: (overrides: CardModalStateSubject) => void;
+	handleModalEdit: (state: CardModalStateSubject) => void;
+	handleModalSave: (overrides: CardModalStateSubject) => void;
 };
 
 type Props = GameProps | ProfileProps | SubjectProps;
@@ -38,11 +35,9 @@ export default function CardModalBody({
 	pageType,
 	state,
 	handleDelete,
-	handleIsModalEdited,
-	handleEdit,
-	handleModalToggle,
+	handleModalEdit,
+	handleModalSave,
 }: Props) {
-	const [title, setTitle] = useState(state.name);
 	return (
 		<ul className="flex flex-col gap-2">
 			<li className="flex items-center gap-2">
@@ -50,14 +45,22 @@ export default function CardModalBody({
 				<input
 					type="text"
 					className="rounded-2xl border-4 p-1 shadow-[4px_4px_0px_rgba(0,0,0,1)]"
-					placeholder={title ? title : state.name}
-					onChange={(e) => setTitle(e.currentTarget.value)}
+					onChange={(e) =>
+						handleModalEdit({
+							name: e.currentTarget.value,
+						} as CardModalStateGame &
+							CardModalStateProfile &
+							CardModalStateSubject)
+					}
 				/>
 			</li>
 
 			<button
 				className="bg-hunyadi rounded-2xl border-4 p-2 font-bold shadow-[4px_4px_0px_rgba(0,0,0,1)]"
-				onClick={() => handleIsModalEdited()}
+				onClick={() => {
+					// so ts doesnt show any errors
+					handleModalSave(state as any);
+				}}
 			>
 				SAVE
 			</button>

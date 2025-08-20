@@ -22,7 +22,6 @@ export default function Games() {
 	} = useMainPageContexts();
 
 	function handleAdd(inputText: string) {
-
 		const node = TreeContextManager.createGame(inputText, tree);
 
 		// memory data structures
@@ -95,7 +94,10 @@ export default function Games() {
 		}
 	}
 
-	function handleEdit(node: DistinctTreeNode, overrides: CardModalStateGame) {
+	function handleModalSave(
+		node: DistinctTreeNode,
+		overrides: CardModalStateGame,
+	) {
 		if (node.type == "game") {
 			const editedNode = TreeContextManager.createGame(node.name, tree, {
 				...overrides,
@@ -116,6 +118,7 @@ export default function Games() {
 			);
 
 			// db's
+			/////////
 
 			setTree(updatedTree);
 			setHistory(updatedHistory);
@@ -161,11 +164,14 @@ export default function Games() {
 					key={index}
 					tree={tree}
 					node={game}
+					pageType={game.type}
 					handleDelete={handleDelete}
 					handleCompletedStatus={() =>
 						handleCompletedStatus(game, !game.completed)
 					}
-					handleEdit={(overrides) => handleEdit(game, overrides)}
+					handleModalSave={(overrides) =>
+						handleModalSave(game, overrides)
+					}
 				/>
 			);
 		});
