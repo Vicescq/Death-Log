@@ -9,20 +9,6 @@ export type AddItemCardModalStateSubject = {
 	composite: boolean;
 };
 
-export type CardModalStateGame = {
-	name: string;
-};
-
-export type CardModalStateProfile = {
-	name: string;
-};
-
-export type CardModalStateSubject = {
-	name: string;
-	reoccuring: boolean;
-	composite: boolean;
-};
-
 export default function Modal({
 	modalRef,
 	modalBody,

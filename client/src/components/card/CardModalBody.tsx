@@ -1,28 +1,26 @@
 import type { Game, Profile, Subject } from "../../model/TreeNodeModel";
+import type { CardModalStateGame } from "./CardTypes";
 import type {
-	CardModalStateGame,
 	CardModalStateProfile,
-	CardModalStateSubject,
-} from "../Modal";
+	CardModalStateSubject
+} from "./CardTypes";
 import SelectDropdown from "../SelectDropDown";
 import Toggle from "../Toggle";
 
 type GameProps = {
 	pageType: "game";
 	state: CardModalStateGame;
-	handleModalToggle: (key: keyof CardModalStateGame) => void;
 	handleDelete: () => void;
 	handleEditedCardModal: (clickedBtn: "SAVE" | "CLOSE") => void;
-	handleEdit: (overrides: Partial<Game>) => void;
+	handleEdit: (overrides: CardModalStateGame) => void;
 };
 
 type ProfileProps = {
 	pageType: "profile";
 	state: CardModalStateProfile;
-	handleModalToggle: (key: keyof CardModalStateProfile) => void;
 	handleDelete: () => void;
 	handleEditedCardModal: (clickedBtn: "SAVE" | "CLOSE") => void;
-	handleEdit: (overrides: Partial<Profile>) => void;
+	handleEdit: (overrides: CardModalStateProfile) => void;
 };
 
 type SubjectProps = {
@@ -31,14 +29,14 @@ type SubjectProps = {
 	handleModalToggle: (key: keyof CardModalStateSubject) => void;
 	handleDelete: () => void;
 	handleEditedCardModal: (clickedBtn: "SAVE" | "CLOSE") => void;
-	handleEdit: (overrides: Partial<Subject>) => void;
+	handleEdit: (overrides: CardModalStateSubject) => void;
 };
 
 type Props = GameProps | ProfileProps | SubjectProps;
 
 export default function CardModalBody({
+	pageType,
 	state,
-	handleModalToggle,
 	handleDelete,
 	handleEditedCardModal,
 	handleEdit
