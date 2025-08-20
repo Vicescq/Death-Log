@@ -1,43 +1,22 @@
-import type { Game, Profile, Subject } from "../../model/TreeNodeModel";
-import type { CardModalStateGame } from "./CardTypes";
+import type { DistinctTreeNode } from "../../model/TreeNodeModel";
+import type { CardModalState, CardModalStateGame } from "./CardTypes";
 import type { CardModalStateProfile, CardModalStateSubject } from "./CardTypes";
-import SelectDropdown from "../SelectDropDown";
-import Toggle from "../Toggle";
-import { useState } from "react";
 
-type GameProps = {
-	pageType: "game";
-	state: CardModalStateGame;
+type Props<T extends DistinctTreeNode> = {
+	pageType: T["type"];
+	state: CardModalState<T["type"]>;
 	handleDelete: () => void;
-	handleModalEdit: (state: CardModalStateGame) => void;
-	handleModalSave: (overrides: CardModalStateGame) => void;
+	handleModalEdit: (state: CardModalState<T["type"]>) => void;
+	handleModalSave: (overrides: CardModalState<T["type"]>) => void;
 };
 
-type ProfileProps = {
-	pageType: "profile";
-	state: CardModalStateProfile;
-	handleDelete: () => void;
-	handleModalEdit: (state: CardModalStateProfile) => void;
-	handleModalSave: (overrides: CardModalStateProfile) => void;
-};
-
-type SubjectProps = {
-	pageType: "subject";
-	state: CardModalStateSubject;
-	handleDelete: () => void;
-	handleModalEdit: (state: CardModalStateSubject) => void;
-	handleModalSave: (overrides: CardModalStateSubject) => void;
-};
-
-type Props = GameProps | ProfileProps | SubjectProps;
-
-export default function CardModalBody({
+export default function CardModalBody<T extends DistinctTreeNode>({
 	pageType,
 	state,
 	handleDelete,
 	handleModalEdit,
 	handleModalSave,
-}: Props) {
+}: Props<T>) {
 	return (
 		<ul className="flex flex-col gap-2">
 			<li className="flex items-center gap-2">
@@ -58,8 +37,7 @@ export default function CardModalBody({
 			<button
 				className="bg-hunyadi rounded-2xl border-4 p-2 font-bold shadow-[4px_4px_0px_rgba(0,0,0,1)]"
 				onClick={() => {
-					// so ts doesnt show any errors
-					handleModalSave(state as any);
+					handleModalSave(state);
 				}}
 			>
 				SAVE

@@ -12,3 +12,10 @@ export type CardModalStateSubject = {
     composite: boolean;
 };
 
+export type CardModalMap = {
+    game: CardModalStateGame
+    profile: CardModalStateProfile
+    subject: CardModalStateSubject
+}
+
+export type CardModalState<T extends keyof CardModalMap> = CardModalMap[T]

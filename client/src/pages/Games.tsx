@@ -8,6 +8,9 @@ import TreeContextManager from "../features/TreeContextManager";
 import URLMapContextManager from "../features/URLMapContextManager";
 import IndexedDBService from "../services/IndexedDBService";
 import type { CardModalStateGame } from "../components/card/CardTypes";
+import Modal from "../components/modal/Modal";
+import AlertModalBody from "../components/modal/AlertModalBody";
+import { useRef } from "react";
 
 export default function Games() {
 	const {
@@ -20,7 +23,7 @@ export default function Games() {
 		user,
 		setUser,
 	} = useMainPageContexts();
-
+const modalRef = useRef<HTMLDialogElement | null>(null);
 	function handleAdd(inputText: string) {
 		const node = TreeContextManager.createGame(inputText, tree);
 
@@ -102,6 +105,7 @@ export default function Games() {
 			const editedNode = TreeContextManager.createGame(node.name, tree, {
 				...overrides,
 			});
+			editedNode.id = node.id;
 
 			// in memory
 			const { updatedTree: updatedTreeIP, action: actionUpdateSelf } =
@@ -164,10 +168,9 @@ export default function Games() {
 					key={index}
 					tree={tree}
 					node={game}
-					pageType={game.type}
 					handleDelete={handleDelete}
 					handleCompletedStatus={() =>
-						handleCompletedStatus(game, !game.completed)
+						handleCompletedStatus(game, game.completed)
 					}
 					handleModalSave={(overrides) =>
 						handleModalSave(game, overrides)
@@ -182,8 +185,12 @@ export default function Games() {
 	return (
 		<>
 			<AddItemCard pageType="game" handleAdd={handleAdd} />
-
+			<button onClick={() => modalRef.current?.showModal()}>dsdsadsad</button>
 			<CardWrapper cards={createCards()} />
+			<Modal modalRef={modalRef} isAlertModal={true} modalBody={<AlertModalBody alert={{
+				msg: "",
+				isAlert: false
+			}}/>} />
 		</>
 	);
 }

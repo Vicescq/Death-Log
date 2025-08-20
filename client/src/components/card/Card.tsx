@@ -22,54 +22,36 @@ import {
 } from "./cardUtils";
 import CardModalBody from "./CardModalBody";
 import type {
+	CardModalState,
 	CardModalStateGame,
 	CardModalStateProfile,
 	CardModalStateSubject,
 } from "./CardTypes";
-import Modal from "../Modal";
+import Modal from "../modal/Modal";
 import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
 
-type GameProps = {
-	node: Game;
-	pageType: "game";
+type Props<T extends DistinctTreeNode> = {
+	node: T;
 	tree: TreeStateType;
 	handleDelete: (node: DistinctTreeNode) => void;
 	handleCompletedStatus: () => void;
-	handleModalSave: (overrides: CardModalStateGame) => void;
+	handleModalSave: (overrides: CardModalState<T["type"]>) => void;
 };
 
-type ProfileProps = {
-	node: Profile;
-	pageType: "profile";
-	tree: TreeStateType;
-	handleDelete: (node: DistinctTreeNode) => void;
-	handleCompletedStatus: () => void;
-	handleModalSave: (overrides: CardModalStateProfile) => void;
-};
-
-type SubjectProps = {
-	node: Subject;
-	pageType: "subject";
-	tree: TreeStateType;
-	handleDelete: (node: DistinctTreeNode) => void;
-	handleCompletedStatus: () => void;
-	handleModalSave: (overrides: CardModalStateSubject) => void;
-};
-
-type Props = GameProps | ProfileProps | SubjectProps;
-
-export default function Card({
+export default function Card<T extends DistinctTreeNode>({
 	node,
 	tree,
 	handleDelete,
 	handleCompletedStatus,
 	handleModalSave,
-}: Props) {
+}: Props<T>) {
 	const modalRef = useRef<HTMLDialogElement | null>(null);
 	const [clickedModalSave, setClickedModalSave] = useState(false);
 	const [resetDeathTypeMode, setResetDeathTypeMode] = useState(false);
 
-	const [modalState, setModalState] = useState(createCardModalState(node));
+	const [modalState, setModalState] = useState<CardModalState<T["type"]>>(
+		createCardModalState(node) as CardModalState<T["type"]>,
+	);
 
 	const deathType: DeathType = resetDeathTypeMode ? "resets" : "fullTries";
 
@@ -86,45 +68,6 @@ export default function Card({
 		tree,
 	);
 
-	let cardModalBody: React.JSX.Element;
-	switch (node.type) {
-		case "game":
-			const modalStateGame = modalState as CardModalStateGame;
-			cardModalBody = (
-				<CardModalBody
-					state={modalStateGame}
-					pageType={node.type}
-					handleDelete={() => handleDelete(node)}
-					handleModalEdit={handleModalEdit}
-					handleModalSave={handleModalSave}
-				/>
-			);
-			break;
-		case "profile":
-			const modalStateProfile = modalState as CardModalStateProfile;
-			cardModalBody = (
-				<CardModalBody
-					state={modalStateProfile}
-					pageType={node.type}
-					handleDelete={() => handleDelete(node)}
-					handleModalEdit={handleModalEdit}
-				/>
-			);
-			break;
-
-		case "subject":
-			const modalStateSubject = modalState as CardModalStateSubject;
-			cardModalBody = (
-				<CardModalBody
-					state={modalStateSubject}
-					pageType={node.type}
-					handleDelete={() => handleDelete(node)}
-					handleModalEdit={handleModalEdit}
-				/>
-			);
-			break;
-	}
-
 	function handleModalEdit(
 		newState:
 			| CardModalStateGame
@@ -133,7 +76,7 @@ export default function Card({
 	) {
 		if (node.type == "game") {
 			const gameState = newState as CardModalStateGame;
-			setModalState((prev: CardModalStateGame) => ({
+			setModalState((prev: CardModalState<T["type"]>) => ({
 				...prev,
 				name: gameState.name,
 			}));
@@ -212,7 +155,18 @@ export default function Card({
 					onClick={handleCompletedStatus}
 				/>
 			</div>
-			<Modal modalRef={modalRef} modalBody={cardModalBody} />
+			<Modal
+				modalRef={modalRef}
+				modalBody={
+					<CardModalBody
+						pageType={node.type}
+						state={modalState}
+						handleDelete={() => handleDelete(node)}
+						handleModalEdit={handleModalEdit}
+						handleModalSave={handleModalSave}
+					/>
+				}
+			/>
 		</div>
 	);
 }

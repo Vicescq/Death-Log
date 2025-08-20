@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import gear from "../../assets/gear.svg";
 import filter from "../../assets/filter.svg";
-import Modal from "../Modal";
+import Modal from "../modal/Modal";
 import type {
 	HandleAddGame,
 	HandleAddProfile,
