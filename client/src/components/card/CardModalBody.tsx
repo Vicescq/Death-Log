@@ -1,9 +1,6 @@
 import type { Game, Profile, Subject } from "../../model/TreeNodeModel";
 import type { CardModalStateGame } from "./CardTypes";
-import type {
-	CardModalStateProfile,
-	CardModalStateSubject
-} from "./CardTypes";
+import type { CardModalStateProfile, CardModalStateSubject } from "./CardTypes";
 import SelectDropdown from "../SelectDropDown";
 import Toggle from "../Toggle";
 
@@ -13,6 +10,7 @@ type GameProps = {
 	handleDelete: () => void;
 	handleEditedCardModal: (clickedBtn: "SAVE" | "CLOSE") => void;
 	handleEdit: (overrides: CardModalStateGame) => void;
+	handleModalToggle?: never
 };
 
 type ProfileProps = {
@@ -21,6 +19,7 @@ type ProfileProps = {
 	handleDelete: () => void;
 	handleEditedCardModal: (clickedBtn: "SAVE" | "CLOSE") => void;
 	handleEdit: (overrides: CardModalStateProfile) => void;
+	handleModalToggle?: never
 };
 
 type SubjectProps = {
@@ -39,9 +38,9 @@ export default function CardModalBody({
 	state,
 	handleDelete,
 	handleEditedCardModal,
-	handleEdit
+	handleEdit,
+	handleModalToggle
 }: Props) {
-
 	return (
 		<ul className="flex flex-col gap-2">
 			<li className="flex items-center gap-2">
@@ -51,7 +50,7 @@ export default function CardModalBody({
 					className="rounded-2xl border-4 p-1 shadow-[4px_4px_0px_rgba(0,0,0,1)]"
 				/>
 			</li>
-			
+
 			<button
 				className="bg-hunyadi rounded-2xl border-4 p-2 font-bold shadow-[4px_4px_0px_rgba(0,0,0,1)]"
 				onClick={() => handleEditedCardModal("SAVE")}

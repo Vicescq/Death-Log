@@ -1,3 +1,4 @@
+import type { AddItemCardModalStateSubject } from "../components/addItemCard/AddItemCardTypes";
 import type { CardModalStateGame } from "../components/card/CardTypes";
 import type { CardModalStateProfile, CardModalStateSubject } from "../components/card/CardTypes";
 import type { TreeStateType } from "../contexts/treeContext";
@@ -89,7 +90,7 @@ export default class TreeContextManager {
     static createGame(
         inputText: string,
         tree: TreeStateType,
-        overrides: CardModalStateGame,
+        overrides?: CardModalStateGame,
     ) {
         const path = createNodePath(inputText, "ROOT_NODE", tree);
         const defaultGame: Game = {
@@ -139,7 +140,7 @@ export default class TreeContextManager {
     static createSubject(
         inputText: string,
         parentID: string,
-        overrides: CardModalStateSubject,
+        overrides: CardModalStateSubject | AddItemCardModalStateSubject,
     ) {
         const defaultSubject: Subject = {
             type: "subject",
@@ -188,7 +189,7 @@ export default class TreeContextManager {
         if (mode == "add") {
             parentNodeCopy.childIDS.push(node.id);
         }
-        else if (mode == "delete"){
+        else if (mode == "delete") {
             parentNodeCopy.childIDS = parentNodeCopy.childIDS.filter((id) => id != node.id);
         }
 

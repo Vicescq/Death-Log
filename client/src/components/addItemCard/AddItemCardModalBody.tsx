@@ -1,7 +1,5 @@
 import Toggle from "../Toggle";
-import type {
-	AddItemCardModalStateSubject,
-} from "../Modal";
+import type { AddItemCardModalStateSubject } from "./AddItemCardTypes";
 import SelectDropdown from "../SelectDropDown";
 
 type GameProfileProps = {

@@ -7,7 +7,7 @@ import type {
 	HandleAddProfile,
 	HandleAddSubject,
 } from "./AddItemCardTypes";
-import type { AddItemCardModalStateSubject } from "../Modal";
+import type { AddItemCardModalStateSubject } from "./AddItemCardTypes";
 import AddItemCardModalBody from "./AddItemCardModalBody";
 
 type GameProps = {
@@ -38,7 +38,7 @@ export default function AddItemCard({ pageType, handleAdd }: Props) {
 			<AddItemCardModalBody pageType="gameORprofile" />
 		);
 		handleAddWrapper = () => {
-			handleAdd(inputText, {});
+			handleAdd(inputText);
 		};
 	} else {
 		const [addItemCardSubjectModalState, setAddItemCardSubjectModalState] =

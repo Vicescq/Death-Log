@@ -7,6 +7,7 @@ import HistoryContextManager from "../features/HistoryContextManager";
 import TreeContextManager from "../features/TreeContextManager";
 import URLMapContextManager from "../features/URLMapContextManager";
 import IndexedDBService from "../services/IndexedDBService";
+import type { CardModalStateGame } from "../components/card/CardTypes";
 
 export default function Games() {
 	const {
@@ -20,9 +21,9 @@ export default function Games() {
 		setUser,
 	} = useMainPageContexts();
 
-	function handleAdd(inputText: string, overrides: Partial<Game>) {
-		console.log(overrides);
-		const node = TreeContextManager.createGame(inputText, tree, overrides);
+	function handleAdd(inputText: string) {
+
+		const node = TreeContextManager.createGame(inputText, tree);
 
 		// memory data structures
 		const { updatedTree: updatedTreeIP, action } =
@@ -94,7 +95,7 @@ export default function Games() {
 		}
 	}
 
-	function handleEdit(node: DistinctTreeNode, overrides: Partial<Game>) {
+	function handleEdit(node: DistinctTreeNode, overrides: CardModalStateGame) {
 		if (node.type == "game") {
 			const editedNode = TreeContextManager.createGame(node.name, tree, {
 				...overrides,

@@ -21,8 +21,11 @@ import {
 	generateCardDeathCounts,
 } from "./cardUtils";
 import CardModalBody from "./CardModalBody";
-import type { CardModalStateGame } from "./CardTypes";
-import type { CardModalStateProfile, CardModalStateSubject } from "./CardTypes";
+import type {
+	CardModalStateGame,
+	CardModalStateProfile,
+	CardModalStateSubject,
+} from "./CardTypes";
 import Modal from "../Modal";
 import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
 
@@ -49,6 +52,7 @@ export default function Card({
 	const modalRef = useRef<HTMLDialogElement | null>(null);
 	const [editedModalState, setEditedModalState] = useState(false);
 	const [resetDeathTypeMode, setResetDeathTypeMode] = useState(false);
+
 	const [modalState, setModalState] = useState(createCardModalState(node));
 
 	const deathType: DeathType = resetDeathTypeMode ? "resets" : "fullTries";
@@ -72,16 +76,11 @@ export default function Card({
 			const modalStateGame = modalState as CardModalStateGame;
 			cardModalBody = (
 				<CardModalBody
-					pageType="game"
 					state={modalStateGame}
+					pageType={node.type}
 					handleDelete={() => handleDelete(node)}
 					handleEditedCardModal={() => setEditedModalState(true)}
-					handleEdit={() =>
-						handleEdit({
-							name: modalStateGame.name,
-							composite: true,
-						})
-					}
+					handleEdit={handleEdit}
 				/>
 			);
 			break;
@@ -89,35 +88,30 @@ export default function Card({
 			const modalStateProfile = modalState as CardModalStateProfile;
 			cardModalBody = (
 				<CardModalBody
-					pageType="profile"
 					state={modalStateProfile}
+					pageType={node.type}
 					handleDelete={() => handleDelete(node)}
 					handleEditedCardModal={() => setEditedModalState(true)}
-					handleEdit={() =>
-						handleEdit({
-							name: modalStateProfile.name,
-						})
-					}
+					handleEdit={handleEdit}
 				/>
 			);
 			break;
 
-		default:
+		case "subject":
 			const modalStateSubject = modalState as CardModalStateSubject;
 			cardModalBody = (
 				<CardModalBody
-					pageType="subject"
 					state={modalStateSubject}
+					pageType={node.type}
 					handleDelete={() => handleDelete(node)}
 					handleEditedCardModal={() => setEditedModalState(true)}
-					handleEdit={() =>
-						handleEdit({
-							name: modalStateSubject.name,
-							reoccurring: modalStateSubject.reoccurring,
-							composite: modalStateSubject.composite,
-						})
+					handleEdit={handleEdit}
+					handleModalToggle={(key) =>
+						setModalState((prev: CardModalStateSubject) => ({
+							...prev,
+							[key]: !prev[key],
+						}))
 					}
-					handleModalToggle={() => true}
 				/>
 			);
 			break;

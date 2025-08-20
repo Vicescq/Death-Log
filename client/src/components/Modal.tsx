@@ -4,11 +4,6 @@ type Props = {
 	handleEditedCardModal?: () => void;
 };
 
-export type AddItemCardModalStateSubject = {
-	reoccuring: boolean;
-	composite: boolean;
-};
-
 export default function Modal({
 	modalRef,
 	modalBody,

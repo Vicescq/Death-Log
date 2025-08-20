@@ -1,8 +1,7 @@
 import type { TreeStateType } from "../../contexts/treeContext";
 import type { DistinctTreeNode, Game, Profile, Subject } from "../../model/TreeNodeModel";
 import { getDeaths } from "../../features/treeUtils";
-import { type CardModalStateGame } from "./CardTypes";
-import type { CardModalStateProfile, CardModalStateSubject } from "./CardTypes";
+import type { CardModalStateGame, CardModalStateProfile, CardModalStateSubject } from "./CardTypes";
 
 export function createCardCSS(
     treeNode: DistinctTreeNode,
@@ -53,19 +52,13 @@ export function generateCardDeathCounts(
     return { deathCount, fullTries, resets };
 }
 
-
-
 export function createCardModalState(node: DistinctTreeNode): CardModalStateGame | CardModalStateProfile | CardModalStateSubject {
     switch (node.type) {
         case "game":
             return { name: node.name };
         case "profile":
             return { name: node.name };
-        case "subject":
-            return {
-                name: node.name,
-                composite: node.composite,
-                reoccurring: node.reoccurring
-            };
+        default:
+            return { name: node.name, composite: node.composite, reoccurring: node.reoccurring } as CardModalStateSubject;
     }
 }
