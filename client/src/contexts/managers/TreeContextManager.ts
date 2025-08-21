@@ -83,7 +83,7 @@ export default class TreeContextManager {
     }
 
     static createRootNode() {
-        const rootNode: RootNode = { type: "ROOT_NODE", id: "ROOT_NODE", childIDS: [], parentID: null, name: "", completed: false, notes: null, dateStart: "", dateEnd: "", path: "" };
+        const rootNode: RootNode = { type: "ROOT_NODE", id: "ROOT_NODE", childIDS: [], parentID: null, name: "", completed: false, notes: null, dateStart: "", dateEnd: ""};
         return rootNode
     }
 
@@ -103,7 +103,6 @@ export default class TreeContextManager {
             notes: null,
             dateStart: new Date().toISOString(),
             dateEnd: null,
-            path: path,
         };
         return {
             ...defaultGame,
@@ -128,7 +127,6 @@ export default class TreeContextManager {
             notes: null,
             dateStart: new Date().toISOString(),
             dateEnd: null,
-            path: path,
         };
         deleteUndefinedValues(overrides);
         return {
@@ -157,7 +155,6 @@ export default class TreeContextManager {
             composite: false,
             compositeRelations: [],
             reoccurring: false,
-            path: "",
             subjectContext: "boss"
         };
         deleteUndefinedValues(overrides);

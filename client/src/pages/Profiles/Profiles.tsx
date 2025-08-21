@@ -6,8 +6,7 @@ import useMainPageContexts from "../../hooks/useMainPageContexts";
 import profilesHandlers from "./profilesHandlers";
 
 export default function Profiles({ gameID }: { gameID: string }) {
-	const { tree, setTree, urlMap, setURLMap, history, setHistory } =
-		useMainPageContexts();
+	const { tree, setTree, history, setHistory } = useMainPageContexts();
 
 	const { handleAdd, handleDelete, handleCompletedStatus } = profilesHandlers(
 		tree,
@@ -15,8 +14,6 @@ export default function Profiles({ gameID }: { gameID: string }) {
 		history,
 		setHistory,
 		gameID,
-		urlMap,
-		setURLMap,
 	);
 
 	function createCards() {
@@ -41,7 +38,6 @@ export default function Profiles({ gameID }: { gameID: string }) {
 		<>
 			<AddItemCard
 				pageType="profile"
-				modalSchema={"AddItemCard-Profile"}
 				handleAdd={handleAdd}
 				tree={tree}
 				parentID={gameID}

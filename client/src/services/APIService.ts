@@ -1,6 +1,5 @@
 import type { User } from "firebase/auth";
 import type { DistinctTreeNode } from "../model/TreeNodeModel";
-import type { URLMapping } from "../db";
 
 export default class APIService {
     constructor() { };
@@ -29,25 +28,7 @@ export default class APIService {
 
     }
 
-    static addURLS(email: string, token: string, mappings: URLMapping["mapping"][]) {
-        if (mappings.length > 0) {
-            fetch(`/api/urlmappings/${email}`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
-                body: JSON.stringify(mappings)
-            })
-        }
-    }
-
-    static deleteURLS() {
-
-    }
-
     static getNodes() {
-
-    }
-
-    static getURLMappings() {
 
     }
 

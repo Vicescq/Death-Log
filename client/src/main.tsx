@@ -12,10 +12,10 @@ import Games from "./pages/Games.tsx";
 import { ErrorBoundary } from "react-error-boundary";
 import ErrorPage, { ForceError } from "./pages/ErrorPage.tsx";
 import Root from "./pages/Root.tsx";
-import URLRouter from "./components/URLRouter.tsx";
 import { ContextWrapper } from "./contexts/ContextWrapper.tsx";
-import Start from "./pages/Start.tsx";
+import Start from "./pages/Start/Start.tsx";
 import UtilityPage from "./pages/UtilityPage.tsx";
+import MainPageRouter from "./pages/MainPageRouter.tsx";
 
 createRoot(document.getElementById("root")!).render(
 	<StrictMode>
@@ -35,16 +35,11 @@ function AppRoutes() {
 			<Routes>
 				<Route path="/" element={<Root />}>
 					<Route index element={<Start />} />
-					<Route path="death-log" element={<Games />} />
-					<Route path="death-log/:gameName" element={<URLRouter />} />
-					<Route
-						path="death-log/:gameName/:profileName"
-						element={<URLRouter />}
-					/>
-					<Route
-						path="death-log/:gameName/:profileName/*"
+					<Route path="death-log" element={<MainPageRouter />} />
+					{/* <Route
+						path="death-log/*"
 						element={<ForceError msg={"URL NOT FOUND!"} />}
-					/>
+					/> */}
 					<Route path="utility" element={<UtilityPage />} />
 				</Route>
 				<Route />

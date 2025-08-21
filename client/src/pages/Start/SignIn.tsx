@@ -6,13 +6,11 @@ import IndexedDBService from "../../services/IndexedDBService";
 import useUserContext from "../../contexts/useUserContext";
 import { useNavigate } from "react-router";
 import useTreeContext from "../../contexts/useTreeContext";
-import useURLMapContext from "../../contexts/useURLMapContext";
 
 export default function SignIn() {
 	const navigate = useNavigate();
 	const [user, setUser] = useUserContext();
 	const [tree, setTree] = useTreeContext();
-	const [urlMap, setURLMap] = useURLMapContext();
 
 	async function handleSignIn() {
 		const provider = new GoogleAuthProvider();

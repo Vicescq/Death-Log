@@ -15,7 +15,6 @@ export type TreeNode = {
     notes: string | null
     dateStart: string,
     dateEnd: string | null,
-    path: string
 }
 
 export type RootNode = TreeNode & {
@@ -27,7 +26,6 @@ export type RootNode = TreeNode & {
     notes: null,
     dateStart: "",
     dateEnd: "",
-    path: "",
 }
 
 export type DistinctTreeNode = Game | Profile | Subject  // for discriminant unions
@@ -47,7 +45,6 @@ export type Subject = TreeNode & {
     type: "subject"
     fullTries: number,
     resets: number,
-    path: ""
 
     reoccurring: boolean,
     composite: boolean,

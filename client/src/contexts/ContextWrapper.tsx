@@ -1,7 +1,6 @@
 import { type ReactNode, useState } from "react";
 import useConsoleLogOnStateChange from "../hooks/useConsoleLogOnStateChange";
 import { type TreeStateType, TreeContext } from "./treeContext";
-import { URLMapContext, type URLMapStateType } from "./urlMapContext";
 import { HistoryContext, type HistoryStateType } from "./historyContext";
 import HistoryContextManager from "./managers/HistoryContextManager";
 import {
@@ -14,7 +13,6 @@ import useSyncDeathLog from "../hooks/useSyncDeathLog";
 
 export function ContextWrapper({ children }: { children: ReactNode }) {
 	const [tree, setTree] = useState<TreeStateType>(new Map());
-	const [urlMap, setURLMap] = useState<URLMapStateType>(new Map());
 	const initHistory = {
 		newActionStartIndex: 0,
 		actionHistory: [],
@@ -23,7 +21,6 @@ export function ContextWrapper({ children }: { children: ReactNode }) {
 	const [user, setUser] = useState<UserStateType>(null);
 	
 	useConsoleLogOnStateChange(tree, "TREE: ", tree);
-	useConsoleLogOnStateChange(urlMap, "URL MAP: ", urlMap);
 	useConsoleLogOnStateChange(history, "HISTORY: ", history);
 	useConsoleLogOnStateChange(
 		history,
@@ -37,18 +34,16 @@ export function ContextWrapper({ children }: { children: ReactNode }) {
 	);
 	useConsoleLogOnStateChange(user, "USER:", user);
 
-	useAuthObserver(setUser, setTree, setHistory, setURLMap);
+	useAuthObserver(setUser, setTree, setHistory);
 	useSyncDeathLog(user, history, setHistory);
 
 	return (
 		<TreeContext.Provider value={[tree, setTree]}>
-			<URLMapContext.Provider value={[urlMap, setURLMap]}>
 				<HistoryContext.Provider value={[history, setHistory]}>
 					<UserContext.Provider value={[user, setUser]}>
 						{children}
 					</UserContext.Provider>
 				</HistoryContext.Provider>
-			</URLMapContext.Provider>
 		</TreeContext.Provider>
 	);
 }

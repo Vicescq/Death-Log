@@ -5,7 +5,6 @@ import type { DistinctTreeNode, Game } from "../model/TreeNodeModel";
 import useMainPageContexts from "../hooks/useMainPageContexts";
 import HistoryContextManager from "../contexts/managers/HistoryContextManager";
 import TreeContextManager from "../contexts/managers/TreeContextManager";
-import URLMapContextManager from "../contexts/managers/URLMapContextManager";
 import IndexedDBService from "../services/IndexedDBService";
 import type { CardModalStateGame } from "../components/card/CardTypes";
 import Modal from "../components/modal/Modal";
@@ -17,8 +16,6 @@ export default function Games() {
 	const {
 		tree,
 		setTree,
-		urlMap,
-		setURLMap,
 		history,
 		setHistory,
 		user,
@@ -41,10 +38,6 @@ export default function Games() {
 				updatedTreeIP,
 				"add",
 			);
-			const updatedURLMap = URLMapContextManager.addURL(
-				urlMap,
-				action.targets,
-			);
 			const updatedHistory = HistoryContextManager.updateActionHistory(
 				history,
 				[action],
@@ -55,13 +48,8 @@ export default function Games() {
 				action.targets,
 				localStorage.getItem("email")!,
 			);
-			IndexedDBService.addURL(
-				action.targets,
-				localStorage.getItem("email")!,
-			);
 
 			setTree(updatedTree);
-			setURLMap(updatedURLMap);
 			setHistory(updatedHistory);
 		} catch (e) {
 			if (e instanceof Error) {
@@ -84,10 +72,6 @@ export default function Games() {
 				updatedTreeIP,
 				"delete",
 			);
-			const updatedURLMap = URLMapContextManager.deleteURL(
-				urlMap,
-				action.targets,
-			);
 			const updatedHistory = HistoryContextManager.updateActionHistory(
 				history,
 				[action],
@@ -96,13 +80,11 @@ export default function Games() {
 			// db's
 			try {
 				IndexedDBService.deleteNode(action.targets);
-				IndexedDBService.deleteURLS(action.targets);
 			} catch (error) {
 				console.error(error);
 			}
 
 			setTree(updatedTree);
-			setURLMap(updatedURLMap);
 			setHistory(updatedHistory);
 		}
 	}
@@ -121,7 +103,6 @@ export default function Games() {
 					},
 				);
 				editedNode.id = node.id;
-				editedNode.path = editedNode.name;
 				sanitizeTreeNodeEntry(editedNode.name, tree, "ROOT_NODE");
 
 				// in memory
@@ -133,13 +114,6 @@ export default function Games() {
 						updatedTreeIP,
 						"update",
 					);
-				const updatedURLMap = URLMapContextManager.updateURL(
-					urlMap,
-					tree,
-					node.path,
-					editedNode.path,
-					editedNode,
-				);
 				const updatedHistory =
 					HistoryContextManager.updateActionHistory(history, [
 						actionUpdateSelf,
@@ -153,7 +127,6 @@ export default function Games() {
 				);
 
 				setTree(updatedTree);
-				setURLMap(updatedURLMap);
 				setHistory(updatedHistory);
 			} else {
 				throw new Error("DEV ERROR!");

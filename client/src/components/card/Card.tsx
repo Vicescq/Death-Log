@@ -1,4 +1,4 @@
-import { NavLink } from "react-router";
+import { Link, NavLink, useNavigate } from "react-router";
 import skull from "../../assets/skull.svg";
 import add from "../../assets/add.svg";
 import minus from "../../assets/minus.svg";
@@ -45,6 +45,7 @@ export default function Card<T extends DistinctTreeNode>({
 	handleCompletedStatus,
 	handleModalSave,
 }: Props<T>) {
+	let navigate = useNavigate();
 	const modalRef = useRef<HTMLDialogElement | null>(null);
 	const [clickedModalSave, setClickedModalSave] = useState(false);
 	const [resetDeathTypeMode, setResetDeathTypeMode] = useState(false);
@@ -109,13 +110,12 @@ export default function Card<T extends DistinctTreeNode>({
 
 			<div className="ml-auto flex flex-col gap-2">
 				{!(node.type == "subject") ? (
-					<NavLink to={`/death-log/${node.path}`}>
-						<img
-							className={`w-9 ${highlightingCSS}`}
-							src={step_into}
-							alt=""
-						/>
-					</NavLink>
+					<img
+						className={`w-9 ${highlightingCSS}`}
+						src={step_into}
+						alt=""
+						onClick={() => navigate("/death-log")}
+					/>
 				) : (
 					<>
 						<img
