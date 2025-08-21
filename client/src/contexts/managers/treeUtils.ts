@@ -1,5 +1,5 @@
 import type { TreeStateType } from "../treeContext";
-import type { TreeNode, Subject, DistinctTreeNode, DeathType, TangibleTreeNode } from "../../model/TreeNodeModel";
+import type { TreeNode, Subject, DistinctTreeNode, DeathType } from "../../model/TreeNodeModel";
 
 export function sanitizeTreeNodeEntry(inputText: string, tree: TreeStateType, parentID: string) {
     inputText = inputText.trim();
@@ -16,8 +16,8 @@ export function sanitizeTreeNodeEntry(inputText: string, tree: TreeStateType, pa
 export function createNodePath(inputText: string, parentID: string, tree: TreeStateType) {
     let path: string;
     if (parentID != "ROOT_NODE") {
-        const parentNode = tree.get(parentID)! as TangibleTreeNode
-        path = parentNode.path + "/" + inputText.replaceAll(" ", "-");
+        const parentNode = tree.get(parentID)
+        path = parentNode?.path + "/" + inputText.replaceAll(" ", "-");
     }
     else {
         path = inputText.replaceAll(" ", "-");

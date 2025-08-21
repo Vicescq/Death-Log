@@ -1,5 +1,5 @@
 import { db } from "../db";
-import type { DistinctTreeNode, TangibleTreeNodeParent } from "../model/TreeNodeModel";
+import type { DistinctTreeNode, TreeNode } from "../model/TreeNodeModel";
 
 export default class IndexedDBService {
     constructor() { }
@@ -22,13 +22,17 @@ export default class IndexedDBService {
         return nodes;
     }
 
-    static async addURL(node: TangibleTreeNodeParent, email: string) {
+    static async addURL(node: TreeNode, email: string) {
         await db.urlMappings.add({ node_id: node.id, email: email, mapping: { path: node.path, node_id: node.id }, created_at: new Date().toISOString() });
     }
 
     static async deleteURLS(ids: string[]) {
         await db.urlMappings.bulkDelete(ids);
     }
+
+    // static async updateURLS(){
+    //     IndexedDBService.deleteURLS()
+    // }
 
     static async getURLMappings(email: string) {
         const rows = await db.urlMappings.where("email").equals(email).toArray();

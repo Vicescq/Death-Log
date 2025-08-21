@@ -32,6 +32,7 @@ export default function Games() {
 		try {
 			sanitizeTreeNodeEntry(inputText, tree, "ROOT_NODE");
 			const node = TreeContextManager.createGame(inputText, tree);
+
 			// memory data structures
 			const { updatedTree: updatedTreeIP, action } =
 				TreeContextManager.addNode(tree, node);
@@ -120,6 +121,7 @@ export default function Games() {
 					},
 				);
 				editedNode.id = node.id;
+				editedNode.path = editedNode.name;
 				sanitizeTreeNodeEntry(editedNode.name, tree, "ROOT_NODE");
 
 				// in memory
@@ -131,6 +133,13 @@ export default function Games() {
 						updatedTreeIP,
 						"update",
 					);
+				const updatedURLMap = URLMapContextManager.updateURL(
+					urlMap,
+					tree,
+					node.path,
+					editedNode.path,
+					editedNode,
+				);
 				const updatedHistory =
 					HistoryContextManager.updateActionHistory(history, [
 						actionUpdateSelf,
@@ -138,9 +147,13 @@ export default function Games() {
 					]);
 
 				// db's
-				/////////
+				IndexedDBService.updateNode(
+					actionUpdateSelf.targets,
+					localStorage.getItem("email")!,
+				);
 
 				setTree(updatedTree);
+				setURLMap(updatedURLMap);
 				setHistory(updatedHistory);
 			} else {
 				throw new Error("DEV ERROR!");
@@ -150,7 +163,7 @@ export default function Games() {
 				setAlert(e.message);
 				modalRef.current?.showModal();
 			} else {
-				// db stuff
+				throw new Error("DEV ERROR!");
 			}
 		}
 	}
@@ -181,7 +194,6 @@ export default function Games() {
 
 		setTree(updatedTree);
 		setHistory(updatedHistory);
-		console.log("dsadasdsaasdasdsadasdas");
 	}
 
 	function createCards() {

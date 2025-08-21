@@ -83,7 +83,7 @@ export default class TreeContextManager {
     }
 
     static createRootNode() {
-        const rootNode: RootNode = { type: "ROOT_NODE", id: "ROOT_NODE", childIDS: [], parentID: null };
+        const rootNode: RootNode = { type: "ROOT_NODE", id: "ROOT_NODE", childIDS: [], parentID: null, name: "", completed: false, notes: null, dateStart: "", dateEnd: "", path: "" };
         return rootNode
     }
 

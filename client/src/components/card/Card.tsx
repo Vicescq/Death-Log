@@ -83,7 +83,7 @@ export default function Card<T extends DistinctTreeNode>({
 		}
 	}
 
-	useConsoleLogOnStateChange(modalState, modalState);
+	// useConsoleLogOnStateChange(modalState, modalState);
 
 	// fixed "bug" where state persists to next card in line if some card got deleted
 	useEffect(() => {
