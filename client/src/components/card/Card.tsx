@@ -17,11 +17,13 @@ import type {
 } from "../../model/TreeNodeModel";
 import {
 	createCardCSS,
+	createCardMainPageTransitionState,
 	createCardModalState,
 	generateCardDeathCounts,
 } from "./cardUtils";
 import CardModalBody from "./CardModalBody";
 import type {
+	CardMainPageTransitionState,
 	CardModalState,
 	CardModalStateGame,
 	CardModalStateProfile,
@@ -46,6 +48,7 @@ export default function Card<T extends DistinctTreeNode>({
 	handleModalSave,
 }: Props<T>) {
 	let navigate = useNavigate();
+	const mainPageTransitionState = createCardMainPageTransitionState(node);
 	const modalRef = useRef<HTMLDialogElement | null>(null);
 	const [clickedModalSave, setClickedModalSave] = useState(false);
 	const [resetDeathTypeMode, setResetDeathTypeMode] = useState(false);
@@ -111,10 +114,10 @@ export default function Card<T extends DistinctTreeNode>({
 			<div className="ml-auto flex flex-col gap-2">
 				{!(node.type == "subject") ? (
 					<img
-						className={`w-9 ${highlightingCSS}`}
+						className={`w-9 ${highlightingCSS} cursor-pointer`}
 						src={step_into}
 						alt=""
-						onClick={() => navigate("/death-log")}
+						onClick={() => navigate("/death-log", {state: mainPageTransitionState})}
 					/>
 				) : (
 					<>

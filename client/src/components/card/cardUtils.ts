@@ -1,7 +1,7 @@
 import type { TreeStateType } from "../../contexts/treeContext";
 import type { DistinctTreeNode, Game, Profile, Subject } from "../../model/TreeNodeModel";
 import { getDeaths } from "../../contexts/managers/treeUtils";
-import type { CardModalStateGame, CardModalStateProfile, CardModalStateSubject } from "./CardTypes";
+import type { CardMainPageTransitionState, CardModalStateGame, CardModalStateProfile, CardModalStateSubject } from "./CardTypes";
 
 export function createCardCSS(
     treeNode: DistinctTreeNode,
@@ -60,5 +60,18 @@ export function createCardModalState(node: DistinctTreeNode): CardModalStateGame
             return { name: node.name };
         default:
             return { name: node.name, composite: node.composite, reoccurring: node.reoccurring } as CardModalStateSubject;
+    }
+}
+
+export function createCardMainPageTransitionState(node: DistinctTreeNode): CardMainPageTransitionState {
+    switch (node.type) {
+        case "game":
+            return { type: "GameToProfiles", parentID: node.id };
+
+        case "profile":
+            return { type: "ProfileToSubjects", parentID: node.id };
+        
+        case "subject":
+            throw new Error("SHOULD NOT HAPPEN!")
     }
 }

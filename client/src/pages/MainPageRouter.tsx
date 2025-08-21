@@ -1,14 +1,22 @@
 import { useLocation } from "react-router";
 import Games from "./Games";
+import type { CardMainPageTransitionState } from "../components/card/CardTypes";
+import Profiles from "./Profiles/Profiles";
+import Subjects from "./Subjects/Subjects";
 
 export default function MainPageRouter() {
 	let location = useLocation();
-	let renderedMainPage: React.JSX.Element;
+	let mainPageState: CardMainPageTransitionState | undefined = location.state;
 
-	if (!location.state) {
-		renderedMainPage = <Games />;
+	if (!mainPageState) {
+		return <Games />;
 	}
-    else if (location.state)
-	renderedMainPage = <Games />;
-	return renderedMainPage;
+
+	switch (mainPageState?.type) {
+		case "GameToProfiles":
+			return <Profiles gameID={mainPageState.parentID} />;
+
+		case "ProfileToSubjects":
+			return <Subjects profileID={mainPageState.parentID} />;
+	}
 }
