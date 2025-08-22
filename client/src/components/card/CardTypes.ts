@@ -21,6 +21,6 @@ export type CardModalMap = {
 export type CardModalState<T extends keyof CardModalMap> = CardModalMap[T]
 
 export type CardMainPageTransitionState = {
-    type: "GameToProfiles" | "ProfileToSubjects"
+    type: "GameToProfiles" | "ProfileToSubjects" | "Terminal"
     parentID: string; 
 }

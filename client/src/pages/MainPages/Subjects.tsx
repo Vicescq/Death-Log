@@ -7,6 +7,9 @@ import useMainPageStates from "../../hooks/useMainPageStates";
 import {
 	handleDelete,
 	handleAdd,
+	handleCompletedStatus,
+	handleModalSave,
+	handleDeathCount,
 } from "./eventHandlers";
 
 export default function Subjects({ profileID }: { profileID: string }) {
@@ -21,7 +24,52 @@ export default function Subjects({ profileID }: { profileID: string }) {
 					key={index}
 					tree={tree}
 					node={subject}
-					handleDelete={() => handleDelete(subject)}
+					handleCompletedStatus={() =>
+						handleCompletedStatus(
+							subject,
+							!subject.completed,
+							tree,
+							setTree,
+							history,
+							setHistory,
+							profileID,
+						)
+					}
+					handleDelete={() =>
+						handleDelete(
+							subject,
+							tree,
+							setTree,
+							history,
+							setHistory,
+							profileID,
+						)
+					}
+					handleModalSave={(overrides) =>
+						handleModalSave(
+							subject,
+							overrides,
+							tree,
+							setTree,
+							history,
+							setHistory,
+							setAlert,
+							modalRef,
+							profileID,
+						)
+					}
+					handleDeathCount={(deathType, operation) =>
+						handleDeathCount(
+							subject,
+							deathType,
+							operation,
+							tree,
+							setTree,
+							history,
+							setHistory,
+							profileID,
+						)
+					}
 				/>
 			);
 		});
@@ -31,9 +79,19 @@ export default function Subjects({ profileID }: { profileID: string }) {
 		<>
 			<AddItemCard
 				pageType="subject"
-				handleAdd={handleAdd}
-				tree={tree}
-				parentID={profileID}
+				handleAdd={(inputText) =>
+					handleAdd(
+						inputText,
+						"subject",
+						tree,
+						setTree,
+						history,
+						setHistory,
+						setAlert,
+						modalRef,
+						profileID,
+					)
+				}
 			/>
 
 			<CardWrapper cards={createCards()} />

@@ -52,12 +52,6 @@ export default function AddItemCard({ pageType, handleAdd }: Props) {
 			<AddItemCardModalBody
 				pageType="subject"
 				state={addItemCardSubjectModalState}
-				handleModalToggle={(key) =>
-					setAddItemCardSubjectModalState((prev) => ({
-						...prev,
-						[key]: !prev[key],
-					}))
-				}
 			/>
 		);
 		handleAddWrapper = () => {

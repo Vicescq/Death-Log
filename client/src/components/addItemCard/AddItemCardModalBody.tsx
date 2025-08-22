@@ -5,13 +5,11 @@ import SelectDropdown from "../SelectDropDown";
 type GameProfileProps = {
 	pageType: "gameORprofile"
 	state?: never;
-	handleModalToggle?: never
 };
 
 type SubjectProps = {
 	pageType: "subject";
 	state: AddItemCardModalStateSubject;
-	handleModalToggle: (key: keyof AddItemCardModalStateSubject) => void;
 };
 
 type Props = GameProfileProps | SubjectProps;

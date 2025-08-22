@@ -8,7 +8,11 @@ import reset from "../../assets/reset.svg";
 import readonly from "../../assets/readonly.svg";
 import type { TreeStateType } from "../../contexts/treeContext";
 import { useEffect, useRef, useState } from "react";
-import type { DeathType, DistinctTreeNode } from "../../model/TreeNodeModel";
+import type {
+	DeathCountOperation,
+	DeathType,
+	DistinctTreeNode,
+} from "../../model/TreeNodeModel";
 import {
 	createCardCSS,
 	createCardMainPageTransitionState,
@@ -31,6 +35,10 @@ type Props<T extends DistinctTreeNode> = {
 	handleDelete: () => void;
 	handleCompletedStatus: () => void;
 	handleModalSave: (overrides: CardModalState<T["type"]>) => void;
+	handleDeathCount?: (
+		deathType: DeathType,
+		operation: DeathCountOperation,
+	) => void;
 };
 
 export default function Card<T extends DistinctTreeNode>({
@@ -39,16 +47,18 @@ export default function Card<T extends DistinctTreeNode>({
 	handleDelete,
 	handleCompletedStatus,
 	handleModalSave,
+	handleDeathCount,
 }: Props<T>) {
 	let navigate = useNavigate();
-	const mainPageTransitionState = createCardMainPageTransitionState(node);
 	const modalRef = useRef<HTMLDialogElement | null>(null);
-	const [clickedModalSave, setClickedModalSave] = useState(false);
 	const [resetDeathTypeMode, setResetDeathTypeMode] = useState(false);
+
+	const [clickedModalSave, setClickedModalSave] = useState(false);
 
 	const [modalState, setModalState] = useState<CardModalState<T["type"]>>(
 		createCardModalState(node) as CardModalState<T["type"]>,
 	);
+	const mainPageTransitionState = createCardMainPageTransitionState(node);
 
 	const deathType: DeathType = resetDeathTypeMode ? "resets" : "fullTries";
 
@@ -138,23 +148,23 @@ export default function Card<T extends DistinctTreeNode>({
 							className={`w-9 cursor-pointer ${settersCSS}`}
 							src={add}
 							alt=""
-							// onClick={() => handleDeathCount!(deathType, "add")}
+							onClick={() => handleDeathCount!(deathType, "add")}
 						/>
 						<img
 							className={`w-9 cursor-pointer ${settersCSS}`}
 							src={minus}
 							alt=""
-							// onClick={() =>
-							// 	handleDeathCount!(deathType, "subtract")
-							// }
+							onClick={() =>
+								handleDeathCount!(deathType, "subtract")
+							}
 						/>
 						<img
 							className={`w-9 cursor-pointer ${settersCSS} ${resetToggleHighlightingCSS}`}
 							src={reset}
 							alt=""
-							// onClick={() => {
-							// 	setResetDeathTypeMode((prev) => !prev);
-							// }}
+							onClick={() => {
+								setResetDeathTypeMode((prev) => !prev);
+							}}
 						/>
 					</>
 				)}

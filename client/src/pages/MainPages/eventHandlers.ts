@@ -4,7 +4,7 @@ import HistoryContextManager from "../../contexts/managers/HistoryContextManager
 import TreeContextManager from "../../contexts/managers/TreeContextManager";
 import { sanitizeTreeNodeEntry } from "../../contexts/managers/treeUtils";
 import type { TreeContextType, TreeStateType } from "../../contexts/treeContext";
-import type { DistinctTreeNode } from "../../model/TreeNodeModel";
+import type { DeathCountOperation, DeathType, DistinctTreeNode, Subject } from "../../model/TreeNodeModel";
 import IndexedDBService from "../../services/IndexedDBService";
 
 export function handleAdd(inputText: string, pageType: "game" | "profile" | "subject", tree: TreeStateType, setTree: TreeContextType[1], history: HistoryStateType, setHistory: HistoryContextType[1], setAlert: React.Dispatch<React.SetStateAction<string>>, modalRef: React.RefObject<HTMLDialogElement | null>, parentID: string) {
@@ -51,12 +51,11 @@ export function handleDelete(node: DistinctTreeNode, tree: TreeStateType, setTre
         // db's
         try {
             IndexedDBService.deleteNode(actions.self.targets, node, localStorage.getItem("email")!, actions.parent.targets);
+            setTree(updatedTree);
+            setHistory(updatedHistory);
         } catch (error) {
             console.error(error);
         }
-
-        setTree(updatedTree);
-        setHistory(updatedHistory);
     }
 }
 
@@ -129,4 +128,55 @@ export function handleCompletedStatus(node: DistinctTreeNode, newStatus: boolean
 
     setTree(updatedTree);
     setHistory(updatedHistory);
+}
+
+export function handleDeathCount(subject: Subject, deathType: DeathType, operation: DeathCountOperation, tree: TreeStateType, setTree: TreeContextType[1], history: HistoryStateType, setHistory: HistoryContextType[1], parentID: string) {
+    const updatedSubject: Subject = { ...subject };
+    if (operation == "add") {
+        deathType == "fullTries"
+            ? updatedSubject.fullTries++
+            : updatedSubject.resets++;
+    } else {
+        deathType == "fullTries"
+            ? updatedSubject.fullTries--
+            : updatedSubject.resets--;
+    }
+
+    updatedSubject.fullTries < 0 ? (updatedSubject.fullTries = 0) : null;
+    updatedSubject.resets < 0 ? (updatedSubject.resets = 0) : null;
+
+
+    // in memory
+    const { updatedTree, actions } =
+        TreeContextManager.updateNode(tree, updatedSubject, {}, parentID);
+
+
+    const updatedHistory =
+        HistoryContextManager.updateActionHistory(history, [
+            actions.self,
+            actions.parent,
+        ]);
+
+    try {
+        // db's
+        IndexedDBService.updateNode(
+            actions.self.targets,
+            localStorage.getItem("email")!,
+        );
+        IndexedDBService.updateNode(
+            actions.parent.targets,
+            localStorage.getItem("email")!,
+        );
+
+        setTree(updatedTree);
+        setHistory(updatedHistory);
+    }
+
+    catch (e) {
+        if (e instanceof Error) {
+            console.error(e);
+        } else {
+            throw new Error("DEV ERROR!");
+        }
+    }
 }

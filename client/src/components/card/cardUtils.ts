@@ -72,6 +72,6 @@ export function createCardMainPageTransitionState(node: DistinctTreeNode): CardM
             return { type: "ProfileToSubjects", parentID: node.id };
         
         case "subject":
-            throw new Error("SHOULD NOT HAPPEN!")
+            return {type: "Terminal", parentID: "__TERMINAL__"};
     }
 }
