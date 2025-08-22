@@ -10,6 +10,8 @@ import {
 	handleModalSave,
 } from "./eventHandlers";
 import useMainPageStates from "../../hooks/useMainPageStates";
+import AlertModalBody from "../../components/modal/AlertModalBody";
+import Modal from "../../components/modal/Modal";
 
 export default function Profiles({ gameID }: { gameID: string }) {
 	const { tree, setTree, history, setHistory } = useMainPageContexts();
@@ -81,6 +83,11 @@ export default function Profiles({ gameID }: { gameID: string }) {
 				}
 			/>
 			<CardWrapper cards={createCards()} />
+			<Modal
+				modalRef={modalRef}
+				isAlertModal={true}
+				modalBody={<AlertModalBody msg={alert} />}
+			/>
 		</>
 	);
 }

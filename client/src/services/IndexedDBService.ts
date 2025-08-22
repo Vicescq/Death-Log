@@ -1,4 +1,4 @@
-import { db } from "../model/IndexedDB";
+import { db } from "../model/IndexedDBSchema";
 import type { DistinctTreeNode, TreeNode } from "../model/TreeNodeModel";
 
 export default class IndexedDBService {

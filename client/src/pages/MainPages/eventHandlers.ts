@@ -17,12 +17,12 @@ export function handleAdd(inputText: string, pageType: "game" | "profile" | "sub
             history,
             [actions.self, actions.parent],
         );
-        const node = actions.self.targets;
+
 
         // db's
         IndexedDBService.addNode(
-            node,
-            localStorage.getItem("email")!, tree.get(parentID)!
+            actions.self.targets,
+            localStorage.getItem("email")!, actions.parent.targets
         );
 
         setTree(updatedTree);
@@ -68,26 +68,23 @@ export function handleModalSave(
         sanitizeTreeNodeEntry(overrides.name, tree, parentID);
 
         // in memory
-        const { updatedTree: updatedTreeIP, action: actionUpdateSelf } =
-            TreeContextManager.updateNode(tree, node, overrides, false);
+        const { updatedTree, actions } =
+            TreeContextManager.updateNode(tree, node, overrides, parentID);
 
-        const { updatedTree: updatedTree, action: actionUpdateParent } =
-            TreeContextManager.updateNode(
-                updatedTreeIP,
-                tree.get(parentID)!,
-                {},
-                node,
-                "update",
-            );
+
         const updatedHistory =
             HistoryContextManager.updateActionHistory(history, [
-                actionUpdateSelf,
-                actionUpdateParent,
+                actions.self,
+                actions.parent,
             ]);
 
         // db's
         IndexedDBService.updateNode(
-            actionUpdateSelf.targets,
+            actions.self.targets,
+            localStorage.getItem("email")!,
+        );
+        IndexedDBService.updateNode(
+            actions.parent.targets,
             localStorage.getItem("email")!,
         );
 
@@ -104,33 +101,26 @@ export function handleModalSave(
     }
 }
 
-
 export function handleCompletedStatus(node: DistinctTreeNode, newStatus: boolean, tree: TreeStateType, setTree: TreeContextType[1], history: HistoryStateType, setHistory: HistoryContextType[1], parentID: string) {
     const dateEnd = newStatus ? new Date().toISOString() : null;
 
     // memory data structures
-    const { updatedTree: updatedTreeIP, action: actionUpdateSelf } =
+    const { updatedTree, actions } =
         TreeContextManager.updateNode(tree, node, {
             dateEnd: dateEnd,
             completed: newStatus,
-        });
-    const { updatedTree: updatedTree, action: actionUpdateParent } =
-        TreeContextManager.updateNode(
-            updatedTreeIP,
-            tree.get(parentID)!,
-            {},
-            node,
-            "update",
-        );
-    const updatedHistory = HistoryContextManager.updateActionHistory(
-        history,
-        [actionUpdateSelf, actionUpdateParent],
-    );
+        }, parentID);
+
+    const updatedHistory = HistoryContextManager.updateActionHistory(history, [actions.self, actions.parent,]);
 
     // db's
     try {
         IndexedDBService.updateNode(
-            actionUpdateSelf.targets,
+            actions.self.targets,
+            localStorage.getItem("email")!,
+        );
+        IndexedDBService.updateNode(
+            actions.parent.targets,
             localStorage.getItem("email")!,
         );
     } catch (error) {

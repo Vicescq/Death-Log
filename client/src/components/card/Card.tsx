@@ -71,12 +71,28 @@ export default function Card<T extends DistinctTreeNode>({
 			| CardModalStateProfile
 			| CardModalStateSubject,
 	) {
-		if (node.type == "game") {
-			const gameState = newState as CardModalStateGame;
-			setModalState((prev: CardModalState<T["type"]>) => ({
-				...prev,
-				name: gameState.name,
-			}));
+		switch (node.type) {
+			case "game":
+				const gameState = newState as CardModalStateGame;
+				setModalState((prev: CardModalState<T["type"]>) => ({
+					...prev,
+					name: gameState.name,
+				}));
+				break;
+			case "profile":
+				const profileState = newState as CardModalStateProfile;
+				setModalState((prev: CardModalState<T["type"]>) => ({
+					...prev,
+					name: profileState.name,
+				}));
+				break;
+			case "subject":
+				const subjectState = newState as CardModalStateProfile;
+				setModalState((prev: CardModalState<T["type"]>) => ({
+					...prev,
+					name: subjectState.name,
+				}));
+				break;
 		}
 	}
 
