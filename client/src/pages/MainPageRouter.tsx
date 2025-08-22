@@ -1,8 +1,8 @@
 import { useLocation } from "react-router";
-import Games from "./Games";
+import Games from "./MainPages/Games";
 import type { CardMainPageTransitionState } from "../components/card/CardTypes";
-import Profiles from "./Profiles/Profiles";
-import Subjects from "./Subjects/Subjects";
+import Profiles from "./MainPages/Profiles";
+import Subjects from "./MainPages/Subjects";
 
 export default function MainPageRouter() {
 	let location = useLocation();

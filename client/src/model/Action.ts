@@ -1,4 +1,4 @@
-import type { DistinctTreeNode } from "./TreeNodeModel";
+import type { TreeNode } from "./TreeNodeModel";
 
 export type ActionType = "add" | "delete" | "update";
 
@@ -6,7 +6,7 @@ export type Action = ActionAdd | ActionDelete | ActionUpdate;
 
 export type ActionAdd = {
     type: "add",
-    targets: DistinctTreeNode
+    targets: TreeNode
 }
 
 export type ActionDelete = {
@@ -16,5 +16,5 @@ export type ActionDelete = {
 
 export type ActionUpdate = {
     type: "update",
-    targets: DistinctTreeNode
+    targets: TreeNode
 }

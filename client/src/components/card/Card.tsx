@@ -1,4 +1,4 @@
-import { Link, NavLink, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import skull from "../../assets/skull.svg";
 import add from "../../assets/add.svg";
 import minus from "../../assets/minus.svg";
@@ -7,14 +7,8 @@ import details from "../../assets/details.svg";
 import reset from "../../assets/reset.svg";
 import readonly from "../../assets/readonly.svg";
 import type { TreeStateType } from "../../contexts/treeContext";
-import React, { useEffect, useRef, useState } from "react";
-import type {
-	DeathType,
-	DistinctTreeNode,
-	Game,
-	Profile,
-	Subject,
-} from "../../model/TreeNodeModel";
+import { useEffect, useRef, useState } from "react";
+import type { DeathType, DistinctTreeNode } from "../../model/TreeNodeModel";
 import {
 	createCardCSS,
 	createCardMainPageTransitionState,
@@ -23,7 +17,6 @@ import {
 } from "./cardUtils";
 import CardModalBody from "./CardModalBody";
 import type {
-	CardMainPageTransitionState,
 	CardModalState,
 	CardModalStateGame,
 	CardModalStateProfile,
@@ -35,7 +28,7 @@ import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
 type Props<T extends DistinctTreeNode> = {
 	node: T;
 	tree: TreeStateType;
-	handleDelete: (node: DistinctTreeNode) => void;
+	handleDelete: () => void;
 	handleCompletedStatus: () => void;
 	handleModalSave: (overrides: CardModalState<T["type"]>) => void;
 };
@@ -117,7 +110,11 @@ export default function Card<T extends DistinctTreeNode>({
 						className={`w-9 ${highlightingCSS} cursor-pointer`}
 						src={step_into}
 						alt=""
-						onClick={() => navigate("/death-log", {state: mainPageTransitionState})}
+						onClick={() =>
+							navigate("/death-log", {
+								state: mainPageTransitionState,
+							})
+						}
 					/>
 				) : (
 					<>
@@ -164,7 +161,7 @@ export default function Card<T extends DistinctTreeNode>({
 					<CardModalBody
 						pageType={node.type}
 						state={modalState}
-						handleDelete={() => handleDelete(node)}
+						handleDelete={handleDelete}
 						handleModalEdit={handleModalEdit}
 						handleModalSave={handleModalSave}
 					/>

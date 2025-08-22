@@ -3,8 +3,6 @@ import type { HistoryContextType, HistoryStateType } from "../contexts/historyCo
 import APIService from "../services/APIService";
 import HistoryContextManager from "../contexts/managers/HistoryContextManager";
 import type { UserStateType } from "../contexts/userContext";
-import type { URLMapping } from "../db";
-import type { TangibleTreeNodeParent } from "../model/TreeNodeModel";
 
 export default function useSyncDeathLog(user: UserStateType, history: HistoryStateType, setHistory: HistoryContextType[1]) {
 
