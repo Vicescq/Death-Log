@@ -1,6 +1,6 @@
 import type { DistinctTreeNode } from "../../model/TreeNodeModel";
-import type { CardModalState, CardModalStateGame } from "./CardTypes";
-import type { CardModalStateProfile, CardModalStateSubject } from "./CardTypes";
+import type { CardModalState, CardModalStateGame } from "./types";
+import type { CardModalStateProfile, CardModalStateSubject } from "./types";
 
 type Props<T extends DistinctTreeNode> = {
 	pageType: T["type"];
@@ -26,10 +26,9 @@ export default function CardModalBody<T extends DistinctTreeNode>({
 					className="rounded-2xl border-4 p-1 shadow-[4px_4px_0px_rgba(0,0,0,1)]"
 					onChange={(e) =>
 						handleModalEdit({
+							...state,
 							name: e.currentTarget.value,
-						} as CardModalStateGame &
-							CardModalStateProfile &
-							CardModalStateSubject)
+						} )
 					}
 				/>
 			</li>

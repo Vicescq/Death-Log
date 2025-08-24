@@ -1,7 +1,7 @@
 import type { TreeStateType } from "../../contexts/treeContext";
 import type { DistinctTreeNode, Game, Profile, Subject } from "../../model/TreeNodeModel";
 import { getDeaths } from "../../contexts/managers/treeUtils";
-import type { CardMainPageTransitionState, CardModalStateGame, CardModalStateProfile, CardModalStateSubject } from "./CardTypes";
+import type { CardMainPageTransitionState, CardModalStateGame, CardModalStateProfile, CardModalStateSubject } from "./types";
 
 export function createCardCSS(
     treeNode: DistinctTreeNode,

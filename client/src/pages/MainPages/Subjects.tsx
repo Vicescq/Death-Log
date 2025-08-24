@@ -79,7 +79,7 @@ export default function Subjects({ profileID }: { profileID: string }) {
 		<>
 			<AddItemCard
 				pageType="subject"
-				handleAdd={(inputText) =>
+				handleAdd={(inputText, overrides) =>
 					handleAdd(
 						inputText,
 						"subject",
@@ -90,6 +90,7 @@ export default function Subjects({ profileID }: { profileID: string }) {
 						setAlert,
 						modalRef,
 						profileID,
+						overrides,
 					)
 				}
 			/>

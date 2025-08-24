@@ -1,4 +1,5 @@
-import type { CardModalStateGame } from "../../components/card/CardTypes";
+import type { AICModalStateSubject } from "../../components/addItemCard/types";
+import type { CardModalStateGame } from "../../components/card/types";
 import type { HistoryContextType, HistoryStateType } from "../../contexts/historyContext";
 import HistoryContextManager from "../../contexts/managers/HistoryContextManager";
 import TreeContextManager from "../../contexts/managers/TreeContextManager";
@@ -7,17 +8,16 @@ import type { TreeContextType, TreeStateType } from "../../contexts/treeContext"
 import type { DeathCountOperation, DeathType, DistinctTreeNode, Subject } from "../../model/TreeNodeModel";
 import IndexedDBService from "../../services/IndexedDBService";
 
-export function handleAdd(inputText: string, pageType: "game" | "profile" | "subject", tree: TreeStateType, setTree: TreeContextType[1], history: HistoryStateType, setHistory: HistoryContextType[1], setAlert: React.Dispatch<React.SetStateAction<string>>, modalRef: React.RefObject<HTMLDialogElement | null>, parentID: string) {
+export function handleAdd(inputText: string, pageType: "game" | "profile" | "subject", tree: TreeStateType, setTree: TreeContextType[1], history: HistoryStateType, setHistory: HistoryContextType[1], setAlert: React.Dispatch<React.SetStateAction<string>>, modalRef: React.RefObject<HTMLDialogElement | null>, parentID: string, overrides?: AICModalStateSubject) {
     try {
 
         // memory data structures
         const { updatedTree, actions } =
-            TreeContextManager.addNode(tree, pageType, inputText, parentID);
+            TreeContextManager.addNode(tree, pageType, inputText, parentID, overrides);
         const updatedHistory = HistoryContextManager.updateActionHistory(
             history,
             [actions.self, actions.parent],
         );
-
 
         // db's
         IndexedDBService.addNode(

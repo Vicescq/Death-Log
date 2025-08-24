@@ -18,14 +18,14 @@ import {
 	createCardMainPageTransitionState,
 	createCardModalState,
 	generateCardDeathCounts,
-} from "./cardUtils";
+} from "./utils";
 import CardModalBody from "./CardModalBody";
 import type {
 	CardModalState,
 	CardModalStateGame,
 	CardModalStateProfile,
 	CardModalStateSubject,
-} from "./CardTypes";
+} from "./types";
 import Modal from "../modal/Modal";
 import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
 
@@ -97,10 +97,10 @@ export default function Card<T extends DistinctTreeNode>({
 				}));
 				break;
 			case "subject":
-				const subjectState = newState as CardModalStateProfile;
+				const subjectState = newState as CardModalStateSubject;
 				setModalState((prev: CardModalState<T["type"]>) => ({
 					...prev,
-					name: subjectState.name,
+					...subjectState
 				}));
 				break;
 		}
@@ -111,6 +111,8 @@ export default function Card<T extends DistinctTreeNode>({
 	// fixed "bug" where state persists to next card in line if some card got deleted
 	useEffect(() => {
 		setResetDeathTypeMode(false);
+		modalRef.current?.close();
+		// setModalState(createCardModalState(node) as CardModalState<T["type"]>)
 	}, [node.id]);
 
 	return (

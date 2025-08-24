@@ -1,6 +1,6 @@
 import { useLocation } from "react-router";
 import Games from "./MainPages/Games";
-import type { CardMainPageTransitionState } from "../components/card/CardTypes";
+import type { CardMainPageTransitionState } from "../components/card/types";
 import Profiles from "./MainPages/Profiles";
 import Subjects from "./MainPages/Subjects";
 

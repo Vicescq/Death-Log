@@ -4,6 +4,7 @@ import type { RootNode, DistinctTreeNode, TreeNode, Game, Profile, Subject, Tree
 import { createShallowCopyMap } from "./treeUtils";
 import { v4 as uuidv4 } from 'uuid';
 import { sortChildIDS, identifyDeletedSelfAndChildrenIDS, createNodePath, sanitizeTreeNodeEntry } from "./treeUtils";
+import type { AICModalStateSubject } from "../../components/addItemCard/types";
 
 export default class TreeContextManager {
     constructor() { }
@@ -27,7 +28,7 @@ export default class TreeContextManager {
         return newTree
     }
 
-    static addNode(tree: TreeStateType, pageType: "game" | "profile" | "subject", inputText: string, parentID: string) {
+    static addNode(tree: TreeStateType, pageType: "game" | "profile" | "subject", inputText: string, parentID: string, overrides?: AICModalStateSubject) {
         sanitizeTreeNodeEntry(inputText, tree, parentID);
         let node: TreeNode;
         switch (pageType) {
@@ -39,6 +40,7 @@ export default class TreeContextManager {
                 break;
             case "subject":
                 node = TreeContextManager.createSubject(inputText, parentID);
+                node = {...node, ...overrides}
                 break;
         }
 

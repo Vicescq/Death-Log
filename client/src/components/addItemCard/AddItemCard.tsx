@@ -3,29 +3,14 @@ import gear from "../../assets/gear.svg";
 import filter from "../../assets/filter.svg";
 import Modal from "../modal/Modal";
 import type {
-	HandleAddGame,
-	HandleAddProfile,
-	HandleAddSubject,
-} from "./AddItemCardTypes";
-import type { AddItemCardModalStateSubject } from "./AddItemCardTypes";
+	AICGame,
+	AICModalStateSubject,
+	AICProfile,
+	AICSubject,
+} from "./types";
 import AddItemCardModalBody from "./AddItemCardModalBody";
 
-type GameProps = {
-	pageType: "game";
-	handleAdd: HandleAddGame;
-};
-
-type ProfileProps = {
-	pageType: "profile";
-	handleAdd: HandleAddProfile;
-};
-
-type SubjectProps = {
-	pageType: "subject";
-	handleAdd: HandleAddSubject;
-};
-
-type Props = GameProps | ProfileProps | SubjectProps;
+type Props = AICGame | AICProfile | AICSubject;
 
 export default function AddItemCard({ pageType, handleAdd }: Props) {
 	const [inputText, setInputText] = useState("");
@@ -33,17 +18,20 @@ export default function AddItemCard({ pageType, handleAdd }: Props) {
 
 	// only for the subject case
 	const [addItemCardSubjectModalState, setAddItemCardSubjectModalState] =
-		useState<AddItemCardModalStateSubject>({
-			reoccuring: false,
+		useState<AICModalStateSubject>({
+			reoccurring: false,
 			composite: false,
 		});
 
 	let addItemCardModalBody: React.JSX.Element;
 	let handleAddWrapper: () => void;
-	if (pageType == "game" || pageType == "profile") {
-		addItemCardModalBody = (
-			<AddItemCardModalBody pageType="gameORprofile" />
-		);
+	if (pageType == "game") {
+		addItemCardModalBody = <AddItemCardModalBody pageType="game" />;
+		handleAddWrapper = () => {
+			handleAdd(inputText);
+		};
+	} else if (pageType == "profile") {
+		addItemCardModalBody = <AddItemCardModalBody pageType="profile" />;
 		handleAddWrapper = () => {
 			handleAdd(inputText);
 		};
@@ -52,6 +40,7 @@ export default function AddItemCard({ pageType, handleAdd }: Props) {
 			<AddItemCardModalBody
 				pageType="subject"
 				state={addItemCardSubjectModalState}
+				handleToggle={(key) => setAddItemCardSubjectModalState((prev) => ({...prev, [key]: !prev[key]}))}
 			/>
 		);
 		handleAddWrapper = () => {
