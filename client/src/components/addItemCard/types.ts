@@ -1,3 +1,5 @@
+import type { Subject } from "../../model/TreeNodeModel";
+
 export type HandleAddGame = (
     inputText: string,
 ) => void;
@@ -6,13 +8,8 @@ export type HandleAddProfile = (
 ) => void;
 export type HandleAddSubject = (
     inputText: string,
-    overrides: AICModalStateSubject
+    overrides: AICSubjectOverrides
 ) => void;
-
-export type AICModalStateSubject = {
-    reoccurring: boolean;
-    composite: boolean;
-};
 
 export type AICGame = {
     pageType: "game";
@@ -29,16 +26,7 @@ export type AICSubject = {
     handleAdd: HandleAddSubject;
 }
 
-export type AICModalBodyGameProps = {
-    pageType: "game"
-}
-
-export type AICModalBodyProfileProps = {
-    pageType: "profile"
-}
-
-export type AICModalBodySubjectProps = {
-    pageType: "subject"
-	state: AICModalStateSubject;
-    handleToggle: (setting: keyof AICModalStateSubject) => void;
+export type AICSubjectOverrides = {
+    composite: boolean;
+    reoccurring: boolean;
 }

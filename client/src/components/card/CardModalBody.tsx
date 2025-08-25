@@ -1,22 +1,22 @@
+import { useState } from "react";
 import type { DistinctTreeNode } from "../../model/TreeNodeModel";
-import type { CardModalState, CardModalStateGame } from "./types";
-import type { CardModalStateProfile, CardModalStateSubject } from "./types";
+import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
 
 type Props<T extends DistinctTreeNode> = {
-	pageType: T["type"];
-	state: CardModalState<T["type"]>;
+	node: T;
 	handleDelete: () => void;
-	handleModalEdit: (state: CardModalState<T["type"]>) => void;
-	handleModalSave: (overrides: CardModalState<T["type"]>) => void;
+	handleModalSave: (overrides: T) => void;
 };
 
 export default function CardModalBody<T extends DistinctTreeNode>({
-	pageType,
-	state,
+	node,
 	handleDelete,
-	handleModalEdit,
 	handleModalSave,
 }: Props<T>) {
+	const [modalState, setModalState] = useState<T>({
+		...node,
+	});
+	
 	return (
 		<ul className="flex flex-col gap-2">
 			<li className="flex items-center gap-2">
@@ -24,19 +24,19 @@ export default function CardModalBody<T extends DistinctTreeNode>({
 				<input
 					type="text"
 					className="rounded-2xl border-4 p-1 shadow-[4px_4px_0px_rgba(0,0,0,1)]"
-					onChange={(e) =>
-						handleModalEdit({
-							...state,
+					onChange={(e) => {
+						setModalState({
+							...modalState,
 							name: e.currentTarget.value,
-						} )
-					}
+						});
+					}}
 				/>
 			</li>
 
 			<button
 				className="bg-hunyadi rounded-2xl border-4 p-2 font-bold shadow-[4px_4px_0px_rgba(0,0,0,1)]"
 				onClick={() => {
-					handleModalSave(state);
+					handleModalSave(modalState);
 				}}
 			>
 				SAVE

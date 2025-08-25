@@ -1,12 +1,12 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import gear from "../../assets/gear.svg";
 import filter from "../../assets/filter.svg";
 import Modal from "../modal/Modal";
 import type {
 	AICGame,
-	AICModalStateSubject,
 	AICProfile,
 	AICSubject,
+	AICSubjectOverrides,
 } from "./types";
 import AddItemCardModalBody from "./AddItemCardModalBody";
 
@@ -16,36 +16,28 @@ export default function AddItemCard({ pageType, handleAdd }: Props) {
 	const [inputText, setInputText] = useState("");
 	const modalRef = useRef<HTMLDialogElement>(null);
 
-	// only for the subject case
-	const [addItemCardSubjectModalState, setAddItemCardSubjectModalState] =
-		useState<AICModalStateSubject>({
-			reoccurring: false,
-			composite: false,
-		});
+	const [subjectModalState, setSubjectModalState] = useState<AICSubjectOverrides>({
+		composite: false,
+		reoccurring: false,
+	});
 
-	let addItemCardModalBody: React.JSX.Element;
 	let handleAddWrapper: () => void;
 	if (pageType == "game") {
-		addItemCardModalBody = <AddItemCardModalBody pageType="game" />;
 		handleAddWrapper = () => {
 			handleAdd(inputText);
 		};
 	} else if (pageType == "profile") {
-		addItemCardModalBody = <AddItemCardModalBody pageType="profile" />;
 		handleAddWrapper = () => {
 			handleAdd(inputText);
 		};
-	} else {
-		addItemCardModalBody = (
-			<AddItemCardModalBody
-				pageType="subject"
-				state={addItemCardSubjectModalState}
-				handleToggle={(key) => setAddItemCardSubjectModalState((prev) => ({...prev, [key]: !prev[key]}))}
-			/>
-		);
+	} else if (pageType == "subject") {
 		handleAddWrapper = () => {
-			handleAdd(inputText, addItemCardSubjectModalState);
+			handleAdd(inputText, subjectModalState);
 		};
+	}
+
+	function handleModalEdit(setting: keyof AICSubjectOverrides) {
+		setSubjectModalState((prev) => ({ ...prev, [setting]: !prev[setting] }));
 	}
 
 	return (
@@ -85,7 +77,15 @@ export default function AddItemCard({ pageType, handleAdd }: Props) {
 					</button>
 				) : null}
 			</div>
-			<Modal modalRef={modalRef} modalBody={addItemCardModalBody} />
+			<Modal
+				modalRef={modalRef}
+				modalBody={
+					<AddItemCardModalBody
+						state={subjectModalState}
+						handleToggle={(setting) => handleModalEdit(setting)}
+					/>
+				}
+			/>
 		</header>
 	);
 }

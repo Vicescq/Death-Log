@@ -21,7 +21,7 @@ export default function Subjects({ profileID }: { profileID: string }) {
 			const subject = tree.get(nodeID) as Subject;
 			return (
 				<Card
-					key={index}
+					key={subject.id}
 					tree={tree}
 					node={subject}
 					handleCompletedStatus={() =>

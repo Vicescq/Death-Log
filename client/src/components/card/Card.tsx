@@ -7,7 +7,7 @@ import details from "../../assets/details.svg";
 import reset from "../../assets/reset.svg";
 import readonly from "../../assets/readonly.svg";
 import type { TreeStateType } from "../../contexts/treeContext";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import type {
 	DeathCountOperation,
 	DeathType,
@@ -16,16 +16,9 @@ import type {
 import {
 	createCardCSS,
 	createCardMainPageTransitionState,
-	createCardModalState,
 	generateCardDeathCounts,
 } from "./utils";
 import CardModalBody from "./CardModalBody";
-import type {
-	CardModalState,
-	CardModalStateGame,
-	CardModalStateProfile,
-	CardModalStateSubject,
-} from "./types";
 import Modal from "../modal/Modal";
 import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
 
@@ -34,7 +27,7 @@ type Props<T extends DistinctTreeNode> = {
 	tree: TreeStateType;
 	handleDelete: () => void;
 	handleCompletedStatus: () => void;
-	handleModalSave: (overrides: CardModalState<T["type"]>) => void;
+	handleModalSave: (overrides: T) => void;
 	handleDeathCount?: (
 		deathType: DeathType,
 		operation: DeathCountOperation,
@@ -50,14 +43,9 @@ export default function Card<T extends DistinctTreeNode>({
 	handleDeathCount,
 }: Props<T>) {
 	let navigate = useNavigate();
+	
 	const modalRef = useRef<HTMLDialogElement | null>(null);
 	const [resetDeathTypeMode, setResetDeathTypeMode] = useState(false);
-
-	const [clickedModalSave, setClickedModalSave] = useState(false);
-
-	const [modalState, setModalState] = useState<CardModalState<T["type"]>>(
-		createCardModalState(node) as CardModalState<T["type"]>,
-	);
 	const mainPageTransitionState = createCardMainPageTransitionState(node);
 
 	const deathType: DeathType = resetDeathTypeMode ? "resets" : "fullTries";
@@ -74,46 +62,6 @@ export default function Card<T extends DistinctTreeNode>({
 		node,
 		tree,
 	);
-
-	function handleModalEdit(
-		newState:
-			| CardModalStateGame
-			| CardModalStateProfile
-			| CardModalStateSubject,
-	) {
-		switch (node.type) {
-			case "game":
-				const gameState = newState as CardModalStateGame;
-				setModalState((prev: CardModalState<T["type"]>) => ({
-					...prev,
-					name: gameState.name,
-				}));
-				break;
-			case "profile":
-				const profileState = newState as CardModalStateProfile;
-				setModalState((prev: CardModalState<T["type"]>) => ({
-					...prev,
-					name: profileState.name,
-				}));
-				break;
-			case "subject":
-				const subjectState = newState as CardModalStateSubject;
-				setModalState((prev: CardModalState<T["type"]>) => ({
-					...prev,
-					...subjectState
-				}));
-				break;
-		}
-	}
-
-	// useConsoleLogOnStateChange(modalState, modalState);
-
-	// fixed "bug" where state persists to next card in line if some card got deleted
-	useEffect(() => {
-		setResetDeathTypeMode(false);
-		modalRef.current?.close();
-		// setModalState(createCardModalState(node) as CardModalState<T["type"]>)
-	}, [node.id]);
 
 	return (
 		<div
@@ -187,10 +135,8 @@ export default function Card<T extends DistinctTreeNode>({
 				modalRef={modalRef}
 				modalBody={
 					<CardModalBody
-						pageType={node.type}
-						state={modalState}
+						node={node}
 						handleDelete={handleDelete}
-						handleModalEdit={handleModalEdit}
 						handleModalSave={handleModalSave}
 					/>
 				}

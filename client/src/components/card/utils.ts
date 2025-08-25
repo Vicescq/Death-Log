@@ -22,16 +22,20 @@ export function createCardCSS(
         completed: "bg-raisinblack text-amber-200",
         composite: "bg-cyan-800 text-black",
         reoccurring: "bg-lime-300 text-black",
+        compositeANDreoccurring: "bg-purple-400 text-black",
     }
 
     let cardCSS = cardCSSConfig.default;
 
     if (treeNode.type == "subject") {
-        if (treeNode.composite) {
-            cardCSS = cardCSSConfig.composite;
+        if (treeNode.reoccurring && treeNode.composite) {
+            cardCSS = cardCSSConfig.compositeANDreoccurring;
         }
         else if (treeNode.reoccurring) {
             cardCSS = cardCSSConfig.reoccurring;
+        }
+        else if (treeNode.composite) {
+            cardCSS = cardCSSConfig.composite;
         }
     }
 
@@ -52,17 +56,6 @@ export function generateCardDeathCounts(
     return { deathCount, fullTries, resets };
 }
 
-export function createCardModalState(node: DistinctTreeNode): CardModalStateGame | CardModalStateProfile | CardModalStateSubject {
-    switch (node.type) {
-        case "game":
-            return { name: node.name };
-        case "profile":
-            return { name: node.name };
-        default:
-            return { name: node.name, composite: node.composite, reoccurring: node.reoccurring } as CardModalStateSubject;
-    }
-}
-
 export function createCardMainPageTransitionState(node: DistinctTreeNode): CardMainPageTransitionState {
     switch (node.type) {
         case "game":
@@ -70,8 +63,8 @@ export function createCardMainPageTransitionState(node: DistinctTreeNode): CardM
 
         case "profile":
             return { type: "ProfileToSubjects", parentID: node.id };
-        
+
         case "subject":
-            return {type: "Terminal", parentID: "__TERMINAL__"};
+            return { type: "Terminal", parentID: "__TERMINAL__" };
     }
 }
