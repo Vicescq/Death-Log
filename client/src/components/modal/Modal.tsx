@@ -1,11 +1,17 @@
 type Props = {
 	modalRef: React.RefObject<HTMLDialogElement | null>;
 	modalBody: React.JSX.Element;
-	isAlertModal?: boolean;
+	isWarningModal: boolean;
+	isWarningReconfirmModal: boolean;
 };
 
-export default function Modal({ modalRef, modalBody, isAlertModal=false }: Props) {
-	const css = isAlertModal ? "rounded-3xl bg-orange-600" : "bg-zomp";
+export default function Modal({
+	modalRef,
+	modalBody,
+	isWarningModal,
+	isWarningReconfirmModal,
+}: Props) {
+	const css = isWarningModal ? "rounded-3xl bg-orange-600" : "bg-zomp";
 
 	return (
 		<dialog
@@ -14,14 +20,23 @@ export default function Modal({ modalRef, modalBody, isAlertModal=false }: Props
 		>
 			<div className="flex flex-col gap-2">
 				{modalBody}
-				<button
-					className="rounded-2xl border-4 bg-red-500 p-2 font-bold shadow-[4px_4px_0px_rgba(0,0,0,1)]"
-					onClick={() => {
-						modalRef.current?.close()!;
-					}}
-				>
-					CLOSE
-				</button>
+				{isWarningReconfirmModal ? (
+					<button
+						className="rounded-2xl border-4 bg-red-500 p-2 font-bold shadow-[4px_4px_0px_rgba(0,0,0,1)]"
+						onClick={() => modalRef.current?.close()}
+					>
+						CANCEL
+					</button>
+				) : (
+					<button
+						className="rounded-2xl border-4 bg-red-500 p-2 font-bold shadow-[4px_4px_0px_rgba(0,0,0,1)]"
+						onClick={() => {
+							modalRef.current?.close();
+						}}
+					>
+						CLOSE
+					</button>
+				)}
 			</div>
 		</dialog>
 	);

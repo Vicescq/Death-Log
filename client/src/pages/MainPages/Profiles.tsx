@@ -9,8 +9,8 @@ import {
 	handleDelete,
 	handleCardModalSave,
 } from "./eventHandlers";
-import useMainPageStates from "../../hooks/useMainPageStates";
-import AlertModalBody from "../../components/modal/AlertModalBody";
+import useWarningStates from "../../hooks/useWarningStates";
+import WarningModalBody from "../../components/modal/WarningModalBody";
 import Modal from "../../components/modal/Modal";
 import { ForceError } from "../ErrorPage";
 import { useEffect, useState } from "react";
@@ -18,7 +18,7 @@ import useLoadMainPageCorrectly from "../../hooks/useLoadMainPageCorrectly";
 
 export default function Profiles({ gameID }: { gameID: string }) {
 	const { tree, setTree, history, setHistory } = useMainPageContexts();
-	const { modalRef: alertModalRef, alert, setAlert } = useMainPageStates();
+	const { modalRef: alertModalRef, alert, setAlert } = useWarningStates();
 	const { loading, deletedID } = useLoadMainPageCorrectly(tree, gameID);
 
 	return (
@@ -102,8 +102,8 @@ export default function Profiles({ gameID }: { gameID: string }) {
 
 			<Modal
 				modalRef={alertModalRef}
-				isAlertModal={true}
-				modalBody={<AlertModalBody msg={alert} />}
+				isWarningModal={true}
+				modalBody={<WarningModalBody msg={alert} isReconfirm={false} isDeleteConfirm={false}/>}
 			/>
 		</>
 	);

@@ -28,15 +28,10 @@ export function createCardCSS(
     let cardCSS = cardCSSConfig.default;
 
     if (treeNode.type == "subject") {
-        if (treeNode.reoccurring && treeNode.composite) {
-            cardCSS = cardCSSConfig.compositeANDreoccurring;
-        }
-        else if (treeNode.reoccurring) {
+        if (treeNode.reoccurring) {
             cardCSS = cardCSSConfig.reoccurring;
         }
-        else if (treeNode.composite) {
-            cardCSS = cardCSSConfig.composite;
-        }
+
     }
 
     if (treeNode.completed) {

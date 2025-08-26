@@ -21,11 +21,13 @@ import {
 import CardModalBody from "./CardModalBody";
 import Modal from "../modal/Modal";
 import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
+import WarningModalBody from "../modal/WarningModalBody";
+import useWarningStates from "../../hooks/useWarningStates";
 
 type Props<T extends DistinctTreeNode> = {
 	node: T;
 	tree: TreeStateType;
-	handleDelete: () => void;
+	handleDelete: (confirmation: boolean) => void;
 	handleCompletedStatus: () => void;
 	handleModalSave: (
 		overrides: T,
@@ -49,10 +51,12 @@ export default function Card<T extends DistinctTreeNode>({
 
 	const modalRef = useRef<HTMLDialogElement | null>(null);
 	const [resetDeathTypeMode, setResetDeathTypeMode] = useState(false);
+	const { warningModalRef, warning, setWarning } = useWarningStates();
+
+	const [reconfirmIsDelete, setReconfirmIsDelete] = useState(false);
+
 	const mainPageTransitionState = createCardMainPageTransitionState(node);
-
 	const deathType: DeathType = resetDeathTypeMode ? "resets" : "fullTries";
-
 	const {
 		cardCSS,
 		settersCSS,
@@ -60,7 +64,6 @@ export default function Card<T extends DistinctTreeNode>({
 		resetToggleHighlightingCSS,
 		reoccurringCSS,
 	} = createCardCSS(node, resetDeathTypeMode);
-
 	const { deathCount, fullTries, resets } = generateCardDeathCounts(
 		node,
 		tree,
@@ -136,14 +139,34 @@ export default function Card<T extends DistinctTreeNode>({
 			</div>
 			<Modal
 				modalRef={modalRef}
+				isWarningModal={false}
+				isWarningReconfirmModal={false}
 				modalBody={
 					<CardModalBody
 						key={JSON.stringify(node)} // forces local state to sync up with updated node, no need for useEffect
 						node={node}
-						handleDelete={handleDelete}
+						handleDelete={() => {
+							modalRef.current?.close();
+							warningModalRef.current?.showModal();
+							setWarning("You are about to delete something!");
+							setReconfirmIsDelete(true);
+						}}
 						handleModalSave={(overrides) =>
 							handleModalSave(overrides, modalRef)
 						}
+					/>
+				}
+			/>
+			<Modal
+				modalRef={warningModalRef}
+				isWarningModal={true}
+				isWarningReconfirmModal={true}
+				modalBody={
+					<WarningModalBody
+						msg={warning}
+						isReconfirm={true}
+						isDeleteReconfirm={reconfirmIsDelete}
+						handleAction={(goBack) => handleDelete(goBack)}
 					/>
 				}
 			/>

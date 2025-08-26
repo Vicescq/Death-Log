@@ -3,21 +3,20 @@ import AddItemCard from "../../components/addItemCard/AddItemCard";
 import CardWrapper from "../../components/card/CardWrapper";
 import useMainPageContexts from "../../hooks/useMainPageContexts";
 import Modal from "../../components/modal/Modal";
-import AlertModalBody from "../../components/modal/AlertModalBody";
+import WarningModalBody from "../../components/modal/WarningModalBody";
 import {
 	handleAdd,
 	handleCompletedStatus,
 	handleDelete,
 	handleCardModalSave,
 } from "./eventHandlers";
-import useMainPageStates from "../../hooks/useMainPageStates";
+import useWarningStates from "../../hooks/useWarningStates";
 import type { Game } from "../../model/TreeNodeModel";
 import useLoadMainPageCorrectly from "../../hooks/useLoadMainPageCorrectly";
-import { ForceError } from "../ErrorPage";
 
 export default function Games() {
 	const { tree, setTree, history, setHistory } = useMainPageContexts();
-	const { modalRef: alertModalRef, alert, setAlert } = useMainPageStates();
+	const { warningModalRef, warning, setWarning } = useWarningStates();
 	const { loading } = useLoadMainPageCorrectly(tree, "ROOT_NODE");
 
 	return (
@@ -34,8 +33,8 @@ export default function Games() {
 								setTree,
 								history,
 								setHistory,
-								setAlert,
-								alertModalRef,
+								setWarning,
+								warningModalRef,
 								"ROOT_NODE",
 							)
 						}
@@ -48,7 +47,7 @@ export default function Games() {
 									key={game.id}
 									tree={tree}
 									node={game}
-									handleDelete={() =>
+									handleDelete={(confirmation) =>
 										handleDelete(
 											game,
 											tree,
@@ -56,6 +55,7 @@ export default function Games() {
 											history,
 											setHistory,
 											"ROOT_NODE",
+											confirmation,
 										)
 									}
 									handleCompletedStatus={() =>
@@ -80,8 +80,8 @@ export default function Games() {
 											setTree,
 											history,
 											setHistory,
-											setAlert,
-											alertModalRef,
+											setWarning,
+											warningModalRef,
 											cardModalRef,
 											"ROOT_NODE",
 										)
@@ -91,9 +91,16 @@ export default function Games() {
 						})}
 					/>
 					<Modal
-						modalRef={alertModalRef}
-						isAlertModal={true}
-						modalBody={<AlertModalBody msg={alert} />}
+						modalRef={warningModalRef}
+						isWarningModal={true}
+						isWarningReconfirmModal={false}
+						modalBody={
+							<WarningModalBody
+								msg={warning}
+								isReconfirm={false}
+								isDeleteReconfirm={false}
+							/>
+						}
 					/>
 				</>
 			)}

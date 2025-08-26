@@ -3,7 +3,7 @@ import AddItemCard from "../../components/addItemCard/AddItemCard";
 import CardWrapper from "../../components/card/CardWrapper";
 import type { Subject } from "../../model/TreeNodeModel";
 import useMainPageContexts from "../../hooks/useMainPageContexts";
-import useMainPageStates from "../../hooks/useMainPageStates";
+import useWarningStates from "../../hooks/useWarningStates";
 import {
 	handleDelete,
 	handleAdd,
@@ -11,14 +11,14 @@ import {
 	handleCardModalSave,
 	handleDeathCount,
 } from "./eventHandlers";
-import AlertModalBody from "../../components/modal/AlertModalBody";
+import WarningModalBody from "../../components/modal/WarningModalBody";
 import Modal from "../../components/modal/Modal";
 import { ForceError } from "../ErrorPage";
 import useLoadMainPageCorrectly from "../../hooks/useLoadMainPageCorrectly";
 
 export default function Subjects({ profileID }: { profileID: string }) {
 	const { tree, setTree, history, setHistory } = useMainPageContexts();
-	const { modalRef: alertModalRef, alert, setAlert } = useMainPageStates();
+	const { modalRef: alertModalRef, alert, setAlert } = useWarningStates();
 	const { loading, deletedID } = useLoadMainPageCorrectly(tree, profileID);
 
 	return (
@@ -113,8 +113,8 @@ export default function Subjects({ profileID }: { profileID: string }) {
 					/>
 					<Modal
 						modalRef={alertModalRef}
-						isAlertModal={true}
-						modalBody={<AlertModalBody msg={alert} />}
+						isWarningModal={true}
+						modalBody={<WarningModalBody msg={alert} isReconfirm={false} isDeleteConfirm={false}/>}
 					/>
 				</>
 			)}

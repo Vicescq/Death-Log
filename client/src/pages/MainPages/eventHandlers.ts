@@ -8,7 +8,7 @@ import type { TreeContextType, TreeStateType } from "../../contexts/treeContext"
 import type { DeathCountOperation, DeathType, DistinctTreeNode, Subject } from "../../model/TreeNodeModel";
 import IndexedDBService from "../../services/IndexedDBService";
 
-export function handleAdd(inputText: string, pageType: "game" | "profile" | "subject", tree: TreeStateType, setTree: TreeContextType[1], history: HistoryStateType, setHistory: HistoryContextType[1], setAlert: React.Dispatch<React.SetStateAction<string>>, alertModalRef: React.RefObject<HTMLDialogElement | null>, parentID: string, overrides?: AICSubjectOverrides) {
+export function handleAdd(inputText: string, pageType: "game" | "profile" | "subject", tree: TreeStateType, setTree: TreeContextType[1], history: HistoryStateType, setHistory: HistoryContextType[1], setWarning: React.Dispatch<React.SetStateAction<string>>, warningModalRef: React.RefObject<HTMLDialogElement | null>, parentID: string, overrides?: AICSubjectOverrides) {
     try {
 
         // memory data structures
@@ -29,17 +29,16 @@ export function handleAdd(inputText: string, pageType: "game" | "profile" | "sub
         setHistory(updatedHistory);
     } catch (e) {
         if (e instanceof Error) {
-            setAlert(e.message);
-            alertModalRef.current?.showModal();
+            setWarning(e.message);
+            warningModalRef.current?.showModal();
         } else {
             // db stuff
         }
     }
 }
 
-export function handleDelete(node: DistinctTreeNode, tree: TreeStateType, setTree: TreeContextType[1], history: HistoryStateType, setHistory: HistoryContextType[1], parentID: string) {
-    const bool = window.confirm();
-    if (bool) {
+export function handleDelete(node: DistinctTreeNode, tree: TreeStateType, setTree: TreeContextType[1], history: HistoryStateType, setHistory: HistoryContextType[1], parentID: string, confirmation: boolean) {
+    if (confirmation) {
         // memory data structures
         const { updatedTree, actions } =
             TreeContextManager.deleteNode(tree, node, parentID);
@@ -53,14 +52,6 @@ export function handleDelete(node: DistinctTreeNode, tree: TreeStateType, setTre
             IndexedDBService.deleteNode(actions.self.targets, node, localStorage.getItem("email")!, actions.parent.targets);
             setTree(updatedTree);
             setHistory(updatedHistory);
-
-            const deletedIDS = sessionStorage.getItem("deletedIDS") ? sessionStorage.getItem("deletedIDS")! : "";
-            if (deletedIDS == "") {
-                sessionStorage.setItem("deletedIDS", JSON.stringify(actions.self.targets).slice(1, JSON.stringify(actions.self.targets).length - 1).trim())
-            }
-            else {
-                sessionStorage.setItem("deletedIDS", deletedIDS.trim() + ", " + JSON.stringify(actions.self.targets).slice(1, JSON.stringify(actions.self.targets).length - 1).trim())
-            }
         } catch (error) {
             console.error(error);
         }
@@ -69,7 +60,7 @@ export function handleDelete(node: DistinctTreeNode, tree: TreeStateType, setTre
 
 export function handleCardModalSave(
     node: DistinctTreeNode,
-    overrides: CardModalStateGame, tree: TreeStateType, setTree: TreeContextType[1], history: HistoryStateType, setHistory: HistoryContextType[1], setAlert: React.Dispatch<React.SetStateAction<string>>, alertModalRef: React.RefObject<HTMLDialogElement | null>, cardModalRef: React.RefObject<HTMLDialogElement | null>, parentID: string
+    overrides: CardModalStateGame, tree: TreeStateType, setTree: TreeContextType[1], history: HistoryStateType, setHistory: HistoryContextType[1], setWarning: React.Dispatch<React.SetStateAction<string>>, warningModalRef: React.RefObject<HTMLDialogElement | null>, cardModalRef: React.RefObject<HTMLDialogElement | null>, parentID: string
 ) {
     try {
         sanitizeTreeNodeEntry(overrides.name, tree, parentID);
@@ -102,9 +93,9 @@ export function handleCardModalSave(
 
     } catch (e) {
         if (e instanceof Error) {
-            setAlert(e.message);
+            setWarning(e.message);
             cardModalRef.current?.close();
-            alertModalRef.current?.showModal();
+            warningModalRef.current?.showModal();
         } else {
             throw new Error("DEV ERROR!");
         }

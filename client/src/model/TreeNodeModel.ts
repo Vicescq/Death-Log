@@ -1,9 +1,13 @@
 export type TreeNodeType = "game" | "profile" | "subject" | "ROOT_NODE";
-
 export type DeathType = "both" | "fullTries" | "resets";
 export type DeathCountOperation = "add" | "subtract";
-
 export type SubjectContext = "boss" | "location" | "other";
+export type Milestone = {
+
+}
+export type DeathEntry = {
+
+}
 
 export type TreeNode = {
     type: TreeNodeType,
@@ -30,26 +34,21 @@ export type RootNode = TreeNode & {
 
 export type DistinctTreeNode = Game | Profile | Subject  // for discriminant unions
 
-
-
-
 export type Game = TreeNode & {
     type: "game"
 }
 
 export type Profile = TreeNode & {
     type: "profile"
+    milestones: Milestone[]
+    deathEntries: DeathEntry[]
 }
 
 export type Subject = TreeNode & {
     type: "subject"
     fullTries: number,
     resets: number,
-
     reoccurring: boolean,
-    composite: boolean,
-    compositeRelations: string[],
-
     context: SubjectContext
 }
 

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import type { SubjectContext } from "../model/TreeNodeModel";
 
 export type SelectDropdownOption = {

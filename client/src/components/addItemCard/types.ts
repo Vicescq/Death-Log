@@ -1,13 +1,13 @@
-import type { SelectDropdownSelected } from "../SelectDropdown";
-
-
+import type { Subject } from "../../model/TreeNodeModel";
 
 export type HandleAddGame = (
     inputText: string,
 ) => void;
+
 export type HandleAddProfile = (
     inputText: string,
 ) => void;
+
 export type HandleAddSubject = (
     inputText: string,
     overrides: AICSubjectOverrides
@@ -28,8 +28,4 @@ export type AICSubject = {
     handleAdd: HandleAddSubject;
 }
 
-export type AICSubjectOverrides = {
-    composite: boolean;
-    reoccurring: boolean;
-    context: SelectDropdownSelected;
-}
+export type AICSubjectOverrides = Pick<Subject, "reoccurring" | "context">

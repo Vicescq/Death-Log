@@ -1,4 +1,3 @@
-import type { SubjectContext } from "../../model/TreeNodeModel";
 import SelectDropdown, { type SelectDropdownOption, type SelectDropdownSelected } from "../SelectDropdown";
 import Toggle from "../Toggle";
 import type { AICSubjectOverrides } from "./types";
@@ -21,13 +20,6 @@ export default function AddItemCardModalBody({
 				<Toggle
 					enable={state.reoccurring}
 					handleToggle={() => handleModalEdit("reoccurring")}
-				/>
-			</li>
-			<li className="flex items-center gap-2">
-				<span className="mr-auto">Composite</span>
-				<Toggle
-					enable={state.composite}
-					handleToggle={() => handleModalEdit("composite")}
 				/>
 			</li>
 			<li className="flex items-center gap-2">

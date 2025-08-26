@@ -20,7 +20,6 @@ export default function AddItemCard({ pageType, handleAdd }: Props) {
 
 	const [subjectModalState, setSubjectModalState] =
 		useState<AICSubjectOverrides>({
-			composite: false,
 			reoccurring: false,
 			context: "boss",
 		});
