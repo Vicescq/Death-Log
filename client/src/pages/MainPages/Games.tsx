@@ -44,10 +44,10 @@ export default function Games() {
 							const game = tree.get(nodeID) as Game;
 							return (
 								<Card
-									key={game.id}
+									key={JSON.stringify(game)} // forces local state to sync up with updated node, no need for useEffect
 									tree={tree}
 									node={game}
-									handleDelete={(confirmation) =>
+									handleDelete={() =>
 										handleDelete(
 											game,
 											tree,
@@ -55,7 +55,6 @@ export default function Games() {
 											history,
 											setHistory,
 											"ROOT_NODE",
-											confirmation,
 										)
 									}
 									handleCompletedStatus={() =>
@@ -92,14 +91,9 @@ export default function Games() {
 					/>
 					<Modal
 						modalRef={warningModalRef}
-						isWarningModal={true}
-						isWarningReconfirmModal={false}
+						type="warning"
 						modalBody={
-							<WarningModalBody
-								msg={warning}
-								isReconfirm={false}
-								isDeleteReconfirm={false}
-							/>
+							<WarningModalBody msg={warning} type="generic" />
 						}
 					/>
 				</>

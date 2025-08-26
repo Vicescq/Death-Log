@@ -18,7 +18,7 @@ import useLoadMainPageCorrectly from "../../hooks/useLoadMainPageCorrectly";
 
 export default function Profiles({ gameID }: { gameID: string }) {
 	const { tree, setTree, history, setHistory } = useMainPageContexts();
-	const { modalRef: alertModalRef, alert, setAlert } = useWarningStates();
+	const { warningModalRef, warning, setWarning } = useWarningStates();
 	const { loading, deletedID } = useLoadMainPageCorrectly(tree, gameID);
 
 	return (
@@ -41,8 +41,8 @@ export default function Profiles({ gameID }: { gameID: string }) {
 								setTree,
 								history,
 								setHistory,
-								setAlert,
-								alertModalRef,
+								setWarning,
+								warningModalRef,
 								gameID,
 							)
 						}
@@ -87,8 +87,8 @@ export default function Profiles({ gameID }: { gameID: string }) {
 											setTree,
 											history,
 											setHistory,
-											setAlert,
-											alertModalRef,
+											setWarning,
+											warningModalRef,
 											cardModalRef,
 											gameID,
 										)
@@ -101,9 +101,9 @@ export default function Profiles({ gameID }: { gameID: string }) {
 			)}
 
 			<Modal
-				modalRef={alertModalRef}
-				isWarningModal={true}
-				modalBody={<WarningModalBody msg={alert} isReconfirm={false} isDeleteConfirm={false}/>}
+				modalRef={warningModalRef}
+				type="warning"
+				modalBody={<WarningModalBody msg={warning} type="generic" />}
 			/>
 		</>
 	);

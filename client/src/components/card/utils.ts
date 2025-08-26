@@ -63,3 +63,17 @@ export function createCardMainPageTransitionState(node: DistinctTreeNode): CardM
             return { type: "Terminal", parentID: "__TERMINAL__" };
     }
 }
+
+export function isCardModalStateEqual(modalState: DistinctTreeNode, node: DistinctTreeNode) {
+    const keys = Object.keys(modalState);
+    for (let i = 0; i < keys.length; i++){
+        const nodeKey = keys[i] as keyof DistinctTreeNode
+        if (nodeKey == "childIDS" || nodeKey == "id" || nodeKey == "parentID"){
+            continue;
+        }
+        if (modalState[nodeKey] != node[nodeKey]) {
+            return false
+        }
+    }
+    return true
+}

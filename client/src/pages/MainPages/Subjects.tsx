@@ -18,7 +18,7 @@ import useLoadMainPageCorrectly from "../../hooks/useLoadMainPageCorrectly";
 
 export default function Subjects({ profileID }: { profileID: string }) {
 	const { tree, setTree, history, setHistory } = useMainPageContexts();
-	const { modalRef: alertModalRef, alert, setAlert } = useWarningStates();
+	const { warningModalRef, warning, setWarning } = useWarningStates();
 	const { loading, deletedID } = useLoadMainPageCorrectly(tree, profileID);
 
 	return (
@@ -41,8 +41,8 @@ export default function Subjects({ profileID }: { profileID: string }) {
 								setTree,
 								history,
 								setHistory,
-								setAlert,
-								alertModalRef,
+								setWarning,
+								warningModalRef,
 								profileID,
 								overrides,
 							)
@@ -89,8 +89,8 @@ export default function Subjects({ profileID }: { profileID: string }) {
 											setTree,
 											history,
 											setHistory,
-											setAlert,
-											alertModalRef,
+											setWarning,
+											warningModalRef,
 											cardModalRef,
 											profileID,
 										)
@@ -112,9 +112,11 @@ export default function Subjects({ profileID }: { profileID: string }) {
 						})}
 					/>
 					<Modal
-						modalRef={alertModalRef}
-						isWarningModal={true}
-						modalBody={<WarningModalBody msg={alert} isReconfirm={false} isDeleteConfirm={false}/>}
+						modalRef={warningModalRef}
+						type="warning"
+						modalBody={
+							<WarningModalBody msg={warning} type="generic" />
+						}
 					/>
 				</>
 			)}

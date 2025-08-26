@@ -17,6 +17,7 @@ import {
 	createCardCSS,
 	createCardMainPageTransitionState,
 	generateCardDeathCounts,
+	isCardModalStateEqual,
 } from "./utils";
 import CardModalBody from "./CardModalBody";
 import Modal from "../modal/Modal";
@@ -27,7 +28,7 @@ import useWarningStates from "../../hooks/useWarningStates";
 type Props<T extends DistinctTreeNode> = {
 	node: T;
 	tree: TreeStateType;
-	handleDelete: (confirmation: boolean) => void;
+	handleDelete: () => void;
 	handleCompletedStatus: () => void;
 	handleModalSave: (
 		overrides: T,
@@ -49,11 +50,17 @@ export default function Card<T extends DistinctTreeNode>({
 }: Props<T>) {
 	let navigate = useNavigate();
 
+	const [modalState, setModalState] = useState(node);
+
 	const modalRef = useRef<HTMLDialogElement | null>(null);
 	const [resetDeathTypeMode, setResetDeathTypeMode] = useState(false);
-	const { warningModalRef, warning, setWarning } = useWarningStates();
 
-	const [reconfirmIsDelete, setReconfirmIsDelete] = useState(false);
+	const {
+		warningModalRef: warningDelModalRef,
+		warning: warningDel,
+		setWarning: setWarningDel,
+	} = useWarningStates();
+	const { warningModalRef, warning, setWarning } = useWarningStates();
 
 	const mainPageTransitionState = createCardMainPageTransitionState(node);
 	const deathType: DeathType = resetDeathTypeMode ? "resets" : "fullTries";
@@ -68,6 +75,26 @@ export default function Card<T extends DistinctTreeNode>({
 		node,
 		tree,
 	);
+
+	function handleModalEdit(inputText: string) {
+		setModalState((prev) => ({ ...prev, name: inputText }));
+	}
+
+	function handleReconfirm(type: "cancel" | "goBack" | "delete") {
+		switch (type) {
+			case "goBack":
+				warningModalRef.current?.close();
+				modalRef.current?.showModal();
+				break;
+			case "delete":
+				handleDelete();
+				break;
+			case "cancel":
+				setModalState(node);
+		}
+	}
+
+	// useConsoleLogOnStateChange(modalState, modalState);
 
 	return (
 		<div
@@ -137,36 +164,58 @@ export default function Card<T extends DistinctTreeNode>({
 					onClick={handleCompletedStatus}
 				/>
 			</div>
+
 			<Modal
 				modalRef={modalRef}
-				isWarningModal={false}
-				isWarningReconfirmModal={false}
+				type="generic"
+				handleModalClose={() => {
+					if (!isCardModalStateEqual(modalState, node)) {
+						warningModalRef.current?.showModal();
+						setWarning(
+							"You have unsaved changes! Click cancel to discard those changes",
+						);
+					}
+				}}
 				modalBody={
 					<CardModalBody
-						key={JSON.stringify(node)} // forces local state to sync up with updated node, no need for useEffect
-						node={node}
 						handleDelete={() => {
 							modalRef.current?.close();
-							warningModalRef.current?.showModal();
-							setWarning("You are about to delete something!");
-							setReconfirmIsDelete(true);
+							warningDelModalRef.current?.showModal();
+							setWarningDel("You are about to delete something!");
 						}}
-						handleModalSave={(overrides) =>
-							handleModalSave(overrides, modalRef)
+						handleModalSave={() =>
+							handleModalSave(modalState, modalRef)
+						}
+						modalState={modalState}
+						handleModalEdit={(inputText) =>
+							handleModalEdit(inputText)
 						}
 					/>
 				}
 			/>
 			<Modal
 				modalRef={warningModalRef}
-				isWarningModal={true}
-				isWarningReconfirmModal={true}
+				type="warningReconfirm"
 				modalBody={
 					<WarningModalBody
 						msg={warning}
-						isReconfirm={true}
-						isDeleteReconfirm={reconfirmIsDelete}
-						handleAction={(goBack) => handleDelete(goBack)}
+						type="editReconfirm"
+						handleReconfirm={handleReconfirm}
+					/>
+				}
+				handleModalClose={() => {
+					handleReconfirm("cancel");
+				}}
+			/>
+
+			<Modal
+				modalRef={warningDelModalRef}
+				type="warningReconfirm"
+				modalBody={
+					<WarningModalBody
+						msg={warningDel}
+						type="deleteReconfirm"
+						handleReconfirm={handleReconfirm}
 					/>
 				}
 			/>

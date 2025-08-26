@@ -1,55 +1,55 @@
-import { ForceError } from "../../pages/ErrorPage";
-
-type Props = {
+type GenericWarning = {
 	msg: string;
-	isReconfirm: boolean;
-	isDeleteReconfirm: boolean;
-	handleAction?: (goBack: boolean) => void;
+	type: "generic";
 };
 
-export default function WarningModalBody({
-	msg,
-	isReconfirm,
-	handleAction,
-	isDeleteReconfirm,
-}: Props) {
+type DeleteWarning = {
+	msg: string;
+	type: "deleteReconfirm";
+	handleReconfirm: (type: "delete") => void;
+};
+
+type EditWarning = {
+	msg: string;
+	type: "editReconfirm";
+	handleReconfirm: (type: "goBack") => void;
+};
+
+type Props = GenericWarning | DeleteWarning | EditWarning;
+
+export default function WarningModalBody(props: Props) {
+	let reconfirmContent: React.JSX.Element | null;
+	switch (props.type) {
+		case "generic":
+			reconfirmContent = null;
+			break;
+		case "deleteReconfirm":
+			reconfirmContent = (
+				<button
+					className="bg-raisinblack rounded-2xl border-4 border-black p-2 font-bold text-white shadow-[4px_4px_0px_rgba(0,0,0,1)]"
+					onClick={() =>  props.handleReconfirm("delete")}
+				>
+					DELETE
+				</button>
+			);
+			break;
+		case "editReconfirm":
+			reconfirmContent = (
+				<button
+					className="bg-raisinblack rounded-2xl border-4 border-black p-2 font-bold text-white shadow-[4px_4px_0px_rgba(0,0,0,1)]"
+					onClick={() => props.handleReconfirm("goBack")}
+				>
+					GO BACK
+				</button>
+			);
+	}
+
 	return (
 		<>
-			<p className="max-w-lg break-words">Warning: {msg}</p>
-			{isReconfirm ? (
-				isDeleteReconfirm ? (
-					<button
-						className="bg-raisinblack rounded-2xl border-4 border-black p-2 font-bold text-white shadow-[4px_4px_0px_rgba(0,0,0,1)]"
-						onClick={() =>
-							handleAction
-								? handleAction(true)
-								: console.error(
-										"DEV ERROR! handleAction must be defined if isReconfirm is true",
-									)
-						}
-					>
-						DELETE
-					</button>
-				) : (
-					<>
-						<button
-							className="bg-raisinblack rounded-2xl border-4 border-black p-2 font-bold text-white shadow-[4px_4px_0px_rgba(0,0,0,1)]"
-							onClick={() =>
-								handleAction
-									? handleAction(true)
-									: console.error(
-											"DEV ERROR! handleAction must be defined if isReconfirm is true",
-										)
-							}
-						>
-							GO BACK
-						</button>
-					</>
-				)
-			) : null}
+			<p className="max-w-lg font-bold break-words">
+				Warning: {props.msg}
+			</p>
+			{reconfirmContent}
 		</>
 	);
 }
-
-// You have unsaved changes! Click "CLOSE" to discard
-// 							those changes, click "GO BACK" to edit/save them.

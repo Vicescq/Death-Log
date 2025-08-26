@@ -37,25 +37,24 @@ export function handleAdd(inputText: string, pageType: "game" | "profile" | "sub
     }
 }
 
-export function handleDelete(node: DistinctTreeNode, tree: TreeStateType, setTree: TreeContextType[1], history: HistoryStateType, setHistory: HistoryContextType[1], parentID: string, confirmation: boolean) {
-    if (confirmation) {
-        // memory data structures
-        const { updatedTree, actions } =
-            TreeContextManager.deleteNode(tree, node, parentID);
-        const updatedHistory = HistoryContextManager.updateActionHistory(
-            history,
-            [actions.self, actions.parent],
-        );
+export function handleDelete(node: DistinctTreeNode, tree: TreeStateType, setTree: TreeContextType[1], history: HistoryStateType, setHistory: HistoryContextType[1], parentID: string) {
+    // memory data structures
+    const { updatedTree, actions } =
+        TreeContextManager.deleteNode(tree, node, parentID);
+    const updatedHistory = HistoryContextManager.updateActionHistory(
+        history,
+        [actions.self, actions.parent],
+    );
 
-        // db's
-        try {
-            IndexedDBService.deleteNode(actions.self.targets, node, localStorage.getItem("email")!, actions.parent.targets);
-            setTree(updatedTree);
-            setHistory(updatedHistory);
-        } catch (error) {
-            console.error(error);
-        }
+    // db's
+    try {
+        IndexedDBService.deleteNode(actions.self.targets, node, localStorage.getItem("email")!, actions.parent.targets);
+        setTree(updatedTree);
+        setHistory(updatedHistory);
+    } catch (error) {
+        console.error(error);
     }
+
 }
 
 export function handleCardModalSave(

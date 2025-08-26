@@ -2,19 +2,19 @@ import { useEffect, useState } from "react";
 import type { DistinctTreeNode } from "../../model/TreeNodeModel";
 import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
 
-type Props<T extends DistinctTreeNode> = {
-	node: T;
+type Props = {
+	modalState: DistinctTreeNode;
 	handleDelete: () => void;
-	handleModalSave: (overrides: T) => void;
+	handleModalSave: () => void;
+	handleModalEdit: (inputText: string) => void;
 };
 
-export default function CardModalBody<T extends DistinctTreeNode>({
-	node,
+export default function CardModalBody({
+	modalState,
 	handleDelete,
 	handleModalSave,
-}: Props<T>) {
-	const [modalState, setModalState] = useState<T>(node);
-
+	handleModalEdit,
+}: Props) {
 	return (
 		<ul className="flex flex-col gap-2">
 			<li className="flex items-center gap-2">
@@ -23,21 +23,13 @@ export default function CardModalBody<T extends DistinctTreeNode>({
 					value={modalState.name}
 					type="text"
 					className="rounded-2xl border-4 p-1 shadow-[4px_4px_0px_rgba(0,0,0,1)]"
-					onChange={(e) => {
-						const val = e.currentTarget.value;
-						setModalState((prev) => ({
-							...prev,
-							name: val,
-						}));
-					}}
+					onChange={(e) => handleModalEdit(e.currentTarget.value)}
 				/>
 			</li>
 
 			<button
 				className="bg-hunyadi rounded-2xl border-4 p-2 font-bold shadow-[4px_4px_0px_rgba(0,0,0,1)]"
-				onClick={() => {
-					handleModalSave(modalState);
-				}}
+				onClick={handleModalSave}
 			>
 				SAVE
 			</button>
