@@ -14,35 +14,43 @@ import {
 import AlertModalBody from "../../components/modal/AlertModalBody";
 import Modal from "../../components/modal/Modal";
 import { ForceError } from "../ErrorPage";
+import useLoadMainPageCorrectly from "../../hooks/useLoadMainPageCorrectly";
 
 export default function Subjects({ profileID }: { profileID: string }) {
 	const { tree, setTree, history, setHistory } = useMainPageContexts();
 	const { modalRef: alertModalRef, alert, setAlert } = useMainPageStates();
+	const { loading, deletedID } = useLoadMainPageCorrectly(tree, profileID);
 
 	return (
 		<>
-			<AddItemCard
-				pageType="subject"
-				handleAdd={(inputText, overrides) =>
-					handleAdd(
-						inputText,
-						"subject",
-						tree,
-						setTree,
-						history,
-						setHistory,
-						setAlert,
-						alertModalRef,
-						profileID,
-						overrides,
-					)
-				}
-			/>
+			{loading ? null : deletedID ? (
+				<ForceError
+					msg={
+						"You just deleted the parent profile page! This page does not exist anymore!"
+					}
+				/>
+			) : (
+				<>
+					<AddItemCard
+						pageType="subject"
+						handleAdd={(inputText, overrides) =>
+							handleAdd(
+								inputText,
+								"subject",
+								tree,
+								setTree,
+								history,
+								setHistory,
+								setAlert,
+								alertModalRef,
+								profileID,
+								overrides,
+							)
+						}
+					/>
 
-			<CardWrapper
-				cards={
-					tree.get(profileID) ? (
-						tree.get(profileID)!.childIDS.map((nodeID) => {
+					<CardWrapper
+						cards={tree.get(profileID)?.childIDS.map((nodeID) => {
 							const subject = tree.get(nodeID) as Subject;
 							return (
 								<Card
@@ -101,17 +109,15 @@ export default function Subjects({ profileID }: { profileID: string }) {
 									}
 								/>
 							);
-						})
-					) : (
-						<ForceError msg={"You just deleted the parent profile page! This page does not exist anymore!"} />
-					)
-				}
-			/>
-			<Modal
-				modalRef={alertModalRef}
-				isAlertModal={true}
-				modalBody={<AlertModalBody msg={alert} />}
-			/>
+						})}
+					/>
+					<Modal
+						modalRef={alertModalRef}
+						isAlertModal={true}
+						modalBody={<AlertModalBody msg={alert} />}
+					/>
+				</>
+			)}
 		</>
 	);
 }

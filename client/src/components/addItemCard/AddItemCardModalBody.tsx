@@ -1,11 +1,11 @@
 import type { SubjectContext } from "../../model/TreeNodeModel";
-import SelectDropdown, { type SelectDropdownOption } from "../SelectDropdown";
+import SelectDropdown, { type SelectDropdownOption, type SelectDropdownSelected } from "../SelectDropdown";
 import Toggle from "../Toggle";
 import type { AICSubjectOverrides } from "./types";
 
 type Props = {
 	state: AICSubjectOverrides;
-	handleModalEdit: (setting: keyof AICSubjectOverrides) => void;
+	handleModalEdit: (setting: keyof AICSubjectOverrides, selected?: SelectDropdownSelected) => void;
 	contextOptions: SelectDropdownOption[];
 };
 
@@ -34,7 +34,7 @@ export default function AddItemCardModalBody({
 				<span className="mr-auto">Context</span>
 				<SelectDropdown
 					options={contextOptions}
-					handleSelect={() => true}
+					handleSelect={(selected) => handleModalEdit("context", selected)}
 				/>
 			</li>
 		</ul>

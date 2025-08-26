@@ -14,28 +14,22 @@ import AlertModalBody from "../../components/modal/AlertModalBody";
 import Modal from "../../components/modal/Modal";
 import { ForceError } from "../ErrorPage";
 import { useEffect, useState } from "react";
+import useLoadMainPageCorrectly from "../../hooks/useLoadMainPageCorrectly";
 
 export default function Profiles({ gameID }: { gameID: string }) {
 	const { tree, setTree, history, setHistory } = useMainPageContexts();
 	const { modalRef: alertModalRef, alert, setAlert } = useMainPageStates();
-	const [loading, setLoading] = useState(true);
-	{
-		/* <ForceError
-							msg={
-								"You just deleted the parent game page! This page does not exist anymore!"
-							}
-						/> */
-	}
-
-	useEffect(() => {
-		if (tree.size != 0) {
-			setLoading(false);
-		}
-	}, [tree.size]);
+	const { loading, deletedID } = useLoadMainPageCorrectly(tree, gameID);
 
 	return (
 		<>
-			{loading ? null : (
+			{loading ? null : deletedID ? (
+				<ForceError
+					msg={
+						"You just deleted the parent game page! This page does not exist anymore!"
+					}
+				/>
+			) : (
 				<>
 					<AddItemCard
 						pageType="profile"

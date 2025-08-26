@@ -9,7 +9,8 @@ import type {
 	AICSubjectOverrides,
 } from "./types";
 import AddItemCardModalBody from "./AddItemCardModalBody";
-import type { SelectDropdownOption } from "../SelectDropdown";
+import type { SelectDropdownOption, SelectDropdownSelected } from "../SelectDropdown";
+import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
 
 type Props = AICGame | AICProfile | AICSubject;
 
@@ -54,12 +55,26 @@ export default function AddItemCard({ pageType, handleAdd }: Props) {
 		};
 	}
 
-	function handleModalEdit(setting: keyof AICSubjectOverrides) {
-		setSubjectModalState((prev) => ({
-			...prev,
-			[setting]: !prev[setting],
-		}));
+	function handleModalEdit(setting: keyof AICSubjectOverrides, selected?: SelectDropdownSelected) {
+		if (setting != "context"){
+			setSubjectModalState((prev) => ({
+				...prev,
+				[setting]: !prev[setting],
+			}));
+		}
+		
+		else if (setting == "context" && selected){
+			setSubjectModalState((prev) => ({
+				...prev,
+				[setting]: selected,
+			}));
+		}
+		else {
+			throw new Error("DEV ERROR! Selected param should be defined!")
+		}
 	}
+
+	// useConsoleLogOnStateChange(subjectModalState, subjectModalState)
 
 	return (
 		<header className="mb-8 flex w-full flex-col gap-4 border-b-4 bg-amber-200 p-4 font-semibold text-black md:w-xl md:border-4 md:border-black md:shadow-[8px_5px_0px_rgba(0,0,0,1)]">
@@ -103,7 +118,7 @@ export default function AddItemCard({ pageType, handleAdd }: Props) {
 				modalBody={
 					<AddItemCardModalBody
 						state={subjectModalState}
-						handleModalEdit={(setting) => handleModalEdit(setting)}
+						handleModalEdit={(setting, selected) => handleModalEdit(setting, selected)}
 						contextOptions={contextOptions}
 					/>
 				}
