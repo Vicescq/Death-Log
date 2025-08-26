@@ -3,8 +3,8 @@ import type { Action, ActionAdd, ActionDelete, ActionType, ActionUpdate } from "
 import type { RootNode, DistinctTreeNode, TreeNode, Game, Profile, Subject, TreeNodeType } from "../../model/TreeNodeModel";
 import { createShallowCopyMap } from "./treeUtils";
 import { v4 as uuidv4 } from 'uuid';
-import { sortChildIDS, identifyDeletedSelfAndChildrenIDS, createNodePath, sanitizeTreeNodeEntry } from "./treeUtils";
-import type { AICModalStateSubject } from "../../components/addItemCard/types";
+import { sortChildIDS, identifyDeletedSelfAndChildrenIDS, sanitizeTreeNodeEntry } from "./treeUtils";
+import type { AICSubjectOverrides } from "../../components/addItemCard/types";
 
 export default class TreeContextManager {
     constructor() { }
@@ -28,7 +28,7 @@ export default class TreeContextManager {
         return newTree
     }
 
-    static addNode(tree: TreeStateType, pageType: "game" | "profile" | "subject", inputText: string, parentID: string, overrides?: AICModalStateSubject) {
+    static addNode(tree: TreeStateType, pageType: "game" | "profile" | "subject", inputText: string, parentID: string, overrides?: AICSubjectOverrides) {
         sanitizeTreeNodeEntry(inputText, tree, parentID);
         let node: TreeNode;
         switch (pageType) {
@@ -184,7 +184,7 @@ export default class TreeContextManager {
             composite: false,
             compositeRelations: [],
             reoccurring: false,
-            subjectContext: "boss"
+            context: "boss"
         };
         return defaultSubject
 

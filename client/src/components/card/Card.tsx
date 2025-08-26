@@ -27,7 +27,10 @@ type Props<T extends DistinctTreeNode> = {
 	tree: TreeStateType;
 	handleDelete: () => void;
 	handleCompletedStatus: () => void;
-	handleModalSave: (overrides: T) => void;
+	handleModalSave: (
+		overrides: T,
+		cardModalRef: React.RefObject<HTMLDialogElement | null>,
+	) => void;
 	handleDeathCount?: (
 		deathType: DeathType,
 		operation: DeathCountOperation,
@@ -43,7 +46,7 @@ export default function Card<T extends DistinctTreeNode>({
 	handleDeathCount,
 }: Props<T>) {
 	let navigate = useNavigate();
-	
+
 	const modalRef = useRef<HTMLDialogElement | null>(null);
 	const [resetDeathTypeMode, setResetDeathTypeMode] = useState(false);
 	const mainPageTransitionState = createCardMainPageTransitionState(node);
@@ -65,7 +68,7 @@ export default function Card<T extends DistinctTreeNode>({
 
 	return (
 		<div
-			className={`flex border-4 border-black font-semibold ${cardCSS} h-60 w-60 rounded-xl p-2 shadow-[10px_8px_0px_rgba(0,0,0,1)] hover:shadow-[20px_10px_0px_rgba(0,0,0,1)]`}
+			className={`flex border-4 border-black font-semibold ${cardCSS} h-60 w-60 rounded-xl p-2 shadow-[10px_8px_0px_rgba(0,0,0,1)] duration-200 ease-in-out hover:shadow-[20px_10px_0px_rgba(0,0,0,1)]`}
 		>
 			<div className="flex w-40 flex-col">
 				<div className="bg-indianred flex gap-1 rounded-2xl border-2 border-black p-1 px-3 shadow-[4px_4px_0px_rgba(0,0,0,1)]">
@@ -135,9 +138,12 @@ export default function Card<T extends DistinctTreeNode>({
 				modalRef={modalRef}
 				modalBody={
 					<CardModalBody
+						key={JSON.stringify(node)} // forces local state to sync up with updated node, no need for useEffect
 						node={node}
 						handleDelete={handleDelete}
-						handleModalSave={handleModalSave}
+						handleModalSave={(overrides) =>
+							handleModalSave(overrides, modalRef)
+						}
 					/>
 				}
 			/>

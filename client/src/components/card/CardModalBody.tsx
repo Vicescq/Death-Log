@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { DistinctTreeNode } from "../../model/TreeNodeModel";
 import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
 
@@ -13,22 +13,22 @@ export default function CardModalBody<T extends DistinctTreeNode>({
 	handleDelete,
 	handleModalSave,
 }: Props<T>) {
-	const [modalState, setModalState] = useState<T>({
-		...node,
-	});
-	
+	const [modalState, setModalState] = useState<T>(node);
+
 	return (
 		<ul className="flex flex-col gap-2">
 			<li className="flex items-center gap-2">
 				<span>Title</span>
 				<input
+					value={modalState.name}
 					type="text"
 					className="rounded-2xl border-4 p-1 shadow-[4px_4px_0px_rgba(0,0,0,1)]"
 					onChange={(e) => {
-						setModalState({
-							...modalState,
-							name: e.currentTarget.value,
-						});
+						const val = e.currentTarget.value;
+						setModalState((prev) => ({
+							...prev,
+							name: val,
+						}));
 					}}
 				/>
 			</li>

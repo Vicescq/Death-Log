@@ -33,7 +33,6 @@ export function ContextWrapper({ children }: { children: ReactNode }) {
 		history.newActionStartIndex,
 	);
 	useConsoleLogOnStateChange(user, "USER:", user);
-
 	useAuthObserver(setUser, setTree, setHistory);
 	useSyncDeathLog(user, history, setHistory);
 

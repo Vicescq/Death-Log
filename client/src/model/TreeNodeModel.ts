@@ -50,7 +50,7 @@ export type Subject = TreeNode & {
     composite: boolean,
     compositeRelations: string[],
 
-    subjectContext: SubjectContext
+    context: SubjectContext
 }
 
 

@@ -8,64 +8,17 @@ import {
 	handleAdd,
 	handleCompletedStatus,
 	handleDelete,
-	handleModalSave,
+	handleCardModalSave,
 } from "./eventHandlers";
 import useMainPageStates from "../../hooks/useMainPageStates";
 import type { Game } from "../../model/TreeNodeModel";
 
 export default function Games() {
 	const { tree, setTree, history, setHistory } = useMainPageContexts();
-	const { modalRef, alert, setAlert } = useMainPageStates();
-
-	function createCards() {
-		return tree.get("ROOT_NODE")?.childIDS.map((nodeID, index) => {
-			const game = tree.get(nodeID) as Game;
-			return (
-				<Card
-					key={index}
-					tree={tree}
-					node={game}
-					handleDelete={() =>
-						handleDelete(
-							game,
-							tree,
-							setTree,
-							history,
-							setHistory,
-							"ROOT_NODE",
-						)
-					}
-					handleCompletedStatus={() =>
-						handleCompletedStatus(
-							game,
-							!game.completed,
-							tree,
-							setTree,
-							history,
-							setHistory,
-							"ROOT_NODE"
-						)
-					}
-					handleModalSave={(overrides) =>
-						handleModalSave(
-							game,
-							overrides,
-							tree,
-							setTree,
-							history,
-							setHistory,
-							setAlert,
-							modalRef,
-							"ROOT_NODE"
-						)
-					}
-				/>
-			);
-		});
-	}
+	const { modalRef: alertModalRef, alert, setAlert } = useMainPageStates();
 
 	// useGetDeathLog(tree, setTree, user, setHistory);
-
+	
 	return (
 		<>
 			<AddItemCard
@@ -79,14 +32,60 @@ export default function Games() {
 						history,
 						setHistory,
 						setAlert,
-						modalRef,
+						alertModalRef,
 						"ROOT_NODE",
 					)
 				}
 			/>
-			<CardWrapper cards={createCards()} />
+			<CardWrapper
+				cards={tree.get("ROOT_NODE")?.childIDS.map((nodeID) => {
+					const game = tree.get(nodeID) as Game;
+					return (
+						<Card
+							key={game.id}
+							tree={tree}
+							node={game}
+							handleDelete={() =>
+								handleDelete(
+									game,
+									tree,
+									setTree,
+									history,
+									setHistory,
+									"ROOT_NODE",
+								)
+							}
+							handleCompletedStatus={() =>
+								handleCompletedStatus(
+									game,
+									!game.completed,
+									tree,
+									setTree,
+									history,
+									setHistory,
+									"ROOT_NODE",
+								)
+							}
+							handleModalSave={(overrides, cardModalRef) =>
+								handleCardModalSave(
+									game,
+									overrides,
+									tree,
+									setTree,
+									history,
+									setHistory,
+									setAlert,
+									alertModalRef,
+									cardModalRef,
+									"ROOT_NODE",
+								)
+							}
+						/>
+					);
+				})}
+			/>
 			<Modal
-				modalRef={modalRef}
+				modalRef={alertModalRef}
 				isAlertModal={true}
 				modalBody={<AlertModalBody msg={alert} />}
 			/>

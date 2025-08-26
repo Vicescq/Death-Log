@@ -5,10 +5,8 @@ import {
 	Routes,
 	Route,
 	useNavigate,
-	HashRouter,
 } from "react-router";
 import "./index.css";
-import Games from "./pages/MainPages/Games.tsx";
 import { ErrorBoundary } from "react-error-boundary";
 import ErrorPage, { ForceError } from "./pages/ErrorPage.tsx";
 import Root from "./pages/Root.tsx";
@@ -19,9 +17,9 @@ import MainPageRouter from "./pages/MainPageRouter.tsx";
 
 createRoot(document.getElementById("root")!).render(
 	<StrictMode>
-		<HashRouter>
+		<BrowserRouter>
 			<ContextWrapper children={<AppRoutes />} />
-		</HashRouter>
+		</BrowserRouter>
 	</StrictMode>,
 );
 
@@ -36,11 +34,11 @@ function AppRoutes() {
 				<Route path="/" element={<Root />}>
 					<Route index element={<Start />} />
 					<Route path="death-log" element={<MainPageRouter />} />
-					{/* <Route
-						path="death-log/*"
-						element={<ForceError msg={"URL NOT FOUND!"} />}
-					/> */}
 					<Route path="utility" element={<UtilityPage />} />
+					<Route
+						path="*"
+						element={<ForceError msg={"URL NOT FOUND!"} />}
+					/>
 				</Route>
 				<Route />
 			</Routes>

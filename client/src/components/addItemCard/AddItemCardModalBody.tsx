@@ -1,27 +1,40 @@
+import type { SubjectContext } from "../../model/TreeNodeModel";
+import SelectDropdown, { type SelectDropdownOption } from "../SelectDropdown";
 import Toggle from "../Toggle";
-import SelectDropdown from "../SelectDropDown";
 import type { AICSubjectOverrides } from "./types";
 
 type Props = {
-	state: AICSubjectOverrides
-	handleToggle: (setting: keyof AICSubjectOverrides) => void;
+	state: AICSubjectOverrides;
+	handleModalEdit: (setting: keyof AICSubjectOverrides) => void;
+	contextOptions: SelectDropdownOption[];
 };
 
-export default function AddItemCardModalBody({state, handleToggle}: Props) {
+export default function AddItemCardModalBody({
+	state,
+	handleModalEdit,
+	contextOptions,
+}: Props) {
 	return (
 		<ul className="flex flex-col gap-2">
 			<li className="flex items-center gap-2">
 				<span className="mr-auto">Reoccurring</span>
 				<Toggle
 					enable={state.reoccurring}
-					handleToggle={() => handleToggle("reoccurring")}
+					handleToggle={() => handleModalEdit("reoccurring")}
 				/>
 			</li>
 			<li className="flex items-center gap-2">
 				<span className="mr-auto">Composite</span>
 				<Toggle
 					enable={state.composite}
-					handleToggle={() => handleToggle("composite")}
+					handleToggle={() => handleModalEdit("composite")}
+				/>
+			</li>
+			<li className="flex items-center gap-2">
+				<span className="mr-auto">Context</span>
+				<SelectDropdown
+					options={contextOptions}
+					handleSelect={() => true}
 				/>
 			</li>
 		</ul>

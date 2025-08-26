@@ -1,4 +1,4 @@
-import type { AICModalStateSubject } from "../../components/addItemCard/types";
+import type { AICSubjectOverrides } from "../../components/addItemCard/types";
 import type { CardModalStateGame } from "../../components/card/types";
 import type { HistoryContextType, HistoryStateType } from "../../contexts/historyContext";
 import HistoryContextManager from "../../contexts/managers/HistoryContextManager";
@@ -8,7 +8,7 @@ import type { TreeContextType, TreeStateType } from "../../contexts/treeContext"
 import type { DeathCountOperation, DeathType, DistinctTreeNode, Subject } from "../../model/TreeNodeModel";
 import IndexedDBService from "../../services/IndexedDBService";
 
-export function handleAdd(inputText: string, pageType: "game" | "profile" | "subject", tree: TreeStateType, setTree: TreeContextType[1], history: HistoryStateType, setHistory: HistoryContextType[1], setAlert: React.Dispatch<React.SetStateAction<string>>, modalRef: React.RefObject<HTMLDialogElement | null>, parentID: string, overrides?: AICModalStateSubject) {
+export function handleAdd(inputText: string, pageType: "game" | "profile" | "subject", tree: TreeStateType, setTree: TreeContextType[1], history: HistoryStateType, setHistory: HistoryContextType[1], setAlert: React.Dispatch<React.SetStateAction<string>>, alertModalRef: React.RefObject<HTMLDialogElement | null>, parentID: string, overrides?: AICSubjectOverrides) {
     try {
 
         // memory data structures
@@ -30,7 +30,7 @@ export function handleAdd(inputText: string, pageType: "game" | "profile" | "sub
     } catch (e) {
         if (e instanceof Error) {
             setAlert(e.message);
-            modalRef.current?.showModal();
+            alertModalRef.current?.showModal();
         } else {
             // db stuff
         }
@@ -53,15 +53,23 @@ export function handleDelete(node: DistinctTreeNode, tree: TreeStateType, setTre
             IndexedDBService.deleteNode(actions.self.targets, node, localStorage.getItem("email")!, actions.parent.targets);
             setTree(updatedTree);
             setHistory(updatedHistory);
+
+            const deletedIDS = sessionStorage.getItem("deletedIDS") ? sessionStorage.getItem("deletedIDS")! : "";
+            if (deletedIDS == "") {
+                sessionStorage.setItem("deletedIDS", JSON.stringify(actions.self.targets).slice(1, JSON.stringify(actions.self.targets).length - 1).trim())
+            }
+            else {
+                sessionStorage.setItem("deletedIDS", deletedIDS.trim() + ", " + JSON.stringify(actions.self.targets).slice(1, JSON.stringify(actions.self.targets).length - 1).trim())
+            }
         } catch (error) {
             console.error(error);
         }
     }
 }
 
-export function handleModalSave(
+export function handleCardModalSave(
     node: DistinctTreeNode,
-    overrides: CardModalStateGame, tree: TreeStateType, setTree: TreeContextType[1], history: HistoryStateType, setHistory: HistoryContextType[1], setAlert: React.Dispatch<React.SetStateAction<string>>, modalRef: React.RefObject<HTMLDialogElement | null>, parentID: string
+    overrides: CardModalStateGame, tree: TreeStateType, setTree: TreeContextType[1], history: HistoryStateType, setHistory: HistoryContextType[1], setAlert: React.Dispatch<React.SetStateAction<string>>, alertModalRef: React.RefObject<HTMLDialogElement | null>, cardModalRef: React.RefObject<HTMLDialogElement | null>, parentID: string
 ) {
     try {
         sanitizeTreeNodeEntry(overrides.name, tree, parentID);
@@ -90,10 +98,13 @@ export function handleModalSave(
         setTree(updatedTree);
         setHistory(updatedHistory);
 
+        cardModalRef.current?.close();
+
     } catch (e) {
         if (e instanceof Error) {
             setAlert(e.message);
-            modalRef.current?.showModal();
+            cardModalRef.current?.close();
+            alertModalRef.current?.showModal();
         } else {
             throw new Error("DEV ERROR!");
         }
@@ -110,7 +121,7 @@ export function handleCompletedStatus(node: DistinctTreeNode, newStatus: boolean
             completed: newStatus,
         }, parentID);
 
-    const updatedHistory = HistoryContextManager.updateActionHistory(history, [actions.self, actions.parent,]);
+    const updatedHistory = HistoryContextManager.updateActionHistory(history, [actions.self, actions.parent]);
 
     // db's
     try {

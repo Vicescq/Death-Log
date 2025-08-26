@@ -1,7 +1,7 @@
 export default function CardWrapper({
 	cards,
 }: {
-	cards: React.JSX.Element[] | undefined;
+	cards: React.JSX.Element[] | React.JSX.Element | undefined;
 }) {
 	return (
 		<>

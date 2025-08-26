@@ -3,7 +3,13 @@ import type { TreeNode, Subject, DistinctTreeNode, DeathType } from "../../model
 
 export function sanitizeTreeNodeEntry(inputText: string, tree: TreeStateType, parentID: string) {
     inputText = inputText.trim();
-    if (inputText.includes("?") || inputText == "") {
+    if (typeof inputText != "string") {
+        throw new Error("Text has to be of type string!");
+    }
+    if (inputText == "") {
+        throw new Error("Name cannot be empty!");
+    }
+    if (inputText.includes("?")) {
         throw new Error("Invalid symbols are found!");
     }
     if (!isNodeNameUnique(tree, parentID, inputText)) {
@@ -11,18 +17,6 @@ export function sanitizeTreeNodeEntry(inputText: string, tree: TreeStateType, pa
     }
 
     return inputText;
-}
-
-export function createNodePath(inputText: string, parentID: string, tree: TreeStateType) {
-    let path: string;
-    if (parentID != "ROOT_NODE") {
-        const parentNode = tree.get(parentID)
-        path = parentNode?.path + "/" + inputText.replaceAll(" ", "-");
-    }
-    else {
-        path = inputText.replaceAll(" ", "-");
-    }
-    return path;
 }
 
 export function sortChildIDS(parentNode: TreeNode, tree: TreeStateType) {

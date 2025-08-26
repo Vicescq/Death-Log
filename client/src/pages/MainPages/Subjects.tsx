@@ -8,72 +8,16 @@ import {
 	handleDelete,
 	handleAdd,
 	handleCompletedStatus,
-	handleModalSave,
+	handleCardModalSave,
 	handleDeathCount,
 } from "./eventHandlers";
+import AlertModalBody from "../../components/modal/AlertModalBody";
+import Modal from "../../components/modal/Modal";
+import { ForceError } from "../ErrorPage";
 
 export default function Subjects({ profileID }: { profileID: string }) {
 	const { tree, setTree, history, setHistory } = useMainPageContexts();
-	const { modalRef, alert, setAlert } = useMainPageStates();
-
-	function createCards() {
-		return tree.get(profileID)?.childIDS.map((nodeID, index) => {
-			const subject = tree.get(nodeID) as Subject;
-			return (
-				<Card
-					key={subject.id}
-					tree={tree}
-					node={subject}
-					handleCompletedStatus={() =>
-						handleCompletedStatus(
-							subject,
-							!subject.completed,
-							tree,
-							setTree,
-							history,
-							setHistory,
-							profileID,
-						)
-					}
-					handleDelete={() =>
-						handleDelete(
-							subject,
-							tree,
-							setTree,
-							history,
-							setHistory,
-							profileID,
-						)
-					}
-					handleModalSave={(overrides) =>
-						handleModalSave(
-							subject,
-							overrides,
-							tree,
-							setTree,
-							history,
-							setHistory,
-							setAlert,
-							modalRef,
-							profileID,
-						)
-					}
-					handleDeathCount={(deathType, operation) =>
-						handleDeathCount(
-							subject,
-							deathType,
-							operation,
-							tree,
-							setTree,
-							history,
-							setHistory,
-							profileID,
-						)
-					}
-				/>
-			);
-		});
-	}
+	const { modalRef: alertModalRef, alert, setAlert } = useMainPageStates();
 
 	return (
 		<>
@@ -88,14 +32,86 @@ export default function Subjects({ profileID }: { profileID: string }) {
 						history,
 						setHistory,
 						setAlert,
-						modalRef,
+						alertModalRef,
 						profileID,
 						overrides,
 					)
 				}
 			/>
 
-			<CardWrapper cards={createCards()} />
+			<CardWrapper
+				cards={
+					tree.get(profileID) ? (
+						tree.get(profileID)!.childIDS.map((nodeID) => {
+							const subject = tree.get(nodeID) as Subject;
+							return (
+								<Card
+									key={subject.id}
+									tree={tree}
+									node={subject}
+									handleCompletedStatus={() =>
+										handleCompletedStatus(
+											subject,
+											!subject.completed,
+											tree,
+											setTree,
+											history,
+											setHistory,
+											profileID,
+										)
+									}
+									handleDelete={() =>
+										handleDelete(
+											subject,
+											tree,
+											setTree,
+											history,
+											setHistory,
+											profileID,
+										)
+									}
+									handleModalSave={(
+										overrides,
+										cardModalRef,
+									) =>
+										handleCardModalSave(
+											subject,
+											overrides,
+											tree,
+											setTree,
+											history,
+											setHistory,
+											setAlert,
+											alertModalRef,
+											cardModalRef,
+											profileID,
+										)
+									}
+									handleDeathCount={(deathType, operation) =>
+										handleDeathCount(
+											subject,
+											deathType,
+											operation,
+											tree,
+											setTree,
+											history,
+											setHistory,
+											profileID,
+										)
+									}
+								/>
+							);
+						})
+					) : (
+						<ForceError msg={"You just deleted the parent profile page! This page does not exist anymore!"} />
+					)
+				}
+			/>
+			<Modal
+				modalRef={alertModalRef}
+				isAlertModal={true}
+				modalBody={<AlertModalBody msg={alert} />}
+			/>
 		</>
 	);
 }

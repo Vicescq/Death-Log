@@ -9,6 +9,7 @@ import type {
 	AICSubjectOverrides,
 } from "./types";
 import AddItemCardModalBody from "./AddItemCardModalBody";
+import type { SelectDropdownOption } from "../SelectDropdown";
 
 type Props = AICGame | AICProfile | AICSubject;
 
@@ -16,10 +17,27 @@ export default function AddItemCard({ pageType, handleAdd }: Props) {
 	const [inputText, setInputText] = useState("");
 	const modalRef = useRef<HTMLDialogElement>(null);
 
-	const [subjectModalState, setSubjectModalState] = useState<AICSubjectOverrides>({
-		composite: false,
-		reoccurring: false,
-	});
+	const [subjectModalState, setSubjectModalState] =
+		useState<AICSubjectOverrides>({
+			composite: false,
+			reoccurring: false,
+			context: "boss",
+		});
+
+	const contextOptions: SelectDropdownOption[] = [
+		{
+			value: "boss",
+			text: "Boss",
+		},
+		{
+			value: "location",
+			text: "Location",
+		},
+		{
+			value: "other",
+			text: "Other",
+		},
+	];
 
 	let handleAddWrapper: () => void;
 	if (pageType == "game") {
@@ -37,7 +55,10 @@ export default function AddItemCard({ pageType, handleAdd }: Props) {
 	}
 
 	function handleModalEdit(setting: keyof AICSubjectOverrides) {
-		setSubjectModalState((prev) => ({ ...prev, [setting]: !prev[setting] }));
+		setSubjectModalState((prev) => ({
+			...prev,
+			[setting]: !prev[setting],
+		}));
 	}
 
 	return (
@@ -82,7 +103,8 @@ export default function AddItemCard({ pageType, handleAdd }: Props) {
 				modalBody={
 					<AddItemCardModalBody
 						state={subjectModalState}
-						handleToggle={(setting) => handleModalEdit(setting)}
+						handleModalEdit={(setting) => handleModalEdit(setting)}
+						contextOptions={contextOptions}
 					/>
 				}
 			/>

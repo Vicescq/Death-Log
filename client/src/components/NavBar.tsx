@@ -1,13 +1,10 @@
-import { NavLink } from "react-router";
-import grimpReaper from "../assets/grim-reaper.png";
-import info from "../assets/info.svg";
 import { auth } from "../firebase-config";
 import useUserContext from "../contexts/useUserContext";
-import profile from "../assets/profile.svg";
-import home from "../assets/home.svg";
-import IndexedDBService from "../services/IndexedDBService";
 import { useNavigate } from "react-router";
 import { useEffect, useState } from "react";
+import { Link } from "react-router";
+import home from "../assets/home.svg"
+import utility from "../assets/utility.svg"
 
 export default function NavBar() {
 	const navigate = useNavigate();
@@ -25,21 +22,24 @@ export default function NavBar() {
 	}
 
 	return (
-		<nav className="bg-zomp border-b-4 border-b-black px-2 text-black">
-			<ul className="flex">
-				<li className="">
-					<NavLink to="/">
-						<img src={grimpReaper} className="m-2 max-w-8" />
-					</NavLink>
+		<nav className="bg-zomp border-b-4 border-b-black px-3 text-black ">
+			<ul className="flex items-center gap-2 h-12">
+				<li className="font-bold">
+					<Link to="/">
+						<img className="w-10" src={home} alt="" />
+					</Link>
 				</li>
-				<li>
-					<img src={info} className="m-2 max-w-8" />
+				<li className="font-bold">
+					<Link to="/utility">
+						<img className="w-10" src={utility} alt="" />
+					</Link>
 				</li>
-				<li>
-					<NavLink to="/utility">
-						<img src="" alt="" />
-					</NavLink>
+				<li className="font-bold">
+					<Link to="/info">
+						INFO
+					</Link>
 				</li>
+				
 				{user && navigator.onLine ? (
 					<li className="my-auto ml-auto">
 						<button onClick={() => handleSignOut()}>
