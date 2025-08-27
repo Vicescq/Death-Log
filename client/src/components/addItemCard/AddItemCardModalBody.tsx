@@ -1,10 +1,16 @@
-import SelectDropdown, { type SelectDropdownOption, type SelectDropdownSelected } from "../SelectDropdown";
+import SelectDropdown, {
+	type SelectDropdownOption,
+	type SelectDropdownSelected,
+} from "../SelectDropdown";
 import Toggle from "../Toggle";
 import type { AICSubjectOverrides } from "./types";
 
 type Props = {
 	state: AICSubjectOverrides;
-	handleModalEdit: (setting: keyof AICSubjectOverrides, selected?: SelectDropdownSelected) => void;
+	handleModalEdit: (
+		setting: keyof AICSubjectOverrides,
+		selected?: SelectDropdownSelected,
+	) => void;
 	contextOptions: SelectDropdownOption[];
 };
 
@@ -16,17 +22,20 @@ export default function AddItemCardModalBody({
 	return (
 		<ul className="flex flex-col gap-2">
 			<li className="flex items-center gap-2">
+				<span className="mr-auto">Context</span>
+				<SelectDropdown
+					selected={state.context}
+					options={contextOptions}
+					handleSelect={(selected) =>
+						handleModalEdit("context", selected)
+					}
+				/>
+			</li>
+			<li className="flex items-center gap-2">
 				<span className="mr-auto">Reoccurring</span>
 				<Toggle
 					enable={state.reoccurring}
 					handleToggle={() => handleModalEdit("reoccurring")}
-				/>
-			</li>
-			<li className="flex items-center gap-2">
-				<span className="mr-auto">Context</span>
-				<SelectDropdown
-					options={contextOptions}
-					handleSelect={(selected) => handleModalEdit("context", selected)}
 				/>
 			</li>
 		</ul>

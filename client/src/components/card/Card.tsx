@@ -6,7 +6,7 @@ import step_into from "../../assets/step_into.svg";
 import details from "../../assets/details.svg";
 import readonly from "../../assets/readonly.svg";
 import type { TreeStateType } from "../../contexts/treeContext";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { DistinctTreeNode } from "../../model/TreeNodeModel";
 import {
 	createCardCSS,
@@ -71,6 +71,15 @@ export default function Card<T extends DistinctTreeNode>({
 				setModalState(node);
 		}
 	}
+
+	// const { cardCSS, settersCSS, highlightingCSS, reoccurringCSS } = useMemo(() => createCardCSS(node), [node]);
+	// const mainPageTransitionState = useMemo(
+	// 	() => createCardMainPageTransitionState(node),
+	// 	[node],
+	// );
+	// const deathCount = useMemo(() => getDeaths(node, tree), [node, tree]);
+
+	useConsoleLogOnStateChange(modalState, modalState);
 
 	return (
 		<div

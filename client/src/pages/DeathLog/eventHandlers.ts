@@ -61,10 +61,19 @@ export function handleCardModalSave(
     overrides: DistinctTreeNode, tree: TreeStateType, setTree: TreeContextType[1], history: HistoryStateType, setHistory: HistoryContextType[1], setWarning: React.Dispatch<React.SetStateAction<string>>, warningModalRef: React.RefObject<HTMLDialogElement | null>, cardModalRef: React.RefObject<HTMLDialogElement | null>, parentID: string
 ) {
     try {
-        if (overrides.name.trim() != node.name) {
+        if (overrides.name.trim() != node.name) { // deliberate name edits
             const name = sanitizeTreeNodeEntry(overrides.name, tree, parentID);
             overrides.name = name;
         }
+
+        else {
+            overrides.name = overrides.name.trim() // covers the case where user accidentaly added some whitespace or DID NOT intend to edit name
+        }
+
+        if (overrides.type == "subject" && overrides.deaths < 0) {
+            overrides.deaths = 0
+        }
+
 
         // in memory
         const { updatedTree, actions } =

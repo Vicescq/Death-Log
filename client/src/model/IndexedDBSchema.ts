@@ -5,7 +5,8 @@ export type Node = {
     email: string
     node_id: string,
     node: TreeNode,
-    created_at: string
+    created_at: string,
+    edited_at: string
 }
 
 export const db = new Dexie('DeathLogDB') as Dexie & {
@@ -13,5 +14,5 @@ export const db = new Dexie('DeathLogDB') as Dexie & {
 };
 
 db.version(1).stores({
-    nodes: "&node_id, email, created_at",
+    nodes: "&node_id, email, created_at, edited_at",
 });
