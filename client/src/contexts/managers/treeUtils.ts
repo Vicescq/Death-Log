@@ -113,7 +113,7 @@ export function isNodeNameUnique(tree: TreeStateType, parentID: string, name: st
     })
     return !siblingNames.includes(name);
 }
-export function createShallowCopyMap<T>(map: Map<string, T>) {
+export function createShallowCopyMap(map: TreeStateType) {
     const objLiteralFromTree = Object.fromEntries(map);
     const objLiteralFromTreeShallowCopy = { ...objLiteralFromTree };
     return new Map(Object.entries(objLiteralFromTreeShallowCopy));
