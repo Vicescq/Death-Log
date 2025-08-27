@@ -15,17 +15,20 @@ export type HandleAddSubject = (
 
 export type AICGame = {
     pageType: "game";
-    handleAdd: HandleAddGame;
+    // handleAdd: HandleAddGame;
+    parentID: string;
 }
 
 export type AICProfile = {
     pageType: "profile";
-    handleAdd: HandleAddProfile;
+    // handleAdd: HandleAddProfile;
+    parentID: string;
 }
 
 export type AICSubject = {
     pageType: "subject";
-    handleAdd: HandleAddSubject;
+    // handleAdd: HandleAddSubject;
+    parentID: string;
 }
 
 export type AICSubjectOverrides = Pick<Subject, "reoccurring" | "context">

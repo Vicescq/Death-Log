@@ -10,7 +10,7 @@ import useTreeContext from "../../contexts/useTreeContext";
 export default function SignIn() {
 	const navigate = useNavigate();
 	const [user, setUser] = useUserContext();
-	const [tree, setTree] = useTreeContext();
+	// const [tree, setTree] = useTreeContext();
 
 	async function handleSignIn() {
 		const provider = new GoogleAuthProvider();

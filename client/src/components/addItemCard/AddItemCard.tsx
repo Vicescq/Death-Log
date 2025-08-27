@@ -14,10 +14,14 @@ import type {
 	SelectDropdownSelected,
 } from "../SelectDropdown";
 import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
+import { useTreeStore } from "../../hooks/StateManager/useTreeStore";
 
 type Props = AICGame | AICProfile | AICSubject;
 
-export default function AddItemCard({ pageType, handleAdd }: Props) {
+export default function AddItemCard({ pageType, parentID }: Props) {
+	const addNode = useTreeStore((state) => state.addNode);
+	const updateNode = useTreeStore((state) => state.updateNode);
+
 	const [inputText, setInputText] = useState("");
 	const modalRef = useRef<HTMLDialogElement>(null);
 
@@ -45,15 +49,18 @@ export default function AddItemCard({ pageType, handleAdd }: Props) {
 	let handleAddWrapper: () => void;
 	if (pageType == "game") {
 		handleAddWrapper = () => {
-			handleAdd(inputText);
+			// handleAdd(inputText);
+			addNode("game", inputText, parentID);
 		};
 	} else if (pageType == "profile") {
 		handleAddWrapper = () => {
-			handleAdd(inputText);
+			// handleAdd(inputText);
+			addNode("profile", inputText, parentID);
 		};
 	} else if (pageType == "subject") {
 		handleAddWrapper = () => {
-			handleAdd(inputText, subjectModalState);
+			// handleAdd(inputText, subjectModalState);
+			addNode("subject", inputText, parentID, subjectModalState);
 		};
 	}
 
@@ -104,7 +111,21 @@ export default function AddItemCard({ pageType, handleAdd }: Props) {
 			</div>
 			<div className="flex gap-4">
 				<button
-					onClick={() => handleAddWrapper()}
+					onClick={() => {
+						// Call the addNode function directly here
+						if (pageType === "game") {
+							addNode("game", inputText, parentID);
+						} else if (pageType === "profile") {
+							addNode("profile", inputText, parentID);
+						} else if (pageType === "subject") {
+							addNode(
+								"subject",
+								inputText,
+								parentID,
+								subjectModalState,
+							);
+						}
+					}}
 					className="bg-zomp w-full rounded-2xl border-4 text-2xl font-bold shadow-[4px_2px_0px_rgba(0,0,0,1)]"
 				>
 					Add {pageType}

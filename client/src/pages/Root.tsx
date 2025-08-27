@@ -1,7 +1,9 @@
 import { Outlet } from "react-router";
 import NavBar from "../components/NavBar";
+import { useTreeStore } from "../hooks/StateManager/useTreeStore";
 
 export default function Root() {
+	
 	return (
 		<>
 			<NavBar />

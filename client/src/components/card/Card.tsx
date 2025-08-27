@@ -7,7 +7,7 @@ import details from "../../assets/details.svg";
 import readonly from "../../assets/readonly.svg";
 import type { TreeStateType } from "../../contexts/treeContext";
 import { useEffect, useMemo, useRef, useState } from "react";
-import type { DistinctTreeNode } from "../../model/TreeNodeModel";
+import type { DistinctTreeNode, Subject, TreeNode } from "../../model/TreeNodeModel";
 import {
 	createCardCSS,
 	createCardMainPageTransitionState,
@@ -19,28 +19,27 @@ import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
 import WarningModalBody from "../modal/WarningModalBody";
 import useWarningStates from "../../hooks/useWarningStates";
 import { getDeaths } from "../../contexts/managers/treeUtils";
+import { useTreeStore } from "../../hooks/StateManager/useTreeStore";
+import {
+	handleDeathCount,
+	handleCompletedStatus,
+} from "../../pages/DeathLog/eventHandlers";
 
 type Props<T extends DistinctTreeNode> = {
-	node: T;
-	tree: TreeStateType;
-	handleDelete: () => void;
-	handleCompletedStatus: () => void;
-	handleModalSave: (
-		overrides: T,
-		cardModalRef: React.RefObject<HTMLDialogElement | null>,
-	) => void;
-	handleDeathCount?: (operation: "add" | "subtract") => void;
+	parentID: string;
+	id: string
 };
 
 export default function Card<T extends DistinctTreeNode>({
-	node,
-	tree,
-	handleDelete,
-	handleCompletedStatus,
-	handleModalSave,
-	handleDeathCount,
+	parentID,
+	id
 }: Props<T>) {
 	let navigate = useNavigate();
+	const nodeX = useTreeStore((state) => state.tree.get(id))
+	const node = nodeX as DistinctTreeNode
+	// const tree = useTreeStore((state) => state.tree);
+	const deleteNodes = useTreeStore((state) => state.deleteNodes);
+	const updateNode = useTreeStore((state) => state.updateNode);
 
 	const [modalState, setModalState] = useState(node);
 
@@ -56,30 +55,27 @@ export default function Card<T extends DistinctTreeNode>({
 	const mainPageTransitionState = createCardMainPageTransitionState(node);
 	const { cardCSS, settersCSS, highlightingCSS, reoccurringCSS } =
 		createCardCSS(node);
-	const deathCount = getDeaths(node, tree);
+	const deathCount = getDeaths(node);
 
-	function handleReconfirm(type: "cancel" | "goBack" | "delete") {
+	function handleReconfirm(
+		type: "cancel" | "goBack" | "delete",
+		nodeX?: TreeNode,
+	) {
 		switch (type) {
 			case "goBack":
 				warningModalRef.current?.close();
 				modalRef.current?.showModal();
 				break;
 			case "delete":
-				handleDelete();
+				// handleDelete();
+				deleteNodes(nodeX!, parentID);
 				break;
 			case "cancel":
 				setModalState(node);
 		}
 	}
 
-	// const { cardCSS, settersCSS, highlightingCSS, reoccurringCSS } = useMemo(() => createCardCSS(node), [node]);
-	// const mainPageTransitionState = useMemo(
-	// 	() => createCardMainPageTransitionState(node),
-	// 	[node],
-	// );
-	// const deathCount = useMemo(() => getDeaths(node, tree), [node, tree]);
-
-	useConsoleLogOnStateChange(modalState, modalState);
+	useConsoleLogOnStateChange(modalState, "MODAL STATE", modalState);
 
 	return (
 		<div
@@ -116,13 +112,19 @@ export default function Card<T extends DistinctTreeNode>({
 							className={`w-9 cursor-pointer ${settersCSS}`}
 							src={add}
 							alt=""
-							onClick={() => handleDeathCount!("add")}
+							onClick={() => {
+								// handleDeathCount!("add")
+								// updateNode(node, modalState, parentID);
+								updateNode(node, {...node, deaths: node.deaths + 1} as Subject, parentID)
+							}}
 						/>
 						<img
 							className={`w-9 cursor-pointer ${settersCSS}`}
 							src={minus}
 							alt=""
-							onClick={() => handleDeathCount!("subtract")}
+							onClick={() => {
+								// handleDeathCount!("subtract")
+							}}
 						/>
 					</>
 				)}
@@ -136,7 +138,10 @@ export default function Card<T extends DistinctTreeNode>({
 					className={`w-9 cursor-pointer ${highlightingCSS} ${reoccurringCSS}`}
 					src={readonly}
 					alt=""
-					onClick={handleCompletedStatus}
+					onClick={() => {
+						node.completed = !node.completed;
+						updateNode(node, node, parentID);
+					}}
 				/>
 			</div>
 
@@ -159,7 +164,7 @@ export default function Card<T extends DistinctTreeNode>({
 							setWarningDel("You are about to delete something!");
 						}}
 						handleModalSave={() =>
-							handleModalSave(modalState, modalRef)
+							updateNode(node, modalState, parentID)
 						}
 						modalState={modalState}
 						setModalState={setModalState}
