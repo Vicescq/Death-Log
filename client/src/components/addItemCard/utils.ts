@@ -5,7 +5,7 @@ import type { TreeStateType, TreeContextType } from "../../contexts/treeContext"
 import IndexedDBService from "../../services/IndexedDBService";
 import { v4 as uuidv4 } from 'uuid';
 
-export function addItemCardStressTest(pageType: "game" | "profile" | "subject", tree: TreeStateType, setTree: TreeContextType[1], history: HistoryStateType, setHistory: HistoryContextType[1], setAlert: React.Dispatch<React.SetStateAction<string>>, modalRef: React.RefObject<HTMLDialogElement | null>, parentID: string) {
+export function addItemCardStressTest(pageType: "game" | "profile" | "subject", tree: TreeStateType, setTree: TreeContextType[1], history: HistoryStateType, setHistory: HistoryContextType[1], setWarning: React.Dispatch<React.SetStateAction<string>>, modalRef: React.RefObject<HTMLDialogElement | null>, parentID: string) {
     try {
         const inputText = uuidv4();
         // memory data structures
@@ -26,7 +26,7 @@ export function addItemCardStressTest(pageType: "game" | "profile" | "subject", 
         setHistory(updatedHistory);
     } catch (e) {
         if (e instanceof Error) {
-            setAlert(e.message);
+            setWarning(e.message);
             modalRef.current?.showModal();
         } else {
             // db stuff

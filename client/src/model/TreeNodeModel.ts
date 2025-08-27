@@ -1,6 +1,4 @@
 export type TreeNodeType = "game" | "profile" | "subject" | "ROOT_NODE";
-export type DeathType = "both" | "fullTries" | "resets";
-export type DeathCountOperation = "add" | "subtract";
 export type SubjectContext = "boss" | "location" | "other";
 export type Milestone = {
 
@@ -46,8 +44,7 @@ export type Profile = TreeNode & {
 
 export type Subject = TreeNode & {
     type: "subject"
-    fullTries: number,
-    resets: number,
+    deaths: number
     reoccurring: boolean,
     context: SubjectContext
 }

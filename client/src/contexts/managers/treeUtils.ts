@@ -1,5 +1,5 @@
 import type { TreeStateType } from "../treeContext";
-import type { TreeNode, Subject, DistinctTreeNode, DeathType } from "../../model/TreeNodeModel";
+import type { TreeNode, Subject, DistinctTreeNode } from "../../model/TreeNodeModel";
 
 export function sanitizeTreeNodeEntry(inputText: string, tree: TreeStateType, parentID: string) {
     inputText = inputText.trim();
@@ -74,20 +74,11 @@ export function identifyDeletedSelfAndChildrenIDS(node: TreeNode, tree: TreeStat
     return idsToBeDeleted;
 }
 
-export function getDeaths(node: DistinctTreeNode, tree: TreeStateType, mode: DeathType) {
+export function getDeaths(node: DistinctTreeNode, tree: TreeStateType) {
 
     function switchStatement(subject: Subject) {
         let total = 0;
-        switch (mode) {
-            case "fullTries":
-                total += subject.fullTries;
-                break;
-            case "resets":
-                total += subject.resets;
-                break;
-            default:
-                total += subject.fullTries + subject.resets;
-        }
+        total += subject.deaths;
         return total;
     }
 

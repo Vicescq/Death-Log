@@ -1,22 +1,24 @@
 import { useLocation } from "react-router";
-import Games from "./MainPages/Games";
 import type { CardMainPageTransitionState } from "../components/card/types";
-import Profiles from "./MainPages/Profiles";
-import Subjects from "./MainPages/Subjects";
+import DeathLog from "./DeathLog/DeathLog";
 
 export default function MainPageRouter() {
 	let location = useLocation();
 	let mainPageState: CardMainPageTransitionState | undefined = location.state;
 
 	if (!mainPageState) {
-		return <Games />;
+		return <DeathLog key={"ROOT_NODE"} type="game" parentID="ROOT_NODE" />;
 	}
 
 	switch (mainPageState?.type) {
 		case "GameToProfiles":
-			return <Profiles gameID={mainPageState.parentID} />;
+			return (
+				<DeathLog key={mainPageState.parentID} type="profile" parentID={mainPageState.parentID} />
+			);
 
 		case "ProfileToSubjects":
-			return <Subjects profileID={mainPageState.parentID} />;
+			return (
+				<DeathLog key={mainPageState.parentID} type="subject" parentID={mainPageState.parentID} />
+			);
 	}
 }

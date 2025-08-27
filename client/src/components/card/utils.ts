@@ -5,13 +5,11 @@ import type { CardMainPageTransitionState, CardModalStateGame, CardModalStatePro
 
 export function createCardCSS(
     treeNode: DistinctTreeNode,
-    resetDeathTypeMode: boolean,
 ) {
 
     const settersCSS = treeNode.completed ? "hidden" : "";
     const highlightingCSS = treeNode.completed ?
         "bg-amber-200 border-2 rounded-2xl shadow-[5px_2px_0px_rgba(0,0,0,1)]" : "";
-    const resetToggleHighlightingCSS = resetDeathTypeMode ? "bg-amber-200 border-2 rounded-2xl shadow-[5px_2px_0px_rgba(0,0,0,1)]" : "";
     let reoccurringCSS = "";
     if (treeNode.type == "subject" && treeNode.reoccurring) {
         reoccurringCSS = "hidden";
@@ -38,17 +36,7 @@ export function createCardCSS(
         cardCSS = cardCSSConfig.completed;
     }
 
-    return { cardCSS, settersCSS, highlightingCSS, resetToggleHighlightingCSS, reoccurringCSS }
-}
-
-export function generateCardDeathCounts(
-    treeNode: DistinctTreeNode,
-    tree: TreeStateType,
-) {
-    const deathCount = getDeaths(treeNode, tree, "both");
-    const fullTries = getDeaths(treeNode, tree, "fullTries");
-    const resets = getDeaths(treeNode, tree, "resets");
-    return { deathCount, fullTries, resets };
+    return { cardCSS, settersCSS, highlightingCSS, reoccurringCSS }
 }
 
 export function createCardMainPageTransitionState(node: DistinctTreeNode): CardMainPageTransitionState {
@@ -66,9 +54,9 @@ export function createCardMainPageTransitionState(node: DistinctTreeNode): CardM
 
 export function isCardModalStateEqual(modalState: DistinctTreeNode, node: DistinctTreeNode) {
     const keys = Object.keys(modalState);
-    for (let i = 0; i < keys.length; i++){
+    for (let i = 0; i < keys.length; i++) {
         const nodeKey = keys[i] as keyof DistinctTreeNode
-        if (nodeKey == "childIDS" || nodeKey == "id" || nodeKey == "parentID"){
+        if (nodeKey == "childIDS" || nodeKey == "id" || nodeKey == "parentID") {
             continue;
         }
         if (modalState[nodeKey] != node[nodeKey]) {
@@ -76,4 +64,18 @@ export function isCardModalStateEqual(modalState: DistinctTreeNode, node: Distin
         }
     }
     return true
+}
+
+export function defaultCardModalDateFormat(isoSTR: string) {
+    const dateObj = new Date(isoSTR);
+    const year = String(dateObj.getFullYear());
+    let month = String(dateObj.getMonth() + 1);
+    let day = String(dateObj.getDate());
+    if (month.length == 1) {
+        month = "0" + month;
+    }
+    if (day.length == 1) {
+        day = "0" + day.length;
+    }
+    return `${year}-${month}-${day}`;
 }

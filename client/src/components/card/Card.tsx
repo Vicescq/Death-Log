@@ -7,16 +7,11 @@ import details from "../../assets/details.svg";
 import reset from "../../assets/reset.svg";
 import readonly from "../../assets/readonly.svg";
 import type { TreeStateType } from "../../contexts/treeContext";
-import { useRef, useState } from "react";
-import type {
-	DeathCountOperation,
-	DeathType,
-	DistinctTreeNode,
-} from "../../model/TreeNodeModel";
+import { useEffect, useRef, useState } from "react";
+import type { DistinctTreeNode } from "../../model/TreeNodeModel";
 import {
 	createCardCSS,
 	createCardMainPageTransitionState,
-	generateCardDeathCounts,
 	isCardModalStateEqual,
 } from "./utils";
 import CardModalBody from "./CardModalBody";
@@ -24,6 +19,7 @@ import Modal from "../modal/Modal";
 import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
 import WarningModalBody from "../modal/WarningModalBody";
 import useWarningStates from "../../hooks/useWarningStates";
+import { getDeaths } from "../../contexts/managers/treeUtils";
 
 type Props<T extends DistinctTreeNode> = {
 	node: T;
@@ -34,10 +30,7 @@ type Props<T extends DistinctTreeNode> = {
 		overrides: T,
 		cardModalRef: React.RefObject<HTMLDialogElement | null>,
 	) => void;
-	handleDeathCount?: (
-		deathType: DeathType,
-		operation: DeathCountOperation,
-	) => void;
+	handleDeathCount?: (operation: "add" | "subtract") => void;
 };
 
 export default function Card<T extends DistinctTreeNode>({
@@ -53,7 +46,6 @@ export default function Card<T extends DistinctTreeNode>({
 	const [modalState, setModalState] = useState(node);
 
 	const modalRef = useRef<HTMLDialogElement | null>(null);
-	const [resetDeathTypeMode, setResetDeathTypeMode] = useState(false);
 
 	const {
 		warningModalRef: warningDelModalRef,
@@ -63,18 +55,9 @@ export default function Card<T extends DistinctTreeNode>({
 	const { warningModalRef, warning, setWarning } = useWarningStates();
 
 	const mainPageTransitionState = createCardMainPageTransitionState(node);
-	const deathType: DeathType = resetDeathTypeMode ? "resets" : "fullTries";
-	const {
-		cardCSS,
-		settersCSS,
-		highlightingCSS,
-		resetToggleHighlightingCSS,
-		reoccurringCSS,
-	} = createCardCSS(node, resetDeathTypeMode);
-	const { deathCount, fullTries, resets } = generateCardDeathCounts(
-		node,
-		tree,
-	);
+	const { cardCSS, settersCSS, highlightingCSS, reoccurringCSS } =
+		createCardCSS(node);
+	const deathCount = getDeaths(node, tree);
 
 	function handleModalEdit(inputText: string) {
 		setModalState((prev) => ({ ...prev, name: inputText }));
@@ -93,8 +76,6 @@ export default function Card<T extends DistinctTreeNode>({
 				setModalState(node);
 		}
 	}
-
-	// useConsoleLogOnStateChange(modalState, modalState);
 
 	return (
 		<div
@@ -131,23 +112,13 @@ export default function Card<T extends DistinctTreeNode>({
 							className={`w-9 cursor-pointer ${settersCSS}`}
 							src={add}
 							alt=""
-							onClick={() => handleDeathCount!(deathType, "add")}
+							onClick={() => handleDeathCount!("add")}
 						/>
 						<img
 							className={`w-9 cursor-pointer ${settersCSS}`}
 							src={minus}
 							alt=""
-							onClick={() =>
-								handleDeathCount!(deathType, "subtract")
-							}
-						/>
-						<img
-							className={`w-9 cursor-pointer ${settersCSS} ${resetToggleHighlightingCSS}`}
-							src={reset}
-							alt=""
-							onClick={() => {
-								setResetDeathTypeMode((prev) => !prev);
-							}}
+							onClick={() => handleDeathCount!("subtract")}
 						/>
 					</>
 				)}

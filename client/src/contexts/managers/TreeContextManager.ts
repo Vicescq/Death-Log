@@ -181,8 +181,7 @@ export default class TreeContextManager {
             notes: null,
             dateStart: new Date().toISOString(),
             dateEnd: null,
-            fullTries: 0,
-            resets: 0,
+            deaths: 0,
             reoccurring: false,
             context: "boss"
         };

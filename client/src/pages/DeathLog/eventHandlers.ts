@@ -5,7 +5,7 @@ import HistoryContextManager from "../../contexts/managers/HistoryContextManager
 import TreeContextManager from "../../contexts/managers/TreeContextManager";
 import { sanitizeTreeNodeEntry } from "../../contexts/managers/treeUtils";
 import type { TreeContextType, TreeStateType } from "../../contexts/treeContext";
-import type { DeathCountOperation, DeathType, DistinctTreeNode, Subject } from "../../model/TreeNodeModel";
+import type { DistinctTreeNode, Subject } from "../../model/TreeNodeModel";
 import IndexedDBService from "../../services/IndexedDBService";
 
 export function handleAdd(inputText: string, pageType: "game" | "profile" | "subject", tree: TreeStateType, setTree: TreeContextType[1], history: HistoryStateType, setHistory: HistoryContextType[1], setWarning: React.Dispatch<React.SetStateAction<string>>, warningModalRef: React.RefObject<HTMLDialogElement | null>, parentID: string, overrides?: AICSubjectOverrides) {
@@ -101,7 +101,8 @@ export function handleCardModalSave(
     }
 }
 
-export function handleCompletedStatus(node: DistinctTreeNode, newStatus: boolean, tree: TreeStateType, setTree: TreeContextType[1], history: HistoryStateType, setHistory: HistoryContextType[1], parentID: string) {
+export function handleCompletedStatus(node: DistinctTreeNode, tree: TreeStateType, setTree: TreeContextType[1], history: HistoryStateType, setHistory: HistoryContextType[1], parentID: string) {
+    const newStatus = !node.completed;
     const dateEnd = newStatus ? new Date().toISOString() : null;
 
     // memory data structures
@@ -131,21 +132,16 @@ export function handleCompletedStatus(node: DistinctTreeNode, newStatus: boolean
     setHistory(updatedHistory);
 }
 
-export function handleDeathCount(subject: Subject, deathType: DeathType, operation: DeathCountOperation, tree: TreeStateType, setTree: TreeContextType[1], history: HistoryStateType, setHistory: HistoryContextType[1], parentID: string) {
+export function handleDeathCount(subject: Subject, operation: "add" | "subtract", tree: TreeStateType, setTree: TreeContextType[1], history: HistoryStateType, setHistory: HistoryContextType[1], parentID: string) {
     const updatedSubject: Subject = { ...subject };
     if (operation == "add") {
-        deathType == "fullTries"
-            ? updatedSubject.fullTries++
-            : updatedSubject.resets++;
+        updatedSubject.deaths++
+
     } else {
-        deathType == "fullTries"
-            ? updatedSubject.fullTries--
-            : updatedSubject.resets--;
+        updatedSubject.deaths--
     }
 
-    updatedSubject.fullTries < 0 ? (updatedSubject.fullTries = 0) : null;
-    updatedSubject.resets < 0 ? (updatedSubject.resets = 0) : null;
-
+    updatedSubject.deaths < 0 ? (updatedSubject.deaths = 0) : null;
 
     // in memory
     const { updatedTree, actions } =

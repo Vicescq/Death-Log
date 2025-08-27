@@ -126,8 +126,7 @@ export default function AddItemCard({ pageType, handleAdd }: Props) {
 						contextOptions={contextOptions}
 					/>
 				}
-				isWarningModal={true}
-				isWarningReconfirmModal={false}
+				type="generic"
 			/>
 		</header>
 	);
