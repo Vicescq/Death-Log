@@ -1,6 +1,6 @@
 import type { TreeStateType } from "../treeContext";
 import type { Action, ActionAdd, ActionDelete, ActionType, ActionUpdate } from "../../model/Action";
-import type { RootNode, DistinctTreeNode, TreeNode, Game, Profile, Subject, TreeNodeType } from "../../model/TreeNodeModel";
+import type { RootNode, TreeNode, Game, Profile, Subject } from "../../model/TreeNodeModel";
 import { createShallowCopyMap } from "./treeUtils";
 import { v4 as uuidv4 } from 'uuid';
 import { sortChildIDS, identifyDeletedSelfAndChildrenIDS, sanitizeTreeNodeEntry } from "./treeUtils";
@@ -29,18 +29,18 @@ export default class TreeContextManager {
     }
 
     static addNode(tree: TreeStateType, pageType: "game" | "profile" | "subject", inputText: string, parentID: string, overrides?: AICSubjectOverrides) {
-        sanitizeTreeNodeEntry(inputText, tree, parentID);
+        const name = sanitizeTreeNodeEntry(inputText, tree, parentID);
         let node: TreeNode;
         switch (pageType) {
             case "game":
-                node = TreeContextManager.createGame(inputText);
+                node = TreeContextManager.createGame(name);
                 break;
             case "profile":
-                node = TreeContextManager.createProfile(inputText, parentID);
+                node = TreeContextManager.createProfile(name, parentID);
                 break;
             case "subject":
-                node = TreeContextManager.createSubject(inputText, parentID);
-                node = {...node, ...overrides}
+                node = TreeContextManager.createSubject(name, parentID);
+                node = { ...node, ...overrides }
                 break;
         }
 
@@ -76,7 +76,7 @@ export default class TreeContextManager {
                 tree.get(parentID)!,
                 "update",
             );
-            
+
         return { updatedTree, actions: { self: actionUpdateSelf, parent: actionUpdateParent } };
     }
 
@@ -126,7 +126,7 @@ export default class TreeContextManager {
     }
 
     static createRootNode() {
-        const rootNode: RootNode = { type: "ROOT_NODE", id: "ROOT_NODE", childIDS: [], parentID: null, name: "", completed: false, notes: null, dateStart: "", dateEnd: "" };
+        const rootNode: RootNode = { type: "ROOT_NODE", id: "ROOT_NODE", childIDS: [], parentID: null, name: "", completed: false, notes: "", dateStart: "", dateEnd: "" };
         return rootNode
     }
 
@@ -140,7 +140,7 @@ export default class TreeContextManager {
             parentID: "ROOT_NODE",
             name: inputText,
             completed: false,
-            notes: null,
+            notes: "",
             dateStart: new Date().toISOString(),
             dateEnd: null,
         };
@@ -158,7 +158,7 @@ export default class TreeContextManager {
             parentID: parentID,
             name: inputText,
             completed: false,
-            notes: null,
+            notes: "",
             dateStart: new Date().toISOString(),
             dateEnd: null,
             milestones: [{}],
@@ -178,7 +178,7 @@ export default class TreeContextManager {
             parentID: parentID,
             name: inputText,
             completed: false,
-            notes: null,
+            notes: "",
             dateStart: new Date().toISOString(),
             dateEnd: null,
             deaths: 0,

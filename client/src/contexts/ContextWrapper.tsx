@@ -21,18 +21,19 @@ export function ContextWrapper({ children }: { children: ReactNode }) {
 	const [user, setUser] = useState<UserStateType>(null);
 	
 	useConsoleLogOnStateChange(tree, "TREE: ", tree);
-	useConsoleLogOnStateChange(history, "HISTORY: ", history);
-	useConsoleLogOnStateChange(
-		history,
-		"\nSENT TO DB: ",
-		HistoryContextManager.batchHistory(history),
-	);
-	useConsoleLogOnStateChange(
-		history.newActionStartIndex,
-		"INDEX:",
-		history.newActionStartIndex,
-	);
-	useConsoleLogOnStateChange(user, "USER:", user);
+	// useConsoleLogOnStateChange(history, "HISTORY: ", history);
+	// useConsoleLogOnStateChange(
+	// 	history,
+	// 	"\nSENT TO DB: ",
+	// 	HistoryContextManager.batchHistory(history),
+	// );
+	// useConsoleLogOnStateChange(
+	// 	history.newActionStartIndex,
+	// 	"INDEX:",
+	// 	history.newActionStartIndex,
+	// );
+	// useConsoleLogOnStateChange(user, "USER:", user);
+
 	useAuthObserver(setUser, setTree, setHistory);
 	useSyncDeathLog(user, history, setHistory);
 

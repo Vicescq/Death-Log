@@ -1,5 +1,4 @@
 import type { AICSubjectOverrides } from "../../components/addItemCard/types";
-import type { CardModalStateGame } from "../../components/card/types";
 import type { HistoryContextType, HistoryStateType } from "../../contexts/historyContext";
 import HistoryContextManager from "../../contexts/managers/HistoryContextManager";
 import TreeContextManager from "../../contexts/managers/TreeContextManager";
@@ -59,10 +58,13 @@ export function handleDelete(node: DistinctTreeNode, tree: TreeStateType, setTre
 
 export function handleCardModalSave(
     node: DistinctTreeNode,
-    overrides: CardModalStateGame, tree: TreeStateType, setTree: TreeContextType[1], history: HistoryStateType, setHistory: HistoryContextType[1], setWarning: React.Dispatch<React.SetStateAction<string>>, warningModalRef: React.RefObject<HTMLDialogElement | null>, cardModalRef: React.RefObject<HTMLDialogElement | null>, parentID: string
+    overrides: DistinctTreeNode, tree: TreeStateType, setTree: TreeContextType[1], history: HistoryStateType, setHistory: HistoryContextType[1], setWarning: React.Dispatch<React.SetStateAction<string>>, warningModalRef: React.RefObject<HTMLDialogElement | null>, cardModalRef: React.RefObject<HTMLDialogElement | null>, parentID: string
 ) {
     try {
-        sanitizeTreeNodeEntry(overrides.name, tree, parentID);
+        if (overrides.name.trim() != node.name) {
+            const name = sanitizeTreeNodeEntry(overrides.name, tree, parentID);
+            overrides.name = name;
+        }
 
         // in memory
         const { updatedTree, actions } =

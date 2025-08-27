@@ -13,7 +13,7 @@ import Root from "./pages/Root.tsx";
 import { ContextWrapper } from "./contexts/ContextWrapper.tsx";
 import Start from "./pages/Start/Start.tsx";
 import UtilityPage from "./pages/UtilityPage.tsx";
-import MainPageRouter from "./pages/MainPageRouter.tsx";
+import MainPageRouter from "./pages/DeathLog/DeathLogRouter.tsx";
 
 createRoot(document.getElementById("root")!).render(
 	<StrictMode>

@@ -1,7 +1,7 @@
 import type { TreeStateType } from "../../contexts/treeContext";
 import type { DistinctTreeNode, Game, Profile, Subject } from "../../model/TreeNodeModel";
 import { getDeaths } from "../../contexts/managers/treeUtils";
-import type { CardMainPageTransitionState, CardModalStateGame, CardModalStateProfile, CardModalStateSubject } from "./types";
+import type { CardMainPageTransitionState } from "../../pages/DeathLog/DeathLogRouter";
 
 export function createCardCSS(
     treeNode: DistinctTreeNode,
@@ -75,7 +75,28 @@ export function defaultCardModalDateFormat(isoSTR: string) {
         month = "0" + month;
     }
     if (day.length == 1) {
-        day = "0" + day.length;
+        day = "0" + day;
     }
     return `${year}-${month}-${day}`;
+}
+
+export function convertDefaultCardModalDateFormatToISO(cardModalDateFormat: string) {
+    const parsedDate = cardModalDateFormat.split("-");
+    const dateObj = new Date(Number(parsedDate[0]), Number(parsedDate[1]) - 1, Number(parsedDate[2]));
+    return dateObj.toISOString();
+}
+
+export function isCardModalDateAtLimit(date: string) {
+    if (
+        Date.parse(
+            convertDefaultCardModalDateFormatToISO(
+                date,
+            ),
+        ) >= Date.parse(new Date().toISOString())
+    ) {
+        date = defaultCardModalDateFormat(
+            new Date().toISOString(),
+        );
+    }
+    return date
 }

@@ -14,7 +14,7 @@ export type TreeNode = {
     childIDS: string[],
     name: string,
     completed: boolean
-    notes: string | null
+    notes: string
     dateStart: string,
     dateEnd: string | null,
 }
@@ -25,7 +25,7 @@ export type RootNode = TreeNode & {
     parentID: null,
     name: "",
     completed: false,
-    notes: null,
+    notes: "",
     dateStart: "",
     dateEnd: "",
 }

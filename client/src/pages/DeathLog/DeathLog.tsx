@@ -46,7 +46,7 @@ export default function DeathLog({ type, parentID }: Props) {
 		<>
 			{loading ? null : deletedID ? (
 				<ForceError
-					msg={`You just deleted the parent ${type} page! This page does not exist anymore!`}
+					msg={`You just deleted the parent page! This page does not exist anymore!`}
 				/>
 			) : (
 				<>

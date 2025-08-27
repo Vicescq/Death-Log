@@ -4,7 +4,6 @@ import add from "../../assets/add.svg";
 import minus from "../../assets/minus.svg";
 import step_into from "../../assets/step_into.svg";
 import details from "../../assets/details.svg";
-import reset from "../../assets/reset.svg";
 import readonly from "../../assets/readonly.svg";
 import type { TreeStateType } from "../../contexts/treeContext";
 import { useEffect, useRef, useState } from "react";
@@ -58,10 +57,6 @@ export default function Card<T extends DistinctTreeNode>({
 	const { cardCSS, settersCSS, highlightingCSS, reoccurringCSS } =
 		createCardCSS(node);
 	const deathCount = getDeaths(node, tree);
-
-	function handleModalEdit(inputText: string) {
-		setModalState((prev) => ({ ...prev, name: inputText }));
-	}
 
 	function handleReconfirm(type: "cancel" | "goBack" | "delete") {
 		switch (type) {
@@ -158,12 +153,11 @@ export default function Card<T extends DistinctTreeNode>({
 							handleModalSave(modalState, modalRef)
 						}
 						modalState={modalState}
-						handleModalEdit={(inputText) =>
-							handleModalEdit(inputText)
-						}
+						setModalState={setModalState}
 					/>
 				}
 			/>
+
 			<Modal
 				modalRef={warningModalRef}
 				type="warningReconfirm"
