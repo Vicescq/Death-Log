@@ -5,9 +5,12 @@ import minus from "../../assets/minus.svg";
 import step_into from "../../assets/step_into.svg";
 import details from "../../assets/details.svg";
 import readonly from "../../assets/readonly.svg";
-import type { TreeStateType } from "../../contexts/treeContext";
-import { useEffect, useMemo, useRef, useState } from "react";
-import type { DistinctTreeNode, Subject, TreeNode } from "../../model/TreeNodeModel";
+import { useRef, useState } from "react";
+import type {
+	DistinctTreeNode,
+	Subject,
+	TreeNode,
+} from "../../model/TreeNodeModel";
 import {
 	createCardCSS,
 	createCardMainPageTransitionState,
@@ -20,29 +23,30 @@ import WarningModalBody from "../modal/WarningModalBody";
 import useWarningStates from "../../hooks/useWarningStates";
 import { getDeaths } from "../../contexts/managers/treeUtils";
 import { useTreeStore } from "../../hooks/StateManager/useTreeStore";
-import {
-	handleDeathCount,
-	handleCompletedStatus,
-} from "../../pages/DeathLog/eventHandlers";
 
 type Props<T extends DistinctTreeNode> = {
 	parentID: string;
-	id: string
+	id: string;
 };
 
 export default function Card<T extends DistinctTreeNode>({
 	parentID,
-	id
+	id,
 }: Props<T>) {
 	let navigate = useNavigate();
-	const nodeX = useTreeStore((state) => state.tree.get(id))
-	const node = nodeX as DistinctTreeNode
-	// const tree = useTreeStore((state) => state.tree);
+
+	const treeNode = useTreeStore((state) => state.tree.get(id));
+	if (treeNode == undefined || treeNode.type == "ROOT_NODE") {
+		throw new Error(
+			"DEV ERROR! INCORRECTLY PASSED IN ROOT NODE OR UNDEFINED NODE TO A CARD",
+		);
+	}
+
+	const node = treeNode as DistinctTreeNode;
 	const deleteNodes = useTreeStore((state) => state.deleteNodes);
 	const updateNode = useTreeStore((state) => state.updateNode);
 
 	const [modalState, setModalState] = useState(node);
-
 	const modalRef = useRef<HTMLDialogElement | null>(null);
 
 	const {
@@ -57,10 +61,7 @@ export default function Card<T extends DistinctTreeNode>({
 		createCardCSS(node);
 	const deathCount = getDeaths(node);
 
-	function handleReconfirm(
-		type: "cancel" | "goBack" | "delete",
-		nodeX?: TreeNode,
-	) {
+	function handleReconfirm(type: "cancel" | "goBack" | "delete") {
 		switch (type) {
 			case "goBack":
 				warningModalRef.current?.close();
@@ -68,7 +69,7 @@ export default function Card<T extends DistinctTreeNode>({
 				break;
 			case "delete":
 				// handleDelete();
-				deleteNodes(nodeX!, parentID);
+				deleteNodes(node, parentID);
 				break;
 			case "cancel":
 				setModalState(node);
@@ -95,7 +96,7 @@ export default function Card<T extends DistinctTreeNode>({
 			</div>
 
 			<div className="ml-auto flex flex-col gap-2">
-				{!(node.type == "subject") ? (
+				{node.type != "subject" ? (
 					<img
 						className={`w-9 ${highlightingCSS} cursor-pointer`}
 						src={step_into}
@@ -113,9 +114,14 @@ export default function Card<T extends DistinctTreeNode>({
 							src={add}
 							alt=""
 							onClick={() => {
-								// handleDeathCount!("add")
-								// updateNode(node, modalState, parentID);
-								updateNode(node, {...node, deaths: node.deaths + 1} as Subject, parentID)
+								updateNode(
+									node,
+									{
+										...node,
+										deaths: node.deaths + 1,
+									},
+									parentID,
+								);
 							}}
 						/>
 						<img
@@ -123,7 +129,16 @@ export default function Card<T extends DistinctTreeNode>({
 							src={minus}
 							alt=""
 							onClick={() => {
-								// handleDeathCount!("subtract")
+								if (node.deaths != 0) {
+									updateNode(
+										node,
+										{
+											...node,
+											deaths: node.deaths - 1,
+										},
+										parentID,
+									);
+								}
 							}}
 						/>
 					</>
@@ -139,8 +154,8 @@ export default function Card<T extends DistinctTreeNode>({
 					src={readonly}
 					alt=""
 					onClick={() => {
-						node.completed = !node.completed;
-						updateNode(node, node, parentID);
+						const nodeCopy: DistinctTreeNode = {...node, completed: !node.completed};
+						updateNode(node, nodeCopy, parentID);
 					}}
 				/>
 			</div>

@@ -1,24 +1,40 @@
 import { create } from 'zustand'
 import type { TreeStateType } from '../../contexts/treeContext'
-import type { TreeNode } from '../../model/TreeNodeModel';
+import type { DistinctTreeNode, RootNode, TreeNode } from '../../model/TreeNodeModel';
 import TreeContextManager from '../../contexts/managers/TreeContextManager';
 import type { AICSubjectOverrides } from '../../components/addItemCard/types';
-import { createShallowCopyMap, identifyDeletedSelfAndChildrenIDS, sanitizeTreeNodeEntry, sortChildIDS } from '../../contexts/managers/treeUtils';
-import type { ActionAdd, ActionDelete, ActionUpdate } from '../../model/Action';
+import { identifyDeletedSelfAndChildrenIDS, sanitizeTreeNodeEntry, sortChildIDS } from '../../contexts/managers/treeUtils';
 
 type TreeState = {
     tree: TreeStateType;
     initTree: (nodes: TreeNode[]) => void;
     addNode: (pageType: "game" | "profile" | "subject", inputText: string, parentID: string, overrides?: AICSubjectOverrides) => void;
-    updateNode: (node: TreeNode, overrides: Partial<TreeNode>, parentID: string) => void;
+    updateNode: (node: TreeNode, overrides: Partial<DistinctTreeNode>, parentID: string) => void;
     deleteNodes: (node: TreeNode, parentID: string) => void;
 }
 
 export const useTreeStore = create<TreeState>((set) => ({
     tree: new Map(),
-    initTree: (nodes) => set(() => ({
-        tree: TreeContextManager.initTree(nodes)
-    })),
+    initTree: (nodes) => {
+        set((state) => {
+            const newTree: TreeStateType = new Map();
+            const rootNode: RootNode = TreeContextManager.createRootNode();
+            newTree.set(rootNode.id, rootNode);
+
+            nodes.forEach((node) => {
+                newTree.set(node.id, node);
+                if (node.type == "game") {
+                    const rootNode = newTree.get(node.parentID!) as RootNode;
+                    const rootNodeCopy: RootNode = { ...rootNode, childIDS: [...rootNode.childIDS] };
+                    rootNodeCopy.childIDS.push(node.id);
+                    // rootNodeCopy.childIDS = sortChildIDS(rootNodeCopy, newTree);
+                    newTree.set(rootNodeCopy.id, rootNodeCopy);
+                }
+            })
+            return { tree: newTree }
+        })
+    },
+
     addNode: (pageType, inputText, parentID, overrides) => {
         set((state) => {
             const name = sanitizeTreeNodeEntry(inputText, state.tree, parentID);
@@ -35,68 +51,45 @@ export const useTreeStore = create<TreeState>((set) => ({
                     node = { ...node, ...overrides }
                     break;
             }
-            const updatedTreeIP = createShallowCopyMap(state.tree);
-            updatedTreeIP.set(node.id, node);
 
-            const updatedTree = updateParentNode(updatedTreeIP, node, updatedTreeIP.get(parentID)!, "add");
+            const updatedTree = new Map(state.tree);
+            updatedTree.set(node.id, node);
 
-            // const actionAddSelf = TreeContextManager.createAction(node, "add") as ActionAdd;
-
-            // const { updatedTree, action: actionUpdateParent } = TreeContextManager.updateParentNode(updatedTreeIP, node, tree.get(parentID)!, "add");
+            const parentNode = updatedTree.get(parentID);
+            const parentNodeCopy: TreeNode = { ...parentNode!, childIDS: [...parentNode!.childIDS, node.id] };
+            parentNodeCopy.childIDS = sortChildIDS(parentNodeCopy, updatedTree)
+            updatedTree.set(parentID, parentNodeCopy);
 
             return { tree: updatedTree }
         })
     },
+
     updateNode: (node, overrides, parentID) => {
         set((state) => {
-            const updatedTreeIP = createShallowCopyMap(state.tree);
+            const updatedTree = new Map(state.tree);
             const updatedNode = { ...node, ...overrides };
-            updatedTreeIP.set(node.id, updatedNode);
+            updatedTree.set(updatedNode.id, updatedNode);
 
-
-            const updatedTree = updateParentNode(updatedTreeIP, node, updatedTreeIP.get(parentID)!, "update");
-
-
-            // const actionUpdateSelf = TreeContextManager.createAction(updatedNode, "update") as ActionUpdate;
-
-            // const { updatedTree, action: actionUpdateParent } =
-            //     TreeContextManager.updateParentNode(
-            //         updatedTreeIP,
-            //         actionUpdateSelf.targets,
-            //         tree.get(parentID)!,
-            //         "update",
-            //     );
+            // const parentNode = updatedTree.get(parentID);
+            // const parentNodeCopy: TreeNode = { ...parentNode! };
+            // parentNodeCopy.childIDS = sortChildIDS(parentNodeCopy, updatedTree);
+            // updatedTree.set(parentID, parentNodeCopy);
 
             return { tree: updatedTree };
         })
     },
     deleteNodes: (node, parentID) => {
         set((state) => {
-            const updatedTreeIP = createShallowCopyMap(state.tree);
+            const updatedTree = new Map(state.tree);
             const nodeIDSToBeDeleted = identifyDeletedSelfAndChildrenIDS(node, state.tree);
-            nodeIDSToBeDeleted.forEach((id) => updatedTreeIP.delete(id));
+            nodeIDSToBeDeleted.forEach((id) => updatedTree.delete(id));
 
-            // const actionDeletedIDs = TreeContextManager.createAction(node, "delete", nodeIDSToBeDeleted) as ActionDelete;
+            const parentNode = updatedTree.get(parentID);
+            const parentNodeCopy: TreeNode = { ...parentNode!, childIDS: parentNode!.childIDS.filter((id) => id != node.id) };
+            parentNodeCopy.childIDS = sortChildIDS(parentNodeCopy, updatedTree)
+            updatedTree.set(parentID, parentNodeCopy);
 
-            // const { updatedTree, action: actionUpdateParent } = TreeContextManager.updateParentNode(updatedTreeIP, node, tree.get(parentID)!, "delete");
-            const updatedTree = updateParentNode(updatedTreeIP, node, updatedTreeIP.get(parentID)!, "delete");
             return { tree: updatedTree };
         })
     }
 }))
-
-function updateParentNode(tree: TreeStateType, node: TreeNode, parentNode: TreeNode, parentNodeModeContext?: "add" | "delete" | "update") {
-    const updatedTree = createShallowCopyMap(tree);
-    const parentNodeCopy: TreeNode = { ...parentNode, childIDS: [...parentNode.childIDS] };
-    if (parentNodeModeContext == "add") {
-        parentNodeCopy.childIDS.push(node.id);
-    }
-    else if (parentNodeModeContext == "delete") {
-        parentNodeCopy.childIDS = parentNodeCopy.childIDS.filter((id) => id != node.id);
-    }
-    parentNodeCopy.childIDS = sortChildIDS(parentNodeCopy, updatedTree);
-    updatedTree.set(parentNodeCopy.id, parentNodeCopy);
-
-    // const action = TreeContextManager.createAction(parentNodeCopy, "update") as ActionUpdate;
-    return updatedTree;
-}

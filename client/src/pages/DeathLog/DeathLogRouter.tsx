@@ -1,5 +1,7 @@
 import { useLocation } from "react-router";
 import DeathLog from "./DeathLog";
+import { useEffect } from "react";
+import  { useTreeStore } from "../../hooks/StateManager/useTreeStore";
 
 export type CardMainPageTransitionState = {
 	type: "GameToProfiles" | "ProfileToSubjects" | "Terminal";
@@ -7,6 +9,8 @@ export type CardMainPageTransitionState = {
 };
 
 export default function MainPageRouter() {
+	
+
 	let location = useLocation();
 	let mainPageState: CardMainPageTransitionState | undefined = location.state;
 

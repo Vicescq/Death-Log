@@ -82,7 +82,7 @@ export default class TreeContextManager {
 
     static updateParentNode(tree: TreeStateType, node: TreeNode, parentNode: TreeNode, parentNodeModeContext?: "add" | "delete" | "update") {
         const updatedTree = createShallowCopyMap(tree);
-        const parentNodeCopy: TreeNode = { ...parentNode!, childIDS: [...parentNode!.childIDS] };
+        const parentNodeCopy: TreeNode = { ...parentNode! };
         if (parentNodeModeContext == "add") {
             parentNodeCopy.childIDS.push(node.id);
         }

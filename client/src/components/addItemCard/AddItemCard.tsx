@@ -46,24 +46,6 @@ export default function AddItemCard({ pageType, parentID }: Props) {
 		},
 	];
 
-	let handleAddWrapper: () => void;
-	if (pageType == "game") {
-		handleAddWrapper = () => {
-			// handleAdd(inputText);
-			addNode("game", inputText, parentID);
-		};
-	} else if (pageType == "profile") {
-		handleAddWrapper = () => {
-			// handleAdd(inputText);
-			addNode("profile", inputText, parentID);
-		};
-	} else if (pageType == "subject") {
-		handleAddWrapper = () => {
-			// handleAdd(inputText, subjectModalState);
-			addNode("subject", inputText, parentID, subjectModalState);
-		};
-	}
-
 	function handleModalEdit(
 		setting: keyof AICSubjectOverrides,
 		selected?: SelectDropdownSelected,
@@ -112,7 +94,6 @@ export default function AddItemCard({ pageType, parentID }: Props) {
 			<div className="flex gap-4">
 				<button
 					onClick={() => {
-						// Call the addNode function directly here
 						if (pageType === "game") {
 							addNode("game", inputText, parentID);
 						} else if (pageType === "profile") {
