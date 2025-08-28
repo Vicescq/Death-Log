@@ -14,7 +14,7 @@ export type DeathEntry = {
 export type TreeNode = {
     type: TreeNodeType,
     id: string,
-    parentID: string | null,
+    parentID: string,
     childIDS: string[],
     name: string,
     completed: boolean
@@ -26,7 +26,7 @@ export type TreeNode = {
 export type RootNode = TreeNode & {
     type: "ROOT_NODE",
     id: "ROOT_NODE",
-    parentID: null,
+    parentID: "NONE",
     name: "",
     completed: false,
     notes: "",
@@ -38,6 +38,7 @@ export type DistinctTreeNode = Game | Profile | Subject  // for discriminant uni
 
 export type Game = TreeNode & {
     type: "game"
+    totalDeaths: number // just for counting, profile doesnt have this bc I can use deathEntries.length
 }
 
 export type Profile = TreeNode & {

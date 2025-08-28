@@ -6,32 +6,41 @@ import step_into from "../../assets/step_into.svg";
 import details from "../../assets/details.svg";
 import readonly from "../../assets/readonly.svg";
 import type { DistinctTreeNode } from "../../model/TreeNodeModel";
-import { createCardCSS, createCardMainPageTransitionState } from "./utils";
-import { getDeaths } from "../../contexts/managers/treeUtils";
+import {
+	createCardCSS,
+	createCardMainPageTransitionState,
+} from "./utils";
 import { useTreeStore } from "../../hooks/StateManagers/useTreeStore";
+import Modal from "../modal/Modal";
 
-type Props = {
-	parentID: string;
-	id: string;
-};
-
-export default function Card({ parentID, id }: Props) {
+export default function Card({ id }: { id: string }) {
 	let navigate = useNavigate();
 
-	const treeNode = useTreeStore((state) => state.tree.get(id));
-	if (treeNode == undefined || treeNode.type == "ROOT_NODE") {
+	const node = useTreeStore((state) =>
+		state.tree.get(id),
+	) as DistinctTreeNode;
+	if (node == undefined) {
 		throw new Error(
 			"DEV ERROR! INCORRECTLY PASSED IN ROOT NODE OR UNDEFINED NODE TO A CARD",
 		);
 	}
-
-	const node = treeNode as DistinctTreeNode;
 	const updateNode = useTreeStore((state) => state.updateNode);
 
 	const mainPageTransitionState = createCardMainPageTransitionState(node);
 	const { cardCSS, settersCSS, highlightingCSS, reoccurringCSS } =
 		createCardCSS(node);
-	const deathCount = getDeaths(node);
+
+	let deathCount = 0;
+	switch (node.type) {
+		case "game":
+			deathCount = node.totalDeaths;
+			break;
+		case "profile":
+			deathCount = node.deathEntries.length;
+			break;
+		case "subject":
+			deathCount = node.deaths;
+	}
 
 	// useConsoleLogOnStateChange(modalState, "MODAL STATE", modalState);
 
@@ -71,14 +80,10 @@ export default function Card({ parentID, id }: Props) {
 							src={add}
 							alt=""
 							onClick={() => {
-								updateNode(
-									node,
-									{
-										...node,
-										deaths: node.deaths + 1,
-									},
-									parentID,
-								);
+								updateNode(node, {
+									...node,
+									deaths: node.deaths + 1,
+								});
 							}}
 						/>
 						<img
@@ -87,14 +92,10 @@ export default function Card({ parentID, id }: Props) {
 							alt=""
 							onClick={() => {
 								if (node.deaths != 0) {
-									updateNode(
-										node,
-										{
-											...node,
-											deaths: node.deaths - 1,
-										},
-										parentID,
-									);
+									updateNode(node, {
+										...node,
+										deaths: node.deaths - 1,
+									});
 								}
 							}}
 						/>
@@ -115,10 +116,19 @@ export default function Card({ parentID, id }: Props) {
 							...node,
 							completed: !node.completed,
 						};
-						updateNode(node, nodeCopy, parentID);
+						updateNode(node, nodeCopy);
 					}}
 				/>
 			</div>
+			{/* <Modal
+				modalStyle={"alert"}
+				body={undefined}
+				modalRef={undefined}
+				negativeFn={function (): void {
+					throw new Error("Function not implemented.");
+				}}
+				negativeFnBtnLabel={"CANCEL"}
+			/> */}
 		</div>
 	);
 }

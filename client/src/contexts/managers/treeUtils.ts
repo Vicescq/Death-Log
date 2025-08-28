@@ -74,42 +74,6 @@ export function identifyDeletedSelfAndChildrenIDS(node: TreeNode, tree: TreeStat
     return idsToBeDeleted;
 }
 
-export function getDeaths(node: DistinctTreeNode) {
-
-    // function switchStatement(subject: Subject) {
-    //     let total = 0;
-    //     total += subject.deaths;
-    //     return total;
-    // }
-
-    // let count = 0;
-    // if (node.type == "game") {
-    //     node.childIDS.forEach((nodeID) => {
-    //         tree.get(nodeID)?.childIDS.forEach((nodeID) => {
-    //             const subject = tree.get(nodeID) as Subject;
-    //             count += switchStatement(subject);
-    //         })
-    //     })
-    // }
-
-    // else if (node.type == "profile") {
-    //     node.childIDS.forEach((nodeID) => {
-    //         const subject = tree.get(nodeID) as Subject;
-    //         count += switchStatement(subject);
-    //     })
-    // }
-
-    // else {
-    //     count += switchStatement(node);
-    // }
-    let x: number = 0;
-    if (node.type == "subject"){
-        x = node.deaths;
-    }
-
-    return x;
-}
-
 export function isNodeNameUnique(tree: TreeStateType, parentID: string, name: string) {
     const siblingNames: string[] = tree.get(parentID)!.childIDS.map((id) => {
         const distinctNode = tree.get(id)! as DistinctTreeNode;

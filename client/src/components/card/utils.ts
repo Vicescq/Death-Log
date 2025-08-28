@@ -59,7 +59,7 @@ export function isCardModalStateEqual(modalState: DistinctTreeNode, node: Distin
             continue;
         }
 
-        if(nodeKey == "name" && modalState[nodeKey].trim() != node[nodeKey]){ // deliberate name edits
+        if (nodeKey == "name" && modalState[nodeKey].trim() != node[nodeKey]) { // deliberate name edits
             return false
         }
 

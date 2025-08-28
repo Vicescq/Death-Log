@@ -126,7 +126,7 @@ export default class TreeContextManager {
     }
 
     static createRootNode() {
-        const rootNode: RootNode = { type: "ROOT_NODE", id: "ROOT_NODE", childIDS: [], parentID: null, name: "", completed: false, notes: "", dateStart: "", dateEnd: "" };
+        const rootNode: RootNode = { type: "ROOT_NODE", id: "ROOT_NODE", childIDS: [], parentID: "NONE", name: "", completed: false, notes: "", dateStart: "", dateEnd: "" };
         return rootNode
     }
 
@@ -143,6 +143,7 @@ export default class TreeContextManager {
             notes: "",
             dateStart: new Date().toISOString(),
             dateEnd: null,
+            totalDeaths: 0
         };
         return defaultGame
     }
