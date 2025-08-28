@@ -161,8 +161,8 @@ export default class TreeContextManager {
             notes: "",
             dateStart: new Date().toISOString(),
             dateEnd: null,
-            milestones: [{}],
-            deathEntries: [{}]
+            milestones: [],
+            deathEntries: []
         };
         return defaultProfile
     }

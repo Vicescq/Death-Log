@@ -14,17 +14,16 @@ import type {
 	SelectDropdownSelected,
 } from "../SelectDropdown";
 import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
-import { useTreeStore } from "../../hooks/StateManager/useTreeStore";
+import { useTreeStore } from "../../hooks/StateManagers/useTreeStore";
 
 type Props = AICGame | AICProfile | AICSubject;
 
 export default function AddItemCard({ pageType, parentID }: Props) {
 	const addNode = useTreeStore((state) => state.addNode);
-	const updateNode = useTreeStore((state) => state.updateNode);
 
 	const [inputText, setInputText] = useState("");
-	const modalRef = useRef<HTMLDialogElement>(null);
 
+	const modalRef = useRef<HTMLDialogElement>(null);
 	const [subjectModalState, setSubjectModalState] =
 		useState<AICSubjectOverrides>({
 			reoccurring: false,
@@ -118,18 +117,29 @@ export default function AddItemCard({ pageType, parentID }: Props) {
 				) : null}
 			</div>
 			<Modal
+				modalStyle="utility"
 				modalRef={modalRef}
-				modalBody={
+				body={
 					<AddItemCardModalBody
 						state={subjectModalState}
-						handleModalEdit={(setting, selected) =>
-							handleModalEdit(setting, selected)
-						}
+						handleEdit={handleModalEdit}
 						contextOptions={contextOptions}
 					/>
 				}
-				type="generic"
+				negativeFn={() => modalRef.current?.close()}
+				negativeFnBtnLabel="CLOSE"
 			/>
+			{/* <Modal
+				modalStyle="alert"
+				modalRef={modalRef}
+				body={
+					<div></div>
+				}
+				negativeFn={() => modalRef.current?.close()}
+				negativeFnBtnLabel="CLOSE"
+				positiveFn={() => 1}
+				positiveFnBtnLabel="TRY AGAIN"
+			/> */}
 		</header>
 	);
 }

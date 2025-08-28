@@ -17,7 +17,7 @@ type EditWarning = {
 
 type Props = GenericWarning | DeleteWarning | EditWarning;
 
-export default function WarningModalBody(props: Props) {
+export default function AlertModalBody(props: Props) {
 	let reconfirmContent: React.JSX.Element | null;
 	switch (props.type) {
 		case "generic":

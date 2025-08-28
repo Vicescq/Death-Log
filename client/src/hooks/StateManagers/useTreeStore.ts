@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import type { TreeStateType } from '../../contexts/treeContext'
-import type { DistinctTreeNode, RootNode, TreeNode } from '../../model/TreeNodeModel';
+import type { DistinctTreeNode, Profile, RootNode, Subject, TreeNode } from '../../model/TreeNodeModel';
 import TreeContextManager from '../../contexts/managers/TreeContextManager';
 import type { AICSubjectOverrides } from '../../components/addItemCard/types';
 import { identifyDeletedSelfAndChildrenIDS, sanitizeTreeNodeEntry, sortChildIDS } from '../../contexts/managers/treeUtils';
@@ -9,7 +9,7 @@ type TreeState = {
     tree: TreeStateType;
     initTree: (nodes: TreeNode[]) => void;
     addNode: (pageType: "game" | "profile" | "subject", inputText: string, parentID: string, overrides?: AICSubjectOverrides) => void;
-    updateNode: (node: TreeNode, overrides: Partial<DistinctTreeNode>, parentID: string) => void;
+    updateNode: (node: TreeNode, overrides: DistinctTreeNode, parentID: string) => void;
     deleteNodes: (node: TreeNode, parentID: string) => void;
 }
 
@@ -70,10 +70,23 @@ export const useTreeStore = create<TreeState>((set) => ({
             const updatedNode = { ...node, ...overrides };
             updatedTree.set(updatedNode.id, updatedNode);
 
-            // const parentNode = updatedTree.get(parentID);
-            // const parentNodeCopy: TreeNode = { ...parentNode! };
-            // parentNodeCopy.childIDS = sortChildIDS(parentNodeCopy, updatedTree);
-            // updatedTree.set(parentID, parentNodeCopy);
+            if (node.type == "subject" && overrides.type == "subject") { // overrides check just for TS inference
+                const subject = node as Subject;
+                const parentNode = updatedTree.get(parentID) as Profile;
+                const parentNodeCopy: Profile = {...parentNode};
+
+                if (subject.deaths < overrides.deaths) {
+                    parentNodeCopy.deathEntries.push({ id: node.id, timestamp: new Date().toISOString() });
+                }
+                else if (subject.deaths > overrides.deaths) {
+                    parentNodeCopy.deathEntries.pop();
+                }
+                else if (subject.completed != overrides.completed){
+                    parentNodeCopy.childIDS = sortChildIDS(parentNodeCopy, updatedTree);
+                }
+
+                updatedTree.set(parentID, parentNodeCopy);
+            }
 
             return { tree: updatedTree };
         })

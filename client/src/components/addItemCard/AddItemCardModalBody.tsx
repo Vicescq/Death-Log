@@ -7,7 +7,7 @@ import type { AICSubjectOverrides } from "./types";
 
 type Props = {
 	state: AICSubjectOverrides;
-	handleModalEdit: (
+	handleEdit: (
 		setting: keyof AICSubjectOverrides,
 		selected?: SelectDropdownSelected,
 	) => void;
@@ -16,7 +16,7 @@ type Props = {
 
 export default function AddItemCardModalBody({
 	state,
-	handleModalEdit,
+	handleEdit,
 	contextOptions,
 }: Props) {
 	return (
@@ -26,16 +26,14 @@ export default function AddItemCardModalBody({
 				<SelectDropdown
 					selected={state.context}
 					options={contextOptions}
-					handleSelect={(selected) =>
-						handleModalEdit("context", selected)
-					}
+					handleSelect={(selected) => handleEdit("context", selected)}
 				/>
 			</li>
 			<li className="flex items-center gap-2">
 				<span className="mr-auto">Reoccurring</span>
 				<Toggle
 					enable={state.reoccurring}
-					handleToggle={() => handleModalEdit("reoccurring")}
+					handleToggle={() => handleEdit("reoccurring")}
 				/>
 			</li>
 		</ul>

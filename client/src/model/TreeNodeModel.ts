@@ -1,10 +1,14 @@
 export type TreeNodeType = "game" | "profile" | "subject" | "ROOT_NODE";
 export type SubjectContext = "boss" | "location" | "other";
 export type Milestone = {
-
+    name: string
+    start: number,
+    end: number,
+    description: string;
 }
 export type DeathEntry = {
-
+    timestamp: string; // iso date
+    id: string
 }
 
 export type TreeNode = {

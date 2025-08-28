@@ -2,9 +2,7 @@ import { useEffect, useMemo } from "react";
 import AddItemCard from "../../components/addItemCard/AddItemCard";
 import Card from "../../components/card/Card";
 import CardWrapper from "../../components/card/CardWrapper";
-import Modal from "../../components/modal/Modal";
-import WarningModalBody from "../../components/modal/WarningModalBody";
-import { useTreeStore } from "../../hooks/StateManager/useTreeStore";
+import { useTreeStore } from "../../hooks/StateManagers/useTreeStore";
 import useLoadMainPageCorrectly from "../../hooks/useLoadMainPageCorrectly";
 import useWarningStates from "../../hooks/useWarningStates";
 import { ForceError } from "../ErrorPage";
@@ -41,13 +39,16 @@ export default function DeathLog({ type, parentID }: Props) {
 
 	const childIDS = tree.get(parentID)?.childIDS || [];
 
-	const cards = useMemo(() => {
-		return childIDS.map((nodeID) => (
-			<Card key={nodeID} id={nodeID} parentID={parentID} />
-		));
-	}, [childIDS, parentID]);
+	// const cards = useMemo(() => {
+	// 	return childIDS.map((nodeID) => (
+	// 		<Card key={nodeID} id={nodeID} parentID={parentID} />
+	// 	));
+	// }, [childIDS, parentID]);
+	const cards = childIDS.map((nodeID) => (
+		<Card key={nodeID} id={nodeID} parentID={parentID} />
+	));
 
-	useConsoleLogOnStateChange(tree, "TREE:", tree)
+	useConsoleLogOnStateChange(tree, "TREE:", tree);
 
 	return (
 		<>
@@ -58,13 +59,6 @@ export default function DeathLog({ type, parentID }: Props) {
 					<AddItemCard pageType={type} parentID={parentID} />
 
 					<CardWrapper cards={cards} />
-					<Modal
-						modalRef={warningModalRef}
-						type="warning"
-						modalBody={
-							<WarningModalBody msg={warning} type="generic" />
-						}
-					/>
 				</>
 			)}
 		</>
