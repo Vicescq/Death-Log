@@ -34,15 +34,33 @@ export default function Card({ id }: { id: string }) {
 		modalState: cardModalState,
 		setModalState: setCardModalState,
 	} = useModal(node);
+
+	// confirm
 	const {
 		modalRef: cardModalConfirmRef,
 		modalState: cardModalConfirmState,
 		setModalState: setCardModalConfirmState,
 	} = useModal("");
+
+	// no changes
 	const {
 		modalRef: cardModalConfirmNCRef,
 		modalState: cardModalConfirmNCState,
 		setModalState: setCardModalConfirmNCState,
+	} = useModal("");
+
+	// del
+	const {
+		modalRef: cardModalConfirmDelRef,
+		modalState: cardModalConfirmDelState,
+		setModalState: setCardModalConfirmDelState,
+	} = useModal("");
+
+	// cancel changes
+	const {
+		modalRef: cardModalConfirmCCRef,
+		modalState: cardModalConfirmCCState,
+		setModalState: setCardModalConfirmCCState,
 	} = useModal("");
 
 	const mainPageTransitionState = createCardMainPageTransitionState(node);
@@ -52,7 +70,7 @@ export default function Card({ id }: { id: string }) {
 
 	useEffect(() => {
 		setCardModalState(node);
-	}, [JSON.stringify(node)])
+	}, [JSON.stringify(node)]);
 
 	useConsoleLogOnStateChange(cardModalState, "MODAL STATE", cardModalState);
 
@@ -132,6 +150,7 @@ export default function Card({ id }: { id: string }) {
 					}}
 				/>
 			</div>
+
 			<Modal
 				modalStyle="utility"
 				body={
@@ -145,7 +164,22 @@ export default function Card({ id }: { id: string }) {
 					/>
 				}
 				modalRef={cardModalRef}
-				negativeFn={() => cardModalRef.current?.close()}
+				negativeFn={() => {
+					if (
+						!isCardModalStateEqual(
+							cardModalState as DistinctTreeNode,
+							node,
+						)
+					) {
+						cardModalConfirmCCRef.current?.showModal();
+						cardModalRef.current?.close();
+						setCardModalConfirmCCState(
+							"Are you sure you want to exit without saving any changes?",
+						);
+					} else {
+						cardModalRef.current?.close();
+					}
+				}}
 				negativeFnBtnLabel={"CLOSE"}
 				positiveFn={() => {
 					if (
@@ -170,13 +204,16 @@ export default function Card({ id }: { id: string }) {
 				positiveFnBtnLabel="SAVE"
 				positiveFnBtnCol="bg-hunyadi"
 				negativeFn2={() => {
-					deleteNodes(node);
 					cardModalRef.current?.close();
+					cardModalConfirmDelRef.current?.showModal();
+					setCardModalConfirmDelState(
+						"Are you sure you want to delete this card?",
+					);
 				}}
 				negativeFn2BtnLabel="DELETE"
-				negativeFn2BtnCol="bg-amber-800"
 			/>
 
+			{/* Modal for save confirm */}
 			<Modal
 				modalStyle="alert"
 				body={<AlertModalBody msg={cardModalConfirmState as string} />}
@@ -184,7 +221,6 @@ export default function Card({ id }: { id: string }) {
 				negativeFn={() => {
 					cardModalConfirmRef.current?.close();
 					cardModalRef.current?.showModal();
-					setCardModalState(node);
 				}}
 				negativeFnBtnLabel={"CANCEL"}
 				positiveFn={() => {
@@ -195,6 +231,7 @@ export default function Card({ id }: { id: string }) {
 				positiveFnBtnCol="bg-hunyadi"
 			/>
 
+			{/* Modal for no changes alert */}
 			<Modal
 				modalStyle="alert"
 				body={
@@ -206,6 +243,45 @@ export default function Card({ id }: { id: string }) {
 					cardModalRef.current?.showModal();
 				}}
 				negativeFnBtnLabel={"CLOSE"}
+			/>
+
+			{/* Modal for delete confirm */}
+			<Modal
+				modalStyle="alert"
+				body={
+					<AlertModalBody msg={cardModalConfirmDelState as string} />
+				}
+				modalRef={cardModalConfirmDelRef}
+				negativeFn={() => {
+					cardModalConfirmDelRef.current?.close();
+					cardModalRef.current?.showModal();
+				}}
+				negativeFnBtnLabel={"CANCEL"}
+				negativeFn2={() => {
+					deleteNodes(node);
+					cardModalConfirmDelRef.current?.close();
+				}}
+				negativeFn2BtnLabel="DELETE"
+			/>
+
+			{/* Modal for cancelling any changes */}
+			<Modal
+				modalStyle="alert"
+				body={
+					<AlertModalBody msg={cardModalConfirmCCState as string} />
+				}
+				modalRef={cardModalConfirmCCRef}
+				negativeFn={() => {
+					cardModalConfirmCCRef.current?.close();
+					setCardModalState(node);
+				}}
+				negativeFnBtnLabel={"EXIT"}
+				positiveFn={() => {
+					cardModalConfirmCCRef.current?.close();
+					cardModalRef.current?.showModal();
+				}}
+				positiveFnBtnLabel="GO BACK"
+				positiveFnBtnCol="bg-gray-500"
 			/>
 		</div>
 	);

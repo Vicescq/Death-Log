@@ -1,6 +1,6 @@
 import type React from "react";
 
-type NegativeLabel = "CANCEL" | "CLOSE" | "DELETE";
+type NegativeLabel = "CANCEL" | "CLOSE" | "DELETE" | "RESET" | "EXIT";
 type PositiveLabel = "GO BACK" | "TRY AGAIN" | "SAVE" | "CONFIRM";
 type ModalStyle = "alert" | "utility";
 

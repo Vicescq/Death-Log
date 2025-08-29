@@ -77,6 +77,10 @@ export const useTreeStore = create<TreeState>((set) => ({
                 sanitizeTreeNodeEntry(overrides.name, updatedTree, node.parentID);
             }
 
+            if (node.completed != overrides.completed) {
+                overrides.dateEnd = new Date().toISOString();
+            }
+
             const updatedNode = { ...node, ...overrides };
             updatedTree.set(updatedNode.id, updatedNode);
             IndexedDBService.updateNode(updatedNode, localStorage.getItem("email")!);
