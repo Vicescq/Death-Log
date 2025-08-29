@@ -63,6 +63,13 @@ export default function Card({ id }: { id: string }) {
 		setModalState: setCardModalConfirmCCState,
 	} = useModal("");
 
+	// general alerts
+	const {
+		modalRef: cardModalGeneralAlertRef,
+		modalState: cardModalConfirmGeneralAlertState,
+		setModalState: setCardModalConfirmGeneralAlertState,
+	} = useModal("");
+
 	const mainPageTransitionState = createCardMainPageTransitionState(node);
 	const { cardCSS, settersCSS, highlightingCSS, reoccurringCSS } =
 		createCardCSS(node);
@@ -78,7 +85,7 @@ export default function Card({ id }: { id: string }) {
 		<div
 			className={`flex border-4 border-black font-semibold ${cardCSS} h-54 w-60 rounded-xl p-2 shadow-[10px_8px_0px_rgba(0,0,0,1)] duration-200 ease-in-out hover:shadow-[20px_10px_0px_rgba(0,0,0,1)]`}
 		>
-			<div className="flex w-33 flex-col">
+			<div className="flex w-38 flex-col">
 				<div className="bg-indianred flex gap-1 rounded-2xl border-2 border-black p-1 px-3 shadow-[4px_4px_0px_rgba(0,0,0,1)]">
 					<img className="w-6" src={skull} alt="" />
 					<p className="mt-auto mb-auto truncate text-xl">
@@ -224,8 +231,17 @@ export default function Card({ id }: { id: string }) {
 				}}
 				negativeFnBtnLabel={"CANCEL"}
 				positiveFn={() => {
-					updateNode(node, cardModalState as DistinctTreeNode);
-					cardModalConfirmRef.current?.close();
+					try{
+						updateNode(node, cardModalState as DistinctTreeNode);
+						cardModalConfirmRef.current?.close();
+					}
+					catch (e){
+						if(e instanceof Error){
+							// setCardModalConfirmGeneralAlertState(e.message);
+							// cardModalGeneralAlertRef.current?.showModal();
+							cardModalConfirmRef.current?.close();
+						}
+					}
 				}}
 				positiveFnBtnLabel="CONFIRM"
 				positiveFnBtnCol="bg-hunyadi"
@@ -283,6 +299,19 @@ export default function Card({ id }: { id: string }) {
 				positiveFnBtnLabel="GO BACK"
 				positiveFnBtnCol="bg-gray-500"
 			/>
+
+			{/* Alert stuff */}
+			{/* <Modal
+				modalStyle="alert"
+				body={
+					<AlertModalBody msg={cardModalConfirmGeneralAlertState as string} />
+				}
+				modalRef={cardModalGeneralAlertRef}
+				negativeFn={() => {
+					cardModalGeneralAlertRef.current?.close();
+				}}
+				negativeFnBtnLabel={"CLOSE"}
+			/> */}
 		</div>
 	);
 }

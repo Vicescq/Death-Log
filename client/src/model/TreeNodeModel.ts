@@ -6,6 +6,7 @@ export type Milestone = {
     end: number,
     description: string;
 }
+
 export type DeathEntry = {
     timestamp: string; // iso date
     id: string

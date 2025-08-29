@@ -23,6 +23,7 @@ type Props = AICGame | AICProfile | AICSubject;
 export default function AddItemCard({ pageType, parentID }: Props) {
 	const addNode = useTreeStore((state) => state.addNode);
 	const [inputText, setInputText] = useState("");
+	const inputRef = useRef<HTMLInputElement>(null)
 
 	const {
 		modalRef: aicModalRef,
@@ -109,6 +110,7 @@ export default function AddItemCard({ pageType, parentID }: Props) {
 					type="text"
 					className="w-full rounded-xl border-2 p-1 shadow-[8px_5px_0px_rgba(0,0,0,1)]"
 					onChange={(e) => setInputText(e.target.value)}
+					ref={inputRef}
 				/>
 
 				{pageType == "game" || pageType == "profile" ? (
@@ -130,7 +132,12 @@ export default function AddItemCard({ pageType, parentID }: Props) {
 			</div>
 			<div className="flex gap-4">
 				<button
-					onClick={handleAdd}
+					onClick={() => {
+						handleAdd();
+						if(inputRef.current){
+							inputRef.current.value = "";
+						}
+					}}
 					className="bg-zomp w-full rounded-2xl border-4 text-2xl font-bold shadow-[4px_2px_0px_rgba(0,0,0,1)]"
 				>
 					Add {pageType}

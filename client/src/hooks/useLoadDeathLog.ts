@@ -20,6 +20,7 @@ export default function useLoadDeathLog(tree: TreeStateType, parentID: string) {
                         throw new Error(e.message);
                     } else {
                         console.error("I HAVE NO IDEA HOW IT GOES HERE");
+                        throw new Error("I HAVE NO IDEA HOW IT GOES HERE")
                     }
                 });
         }
