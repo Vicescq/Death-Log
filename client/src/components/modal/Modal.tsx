@@ -1,7 +1,7 @@
 import type React from "react";
 
 type NegativeLabel = "CANCEL" | "CLOSE" | "DELETE";
-type PositiveLabel = "GO BACK" | "TRY AGAIN" | "SAVE";
+type PositiveLabel = "GO BACK" | "TRY AGAIN" | "SAVE" | "CONFIRM";
 type ModalStyle = "alert" | "utility";
 
 type Props = {
@@ -12,15 +12,19 @@ type Props = {
 	negativeFnBtnLabel: NegativeLabel;
 	positiveFn?: () => void;
 	positiveFnBtnLabel?: PositiveLabel;
+	positiveFnBtnCol?: string;
 	negativeFn2?: () => void;
 	negativeFn2BtnLabel?: NegativeLabel;
+	negativeFn2BtnCol?: string;
 };
 
 export default function Modal(props: Props) {
 	let css = "bg-zomp";
 	if (props.modalStyle == "alert") {
-		css = "rounded-3xl bg-orange-600";
+		css = "rounded-3xl bg-hunyadi";
 	}
+
+	// bg-orange-700 bg-hunyadi
 
 	return (
 		<dialog
@@ -31,7 +35,7 @@ export default function Modal(props: Props) {
 				{props.body}
 				{props.positiveFn ? (
 					<button
-						className="rounded-2xl border-4 bg-red-500 p-2 font-bold shadow-[4px_4px_0px_rgba(0,0,0,1)]"
+						className={`${props.positiveFnBtnCol ?? "bg-red-500"} rounded-2xl border-4  p-2 font-bold shadow-[4px_4px_0px_rgba(0,0,0,1)]`}
 						onClick={props.positiveFn}
 					>
 						{props.positiveFnBtnLabel
@@ -41,7 +45,7 @@ export default function Modal(props: Props) {
 				) : null}
 				{props.negativeFn2 ? (
 					<button
-						className="rounded-2xl border-4 bg-red-500 p-2 font-bold shadow-[4px_4px_0px_rgba(0,0,0,1)]"
+						className={`${props.negativeFn2BtnCol ?? "bg-red-500"} rounded-2xl border-4  p-2 font-bold shadow-[4px_4px_0px_rgba(0,0,0,1)]`}
 						onClick={props.negativeFn2}
 					>
 						{props.negativeFn2BtnLabel

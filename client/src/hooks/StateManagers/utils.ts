@@ -83,11 +83,6 @@ export function isNodeNameUnique(tree: TreeStateType, parentID: string, name: st
     })
     return !siblingNames.includes(name);
 }
-export function createShallowCopyMap(map: TreeStateType) {
-    const objLiteralFromTree = Object.fromEntries(map);
-    const objLiteralFromTreeShallowCopy = { ...objLiteralFromTree };
-    return new Map(Object.entries(objLiteralFromTreeShallowCopy));
-}
 
 export function createRootNode() {
     const rootNode: RootNode = { type: "ROOT_NODE", id: "ROOT_NODE", childIDS: [], parentID: "NONE", name: "", completed: false, notes: "", dateStart: "", dateEnd: "" };
@@ -151,7 +146,32 @@ export function createSubject(
         context: "boss"
     };
     return defaultSubject
+}
 
+export function requiresParentUpdate(node: TreeNode, overrides: DistinctTreeNode) {
+    let generalCond = node.completed != overrides.completed || node.dateStart != overrides.dateStart || node.dateEnd != overrides.dateEnd;
+    let updateRequired: boolean;
 
+    if (node.type == "subject" && overrides.type == "subject") {
+        const subject = node as Subject;
+        updateRequired = subject.deaths < overrides.deaths || subject.deaths > overrides.deaths || generalCond;
+    }
+    else {
+        updateRequired = generalCond
+    }
 
+    return updateRequired;
+}
+
+export function updateProfileDeathEntriesOnSubjectDelete(profile: Profile, deletedSubject: Subject) {
+    const targetedIndices: number[] = [];
+    for (let i = profile.deathEntries.length - 1; i >= 0; i--) {
+        if (profile.deathEntries[i].id == deletedSubject.id) {
+            targetedIndices.push(i);
+        }
+    }
+    const updatedDeathEntries = profile.deathEntries.filter((_, i) => {
+        return !targetedIndices.includes(i);
+    });
+    return updatedDeathEntries;
 }

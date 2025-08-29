@@ -20,19 +20,12 @@ import Toggle from "../Toggle";
 type Props<T extends DistinctTreeNode> = {
 	modalState: T;
 	setModalState: React.Dispatch<React.SetStateAction<T>>;
-	handleDelete: () => void;
-	handleModalSave: () => void;
 };
 
 export default function CardModalBody<T extends DistinctTreeNode>({
 	modalState,
-	handleDelete,
-	handleModalSave,
 	setModalState,
 }: Props<T>) {
-	function isSubject(node: DistinctTreeNode): node is Subject {
-		return node.type === "subject";
-	}
 	const contextOptions: SelectDropdownOption[] = [
 		{
 			value: "boss",
@@ -60,6 +53,12 @@ export default function CardModalBody<T extends DistinctTreeNode>({
 						setModalState((prev) => ({
 							...prev,
 							name: e.target.value,
+						}))
+					}
+					onBlur={(e) =>
+						setModalState((prev) => ({
+							...prev,
+							name: e.target.value.trim(),
 						}))
 					}
 				/>
@@ -118,25 +117,6 @@ export default function CardModalBody<T extends DistinctTreeNode>({
 			{modalState.type == "subject" ? (
 				<>
 					<li className="flex items-center gap-2">
-						<span className="mr-auto">Deaths</span>
-						<input
-							value={modalState.deaths}
-							type="number"
-							className="w-44 border-b-2 outline-0"
-							onChange={(e) => {
-								(
-									setModalState as React.Dispatch<
-										React.SetStateAction<Subject>
-									>
-								)((prev) => ({
-									...prev,
-									deaths: Number(e.target.value),
-								}));
-							}}
-						/>
-					</li>
-
-					<li className="flex items-center gap-2">
 						<span className="mr-auto">Context</span>
 						<SelectDropdown
 							selected={modalState.context}
@@ -188,21 +168,14 @@ export default function CardModalBody<T extends DistinctTreeNode>({
 							notes: e.target.value,
 						}));
 					}}
+					onBlur={(e) => {
+						setModalState((prev) => ({
+							...prev,
+							notes: e.target.value.trim(),
+						}));
+					}}
 				/>
 			</li>
-
-			<button
-				className="bg-hunyadi rounded-2xl border-4 p-2 font-bold shadow-[4px_4px_0px_rgba(0,0,0,1)]"
-				onClick={handleModalSave}
-			>
-				SAVE
-			</button>
-			<button
-				className="rounded-2xl border-4 bg-orange-700 p-2 font-bold shadow-[4px_4px_0px_rgba(0,0,0,1)]"
-				onClick={handleDelete}
-			>
-				DELETE
-			</button>
 		</ul>
 	);
 }

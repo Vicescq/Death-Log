@@ -10,10 +10,15 @@ import {
 	createCardCSS,
 	createCardMainPageTransitionState,
 	getCardDeathCount,
+	isCardModalStateEqual,
 } from "./utils";
 import { useTreeStore } from "../../hooks/StateManagers/useTreeStore";
+import useModal from "../../hooks/useModal";
+import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
 import Modal from "../modal/Modal";
-import { useRef, useState } from "react";
+import CardModalBody from "./CardModalBody";
+import { useEffect, type SetStateAction } from "react";
+import AlertModalBody from "../modal/AlertModalBody";
 
 export default function Card({ id }: { id: string }) {
 	let navigate = useNavigate();
@@ -22,19 +27,38 @@ export default function Card({ id }: { id: string }) {
 		state.tree.get(id),
 	) as DistinctTreeNode;
 	const updateNode = useTreeStore((state) => state.updateNode);
+	const deleteNodes = useTreeStore((state) => state.deleteNodes);
 
-	
+	const {
+		modalRef: cardModalRef,
+		modalState: cardModalState,
+		setModalState: setCardModalState,
+	} = useModal(node);
+	const {
+		modalRef: cardModalConfirmRef,
+		modalState: cardModalConfirmState,
+		setModalState: setCardModalConfirmState,
+	} = useModal("");
+	const {
+		modalRef: cardModalConfirmNCRef,
+		modalState: cardModalConfirmNCState,
+		setModalState: setCardModalConfirmNCState,
+	} = useModal("");
 
 	const mainPageTransitionState = createCardMainPageTransitionState(node);
 	const { cardCSS, settersCSS, highlightingCSS, reoccurringCSS } =
 		createCardCSS(node);
 	const deathCount = getCardDeathCount(node);
 
-	// useConsoleLogOnStateChange(modalState, "MODAL STATE", modalState);
+	useEffect(() => {
+		setCardModalState(node);
+	}, [JSON.stringify(node)])
+
+	useConsoleLogOnStateChange(cardModalState, "MODAL STATE", cardModalState);
 
 	return (
 		<div
-			className={`flex border-4 border-black font-semibold ${cardCSS} h-48 w-60 rounded-xl p-2 shadow-[10px_8px_0px_rgba(0,0,0,1)] duration-200 ease-in-out hover:shadow-[20px_10px_0px_rgba(0,0,0,1)]`}
+			className={`flex border-4 border-black font-semibold ${cardCSS} h-54 w-60 rounded-xl p-2 shadow-[10px_8px_0px_rgba(0,0,0,1)] duration-200 ease-in-out hover:shadow-[20px_10px_0px_rgba(0,0,0,1)]`}
 		>
 			<div className="flex w-33 flex-col">
 				<div className="bg-indianred flex gap-1 rounded-2xl border-2 border-black p-1 px-3 shadow-[4px_4px_0px_rgba(0,0,0,1)]">
@@ -93,7 +117,7 @@ export default function Card({ id }: { id: string }) {
 					className={`w-9 cursor-pointer ${highlightingCSS}`}
 					src={details}
 					alt=""
-					onClick={() => 1}
+					onClick={() => cardModalRef.current?.showModal()}
 				/>
 				<img
 					className={`w-9 cursor-pointer ${highlightingCSS} ${reoccurringCSS}`}
@@ -108,15 +132,81 @@ export default function Card({ id }: { id: string }) {
 					}}
 				/>
 			</div>
-			{/* <Modal
-				modalStyle={"alert"}
-				body={<></>}
-				modalRef={modalRef}
-				negativeFn={function (): void {
-					throw new Error("Function not implemented.");
+			<Modal
+				modalStyle="utility"
+				body={
+					<CardModalBody
+						modalState={cardModalState as DistinctTreeNode}
+						setModalState={
+							setCardModalState as React.Dispatch<
+								React.SetStateAction<DistinctTreeNode>
+							>
+						}
+					/>
+				}
+				modalRef={cardModalRef}
+				negativeFn={() => cardModalRef.current?.close()}
+				negativeFnBtnLabel={"CLOSE"}
+				positiveFn={() => {
+					if (
+						!isCardModalStateEqual(
+							cardModalState as DistinctTreeNode,
+							node,
+						)
+					) {
+						setCardModalConfirmState(
+							"Are you sure you want to edit this card?",
+						);
+						cardModalConfirmRef.current?.showModal();
+						cardModalRef.current?.close();
+					} else {
+						setCardModalConfirmNCState(
+							"Cannot save! You have not made any changes!",
+						);
+						cardModalConfirmNCRef.current?.showModal();
+						cardModalRef.current?.close();
+					}
+				}}
+				positiveFnBtnLabel="SAVE"
+				positiveFnBtnCol="bg-hunyadi"
+				negativeFn2={() => {
+					deleteNodes(node);
+					cardModalRef.current?.close();
+				}}
+				negativeFn2BtnLabel="DELETE"
+				negativeFn2BtnCol="bg-amber-800"
+			/>
+
+			<Modal
+				modalStyle="alert"
+				body={<AlertModalBody msg={cardModalConfirmState as string} />}
+				modalRef={cardModalConfirmRef}
+				negativeFn={() => {
+					cardModalConfirmRef.current?.close();
+					cardModalRef.current?.showModal();
+					setCardModalState(node);
 				}}
 				negativeFnBtnLabel={"CANCEL"}
-			/> */}
+				positiveFn={() => {
+					updateNode(node, cardModalState as DistinctTreeNode);
+					cardModalConfirmRef.current?.close();
+				}}
+				positiveFnBtnLabel="CONFIRM"
+				positiveFnBtnCol="bg-hunyadi"
+			/>
+
+			<Modal
+				modalStyle="alert"
+				body={
+					<AlertModalBody msg={cardModalConfirmNCState as string} />
+				}
+				modalRef={cardModalConfirmNCRef}
+				negativeFn={() => {
+					cardModalConfirmNCRef.current?.close();
+					cardModalRef.current?.showModal();
+				}}
+				negativeFnBtnLabel={"CLOSE"}
+			/>
 		</div>
 	);
 }

@@ -44,13 +44,7 @@ export default function NavBar() {
 						</button>
 					</li>
 				) : null} */}
-				{navigator.onLine ? (
-					<li className="my-auto ml-auto">
-						<button onClick={() => handleSignOut()}>
-							SIGN OUT
-						</button>
-					</li>
-				) : null}
+				
 			</ul>
 		</nav>
 	);

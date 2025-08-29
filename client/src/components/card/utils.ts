@@ -1,4 +1,4 @@
-import type { DistinctTreeNode, Game, Profile, Subject } from "../../model/TreeNodeModel";
+import type { DistinctTreeNode } from "../../model/TreeNodeModel";
 import type { CardMainPageTransitionState } from "../../pages/DeathLog/DeathLogRouter";
 
 export function createCardCSS(
@@ -27,7 +27,6 @@ export function createCardCSS(
         if (treeNode.reoccurring) {
             cardCSS = cardCSSConfig.reoccurring;
         }
-
     }
 
     if (treeNode.completed) {
@@ -50,20 +49,16 @@ export function createCardMainPageTransitionState(node: DistinctTreeNode): CardM
     }
 }
 
-export function isCardModalStateEqual(modalState: DistinctTreeNode, node: DistinctTreeNode) {
+export function isCardModalStateEqual(cardModalState: DistinctTreeNode, node: DistinctTreeNode) {
 
-    const keys = Object.keys(modalState);
+    const keys = Object.keys(cardModalState);
     for (let i = 0; i < keys.length; i++) {
         const nodeKey = keys[i] as keyof DistinctTreeNode
         if (nodeKey == "childIDS" || nodeKey == "id" || nodeKey == "parentID") {
             continue;
         }
 
-        if (nodeKey == "name" && modalState[nodeKey].trim() != node[nodeKey]) { // deliberate name edits
-            return false
-        }
-
-        else if (modalState[nodeKey] != node[nodeKey] && nodeKey != "name") { // exclude name due to whitespace accidents
+        if (cardModalState[nodeKey] != node[nodeKey]) {
             return false
         }
     }
