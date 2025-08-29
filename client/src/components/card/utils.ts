@@ -104,3 +104,18 @@ export function isCardModalDateAtLimit(date: string) {
     }
     return date
 }
+
+export function getCardDeathCount(node: DistinctTreeNode) {
+    let deathCount = 0;
+    switch (node.type) {
+        case "game":
+            deathCount = node.totalDeaths;
+            break;
+        case "profile":
+            deathCount = node.deathEntries.length;
+            break;
+        case "subject":
+            deathCount = node.deaths;
+    }
+    return deathCount;
+}

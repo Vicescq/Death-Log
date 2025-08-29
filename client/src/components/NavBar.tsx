@@ -1,14 +1,13 @@
 import { auth } from "../firebase-config";
-import useUserContext from "../contexts/useUserContext";
 import { useNavigate } from "react-router";
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
-import home from "../assets/home.svg"
-import utility from "../assets/utility.svg"
+import home from "../assets/home.svg";
+import utility from "../assets/utility.svg";
 
 export default function NavBar() {
 	const navigate = useNavigate();
-	const [user] = useUserContext();
+	// const [user] = useUserContext();
 
 	async function handleSignOut() {
 		try {
@@ -22,8 +21,8 @@ export default function NavBar() {
 	}
 
 	return (
-		<nav className="bg-zomp border-b-4 border-b-black px-3 text-black ">
-			<ul className="flex items-center gap-2 h-12">
+		<nav className="bg-zomp border-b-4 border-b-black px-3 text-black">
+			<ul className="flex h-12 items-center gap-2">
 				<li className="font-bold">
 					<Link to="/">
 						<img className="w-10" src={home} alt="" />
@@ -35,12 +34,17 @@ export default function NavBar() {
 					</Link>
 				</li>
 				<li className="font-bold">
-					<Link to="/info">
-						INFO
-					</Link>
+					<Link to="/info">INFO</Link>
 				</li>
-				
-				{user && navigator.onLine ? (
+
+				{/* {user && navigator.onLine ? (
+					<li className="my-auto ml-auto">
+						<button onClick={() => handleSignOut()}>
+							SIGN OUT
+						</button>
+					</li>
+				) : null} */}
+				{navigator.onLine ? (
 					<li className="my-auto ml-auto">
 						<button onClick={() => handleSignOut()}>
 							SIGN OUT

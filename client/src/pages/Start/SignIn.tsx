@@ -9,7 +9,7 @@ import useTreeContext from "../../contexts/useTreeContext";
 
 export default function SignIn() {
 	const navigate = useNavigate();
-	const [user, setUser] = useUserContext();
+	// const [user, setUser] = useUserContext();
 	// const [tree, setTree] = useTreeContext();
 
 	async function handleSignIn() {
@@ -17,18 +17,16 @@ export default function SignIn() {
 		try {
 			await signInWithPopup(auth, provider);
 			navigate("/death-log");
-
 		} catch (error) {
 			console.error(error);
 		}
 	}
 
 	async function handleSignOut() {
-		try{
+		try {
 			await auth.signOut();
 			navigate("/death-log");
-		}
-		catch (error){
+		} catch (error) {
 			console.error(error);
 		}
 		// maybe add alertmodal warning that will alert user they will get signed out
@@ -36,7 +34,7 @@ export default function SignIn() {
 
 	return (
 		<div className="flex flex-col gap-4 text-black">
-			{user ? (
+			{/* {user ? (
 				<button
 					className="bg-indianred min-w-40 rounded-2xl border-4 border-black p-1 font-bold shadow-[4px_4px_0px_rgba(0,0,0,1)] sm:min-w-80"
 					onClick={() => navigate("/death-log")}
@@ -51,6 +49,20 @@ export default function SignIn() {
 					GOOGLE SIGN IN
 				</button>
 			)}
+
+			<button
+				className="bg-hunyadi min-w-40 rounded-2xl border-4 border-black p-1 font-bold shadow-[4px_4px_0px_rgba(0,0,0,1)] sm:min-w-80"
+				onClick={() => handleSignOut()}
+			>
+				CONTINUE AS GUEST
+			</button> */}
+
+			<button
+				className="bg-indianred min-w-40 rounded-2xl border-4 border-black p-1 font-bold shadow-[4px_4px_0px_rgba(0,0,0,1)] sm:min-w-80"
+				onClick={() => handleSignIn()}
+			>
+				GOOGLE SIGN IN
+			</button>
 
 			<button
 				className="bg-hunyadi min-w-40 rounded-2xl border-4 border-black p-1 font-bold shadow-[4px_4px_0px_rgba(0,0,0,1)] sm:min-w-80"

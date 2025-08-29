@@ -9,9 +9,11 @@ import type { DistinctTreeNode } from "../../model/TreeNodeModel";
 import {
 	createCardCSS,
 	createCardMainPageTransitionState,
+	getCardDeathCount,
 } from "./utils";
 import { useTreeStore } from "../../hooks/StateManagers/useTreeStore";
 import Modal from "../modal/Modal";
+import { useRef, useState } from "react";
 
 export default function Card({ id }: { id: string }) {
 	let navigate = useNavigate();
@@ -19,38 +21,24 @@ export default function Card({ id }: { id: string }) {
 	const node = useTreeStore((state) =>
 		state.tree.get(id),
 	) as DistinctTreeNode;
-	if (node == undefined) {
-		throw new Error(
-			"DEV ERROR! INCORRECTLY PASSED IN ROOT NODE OR UNDEFINED NODE TO A CARD",
-		);
-	}
 	const updateNode = useTreeStore((state) => state.updateNode);
+
+	
 
 	const mainPageTransitionState = createCardMainPageTransitionState(node);
 	const { cardCSS, settersCSS, highlightingCSS, reoccurringCSS } =
 		createCardCSS(node);
-
-	let deathCount = 0;
-	switch (node.type) {
-		case "game":
-			deathCount = node.totalDeaths;
-			break;
-		case "profile":
-			deathCount = node.deathEntries.length;
-			break;
-		case "subject":
-			deathCount = node.deaths;
-	}
+	const deathCount = getCardDeathCount(node);
 
 	// useConsoleLogOnStateChange(modalState, "MODAL STATE", modalState);
 
 	return (
 		<div
-			className={`flex border-4 border-black font-semibold ${cardCSS} h-60 w-60 rounded-xl p-2 shadow-[10px_8px_0px_rgba(0,0,0,1)] duration-200 ease-in-out hover:shadow-[20px_10px_0px_rgba(0,0,0,1)]`}
+			className={`flex border-4 border-black font-semibold ${cardCSS} h-48 w-60 rounded-xl p-2 shadow-[10px_8px_0px_rgba(0,0,0,1)] duration-200 ease-in-out hover:shadow-[20px_10px_0px_rgba(0,0,0,1)]`}
 		>
-			<div className="flex w-40 flex-col">
+			<div className="flex w-33 flex-col">
 				<div className="bg-indianred flex gap-1 rounded-2xl border-2 border-black p-1 px-3 shadow-[4px_4px_0px_rgba(0,0,0,1)]">
-					<img className="w-9" src={skull} alt="" />
+					<img className="w-6" src={skull} alt="" />
 					<p className="mt-auto mb-auto truncate text-xl">
 						{deathCount}
 					</p>
@@ -122,8 +110,8 @@ export default function Card({ id }: { id: string }) {
 			</div>
 			{/* <Modal
 				modalStyle={"alert"}
-				body={undefined}
-				modalRef={undefined}
+				body={<></>}
+				modalRef={modalRef}
 				negativeFn={function (): void {
 					throw new Error("Function not implemented.");
 				}}

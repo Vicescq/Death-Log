@@ -1,5 +1,7 @@
-import type { TreeStateType } from "../treeContext";
-import type { TreeNode, Subject, DistinctTreeNode } from "../../model/TreeNodeModel";
+
+import type { TreeStateType } from "../../contexts/treeContext";
+import type { TreeNode, Subject, DistinctTreeNode, Game, Profile, RootNode } from "../../model/TreeNodeModel";
+import { v4 as uuidv4 } from 'uuid';
 
 export function sanitizeTreeNodeEntry(inputText: string, tree: TreeStateType, parentID: string) {
     inputText = inputText.trim();
@@ -85,4 +87,71 @@ export function createShallowCopyMap(map: TreeStateType) {
     const objLiteralFromTree = Object.fromEntries(map);
     const objLiteralFromTreeShallowCopy = { ...objLiteralFromTree };
     return new Map(Object.entries(objLiteralFromTreeShallowCopy));
+}
+
+export function createRootNode() {
+    const rootNode: RootNode = { type: "ROOT_NODE", id: "ROOT_NODE", childIDS: [], parentID: "NONE", name: "", completed: false, notes: "", dateStart: "", dateEnd: "" };
+    return rootNode
+}
+
+export function createGame(
+    inputText: string,
+) {
+    const defaultGame: Game = {
+        type: "game",
+        id: uuidv4(),
+        childIDS: [],
+        parentID: "ROOT_NODE",
+        name: inputText,
+        completed: false,
+        notes: "",
+        dateStart: new Date().toISOString(),
+        dateEnd: null,
+        totalDeaths: 0
+    };
+    return defaultGame
+}
+
+export function createProfile(
+    inputText: string,
+    parentID: string,
+) {
+    const defaultProfile: Profile = {
+        type: "profile",
+        id: uuidv4(),
+        childIDS: [],
+        parentID: parentID,
+        name: inputText,
+        completed: false,
+        notes: "",
+        dateStart: new Date().toISOString(),
+        dateEnd: null,
+        milestones: [],
+        deathEntries: []
+    };
+    return defaultProfile
+}
+
+export function createSubject(
+    inputText: string,
+    parentID: string,
+) {
+    const defaultSubject: Subject = {
+        type: "subject",
+        id: uuidv4(),
+        childIDS: [],
+        parentID: parentID,
+        name: inputText,
+        completed: false,
+        notes: "",
+        dateStart: new Date().toISOString(),
+        dateEnd: null,
+        deaths: 0,
+        reoccurring: false,
+        context: "boss"
+    };
+    return defaultSubject
+
+
+
 }

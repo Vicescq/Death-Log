@@ -1,10 +1,9 @@
 import { create } from 'zustand'
 import type { TreeStateType } from '../../contexts/treeContext'
 import type { DistinctTreeNode, Game, Profile, RootNode, Subject, TreeNode } from '../../model/TreeNodeModel';
-import TreeContextManager from '../../contexts/managers/TreeContextManager';
 import type { AICSubjectOverrides } from '../../components/addItemCard/types';
-import { identifyDeletedSelfAndChildrenIDS, sanitizeTreeNodeEntry, sortChildIDS } from '../../contexts/managers/treeUtils';
 import IndexedDBService from '../../services/IndexedDBService';
+import { sortChildIDS, sanitizeTreeNodeEntry, identifyDeletedSelfAndChildrenIDS, createGame, createProfile, createSubject, createRootNode } from './utils';
 
 type TreeState = {
     tree: TreeStateType;
@@ -20,7 +19,7 @@ export const useTreeStore = create<TreeState>((set) => ({
     initTree: (nodes) => {
         set(() => {
             const newTree: TreeStateType = new Map();
-            const rootNode: RootNode = TreeContextManager.createRootNode();
+            const rootNode: RootNode = createRootNode();
             newTree.set(rootNode.id, rootNode);
 
             nodes.forEach((node) => {
@@ -43,13 +42,13 @@ export const useTreeStore = create<TreeState>((set) => ({
             let node: TreeNode;
             switch (pageType) {
                 case "game":
-                    node = TreeContextManager.createGame(name);
+                    node = createGame(name);
                     break;
                 case "profile":
-                    node = TreeContextManager.createProfile(name, parentID);
+                    node = createProfile(name, parentID);
                     break;
                 case "subject":
-                    node = TreeContextManager.createSubject(name, parentID);
+                    node = createSubject(name, parentID);
                     node = { ...node, ...overrides }
                     break;
             }
@@ -70,43 +69,61 @@ export const useTreeStore = create<TreeState>((set) => ({
 
     updateNode: (node, overrides) => {
         set((state) => {
+            // update current node
             const updatedTree = new Map(state.tree);
             const updatedNode = { ...node, ...overrides };
             updatedTree.set(updatedNode.id, updatedNode);
+            IndexedDBService.updateNode(updatedNode, localStorage.getItem("email")!);
+
+            const parentNode = updatedTree.get(node.parentID)!;
+            const parentNodeCopy: TreeNode = { ...parentNode };
+
+
+
+
+            // sorting is required
+            if ((node.completed != overrides.completed) || (node.dateStart != overrides.dateStart) || (node.dateEnd != overrides.dateEnd)) {
+                parentNodeCopy.childIDS = sortChildIDS(parentNodeCopy, updatedTree);
+            }
 
             if (node.type == "subject" && overrides.type == "subject") { // overrides check just for TS inference
                 const subject = node as Subject;
-                const profileNode = updatedTree.get(node.parentID) as Profile;
-                const profileNodeCopy: Profile = { ...profileNode };
+                const profileNodeCopy = parentNodeCopy as Profile;
 
                 if (subject.deaths < overrides.deaths) {
                     profileNodeCopy.deathEntries.push({ id: node.id, timestamp: new Date().toISOString() });
                     const gameNode = updatedTree.get(profileNodeCopy.parentID) as Game;
+
+                    // update game
                     const gameNodeCopy: Game = { ...gameNode };
                     gameNodeCopy.totalDeaths++;
                     updatedTree.set(profileNodeCopy.parentID, gameNodeCopy);
-
                     IndexedDBService.updateNode(gameNodeCopy, localStorage.getItem("email")!);
                 }
+
                 else if (subject.deaths > overrides.deaths) {
                     profileNodeCopy.deathEntries.pop();
+
+                    // update game
                     const gameNode = updatedTree.get(profileNodeCopy.parentID) as Game;
                     const gameNodeCopy: Game = { ...gameNode };
                     gameNodeCopy.totalDeaths--;
                     updatedTree.set(profileNodeCopy.parentID, gameNodeCopy);
-
                     IndexedDBService.updateNode(gameNodeCopy, localStorage.getItem("email")!);
                 }
-                else if ((subject.completed != overrides.completed) || (subject.dateStart != overrides.dateStart) || (subject.dateEnd != overrides.dateEnd)) {
-                    profileNodeCopy.childIDS = sortChildIDS(profileNodeCopy, updatedTree);
-                }
 
-                IndexedDBService.updateNode(profileNodeCopy, localStorage.getItem("email")!);
-
+                // update profile
                 updatedTree.set(node.parentID, profileNodeCopy);
+                IndexedDBService.updateNode(profileNodeCopy, localStorage.getItem("email")!);
             }
 
-            IndexedDBService.updateNode(updatedNode, localStorage.getItem("email")!);
+            else {
+                updatedTree.set(parentNodeCopy.id, parentNodeCopy);
+                IndexedDBService.updateNode(parentNodeCopy, localStorage.getItem("email")!);
+            }
+
+
+
             return { tree: updatedTree };
         })
     },
