@@ -13,11 +13,10 @@ import {
 	isCardModalStateEqual,
 } from "./utils";
 import { useTreeStore } from "../../hooks/StateManagers/useTreeStore";
-import useModal from "../modal/useModal";
 import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
 import Modal from "../modal/Modal";
 import CardModalBody from "./CardModalBody";
-import { useEffect, useState, type SetStateAction } from "react";
+import { useEffect } from "react";
 import AlertModalBody from "../modal/AlertModalBody";
 import useCardModals from "./useCardModals";
 
@@ -38,12 +37,7 @@ export default function Card({ id }: { id: string }) {
 	const deathCount = getCardDeathCount(node);
 
 	function showSaveReconfirm() {
-		if (
-			isCardModalStateEqual(
-				cardModals.card.state as DistinctTreeNode,
-				node,
-			)
-		) {
+		if (isCardModalStateEqual(cardModals.card.state, node)) {
 			cardModals.alert.set(
 				"No changes have been saved since you edited nothing!",
 			);
@@ -129,7 +123,7 @@ export default function Card({ id }: { id: string }) {
 
 	function onSave() {
 		try {
-			updateNode(node, cardModals.card.state as DistinctTreeNode);
+			updateNode(node, cardModals.card.state);
 			cardModals.alert.ref.current?.close();
 		} catch (e) {
 			if (e instanceof Error) {
@@ -148,17 +142,8 @@ export default function Card({ id }: { id: string }) {
 	}
 
 	function onCardModalClose() {
-		if (
-			!isCardModalStateEqual(
-				cardModals.card.state as DistinctTreeNode,
-				node,
-			)
-		) {
-			(
-				cardModals.card.set as React.Dispatch<
-					SetStateAction<DistinctTreeNode>
-				>
-			)(node);
+		if (!isCardModalStateEqual(cardModals.card.state, node)) {
+			cardModals.card.set(node);
 		}
 		cardModals.card.ref.current?.close();
 	}
@@ -242,12 +227,8 @@ export default function Card({ id }: { id: string }) {
 				modalStyle="utility"
 				body={
 					<CardModalBody
-						modalState={cardModals.card.state as DistinctTreeNode}
-						setModalState={
-							cardModals.card.set as React.Dispatch<
-								SetStateAction<DistinctTreeNode>
-							>
-						}
+						modalState={cardModals.card.state}
+						setModalState={cardModals.card.set}
 					/>
 				}
 				modalRef={cardModals.card.ref}
@@ -269,7 +250,7 @@ export default function Card({ id }: { id: string }) {
 
 			<Modal
 				modalStyle="alert"
-				body={<AlertModalBody msg={cardModals.alert.state as string} />}
+				body={<AlertModalBody msg={cardModals.alert.state} />}
 				modalRef={cardModals.alert.ref}
 				closeFn={cardModals.alert.props.state[0]}
 				fn={cardModals.alert.props.state[1]}

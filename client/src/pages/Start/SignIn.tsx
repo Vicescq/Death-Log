@@ -3,9 +3,7 @@ import { auth } from "../../firebase-config";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import APIService from "../../services/APIService";
 import IndexedDBService from "../../services/IndexedDBService";
-import useUserContext from "../../contexts/useUserContext";
 import { useNavigate } from "react-router";
-import useTreeContext from "../../contexts/useTreeContext";
 
 export default function SignIn() {
 	const navigate = useNavigate();

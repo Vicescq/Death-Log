@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { DistinctTreeNode } from "../../model/TreeNodeModel";
-import type { ModalFn, ModalProps } from "../modal/types";
+import type { ModalFn } from "../modal/types";
 import useModal from "../modal/useModal";
 
 export default function useCardModals(node: DistinctTreeNode) {
@@ -8,13 +8,13 @@ export default function useCardModals(node: DistinctTreeNode) {
         modalRef: cardModalRef,
         modalState: cardModalState,
         setModalState: setCardModalState,
-    } = useModal(node);
+    } = useModal<DistinctTreeNode>(node);
 
     const {
         modalRef: cardModalAlertRef,
         modalState: cardModalAlertState,
         setModalState: setCardModalAlertState,
-    } = useModal("");
+    } = useModal<string>("");
 
     // each index corresponds to closeFn, fn, and fn2
     const [modalAlertProps, setModalAlertProps] = useState<ModalFn[]>(
