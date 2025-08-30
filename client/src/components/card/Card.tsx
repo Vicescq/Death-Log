@@ -15,9 +15,9 @@ import {
 import { useTreeStore } from "../../hooks/StateManagers/useTreeStore";
 import useModal from "../../hooks/useModal";
 import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
-import Modal from "../modal/Modal";
+import Modal, { type ModalPropsState } from "../modal/Modal";
 import CardModalBody from "./CardModalBody";
-import { useEffect, type SetStateAction } from "react";
+import { useEffect, useState, type SetStateAction } from "react";
 import AlertModalBody from "../modal/AlertModalBody";
 
 export default function Card({ id }: { id: string }) {
@@ -30,45 +30,70 @@ export default function Card({ id }: { id: string }) {
 	const deleteNodes = useTreeStore((state) => state.deleteNodes);
 
 	const {
-		modalRef: cardModalRef,
-		modalState: cardModalState,
-		setModalState: setCardModalState,
-	} = useModal(node);
+		modalRef,
+		modalState,
+		setModalState,
+		modalPropsState,
+		setModalPropsState,
+	} = useModal(node, {
+		modalFn: {
+			fn: () => 1,
+			label: "CLOSE",
+		},
+		modalStyle: "utility",
+		modalFn2: {
+			fn: () => {
+				setRCModalState("Are you sure you want to edit this card?");
+				setRCModalPropsState((prev) => ({
+					...prev,
+					modalFn: {
+						fn: () => 1,
+						label: "CLOSE",
+					},
+					modalFn2: {
+						fn: () => 1,
+						label: "CONFIRM",
+						btnCol: "bg-hunyadi",
+					},
+				}));
+			},
+			label: "SAVE",
+			btnCol: "bg-hunyadi",
+		},
+		modalFn3: {
+			fn: () => 1,
+			label: "DELETE",
+			btnCol: "bg-orange-700",
+		},
+	});
 
-	// confirm
 	const {
-		modalRef: cardModalConfirmRef,
-		modalState: cardModalConfirmState,
-		setModalState: setCardModalConfirmState,
-	} = useModal("");
+		modalRef: alertModalRef,
+		modalState: alertModalState,
+		setModalState: setAlertModalState,
+		modalPropsState: alertModalPropsState,
+		setModalPropsState: setAlertModalPropsState,
+	} = useModal("", {
+		modalStyle: "alert",
+		modalFn: {
+			fn: () => 1,
+			label: "CLOSE",
+		},
+	});
 
-	// no changes
 	const {
-		modalRef: cardModalConfirmNCRef,
-		modalState: cardModalConfirmNCState,
-		setModalState: setCardModalConfirmNCState,
-	} = useModal("");
-
-	// del
-	const {
-		modalRef: cardModalConfirmDelRef,
-		modalState: cardModalConfirmDelState,
-		setModalState: setCardModalConfirmDelState,
-	} = useModal("");
-
-	// cancel changes
-	const {
-		modalRef: cardModalConfirmCCRef,
-		modalState: cardModalConfirmCCState,
-		setModalState: setCardModalConfirmCCState,
-	} = useModal("");
-
-	// general alerts
-	const {
-		modalRef: cardModalGeneralAlertRef,
-		modalState: cardModalConfirmGeneralAlertState,
-		setModalState: setCardModalConfirmGeneralAlertState,
-	} = useModal("");
+		modalRef: rcModalRef,
+		modalState: rcModalState,
+		setModalState: setRCModalState,
+		modalPropsState: rcModalPropsState,
+		setModalPropsState: setRCModalPropsState,
+	} = useModal("", {
+		modalStyle: "alert",
+		modalFn: {
+			fn: () => 1,
+			label: "CLOSE",
+		},
+	});
 
 	const mainPageTransitionState = createCardMainPageTransitionState(node);
 	const { cardCSS, settersCSS, highlightingCSS, reoccurringCSS } =
@@ -76,10 +101,10 @@ export default function Card({ id }: { id: string }) {
 	const deathCount = getCardDeathCount(node);
 
 	useEffect(() => {
-		setCardModalState(node);
+		setModalState(node);
 	}, [JSON.stringify(node)]);
 
-	useConsoleLogOnStateChange(cardModalState, "MODAL STATE", cardModalState);
+	// useConsoleLogOnStateChange(modalPropsState, "MODAL PROPS", modalPropsState);
 
 	return (
 		<div
@@ -142,7 +167,7 @@ export default function Card({ id }: { id: string }) {
 					className={`w-9 cursor-pointer ${highlightingCSS}`}
 					src={details}
 					alt=""
-					onClick={() => cardModalRef.current?.showModal()}
+					onClick={() => modalRef.current?.showModal()}
 				/>
 				<img
 					className={`w-9 cursor-pointer ${highlightingCSS} ${reoccurringCSS}`}
@@ -157,161 +182,41 @@ export default function Card({ id }: { id: string }) {
 					}}
 				/>
 			</div>
-
 			<Modal
-				modalStyle="utility"
+				modalStyle={modalPropsState.modalStyle}
 				body={
 					<CardModalBody
-						modalState={cardModalState as DistinctTreeNode}
+						modalState={modalState as DistinctTreeNode}
 						setModalState={
-							setCardModalState as React.Dispatch<
-								React.SetStateAction<DistinctTreeNode>
+							setModalState as React.Dispatch<
+								SetStateAction<DistinctTreeNode>
 							>
 						}
 					/>
 				}
-				modalRef={cardModalRef}
-				negativeFn={() => {
-					if (
-						!isCardModalStateEqual(
-							cardModalState as DistinctTreeNode,
-							node,
-						)
-					) {
-						cardModalConfirmCCRef.current?.showModal();
-						cardModalRef.current?.close();
-						setCardModalConfirmCCState(
-							"Are you sure you want to exit without saving any changes?",
-						);
-					} else {
-						cardModalRef.current?.close();
-					}
-				}}
-				negativeFnBtnLabel={"CLOSE"}
-				positiveFn={() => {
-					if (
-						!isCardModalStateEqual(
-							cardModalState as DistinctTreeNode,
-							node,
-						)
-					) {
-						setCardModalConfirmState(
-							"Are you sure you want to edit this card?",
-						);
-						cardModalConfirmRef.current?.showModal();
-						cardModalRef.current?.close();
-					} else {
-						setCardModalConfirmNCState(
-							"Cannot save! You have not made any changes!",
-						);
-						cardModalConfirmNCRef.current?.showModal();
-						cardModalRef.current?.close();
-					}
-				}}
-				positiveFnBtnLabel="SAVE"
-				positiveFnBtnCol="bg-hunyadi"
-				negativeFn2={() => {
-					cardModalRef.current?.close();
-					cardModalConfirmDelRef.current?.showModal();
-					setCardModalConfirmDelState(
-						"Are you sure you want to delete this card?",
-					);
-				}}
-				negativeFn2BtnLabel="DELETE"
+				modalRef={modalRef}
+				modalFn={modalPropsState.modalFn}
+				modalFn2={modalPropsState.modalFn2}
+				modalFn3={modalPropsState.modalFn3}
 			/>
 
-			{/* Modal for save confirm */}
 			<Modal
-				modalStyle="alert"
-				body={<AlertModalBody msg={cardModalConfirmState as string} />}
-				modalRef={cardModalConfirmRef}
-				negativeFn={() => {
-					cardModalConfirmRef.current?.close();
-					cardModalRef.current?.showModal();
-				}}
-				negativeFnBtnLabel={"CANCEL"}
-				positiveFn={() => {
-					try{
-						updateNode(node, cardModalState as DistinctTreeNode);
-						cardModalConfirmRef.current?.close();
-					}
-					catch (e){
-						if(e instanceof Error){
-							// setCardModalConfirmGeneralAlertState(e.message);
-							// cardModalGeneralAlertRef.current?.showModal();
-							cardModalConfirmRef.current?.close();
-						}
-					}
-				}}
-				positiveFnBtnLabel="CONFIRM"
-				positiveFnBtnCol="bg-hunyadi"
+				modalStyle={rcModalPropsState.modalStyle}
+				body={<AlertModalBody msg={rcModalState as string} />}
+				modalRef={rcModalRef}
+				modalFn={rcModalPropsState.modalFn}
+				modalFn2={rcModalPropsState.modalFn2}
+				modalFn3={rcModalPropsState.modalFn3}
 			/>
 
-			{/* Modal for no changes alert */}
 			<Modal
-				modalStyle="alert"
-				body={
-					<AlertModalBody msg={cardModalConfirmNCState as string} />
-				}
-				modalRef={cardModalConfirmNCRef}
-				negativeFn={() => {
-					cardModalConfirmNCRef.current?.close();
-					cardModalRef.current?.showModal();
-				}}
-				negativeFnBtnLabel={"CLOSE"}
+				modalStyle={alertModalPropsState.modalStyle}
+				body={<AlertModalBody msg={alertModalState as string} />}
+				modalRef={alertModalRef}
+				modalFn={alertModalPropsState.modalFn}
+				modalFn2={alertModalPropsState.modalFn2}
+				modalFn3={alertModalPropsState.modalFn3}
 			/>
-
-			{/* Modal for delete confirm */}
-			<Modal
-				modalStyle="alert"
-				body={
-					<AlertModalBody msg={cardModalConfirmDelState as string} />
-				}
-				modalRef={cardModalConfirmDelRef}
-				negativeFn={() => {
-					cardModalConfirmDelRef.current?.close();
-					cardModalRef.current?.showModal();
-				}}
-				negativeFnBtnLabel={"CANCEL"}
-				negativeFn2={() => {
-					deleteNodes(node);
-					cardModalConfirmDelRef.current?.close();
-				}}
-				negativeFn2BtnLabel="DELETE"
-			/>
-
-			{/* Modal for cancelling any changes */}
-			<Modal
-				modalStyle="alert"
-				body={
-					<AlertModalBody msg={cardModalConfirmCCState as string} />
-				}
-				modalRef={cardModalConfirmCCRef}
-				negativeFn={() => {
-					cardModalConfirmCCRef.current?.close();
-					setCardModalState(node);
-				}}
-				negativeFnBtnLabel={"EXIT"}
-				positiveFn={() => {
-					cardModalConfirmCCRef.current?.close();
-					cardModalRef.current?.showModal();
-				}}
-				positiveFnBtnLabel="GO BACK"
-				positiveFnBtnCol="bg-gray-500"
-			/>
-
-			{/* Alert stuff */}
-			{/* <Modal
-				modalStyle="alert"
-				body={
-					<AlertModalBody msg={cardModalConfirmGeneralAlertState as string} />
-				}
-				modalRef={cardModalGeneralAlertRef}
-				negativeFn={() => {
-					cardModalGeneralAlertRef.current?.close();
-				}}
-				negativeFnBtnLabel={"CLOSE"}
-			/> */}
 		</div>
 	);
 }

@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import gear from "../../assets/gear.svg";
 import filter from "../../assets/filter.svg";
 import Modal from "../modal/Modal";
@@ -23,21 +23,42 @@ type Props = AICGame | AICProfile | AICSubject;
 export default function AddItemCard({ pageType, parentID }: Props) {
 	const addNode = useTreeStore((state) => state.addNode);
 	const [inputText, setInputText] = useState("");
-	const inputRef = useRef<HTMLInputElement>(null)
+	const inputRef = useRef<HTMLInputElement>(null);
+
+	// {
+	// 	reoccurring: false,
+	// 	context: "boss",
+	// }
 
 	const {
-		modalRef: aicModalRef,
-		modalState: aicModalState,
-		setModalState: setAICModalState,
-	} = useModal({
-		reoccurring: false,
-		context: "boss",
-	});
+		modalRef,
+		modalState,
+		setModalState,
+		modalPropsState,
+		setModalPropsState,
+	} = useModal(
+		{ reoccurring: false, context: "boss" },
+		{
+			modalStyle: "utility",
+			modalFn: {
+				fn: () => modalRef.current?.close(),
+				label: "CLOSE",
+			},
+		},
+	);
 	const {
 		modalRef: alertModalRef,
 		modalState: alertModalState,
 		setModalState: setAlertModalState,
-	} = useModal("");
+		modalPropsState: alertModalPropsState,
+		setModalPropsState: setAlertModalPropsState,
+	} = useModal("", {
+		modalStyle: "alert",
+		modalFn: {
+			fn: () => alertModalRef.current?.close(),
+			label: "CLOSE",
+		},
+	});
 
 	function handleAdd() {
 		try {
@@ -50,7 +71,7 @@ export default function AddItemCard({ pageType, parentID }: Props) {
 					"subject",
 					inputText,
 					parentID,
-					aicModalState as AICSubjectOverrides,
+					modalState as AICSubjectOverrides,
 				);
 			}
 		} catch (e) {
@@ -82,7 +103,7 @@ export default function AddItemCard({ pageType, parentID }: Props) {
 	) {
 		if (setting != "context") {
 			(
-				setAICModalState as React.Dispatch<
+				setModalState as React.Dispatch<
 					React.SetStateAction<AICSubjectOverrides>
 				>
 			)((prev) => ({
@@ -91,7 +112,7 @@ export default function AddItemCard({ pageType, parentID }: Props) {
 			}));
 		} else if (setting == "context" && selected) {
 			(
-				setAICModalState as React.Dispatch<
+				setModalState as React.Dispatch<
 					React.SetStateAction<AICSubjectOverrides>
 				>
 			)((prev) => ({
@@ -124,7 +145,9 @@ export default function AddItemCard({ pageType, parentID }: Props) {
 							alt=""
 							className="w-10"
 							onClick={() => {
-								aicModalRef.current?.showModal();
+								if (modalPropsState.modalStyle == "utility") {
+									modalRef.current?.showModal();
+								}
 							}}
 						/>
 					</button>
@@ -134,7 +157,7 @@ export default function AddItemCard({ pageType, parentID }: Props) {
 				<button
 					onClick={() => {
 						handleAdd();
-						if(inputRef.current){
+						if (inputRef.current) {
 							inputRef.current.value = "";
 						}
 					}}
@@ -150,24 +173,28 @@ export default function AddItemCard({ pageType, parentID }: Props) {
 			</div>
 
 			<Modal
-				modalStyle="utility"
-				modalRef={aicModalRef}
+				modalStyle={modalPropsState.modalStyle}
 				body={
 					<AddItemCardModalBody
-						state={aicModalState as AICSubjectOverrides}
-						handleEdit={handleModalEdit}
+						state={modalState as AICSubjectOverrides}
+						handleEdit={(setting, selected) =>
+							handleModalEdit(setting, selected)
+						}
 						contextOptions={contextOptions}
 					/>
 				}
-				negativeFn={() => aicModalRef.current?.close()}
-				negativeFnBtnLabel="CLOSE"
+				modalRef={modalRef}
+				modalFn={modalPropsState.modalFn}
+				modalFn2={modalPropsState.modalFn2}
+				modalFn3={modalPropsState.modalFn3}
 			/>
 			<Modal
-				modalStyle="alert"
-				modalRef={alertModalRef}
+				modalStyle={alertModalPropsState.modalStyle}
 				body={<AlertModalBody msg={alertModalState as string} />}
-				negativeFn={() => alertModalRef.current?.close()}
-				negativeFnBtnLabel="CLOSE"
+				modalRef={alertModalRef}
+				modalFn={alertModalPropsState.modalFn}
+				modalFn2={alertModalPropsState.modalFn2}
+				modalFn3={alertModalPropsState.modalFn3}
 			/>
 		</header>
 	);

@@ -1,21 +1,35 @@
 import type React from "react";
+import type { DistinctTreeNode } from "../../model/TreeNodeModel";
+import type { AICSubjectOverrides } from "../addItemCard/types";
 
-type NegativeLabel = "CANCEL" | "CLOSE" | "DELETE" | "RESET" | "EXIT";
-type PositiveLabel = "GO BACK" | "TRY AGAIN" | "SAVE" | "CONFIRM";
-type ModalStyle = "alert" | "utility";
+export type ModalState = AICSubjectOverrides | DistinctTreeNode | string;
+export type AlertModalState = string;
+export type ModalLabel =
+	| "CANCEL"
+	| "CLOSE"
+	| "DELETE"
+	| "RESET"
+	| "EXIT"
+	| "GO BACK"
+	| "TRY AGAIN"
+	| "SAVE"
+	| "CONFIRM";
+export type ModalStyle = "alert" | "utility";
+export type ModalPropsState = Omit<Props, "modalRef" | "body">;
+
+export type ModalFn = {
+	fn: () => void;
+	label: ModalLabel;
+	btnCol?: string;
+};
 
 type Props = {
 	modalStyle: ModalStyle;
 	body: React.JSX.Element;
 	modalRef: React.RefObject<HTMLDialogElement | null>;
-	negativeFn: () => void;
-	negativeFnBtnLabel: NegativeLabel;
-	positiveFn?: () => void;
-	positiveFnBtnLabel?: PositiveLabel;
-	positiveFnBtnCol?: string;
-	negativeFn2?: () => void;
-	negativeFn2BtnLabel?: NegativeLabel;
-	negativeFn2BtnCol?: string;
+	modalFn: ModalFn;
+	modalFn2?: ModalFn;
+	modalFn3?: ModalFn;
 };
 
 export default function Modal(props: Props) {
@@ -23,9 +37,7 @@ export default function Modal(props: Props) {
 	if (props.modalStyle == "alert") {
 		css = "rounded-3xl bg-hunyadi";
 	}
-
-	// bg-orange-700 bg-hunyadi
-
+	
 	return (
 		<dialog
 			ref={props.modalRef}
@@ -33,32 +45,28 @@ export default function Modal(props: Props) {
 		>
 			<div className="flex flex-col gap-2">
 				{props.body}
-				{props.positiveFn ? (
+				{props.modalFn2 ? (
 					<button
-						className={`${props.positiveFnBtnCol ?? "bg-red-500"} rounded-2xl border-4  p-2 font-bold shadow-[4px_4px_0px_rgba(0,0,0,1)]`}
-						onClick={props.positiveFn}
+						className={`${props.modalFn2.btnCol ?? "bg-red-500"} rounded-2xl border-4 p-2 font-bold shadow-[4px_4px_0px_rgba(0,0,0,1)]`}
+						onClick={props.modalFn2.fn}
 					>
-						{props.positiveFnBtnLabel
-							? props.positiveFnBtnLabel
-							: null}
+						{props.modalFn2.label}
 					</button>
 				) : null}
-				{props.negativeFn2 ? (
+				{props.modalFn3 ? (
 					<button
-						className={`${props.negativeFn2BtnCol ?? "bg-red-500"} rounded-2xl border-4  p-2 font-bold shadow-[4px_4px_0px_rgba(0,0,0,1)]`}
-						onClick={props.negativeFn2}
+						className={`${props.modalFn3.btnCol ?? "bg-red-500"} rounded-2xl border-4 p-2 font-bold shadow-[4px_4px_0px_rgba(0,0,0,1)]`}
+						onClick={props.modalFn3.fn}
 					>
-						{props.negativeFn2BtnLabel
-							? props.negativeFn2BtnLabel
-							: null}
+						{props.modalFn3.label}
 					</button>
 				) : null}
 
 				<button
 					className="rounded-2xl border-4 bg-red-500 p-2 font-bold shadow-[4px_4px_0px_rgba(0,0,0,1)]"
-					onClick={props.negativeFn}
+					onClick={props.modalFn.fn}
 				>
-					{props.negativeFnBtnLabel}
+					{props.modalFn.label}
 				</button>
 			</div>
 		</dialog>
