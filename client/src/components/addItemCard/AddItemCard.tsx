@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import gear from "../../assets/gear.svg";
 import filter from "../../assets/filter.svg";
-import Modal from "../modal/Modal";
+import Modal from "../Modal/Modal";
 import type {
 	AICGame,
 	AICProfile,
@@ -10,14 +10,13 @@ import type {
 } from "./types";
 import AddItemCardModalBody from "./AddItemCardModalBody";
 import type {
-	SelectDropdownOption,
 	SelectDropdownSelected,
 } from "../SelectDropdown";
 import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
-import { useTreeStore } from "../../hooks/StateManagers/useTreeStore";
-import useModal from "../modal/useModal";
-import AlertModalBody from "../modal/AlertModalBody";
+import { useTreeStore } from "../../stores/useTreeStore";
+import AlertModalBody from "../Modal/AlertModalBody";
 import useAICModals from "./useAICModals";
+import { contextOptions } from "../../utils";
 
 type Props = AICGame | AICProfile | AICSubject;
 
@@ -28,21 +27,6 @@ export default function AddItemCard({ pageType, parentID }: Props) {
 
 	const aicModals = useAICModals();
 
-	const contextOptions: SelectDropdownOption[] = [
-		{
-			value: "boss",
-			text: "Boss",
-		},
-		{
-			value: "location",
-			text: "Location",
-		},
-		{
-			value: "other",
-			text: "Other",
-		},
-	];
-
 	function handleAdd() {
 		try {
 			if (pageType === "game") {
@@ -50,12 +34,7 @@ export default function AddItemCard({ pageType, parentID }: Props) {
 			} else if (pageType === "profile") {
 				addNode("profile", inputText, parentID);
 			} else if (pageType === "subject") {
-				addNode(
-					"subject",
-					inputText,
-					parentID,
-					aicModals.aic.state as AICSubjectOverrides,
-				);
+				addNode("subject", inputText, parentID, aicModals.aic.state);
 			}
 		} catch (e) {
 			if (e instanceof Error) {
@@ -70,20 +49,12 @@ export default function AddItemCard({ pageType, parentID }: Props) {
 		selected?: SelectDropdownSelected,
 	) {
 		if (setting != "context") {
-			(
-				aicModals.aic.set as React.Dispatch<
-					React.SetStateAction<AICSubjectOverrides>
-				>
-			)((prev) => ({
+			aicModals.aic.set((prev) => ({
 				...prev,
 				[setting]: !prev[setting],
 			}));
 		} else if (setting == "context" && selected) {
-			(
-				aicModals.aic.set as React.Dispatch<
-					React.SetStateAction<AICSubjectOverrides>
-				>
-			)((prev) => ({
+			aicModals.aic.set((prev) => ({
 				...prev,
 				[setting]: selected,
 			}));
@@ -143,7 +114,7 @@ export default function AddItemCard({ pageType, parentID }: Props) {
 				modalRef={aicModals.aic.ref}
 				body={
 					<AddItemCardModalBody
-						state={aicModals.aic.state as AICSubjectOverrides}
+						state={aicModals.aic.state}
 						handleEdit={handleModalEdit}
 						contextOptions={contextOptions}
 					/>
@@ -157,7 +128,7 @@ export default function AddItemCard({ pageType, parentID }: Props) {
 			<Modal
 				modalStyle="alert"
 				modalRef={aicModals.alert.ref}
-				body={<AlertModalBody msg={aicModals.alert.state as string} />}
+				body={<AlertModalBody msg={aicModals.alert.state} />}
 				closeFn={{
 					fn: () => aicModals.alert.ref.current?.close(),
 					label: "CLOSE",

@@ -1,29 +1,23 @@
 import { useState } from "react";
 import type { DistinctTreeNode } from "../../model/TreeNodeModel";
-import type { ModalFn, ModalProps } from "../modal/types";
-import useModal from "../modal/useModal";
+import type { ModalFn } from "../Modal/types";
+import useModal from "../Modal/useModal";
 
 export default function useCardModals(node: DistinctTreeNode) {
     const {
         modalRef: cardModalRef,
         modalState: cardModalState,
         setModalState: setCardModalState,
-    } = useModal(node);
-
-    const {
-        modalRef: cardModalConfirmRef,
-        modalState: cardModalConfirmState,
-        setModalState: setCardModalConfirmState,
-    } = useModal("");
+    } = useModal<DistinctTreeNode>(node);
 
     const {
         modalRef: cardModalAlertRef,
         modalState: cardModalAlertState,
         setModalState: setCardModalAlertState,
-    } = useModal("");
+    } = useModal<string>("");
 
     // each index corresponds to closeFn, fn, and fn2
-    const [modalConfirmProps, setModalConfirmProps] = useState<ModalFn[]>(
+    const [modalAlertProps, setModalAlertProps] = useState<ModalFn[]>(
         [{
             fn: () => { }, label: "CLOSE", btnCol: ""
         },
@@ -36,10 +30,12 @@ export default function useCardModals(node: DistinctTreeNode) {
     );
 
     return {
-        card: { ref: cardModalRef, state: cardModalState, set: setCardModalState }, confirm: {
-            ref: cardModalConfirmRef, state: cardModalConfirmState, set: setCardModalConfirmState, props: {
-                state: modalConfirmProps, set: setModalConfirmProps
+        card: { ref: cardModalRef, state: cardModalState, set: setCardModalState },
+        alert: {
+            ref: cardModalAlertRef, state: cardModalAlertState, set: setCardModalAlertState, props: {
+                state: modalAlertProps,
+                set: setModalAlertProps
             }
-        }, alert: { ref: cardModalAlertRef, state: cardModalAlertState, set: setCardModalAlertState }
+        }
     } as const
 }

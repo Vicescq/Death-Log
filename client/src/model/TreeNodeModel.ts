@@ -1,5 +1,6 @@
-export type TreeNodeType = "game" | "profile" | "subject" | "ROOT_NODE";
-export type SubjectContext = "boss" | "location" | "other";
+export type Tree = Map<string, TreeNode>;
+
+export type SubjectContext = "boss" | "location" | "other" | "genericEnemy" | "miniBoss";
 export type Milestone = {
     name: string
     start: number,
@@ -13,7 +14,7 @@ export type DeathEntry = {
 }
 
 export type TreeNode = {
-    type: TreeNodeType,
+    type: "game" | "profile" | "subject" | "ROOT_NODE",
     id: string,
     parentID: string,
     childIDS: string[],
@@ -27,7 +28,7 @@ export type TreeNode = {
 export type RootNode = TreeNode & {
     type: "ROOT_NODE",
     id: "ROOT_NODE",
-    parentID: "NONE",
+    parentID: "NONE", // string instead of null because of annoying TS compiler warnings
     name: "",
     completed: false,
     notes: "",
@@ -36,6 +37,7 @@ export type RootNode = TreeNode & {
 }
 
 export type DistinctTreeNode = Game | Profile | Subject  // for discriminant unions
+export type ParentTreeNode = RootNode | Game | Profile;
 
 export type Game = TreeNode & {
     type: "game"
@@ -54,5 +56,6 @@ export type Subject = TreeNode & {
     reoccurring: boolean,
     context: SubjectContext
 }
+
 
 

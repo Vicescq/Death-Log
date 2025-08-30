@@ -1,20 +1,13 @@
 import { useRef, useState } from "react";
-import type { ModalProps, ModalState } from "./types";
+import type { ModalState } from "./types";
 
-export default function useModal(
-	modalStateInit: ModalState,
-	modalStatePropsInit: ModalProps,
-) {
+export default function useModal<T extends ModalState>(modalStateInit: T) {
 	const modalRef = useRef<HTMLDialogElement>(null);
-	const [modalState, setModalState] = useState<ModalState>(modalStateInit);
-	const [modalPropsState, setModalPropsState] =
-		useState<ModalProps>(modalStatePropsInit);
+	const [modalState, setModalState] = useState(modalStateInit);
 
 	return {
 		modalRef,
 		modalState,
 		setModalState,
-		modalPropsState,
-		setModalPropsState,
 	};
 }

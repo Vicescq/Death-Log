@@ -1,11 +1,12 @@
-import useModal from "../modal/useModal";
+import useModal from "../Modal/useModal";
+import type { AICSubjectOverrides } from "./types";
 
 export default function useAICModals() {
     const {
         modalRef: aicModalRef,
         modalState: aicModalState,
         setModalState: setAICModalState,
-    } = useModal({
+    } = useModal<AICSubjectOverrides>({
         reoccurring: false,
         context: "boss",
     });
@@ -14,7 +15,7 @@ export default function useAICModals() {
         modalRef: alertModalRef,
         modalState: alertModalState,
         setModalState: setAlertModalState,
-    } = useModal("");
+    } = useModal<string>("");
 
     return {
         aic: {

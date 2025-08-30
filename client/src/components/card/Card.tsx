@@ -12,13 +12,12 @@ import {
 	getCardDeathCount,
 	isCardModalStateEqual,
 } from "./utils";
-import { useTreeStore } from "../../hooks/StateManagers/useTreeStore";
-import useModal from "../modal/useModal";
+import { useTreeStore } from "../../stores/useTreeStore";
 import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
-import Modal from "../modal/Modal";
+import Modal from "../Modal/Modal";
 import CardModalBody from "./CardModalBody";
-import { useEffect, useState, type SetStateAction } from "react";
-import AlertModalBody from "../modal/AlertModalBody";
+import { useEffect } from "react";
+import AlertModalBody from "../Modal/AlertModalBody";
 import useCardModals from "./useCardModals";
 
 export default function Card({ id }: { id: string }) {
@@ -27,8 +26,16 @@ export default function Card({ id }: { id: string }) {
 	const node = useTreeStore((state) =>
 		state.tree.get(id),
 	) as DistinctTreeNode;
-	const updateNode = useTreeStore((state) => state.updateNode);
-	const deleteNodes = useTreeStore((state) => state.deleteNodes);
+	const updateModalEditedNode = useTreeStore(
+		(state) => state.updateModalEditedNode,
+	);
+	const updateNodeCompletion = useTreeStore(
+		(state) => state.updateNodeCompletion,
+	);
+	const updateNodeDeaths = useTreeStore((state) => state.updateNodeDeaths);
+	const deleteGame = useTreeStore((state) => state.deleteGame);
+	const deleteProfile = useTreeStore((state) => state.deleteProfile);
+	const deleteSubject = useTreeStore((state) => state.deleteSubject);
 
 	const cardModals = useCardModals(node);
 
@@ -37,53 +44,130 @@ export default function Card({ id }: { id: string }) {
 		createCardCSS(node);
 	const deathCount = getCardDeathCount(node);
 
+	
 	function showSaveReconfirm() {
-		if (
-			isCardModalStateEqual(
-				cardModals.card.state as DistinctTreeNode,
-				node,
-			)
-		) {
-			cardModals.confirm.set(
+		if (isCardModalStateEqual(cardModals.card.state, node)) {
+			cardModals.alert.set(
 				"No changes have been saved since you edited nothing!",
 			);
-			cardModals.confirm.props.set([
+			cardModals.alert.props.set([
 				{
 					fn: () => {
-						cardModals.confirm.ref.current?.close();
+						cardModals.alert.ref.current?.close();
 						cardModals.card.ref.current?.showModal();
 					},
 					label: "CLOSE",
 				},
 			]);
 		} else {
-			cardModals.confirm.set("Are you sure you want to edit this card?");
-			cardModals.confirm.props.set([
+			cardModals.alert.set("Are you sure you want to edit this card?");
+			cardModals.alert.props.set([
 				{
 					fn: () => {
-						cardModals.confirm.ref.current?.close();
+						cardModals.alert.ref.current?.close();
 						cardModals.card.ref.current?.showModal();
 					},
 					label: "CANCEL",
 				},
 				{
-					fn: () => {},
+					fn: () => onSave(),
 					label: "CONFIRM",
 					btnCol: "bg-hunyadi",
 				},
 			]);
 		}
 		cardModals.card.ref.current?.close();
-		cardModals.confirm.ref.current?.showModal();
+		cardModals.alert.ref.current?.showModal();
 	}
 
-	function showDeleteReconfirm() {}
+	function showDeleteReconfirm() {
+		cardModals.alert.set("Are you sure you want to delete this card?");
+		cardModals.alert.props.set([
+			{
+				fn: () => {
+					cardModals.alert.ref.current?.close();
+					cardModals.card.ref.current?.showModal();
+				},
+				label: "CANCEL",
+			},
+			{
+				fn: () => {
+					switch (node.type) {
+						case "game":
+							deleteGame(node);
+							break;
+						case "profile":
+							deleteProfile(node);
+							break;
+						case "subject":
+							deleteSubject(node);
+							break;
+					}
+				},
+				label: "CONFIRM",
+				btnCol: "bg-orange-700",
+			},
+		]);
+		cardModals.alert.ref.current?.showModal();
+		cardModals.card.ref.current?.close();
+	}
+
+	function showCompletionReconfirm() {
+		if (node.completed) {
+			cardModals.alert.set("Mark this card as incomplete?");
+		} else {
+			cardModals.alert.set("Mark this card as complete?");
+		}
+
+		cardModals.alert.props.set([
+			{
+				fn: () => {
+					cardModals.alert.ref.current?.close();
+				},
+				label: "CANCEL",
+			},
+			{
+				fn: () => {
+					updateNodeCompletion(node);
+					cardModals.alert.ref.current?.close();
+				},
+				label: "CONFIRM",
+				btnCol: "bg-hunyadi",
+			},
+		]);
+		cardModals.alert.ref.current?.showModal();
+	}
+
+	function onSave() {
+		try {
+			updateModalEditedNode(node, cardModals.card.state);
+			cardModals.alert.ref.current?.close();
+		} catch (e) {
+			if (e instanceof Error) {
+				cardModals.alert.set(e.message);
+				cardModals.alert.props.set([
+					{
+						fn: () => {
+							cardModals.alert.ref.current?.close();
+							cardModals.card.ref.current?.showModal();
+						},
+						label: "CLOSE",
+					},
+				]);
+			}
+		}
+	}
+
+	function onCardModalClose() {
+		if (!isCardModalStateEqual(cardModals.card.state, node)) {
+			cardModals.card.set(node);
+		}
+		cardModals.card.ref.current?.close();
+	}
 
 	useEffect(() => {
 		cardModals.card.set(node);
 	}, [JSON.stringify(node)]);
-
-	// useConsoleLogOnStateChange(cardModalState, "MODAL STATE", cardModalState);
 
 	return (
 		<div
@@ -112,6 +196,7 @@ export default function Card({ id }: { id: string }) {
 							navigate("/death-log", {
 								state: mainPageTransitionState,
 							})
+							
 						}
 					/>
 				) : (
@@ -121,10 +206,7 @@ export default function Card({ id }: { id: string }) {
 							src={add}
 							alt=""
 							onClick={() => {
-								updateNode(node, {
-									...node,
-									deaths: node.deaths + 1,
-								});
+								updateNodeDeaths(node, "add");
 							}}
 						/>
 						<img
@@ -133,10 +215,7 @@ export default function Card({ id }: { id: string }) {
 							alt=""
 							onClick={() => {
 								if (node.deaths != 0) {
-									updateNode(node, {
-										...node,
-										deaths: node.deaths - 1,
-									});
+									updateNodeDeaths(node, "subtract");
 								}
 							}}
 						/>
@@ -152,30 +231,21 @@ export default function Card({ id }: { id: string }) {
 					className={`w-9 cursor-pointer ${highlightingCSS} ${reoccurringCSS}`}
 					src={readonly}
 					alt=""
-					onClick={() => {
-						const nodeCopy: DistinctTreeNode = {
-							...node,
-							completed: !node.completed,
-						};
-						updateNode(node, nodeCopy);
-					}}
+					onClick={() => showCompletionReconfirm()}
 				/>
 			</div>
+
 			<Modal
 				modalStyle="utility"
 				body={
 					<CardModalBody
-						modalState={cardModals.card.state as DistinctTreeNode}
-						setModalState={
-							cardModals.card.set as React.Dispatch<
-								SetStateAction<DistinctTreeNode>
-							>
-						}
+						modalState={cardModals.card.state}
+						setModalState={cardModals.card.set}
 					/>
 				}
 				modalRef={cardModals.card.ref}
 				closeFn={{
-					fn: () => cardModals.card.ref.current?.close(),
+					fn: () => onCardModalClose(),
 					label: "CLOSE",
 				}}
 				fn={{
@@ -183,17 +253,20 @@ export default function Card({ id }: { id: string }) {
 					label: "SAVE",
 					btnCol: "bg-hunyadi",
 				}}
+				fn2={{
+					fn: () => showDeleteReconfirm(),
+					label: "DELETE",
+					btnCol: "bg-orange-700",
+				}}
 			/>
 
 			<Modal
 				modalStyle="alert"
-				body={
-					<AlertModalBody msg={cardModals.confirm.state as string} />
-				}
-				modalRef={cardModals.confirm.ref}
-				closeFn={cardModals.confirm.props.state[0]}
-				fn={cardModals.confirm.props.state[1]}
-				fn2={cardModals.confirm.props.state[2]}
+				body={<AlertModalBody msg={cardModals.alert.state} />}
+				modalRef={cardModals.alert.ref}
+				closeFn={cardModals.alert.props.state[0]}
+				fn={cardModals.alert.props.state[1]}
+				fn2={cardModals.alert.props.state[2]}
 			/>
 		</div>
 	);

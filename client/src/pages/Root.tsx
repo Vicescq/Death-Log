@@ -1,10 +1,8 @@
 import { Outlet } from "react-router";
 import NavBar from "../components/NavBar";
-import { useTreeStore } from "../hooks/StateManagers/useTreeStore";
+import { useTreeStore } from "../stores/useTreeStore";
 import { useEffect } from "react";
-
 export default function Root() {
-	
 	return (
 		<>
 			<NavBar />
