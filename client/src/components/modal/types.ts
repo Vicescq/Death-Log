@@ -1,6 +1,9 @@
 import type { ReactNode } from "react";
 import type React from "react";
+import type { AICSubjectOverrides } from "../addItemCard/types";
+import type { DistinctTreeNode } from "../../model/TreeNodeModel";
 
+export type ModalState = AICSubjectOverrides | DistinctTreeNode | string
 
 export type ModalLabel = "CANCEL" |
 	"CLOSE" |
