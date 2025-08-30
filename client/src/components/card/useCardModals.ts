@@ -11,19 +11,13 @@ export default function useCardModals(node: DistinctTreeNode) {
     } = useModal(node);
 
     const {
-        modalRef: cardModalConfirmRef,
-        modalState: cardModalConfirmState,
-        setModalState: setCardModalConfirmState,
-    } = useModal("");
-
-    const {
         modalRef: cardModalAlertRef,
         modalState: cardModalAlertState,
         setModalState: setCardModalAlertState,
     } = useModal("");
 
     // each index corresponds to closeFn, fn, and fn2
-    const [modalConfirmProps, setModalConfirmProps] = useState<ModalFn[]>(
+    const [modalAlertProps, setModalAlertProps] = useState<ModalFn[]>(
         [{
             fn: () => { }, label: "CLOSE", btnCol: ""
         },
@@ -36,10 +30,12 @@ export default function useCardModals(node: DistinctTreeNode) {
     );
 
     return {
-        card: { ref: cardModalRef, state: cardModalState, set: setCardModalState }, confirm: {
-            ref: cardModalConfirmRef, state: cardModalConfirmState, set: setCardModalConfirmState, props: {
-                state: modalConfirmProps, set: setModalConfirmProps
+        card: { ref: cardModalRef, state: cardModalState, set: setCardModalState },
+        alert: {
+            ref: cardModalAlertRef, state: cardModalAlertState, set: setCardModalAlertState, props: {
+                state: modalAlertProps,
+                set: setModalAlertProps
             }
-        }, alert: { ref: cardModalAlertRef, state: cardModalAlertState, set: setCardModalAlertState }
+        }
     } as const
 }
