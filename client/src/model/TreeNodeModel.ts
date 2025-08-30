@@ -1,5 +1,7 @@
+export type TreeStateType = Map<string, TreeNode>;
+
 export type TreeNodeType = "game" | "profile" | "subject" | "ROOT_NODE";
-export type SubjectContext = "boss" | "location" | "other";
+export type SubjectContext = "boss" | "location" | "other" | "genericEnemy" | "miniBoss";
 export type Milestone = {
     name: string
     start: number,
@@ -54,5 +56,6 @@ export type Subject = TreeNode & {
     reoccurring: boolean,
     context: SubjectContext
 }
+
 
 

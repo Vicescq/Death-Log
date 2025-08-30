@@ -5,7 +5,7 @@ import CardWrapper from "../../components/card/CardWrapper";
 import { useTreeStore } from "../../hooks/StateManagers/useTreeStore";
 import { ForceError } from "../ErrorPage";
 import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
-import useLoadDeathLog from "../../hooks/useLoadDeathLog";
+import useLoadDeathLog from "./useLoadDeathLog";
 
 type Props = {
 	type: "game" | "profile" | "subject";

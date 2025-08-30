@@ -10,14 +10,13 @@ import type {
 } from "./types";
 import AddItemCardModalBody from "./AddItemCardModalBody";
 import type {
-	SelectDropdownOption,
 	SelectDropdownSelected,
 } from "../SelectDropdown";
 import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
 import { useTreeStore } from "../../hooks/StateManagers/useTreeStore";
-import useModal from "../modal/useModal";
 import AlertModalBody from "../modal/AlertModalBody";
 import useAICModals from "./useAICModals";
+import { contextOptions } from "../../utils";
 
 type Props = AICGame | AICProfile | AICSubject;
 
@@ -27,21 +26,6 @@ export default function AddItemCard({ pageType, parentID }: Props) {
 	const inputRef = useRef<HTMLInputElement>(null);
 
 	const aicModals = useAICModals();
-
-	const contextOptions: SelectDropdownOption[] = [
-		{
-			value: "boss",
-			text: "Boss",
-		},
-		{
-			value: "location",
-			text: "Location",
-		},
-		{
-			value: "other",
-			text: "Other",
-		},
-	];
 
 	function handleAdd() {
 		try {

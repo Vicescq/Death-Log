@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import IndexedDBService from "../services/IndexedDBService";
-import { useTreeStore } from "./StateManagers/useTreeStore";
-import type { TreeStateType } from "../contexts/treeContext";
+import IndexedDBService from "../../services/IndexedDBService";
+import { useTreeStore } from "../../hooks/StateManagers/useTreeStore";
+import type { TreeStateType } from "../../model/TreeNodeModel";
 
 export default function useLoadDeathLog(tree: TreeStateType, parentID: string) {
     const initTree = useTreeStore((state) => state.initTree);

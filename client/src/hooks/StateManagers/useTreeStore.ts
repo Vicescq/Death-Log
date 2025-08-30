@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { TreeStateType } from '../../contexts/treeContext'
+import type { TreeStateType } from "../../model/TreeNodeModel";
 import type { DistinctTreeNode, Game, Profile, RootNode, Subject, TreeNode } from '../../model/TreeNodeModel';
 import type { AICSubjectOverrides } from '../../components/addItemCard/types';
 import IndexedDBService from '../../services/IndexedDBService';

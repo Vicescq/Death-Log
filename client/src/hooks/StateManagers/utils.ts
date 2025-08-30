@@ -1,5 +1,5 @@
 
-import type { TreeStateType } from "../../contexts/treeContext";
+import type { TreeStateType } from "../../model/TreeNodeModel";
 import type { TreeNode, Subject, DistinctTreeNode, Game, Profile, RootNode } from "../../model/TreeNodeModel";
 import { v4 as uuidv4 } from 'uuid';
 

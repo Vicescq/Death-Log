@@ -16,6 +16,7 @@ import SelectDropdown, {
 	type SelectDropdownSelected,
 } from "../SelectDropdown";
 import Toggle from "../Toggle";
+import { contextOptions } from "../../utils";
 
 type Props<T extends DistinctTreeNode> = {
 	modalState: T;
@@ -26,21 +27,6 @@ export default function CardModalBody<T extends DistinctTreeNode>({
 	modalState,
 	setModalState,
 }: Props<T>) {
-	const contextOptions: SelectDropdownOption[] = [
-		{
-			value: "boss",
-			text: "Boss",
-		},
-		{
-			value: "location",
-			text: "Location",
-		},
-		{
-			value: "other",
-			text: "Other",
-		},
-	];
-
 	return (
 		<ul className="flex flex-col gap-2">
 			<li className="flex items-center gap-2">
