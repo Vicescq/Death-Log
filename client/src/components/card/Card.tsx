@@ -17,7 +17,7 @@ import useModal from "../modal/useModal";
 import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
 import Modal from "../modal/Modal";
 import CardModalBody from "./CardModalBody";
-import { useEffect, type SetStateAction } from "react";
+import { useEffect, useState, type SetStateAction } from "react";
 import AlertModalBody from "../modal/AlertModalBody";
 import useCardModals from "./useCardModals";
 
@@ -161,7 +161,6 @@ export default function Card({ id }: { id: string }) {
 					}}
 				/>
 			</div>
-
 			<Modal
 				modalStyle="utility"
 				body={

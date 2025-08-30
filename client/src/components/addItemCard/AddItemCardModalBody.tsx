@@ -1,7 +1,5 @@
-import SelectDropdown, {
-	type SelectDropdownOption,
-	type SelectDropdownSelected,
-} from "../SelectDropdown";
+
+import SelectDropdown, { type SelectDropdownSelected, type SelectDropdownOption } from "../SelectDropdown";
 import Toggle from "../Toggle";
 import type { AICSubjectOverrides } from "./types";
 

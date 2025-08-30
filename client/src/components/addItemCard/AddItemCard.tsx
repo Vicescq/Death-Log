@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import gear from "../../assets/gear.svg";
 import filter from "../../assets/filter.svg";
 import Modal from "../modal/Modal";
@@ -25,8 +25,68 @@ export default function AddItemCard({ pageType, parentID }: Props) {
 	const addNode = useTreeStore((state) => state.addNode);
 	const [inputText, setInputText] = useState("");
 	const inputRef = useRef<HTMLInputElement>(null);
+<<<<<<< HEAD
 
 	const aicModals = useAICModals();
+=======
+
+	// {
+	// 	reoccurring: false,
+	// 	context: "boss",
+	// }
+
+	const {
+		modalRef,
+		modalState,
+		setModalState,
+		modalPropsState,
+		setModalPropsState,
+	} = useModal(
+		{ reoccurring: false, context: "boss" },
+		{
+			modalStyle: "utility",
+			modalFn: {
+				fn: () => modalRef.current?.close(),
+				label: "CLOSE",
+			},
+		},
+	);
+	const {
+		modalRef: alertModalRef,
+		modalState: alertModalState,
+		setModalState: setAlertModalState,
+		modalPropsState: alertModalPropsState,
+		setModalPropsState: setAlertModalPropsState,
+	} = useModal("", {
+		modalStyle: "alert",
+		modalFn: {
+			fn: () => alertModalRef.current?.close(),
+			label: "CLOSE",
+		},
+	});
+
+	function handleAdd() {
+		try {
+			if (pageType === "game") {
+				addNode("game", inputText, parentID);
+			} else if (pageType === "profile") {
+				addNode("profile", inputText, parentID);
+			} else if (pageType === "subject") {
+				addNode(
+					"subject",
+					inputText,
+					parentID,
+					modalState as AICSubjectOverrides,
+				);
+			}
+		} catch (e) {
+			if (e instanceof Error) {
+				setAlertModalState(e.message);
+				alertModalRef.current?.showModal();
+			}
+		}
+	}
+>>>>>>> 8d11761659a3b49db77889a688e87671fd3d4fb4
 
 	const contextOptions: SelectDropdownOption[] = [
 		{
@@ -71,7 +131,11 @@ export default function AddItemCard({ pageType, parentID }: Props) {
 	) {
 		if (setting != "context") {
 			(
+<<<<<<< HEAD
 				aicModals.aic.set as React.Dispatch<
+=======
+				setModalState as React.Dispatch<
+>>>>>>> 8d11761659a3b49db77889a688e87671fd3d4fb4
 					React.SetStateAction<AICSubjectOverrides>
 				>
 			)((prev) => ({
@@ -80,7 +144,11 @@ export default function AddItemCard({ pageType, parentID }: Props) {
 			}));
 		} else if (setting == "context" && selected) {
 			(
+<<<<<<< HEAD
 				aicModals.aic.set as React.Dispatch<
+=======
+				setModalState as React.Dispatch<
+>>>>>>> 8d11761659a3b49db77889a688e87671fd3d4fb4
 					React.SetStateAction<AICSubjectOverrides>
 				>
 			)((prev) => ({
@@ -113,7 +181,13 @@ export default function AddItemCard({ pageType, parentID }: Props) {
 							alt=""
 							className="w-10"
 							onClick={() => {
+<<<<<<< HEAD
 								aicModals.aic.ref.current?.showModal();
+=======
+								if (modalPropsState.modalStyle == "utility") {
+									modalRef.current?.showModal();
+								}
+>>>>>>> 8d11761659a3b49db77889a688e87671fd3d4fb4
 							}}
 						/>
 					</button>
@@ -139,6 +213,7 @@ export default function AddItemCard({ pageType, parentID }: Props) {
 			</div>
 
 			<Modal
+<<<<<<< HEAD
 				modalStyle="utility"
 				modalRef={aicModals.aic.ref}
 				body={
@@ -152,9 +227,26 @@ export default function AddItemCard({ pageType, parentID }: Props) {
 					fn: () => aicModals.aic.ref.current?.close(),
 					label: "CLOSE",
 				}}
+=======
+				modalStyle={modalPropsState.modalStyle}
+				body={
+					<AddItemCardModalBody
+						state={modalState as AICSubjectOverrides}
+						handleEdit={(setting, selected) =>
+							handleModalEdit(setting, selected)
+						}
+						contextOptions={contextOptions}
+					/>
+				}
+				modalRef={modalRef}
+				modalFn={modalPropsState.modalFn}
+				modalFn2={modalPropsState.modalFn2}
+				modalFn3={modalPropsState.modalFn3}
+>>>>>>> 8d11761659a3b49db77889a688e87671fd3d4fb4
 			/>
 
 			<Modal
+<<<<<<< HEAD
 				modalStyle="alert"
 				modalRef={aicModals.alert.ref}
 				body={<AlertModalBody msg={aicModals.alert.state as string} />}
@@ -162,6 +254,14 @@ export default function AddItemCard({ pageType, parentID }: Props) {
 					fn: () => aicModals.alert.ref.current?.close(),
 					label: "CLOSE",
 				}}
+=======
+				modalStyle={alertModalPropsState.modalStyle}
+				body={<AlertModalBody msg={alertModalState as string} />}
+				modalRef={alertModalRef}
+				modalFn={alertModalPropsState.modalFn}
+				modalFn2={alertModalPropsState.modalFn2}
+				modalFn3={alertModalPropsState.modalFn3}
+>>>>>>> 8d11761659a3b49db77889a688e87671fd3d4fb4
 			/>
 		</header>
 	);
