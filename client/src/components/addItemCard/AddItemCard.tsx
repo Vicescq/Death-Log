@@ -15,51 +15,18 @@ import type {
 } from "../SelectDropdown";
 import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
 import { useTreeStore } from "../../hooks/StateManagers/useTreeStore";
-import useModal from "../../hooks/useModal";
+import useModal from "../modal/useModal";
 import AlertModalBody from "../modal/AlertModalBody";
+import useAICModals from "./useAICModals";
 
 type Props = AICGame | AICProfile | AICSubject;
 
 export default function AddItemCard({ pageType, parentID }: Props) {
 	const addNode = useTreeStore((state) => state.addNode);
 	const [inputText, setInputText] = useState("");
-	const inputRef = useRef<HTMLInputElement>(null)
+	const inputRef = useRef<HTMLInputElement>(null);
 
-	const {
-		modalRef: aicModalRef,
-		modalState: aicModalState,
-		setModalState: setAICModalState,
-	} = useModal({
-		reoccurring: false,
-		context: "boss",
-	});
-	const {
-		modalRef: alertModalRef,
-		modalState: alertModalState,
-		setModalState: setAlertModalState,
-	} = useModal("");
-
-	function handleAdd() {
-		try {
-			if (pageType === "game") {
-				addNode("game", inputText, parentID);
-			} else if (pageType === "profile") {
-				addNode("profile", inputText, parentID);
-			} else if (pageType === "subject") {
-				addNode(
-					"subject",
-					inputText,
-					parentID,
-					aicModalState as AICSubjectOverrides,
-				);
-			}
-		} catch (e) {
-			if (e instanceof Error) {
-				setAlertModalState(e.message);
-				alertModalRef.current?.showModal();
-			}
-		}
-	}
+	const aicModals = useAICModals();
 
 	const contextOptions: SelectDropdownOption[] = [
 		{
@@ -76,13 +43,35 @@ export default function AddItemCard({ pageType, parentID }: Props) {
 		},
 	];
 
+	function handleAdd() {
+		try {
+			if (pageType === "game") {
+				addNode("game", inputText, parentID);
+			} else if (pageType === "profile") {
+				addNode("profile", inputText, parentID);
+			} else if (pageType === "subject") {
+				addNode(
+					"subject",
+					inputText,
+					parentID,
+					aicModals.aic.state as AICSubjectOverrides,
+				);
+			}
+		} catch (e) {
+			if (e instanceof Error) {
+				aicModals.alert.set(e.message);
+				aicModals.alert.ref.current?.showModal();
+			}
+		}
+	}
+
 	function handleModalEdit(
 		setting: keyof AICSubjectOverrides,
 		selected?: SelectDropdownSelected,
 	) {
 		if (setting != "context") {
 			(
-				setAICModalState as React.Dispatch<
+				aicModals.aic.set as React.Dispatch<
 					React.SetStateAction<AICSubjectOverrides>
 				>
 			)((prev) => ({
@@ -91,7 +80,7 @@ export default function AddItemCard({ pageType, parentID }: Props) {
 			}));
 		} else if (setting == "context" && selected) {
 			(
-				setAICModalState as React.Dispatch<
+				aicModals.aic.set as React.Dispatch<
 					React.SetStateAction<AICSubjectOverrides>
 				>
 			)((prev) => ({
@@ -124,7 +113,7 @@ export default function AddItemCard({ pageType, parentID }: Props) {
 							alt=""
 							className="w-10"
 							onClick={() => {
-								aicModalRef.current?.showModal();
+								aicModals.aic.ref.current?.showModal();
 							}}
 						/>
 					</button>
@@ -134,7 +123,7 @@ export default function AddItemCard({ pageType, parentID }: Props) {
 				<button
 					onClick={() => {
 						handleAdd();
-						if(inputRef.current){
+						if (inputRef.current) {
 							inputRef.current.value = "";
 						}
 					}}
@@ -151,23 +140,28 @@ export default function AddItemCard({ pageType, parentID }: Props) {
 
 			<Modal
 				modalStyle="utility"
-				modalRef={aicModalRef}
+				modalRef={aicModals.aic.ref}
 				body={
 					<AddItemCardModalBody
-						state={aicModalState as AICSubjectOverrides}
+						state={aicModals.aic.state as AICSubjectOverrides}
 						handleEdit={handleModalEdit}
 						contextOptions={contextOptions}
 					/>
 				}
-				negativeFn={() => aicModalRef.current?.close()}
-				negativeFnBtnLabel="CLOSE"
+				closeFn={{
+					fn: () => aicModals.aic.ref.current?.close(),
+					label: "CLOSE",
+				}}
 			/>
+
 			<Modal
 				modalStyle="alert"
-				modalRef={alertModalRef}
-				body={<AlertModalBody msg={alertModalState as string} />}
-				negativeFn={() => alertModalRef.current?.close()}
-				negativeFnBtnLabel="CLOSE"
+				modalRef={aicModals.alert.ref}
+				body={<AlertModalBody msg={aicModals.alert.state as string} />}
+				closeFn={{
+					fn: () => aicModals.alert.ref.current?.close(),
+					label: "CLOSE",
+				}}
 			/>
 		</header>
 	);

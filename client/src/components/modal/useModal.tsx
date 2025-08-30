@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
-import type { AICSubjectOverrides } from "../components/addItemCard/types";
-import type { DistinctTreeNode } from "../model/TreeNodeModel";
+import type { AICSubjectOverrides } from "../addItemCard/types";
+import type { DistinctTreeNode } from "../../model/TreeNodeModel";
 
 type ModalState = AICSubjectOverrides | string | DistinctTreeNode;
 
