@@ -1,10 +1,10 @@
 import Dexie, { type EntityTable, type Table } from 'dexie';
-import type { TreeNode } from './TreeNodeModel';
+import type { DistinctTreeNode, TreeNode } from './TreeNodeModel';
 
 export type Node = {
     email: string
     node_id: string,
-    node: TreeNode,
+    node: DistinctTreeNode,
     created_at: string,
     edited_at: string
 }

@@ -1,26 +1,38 @@
 import { db } from "../model/IndexedDBSchema";
-import type { TreeNode } from "../model/TreeNodeModel";
+import type { DistinctTreeNode, Game, Profile, Subject, TreeNode } from "../model/TreeNodeModel";
+import { assertIsNonNull } from "../utils";
 
 export default class IndexedDBService {
     constructor() { }
 
-    static async addNode(node: TreeNode, email: string, parentNode: TreeNode) {
+    static async addNode(node: DistinctTreeNode, email: string, parentNode?: DistinctTreeNode) {
         await db.nodes.add({ email: email, node_id: node.id, node: node, created_at: new Date().toISOString(), edited_at: new Date().toISOString() });
         if (node.type != "game") {
-            await IndexedDBService.updateNode(parentNode, email);
+            assertIsNonNull(parentNode);
+            await db.nodes.update(parentNode.id, { email: email, node_id: parentNode.id, node: parentNode, edited_at: new Date().toISOString() });
         }
     }
 
-    static async deleteNode(ids: string[], node: TreeNode, email: string, parentNode: TreeNode) {
-        await db.nodes.bulkDelete(ids);
+    static async deleteNode(ids: string[], node: DistinctTreeNode, email: string, parentNode?: DistinctTreeNode) {
+        await db.nodes.bulkDelete(ids); // deletes self and children
         if (node.type != "game") {
-            await IndexedDBService.updateNode(parentNode, email);
+            assertIsNonNull(parentNode);
+            await db.nodes.update(parentNode.id, { email: email, node_id: parentNode.id, node: parentNode, edited_at: new Date().toISOString() }); // updated death count and sorted childIDs
         }
     }
 
-    static async updateNode(node: TreeNode, email: string) {
-        await db.nodes.update(node.id, { email: email, node_id: node.id, node: node, edited_at: new Date().toISOString() });
+    static async updateNodeLineage(subject: Subject, profile: Profile, game: Game, email: string) {
+        await db.nodes.update(subject.id, { email: email, node_id: subject.id, node: subject, edited_at: new Date().toISOString() });
+        await db.nodes.update(profile.id, { email: email, node_id: profile.id, node: profile, edited_at: new Date().toISOString() });
+        await db.nodes.update(game.id, { email: email, node_id: game.id, node: game, edited_at: new Date().toISOString() });
+    }
 
+    static async updateNodeAndParent(node: DistinctTreeNode, email: string, parentNode?: DistinctTreeNode) {
+        await db.nodes.update(node.id, { email: email, node_id: node.id, node: node, edited_at: new Date().toISOString() });
+        if (node.type != "game") {
+            assertIsNonNull(parentNode);
+            await db.nodes.update(parentNode.id, { email: email, node_id: parentNode.id, node: parentNode, edited_at: new Date().toISOString() });
+        }
     }
 
     static async getNodes(email: string) {

@@ -1,9 +1,9 @@
 
-import type { TreeStateType } from "../../model/TreeNodeModel";
-import type { TreeNode, Subject, DistinctTreeNode, Game, Profile, RootNode } from "../../model/TreeNodeModel";
+import type { TreeNode, Subject, DistinctTreeNode, Game, Profile, RootNode, Tree } from "../../model/TreeNodeModel";
 import { v4 as uuidv4 } from 'uuid';
+import { assertIsDistinctTreeNode, assertIsNonNull } from "../../utils";
 
-export function sanitizeTreeNodeEntry(inputText: string, tree: TreeStateType, parentID: string) {
+export function sanitizeTreeNodeEntry(inputText: string, tree: Tree, parentID: string) {
     inputText = inputText.trim();
     if (typeof inputText != "string") {
         throw new Error("Text has to be of type string!");
@@ -21,10 +21,15 @@ export function sanitizeTreeNodeEntry(inputText: string, tree: TreeStateType, pa
     return inputText;
 }
 
-export function sortChildIDS(parentNode: TreeNode, tree: TreeStateType) {
+export function sortChildIDS(parentNode: TreeNode, tree: Tree) {
     const sorted = parentNode.childIDS.toSorted((a, b) => {
-        const nodeA = tree.get(a) as DistinctTreeNode;
-        const nodeB = tree.get(b) as DistinctTreeNode;
+        const nodeA = tree.get(a);
+        const nodeB = tree.get(b);
+
+        assertIsNonNull(nodeA);
+        assertIsNonNull(nodeB);
+        assertIsDistinctTreeNode(nodeA);
+        assertIsDistinctTreeNode(nodeB);
 
         let result = 0;
 
@@ -43,7 +48,14 @@ export function sortChildIDS(parentNode: TreeNode, tree: TreeStateType) {
         const nodeAWeights = applyWeights(nodeA);
         const nodeBWeights = applyWeights(nodeB);
         if (nodeAWeights == nodeBWeights) {
-            result = nodeA.completed ? Date.parse(nodeB.dateEnd!) - Date.parse(nodeA.dateEnd!) : Date.parse(nodeB.dateStart) - Date.parse(nodeA.dateStart);
+            if (nodeA.completed) {
+                assertIsNonNull(nodeA.dateEnd);
+                assertIsNonNull(nodeB.dateEnd);
+                result = Date.parse(nodeB.dateEnd) - Date.parse(nodeA.dateEnd)
+            }
+            else {
+                result = Date.parse(nodeB.dateStart) - Date.parse(nodeA.dateStart)
+            }
         }
         else {
             result = nodeBWeights > nodeAWeights ? 1 : -1;
@@ -54,10 +66,10 @@ export function sortChildIDS(parentNode: TreeNode, tree: TreeStateType) {
     return sorted
 }
 
-export function identifyDeletedSelfAndChildrenIDS(node: TreeNode, tree: TreeStateType) {
+export function identifyDeletedSelfAndChildrenIDS(node: DistinctTreeNode, tree: Tree) {
     const idsToBeDeleted: string[] = [];
 
-    function deleteSelfAndChildren(node: TreeNode) {
+    function deleteSelfAndChildren(node: DistinctTreeNode) {
         // leaf nodes
         if (node.childIDS.length == 0) {
             idsToBeDeleted.push(node.id);
@@ -66,7 +78,10 @@ export function identifyDeletedSelfAndChildrenIDS(node: TreeNode, tree: TreeStat
 
         // iterate every child node
         for (let i = 0; i < node.childIDS.length; i++) {
-            deleteSelfAndChildren(tree.get(node.childIDS[i])!);
+            const childNode = tree.get(node.childIDS[i]);
+            assertIsNonNull(childNode);
+            assertIsDistinctTreeNode(childNode);
+            deleteSelfAndChildren(childNode);
         }
 
         idsToBeDeleted.push(node.id);
@@ -76,9 +91,12 @@ export function identifyDeletedSelfAndChildrenIDS(node: TreeNode, tree: TreeStat
     return idsToBeDeleted;
 }
 
-export function isNodeNameUnique(tree: TreeStateType, parentID: string, name: string) {
-    const siblingNames: string[] = tree.get(parentID)!.childIDS.map((id) => {
-        const distinctNode = tree.get(id)! as DistinctTreeNode;
+export function isNodeNameUnique(tree: Tree, parentID: string, name: string) {
+    const parentNode = tree.get(parentID);
+    assertIsNonNull(parentNode);
+    const siblingNames = parentNode.childIDS.map((id) => {
+        const distinctNode = tree.get(id);
+        assertIsNonNull(distinctNode);
         return distinctNode.name;
     })
     return !siblingNames.includes(name);
@@ -146,21 +164,6 @@ export function createSubject(
         context: "boss"
     };
     return defaultSubject
-}
-
-export function requiresParentUpdate(node: TreeNode, overrides: DistinctTreeNode) {
-    let generalCond = node.completed != overrides.completed || node.dateStart != overrides.dateStart || node.dateEnd != overrides.dateEnd;
-    let updateRequired: boolean;
-
-    if (node.type == "subject" && overrides.type == "subject") {
-        const subject = node as Subject;
-        updateRequired = subject.deaths < overrides.deaths || subject.deaths > overrides.deaths || generalCond;
-    }
-    else {
-        updateRequired = generalCond
-    }
-
-    return updateRequired;
 }
 
 export function updateProfileDeathEntriesOnSubjectDelete(profile: Profile, deletedSubject: Subject) {

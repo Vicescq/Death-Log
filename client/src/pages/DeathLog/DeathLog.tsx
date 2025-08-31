@@ -15,7 +15,7 @@ type Props = {
 export default function DeathLog({ type, parentID }: Props) {
 	const tree = useTreeStore((state) => state.tree);
 	const { loading, deletedID } = useLoadDeathLog(tree, parentID);
-
+	
 	const childIDS = tree.get(parentID)?.childIDS || [];
 	const cards = useMemo(() => {
 		return childIDS.map((nodeID) => <Card key={nodeID} id={nodeID} />);
