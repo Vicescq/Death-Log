@@ -81,6 +81,7 @@ export const useTreeStore = create<TreeState>((set) => ({
         set((state) => {
             const updatedTree = new Map(state.tree);
             const nodeIDSToBeDeleted = identifyDeletedSelfAndChildrenIDS(node, updatedTree);
+            console.log("DELETED:", nodeIDSToBeDeleted)
             nodeIDSToBeDeleted.forEach((id) => updatedTree.delete(id));
 
             const localStorageRes = localStorage.getItem("email");
@@ -93,6 +94,10 @@ export const useTreeStore = create<TreeState>((set) => ({
 
             // handle death updates
             switch (parentNodeCopy.type) {
+                case "ROOT_NODE":
+                    updatedTree.set(parentNodeCopy.id, parentNodeCopy);
+                    break;
+
                 case "game":
                     assertIsGame(parentNodeCopy);
                     assertIsProfile(node);
@@ -112,6 +117,7 @@ export const useTreeStore = create<TreeState>((set) => ({
                     const gameNodeCopy: Game = { ...game };
                     gameNodeCopy.totalDeaths -= node.deaths;
 
+                    updatedTree.set(parentNodeCopy.id, parentNodeCopy);
                     updatedTree.set(gameNodeCopy.id, gameNodeCopy);
                     break;
 
@@ -175,6 +181,7 @@ export const useTreeStore = create<TreeState>((set) => ({
             const updatedTree = new Map(state.tree);
             const updatedNode: DistinctTreeNode = { ...node, completed: !node.completed };
             updatedNode.dateEnd = updatedNode.completed ? new Date().toISOString() : null;
+            updatedTree.set(updatedNode.id, updatedNode);
 
             const localStorageRes = localStorage.getItem("email");
             assertIsNonNull(localStorageRes);
@@ -184,7 +191,7 @@ export const useTreeStore = create<TreeState>((set) => ({
             const parentNodeCopy: TreeNode = { ...parentNode, childIDS: [...parentNode.childIDS] };
             parentNodeCopy.childIDS = sortChildIDS(parentNodeCopy, updatedTree);
 
-            updatedTree.set(updatedNode.id, updatedNode);
+
             updatedTree.set(parentNodeCopy.id, parentNodeCopy);
 
             if (parentNodeCopy.id == "ROOT_NODE") {
@@ -202,6 +209,7 @@ export const useTreeStore = create<TreeState>((set) => ({
     updateModalEditedNode: (node, overrides) => {
         set((state) => {
             const updatedTree = new Map(state.tree);
+            let updatedAlready = false;
 
             const localStorageRes = localStorage.getItem("email");
             assertIsNonNull(localStorageRes);
@@ -210,6 +218,7 @@ export const useTreeStore = create<TreeState>((set) => ({
                 sanitizeTreeNodeEntry(overrides.name, updatedTree, node.parentID);
             }
             const updatedNode: DistinctTreeNode = { ...node, ...overrides };
+            updatedTree.set(updatedNode.id, updatedNode);
 
             // requires sorting
             if (node.dateStart != overrides.dateStart || node.dateEnd != overrides.dateEnd) {
@@ -227,9 +236,10 @@ export const useTreeStore = create<TreeState>((set) => ({
                     assertIsDistinctTreeNode(parentNodeCopy);
                     IndexedDBService.updateNodeAndParent(updatedNode, localStorageRes, parentNodeCopy);
                 }
+                updatedAlready = true
             }
 
-            updatedTree.set(updatedNode.id, updatedNode);
+            updatedAlready ? null : IndexedDBService.updateNode(updatedNode, localStorageRes);
 
             return { tree: updatedTree }
         })

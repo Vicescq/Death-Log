@@ -34,7 +34,7 @@ export function assertIsProfile(node: TreeNode): asserts node is Profile {
 }
 
 export function assertIsSubject(node: TreeNode): asserts node is Subject {
-    if (node.type != "profile") {
+    if (node.type != "subject") {
         throw new Error("DEV ERROR! expected subject type is somehow wrong!")
     }
 }

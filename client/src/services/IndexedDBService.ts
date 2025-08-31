@@ -35,6 +35,10 @@ export default class IndexedDBService {
         }
     }
 
+    static async updateNode(node: DistinctTreeNode, email: string){
+        await db.nodes.update(node.id, { email: email, node_id: node.id, node: node, edited_at: new Date().toISOString() });
+    }
+
     static async getNodes(email: string) {
         const rows = await db.nodes.where("email").equals(email).toArray();
         const nodes = rows.map((node) => { return node.node });

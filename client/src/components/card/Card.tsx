@@ -26,7 +26,13 @@ export default function Card({ id }: { id: string }) {
 	const node = useTreeStore((state) =>
 		state.tree.get(id),
 	) as DistinctTreeNode;
-	const updateNode = useTreeStore((state) => state.updateNode);
+	const updateModalEditedNode = useTreeStore(
+		(state) => state.updateModalEditedNode,
+	);
+	const updateNodeCompletion = useTreeStore(
+		(state) => state.updateNodeCompletion,
+	);
+	const updateNodeDeaths = useTreeStore((state) => state.updateNodeDeaths);
 	const deleteNodes = useTreeStore((state) => state.deleteNodes);
 
 	const cardModals = useCardModals(node);
@@ -91,7 +97,7 @@ export default function Card({ id }: { id: string }) {
 		cardModals.card.ref.current?.close();
 	}
 
-	function showCompletetionReconfirm() {
+	function showCompletionReconfirm() {
 		if (node.completed) {
 			cardModals.alert.set("Mark this card as incomplete?");
 		} else {
@@ -107,11 +113,7 @@ export default function Card({ id }: { id: string }) {
 			},
 			{
 				fn: () => {
-					const nodeCopy: DistinctTreeNode = {
-						...node,
-						completed: !node.completed,
-					};
-					updateNode(node, nodeCopy);
+					updateNodeCompletion(node);
 					cardModals.alert.ref.current?.close();
 				},
 				label: "CONFIRM",
@@ -123,7 +125,7 @@ export default function Card({ id }: { id: string }) {
 
 	function onSave() {
 		try {
-			updateNode(node, cardModals.card.state);
+			updateModalEditedNode(node, cardModals.card.state);
 			cardModals.alert.ref.current?.close();
 		} catch (e) {
 			if (e instanceof Error) {
@@ -188,10 +190,7 @@ export default function Card({ id }: { id: string }) {
 							src={add}
 							alt=""
 							onClick={() => {
-								updateNode(node, {
-									...node,
-									deaths: node.deaths + 1,
-								});
+								updateNodeDeaths(node, "add");
 							}}
 						/>
 						<img
@@ -200,10 +199,7 @@ export default function Card({ id }: { id: string }) {
 							alt=""
 							onClick={() => {
 								if (node.deaths != 0) {
-									updateNode(node, {
-										...node,
-										deaths: node.deaths - 1,
-									});
+									updateNodeDeaths(node, "subtract");
 								}
 							}}
 						/>
@@ -219,7 +215,7 @@ export default function Card({ id }: { id: string }) {
 					className={`w-9 cursor-pointer ${highlightingCSS} ${reoccurringCSS}`}
 					src={readonly}
 					alt=""
-					onClick={() => showCompletetionReconfirm()}
+					onClick={() => showCompletionReconfirm()}
 				/>
 			</div>
 
