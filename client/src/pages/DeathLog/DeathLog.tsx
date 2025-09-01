@@ -1,7 +1,7 @@
 import { useMemo } from "react";
-import AddItemCard from "../../components/addItemCard/AddItemCard";
-import Card from "../../components/card/Card";
-import CardWrapper from "../../components/card/CardWrapper";
+import AddItemCard from "../../components/AddItemCard/AddItemCard";
+import Card from "../../components/Card/Card";
+import CardWrapper from "../../components/Card/CardWrapper";
 import { useTreeStore } from "../../stores/useTreeStore";
 import { ForceError } from "../ErrorPage";
 import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";

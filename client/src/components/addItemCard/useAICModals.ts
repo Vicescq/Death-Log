@@ -1,4 +1,4 @@
-import useModal from "../modal/useModal";
+import useModal from "../Modal/useModal";
 import type { AICSubjectOverrides } from "./types";
 
 export default function useAICModals() {

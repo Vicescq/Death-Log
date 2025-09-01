@@ -1,9 +1,9 @@
 import { create } from 'zustand'
 import type { DistinctTreeNode, Game, ParentTreeNode, Profile, RootNode, Subject, Tree, TreeNode } from '../model/TreeNodeModel';
-import type { AICSubjectOverrides } from '../components/addItemCard/types';
+import type { AICSubjectOverrides } from '../components/AddItemCard/types';
 import IndexedDBService from '../services/IndexedDBService';
 import { sortChildIDS, sanitizeTreeNodeEntry, identifyDeletedSelfAndChildrenIDS, createGame, createProfile, createSubject, createRootNode, updateProfileDeathEntriesOnSubjectDelete } from './utils';
-import { assertIsDistinctTreeNode, assertIsGame, assertIsNonNull, assertIsProfile, assertIsRootNode, assertIsSubject } from '../utils';
+import { assertIsDistinctTreeNode, assertIsGame, assertIsNonNull, assertIsProfile, assertIsRootNode } from '../utils';
 
 type TreeState = {
     tree: Tree;

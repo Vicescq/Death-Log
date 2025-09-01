@@ -14,10 +14,10 @@ import {
 } from "./utils";
 import { useTreeStore } from "../../stores/useTreeStore";
 import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
-import Modal from "../modal/Modal";
+import Modal from "../Modal/Modal";
 import CardModalBody from "./CardModalBody";
 import { useEffect } from "react";
-import AlertModalBody from "../modal/AlertModalBody";
+import AlertModalBody from "../Modal/AlertModalBody";
 import useCardModals from "./useCardModals";
 
 export default function Card({ id }: { id: string }) {
@@ -44,6 +44,7 @@ export default function Card({ id }: { id: string }) {
 		createCardCSS(node);
 	const deathCount = getCardDeathCount(node);
 
+	
 	function showSaveReconfirm() {
 		if (isCardModalStateEqual(cardModals.card.state, node)) {
 			cardModals.alert.set(
@@ -195,6 +196,7 @@ export default function Card({ id }: { id: string }) {
 							navigate("/death-log", {
 								state: mainPageTransitionState,
 							})
+							
 						}
 					/>
 				) : (
