@@ -1,7 +1,7 @@
 import { useLocation } from "react-router";
 import DeathLog from "./DeathLog";
 import { useEffect } from "react";
-import  { useTreeStore } from "../../hooks/StateManagers/useTreeStore";
+import  { useTreeStore } from "../../stores/useTreeStore";
 
 export type CardMainPageTransitionState = {
 	type: "GameToProfiles" | "ProfileToSubjects" | "Terminal";

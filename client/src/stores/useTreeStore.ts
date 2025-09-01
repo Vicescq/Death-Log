@@ -1,15 +1,17 @@
 import { create } from 'zustand'
-import type { DistinctTreeNode, Game, ParentTreeNode, Profile, RootNode, Subject, Tree, TreeNode } from '../../model/TreeNodeModel';
-import type { AICSubjectOverrides } from '../../components/addItemCard/types';
-import IndexedDBService from '../../services/IndexedDBService';
+import type { DistinctTreeNode, Game, ParentTreeNode, Profile, RootNode, Subject, Tree, TreeNode } from '../model/TreeNodeModel';
+import type { AICSubjectOverrides } from '../components/addItemCard/types';
+import IndexedDBService from '../services/IndexedDBService';
 import { sortChildIDS, sanitizeTreeNodeEntry, identifyDeletedSelfAndChildrenIDS, createGame, createProfile, createSubject, createRootNode, updateProfileDeathEntriesOnSubjectDelete } from './utils';
-import { assertIsDistinctTreeNode, assertIsGame, assertIsNonNull, assertIsProfile, assertIsRootNode, assertIsSubject } from '../../utils';
+import { assertIsDistinctTreeNode, assertIsGame, assertIsNonNull, assertIsProfile, assertIsRootNode, assertIsSubject } from '../utils';
 
 type TreeState = {
     tree: Tree;
     initTree: (nodes: DistinctTreeNode[]) => void;
     addNode: (pageType: "game" | "profile" | "subject", inputText: string, parentID: string, overrides?: AICSubjectOverrides) => void;
-    deleteNodes: (node: DistinctTreeNode) => void;
+    deleteGame: (node: Game) => void;
+    deleteProfile: (node: Profile) => void;
+    deleteSubject: (node: Subject) => void;
     updateNodeDeaths: (subject: Subject, operation: "add" | "subtract") => void;
     updateNodeCompletion: (node: DistinctTreeNode) => void;
     updateModalEditedNode: (node: DistinctTreeNode, overrides: DistinctTreeNode) => void;
@@ -77,67 +79,78 @@ export const useTreeStore = create<TreeState>((set) => ({
         })
     },
 
-    deleteNodes: (node) => {
+    deleteGame(node) {
         set((state) => {
             const updatedTree = new Map(state.tree);
             const nodeIDSToBeDeleted = identifyDeletedSelfAndChildrenIDS(node, updatedTree);
-            console.log("DELETED:", nodeIDSToBeDeleted)
             nodeIDSToBeDeleted.forEach((id) => updatedTree.delete(id));
-
             const localStorageRes = localStorage.getItem("email");
-            assertIsNonNull(localStorageRes)
+            assertIsNonNull(localStorageRes);
 
             const parentNode = updatedTree.get(node.parentID);
             assertIsNonNull(parentNode);
-            let parentNodeCopy: TreeNode = { ...parentNode, childIDS: parentNode.childIDS.filter((id) => id != node.id) };
+            assertIsRootNode(parentNode)
+            const parentNodeCopy: RootNode = { ...parentNode, childIDS: parentNode.childIDS.filter((id) => id != node.id) };
             parentNodeCopy.childIDS = sortChildIDS(parentNodeCopy, updatedTree);
 
-            // handle death updates
-            switch (parentNodeCopy.type) {
-                case "ROOT_NODE":
-                    updatedTree.set(parentNodeCopy.id, parentNodeCopy);
-                    break;
+            updatedTree.set(parentNodeCopy.id, parentNodeCopy);
+            IndexedDBService.deleteGame(nodeIDSToBeDeleted);
+            return { tree: updatedTree }
+        })
+    },
 
-                case "game":
-                    assertIsGame(parentNodeCopy);
-                    assertIsProfile(node);
-                    parentNodeCopy.totalDeaths -= node.deathEntries.length;
+    deleteProfile(node) {
+        set((state) => {
+            const updatedTree = new Map(state.tree);
+            const nodeIDSToBeDeleted = identifyDeletedSelfAndChildrenIDS(node, updatedTree);
+            nodeIDSToBeDeleted.forEach((id) => updatedTree.delete(id));
+            const localStorageRes = localStorage.getItem("email");
+            assertIsNonNull(localStorageRes);
 
-                    updatedTree.set(parentNodeCopy.id, parentNodeCopy);
-                    break;
-                case "profile":
+            const parentNode = updatedTree.get(node.parentID);
+            assertIsNonNull(parentNode);
+            assertIsGame(parentNode);
+            const parentNodeCopy: Game = { ...parentNode, childIDS: parentNode.childIDS.filter((id) => id != node.id) };
+            parentNodeCopy.totalDeaths -= node.deathEntries.length;
 
-                    assertIsProfile(parentNodeCopy);
-                    assertIsSubject(node);
-                    parentNodeCopy.deathEntries = updateProfileDeathEntriesOnSubjectDelete(parentNodeCopy, node);
+            updatedTree.set(parentNodeCopy.id, parentNodeCopy);
+            IndexedDBService.deleteProfile(nodeIDSToBeDeleted, parentNodeCopy, localStorageRes);
+            return { tree: updatedTree }
+        })
+    },
 
-                    const game = updatedTree.get(parentNodeCopy.parentID);
-                    assertIsNonNull(game);
-                    assertIsGame(game);
-                    const gameNodeCopy: Game = { ...game };
-                    gameNodeCopy.totalDeaths -= node.deaths;
+    deleteSubject(node) {
+        set((state) => {
+            const updatedTree = new Map(state.tree);
+            const nodeIDSToBeDeleted = identifyDeletedSelfAndChildrenIDS(node, updatedTree);
+            nodeIDSToBeDeleted.forEach((id) => updatedTree.delete(id));
+            const localStorageRes = localStorage.getItem("email");
+            assertIsNonNull(localStorageRes);
 
-                    updatedTree.set(parentNodeCopy.id, parentNodeCopy);
-                    updatedTree.set(gameNodeCopy.id, gameNodeCopy);
-                    break;
+            const profileNode = updatedTree.get(node.parentID);
+            assertIsNonNull(profileNode);
+            assertIsProfile(profileNode)
+            const profileNodeCopy: Profile = { ...profileNode, childIDS: profileNode.childIDS.filter((id) => id != node.id) };
 
-                case "subject":
-                    throw new Error("DEV ERROR! Its impossible for a subject to be a parent!");
-            }
+            profileNodeCopy.deathEntries = updateProfileDeathEntriesOnSubjectDelete(profileNodeCopy, node);
 
-            if (parentNodeCopy.id == "ROOT_NODE") {
-                IndexedDBService.deleteNode(nodeIDSToBeDeleted, node, localStorageRes);
-            }
-            else {
-                assertIsDistinctTreeNode(parentNodeCopy);
-                IndexedDBService.deleteNode(nodeIDSToBeDeleted, node, localStorageRes, parentNodeCopy);
-            }
+            const game = updatedTree.get(profileNodeCopy.parentID);
+            assertIsNonNull(game);
+            assertIsGame(game);
+            const gameNodeCopy: Game = { ...game };
+            gameNodeCopy.totalDeaths -= node.deaths;
 
-            return { tree: updatedTree };
+            updatedTree.set(profileNodeCopy.id, profileNodeCopy);
+            updatedTree.set(gameNodeCopy.id, gameNodeCopy);
+            IndexedDBService.deleteSubject(nodeIDSToBeDeleted, gameNodeCopy, profileNodeCopy, localStorageRes);
+            return { tree: updatedTree }
         })
     },
 
     updateNodeDeaths: (subject, operation) => {
+        /**
+         * Updates node deaths and implictly updates the subject's lineage with the updated count
+         */
         set((state) => {
             const updatedTree = new Map(state.tree);
             let updatedSubject: Subject;
@@ -177,6 +190,9 @@ export const useTreeStore = create<TreeState>((set) => ({
     },
 
     updateNodeCompletion: (node) => {
+        /**
+         * Updates node completion and implictly updates the subject's direct non-rootNode parent
+         */
         set((state) => {
             const updatedTree = new Map(state.tree);
             const updatedNode: DistinctTreeNode = { ...node, completed: !node.completed };
@@ -207,6 +223,9 @@ export const useTreeStore = create<TreeState>((set) => ({
     },
 
     updateModalEditedNode: (node, overrides) => {
+        /**
+         * Updates node with modal edits and in certain cases, implictly updates the subject's direct non-rootNode parent
+         */
         set((state) => {
             const updatedTree = new Map(state.tree);
             let updatedAlready = false;

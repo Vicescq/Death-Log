@@ -13,7 +13,7 @@ import type {
 	SelectDropdownSelected,
 } from "../SelectDropdown";
 import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
-import { useTreeStore } from "../../hooks/StateManagers/useTreeStore";
+import { useTreeStore } from "../../stores/useTreeStore";
 import AlertModalBody from "../modal/AlertModalBody";
 import useAICModals from "./useAICModals";
 import { contextOptions } from "../../utils";

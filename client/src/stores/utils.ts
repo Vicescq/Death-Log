@@ -1,7 +1,7 @@
 
-import type { TreeNode, Subject, DistinctTreeNode, Game, Profile, RootNode, Tree } from "../../model/TreeNodeModel";
+import type { TreeNode, Subject, DistinctTreeNode, Game, Profile, RootNode, Tree } from "../model/TreeNodeModel";
 import { v4 as uuidv4 } from 'uuid';
-import { assertIsDistinctTreeNode, assertIsNonNull } from "../../utils";
+import { assertIsDistinctTreeNode, assertIsNonNull } from "../utils";
 
 export function sanitizeTreeNodeEntry(inputText: string, tree: Tree, parentID: string) {
     inputText = inputText.trim();

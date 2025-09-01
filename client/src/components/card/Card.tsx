@@ -12,7 +12,7 @@ import {
 	getCardDeathCount,
 	isCardModalStateEqual,
 } from "./utils";
-import { useTreeStore } from "../../hooks/StateManagers/useTreeStore";
+import { useTreeStore } from "../../stores/useTreeStore";
 import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
 import Modal from "../modal/Modal";
 import CardModalBody from "./CardModalBody";
@@ -33,7 +33,9 @@ export default function Card({ id }: { id: string }) {
 		(state) => state.updateNodeCompletion,
 	);
 	const updateNodeDeaths = useTreeStore((state) => state.updateNodeDeaths);
-	const deleteNodes = useTreeStore((state) => state.deleteNodes);
+	const deleteGame = useTreeStore((state) => state.deleteGame);
+	const deleteProfile = useTreeStore((state) => state.deleteProfile);
+	const deleteSubject = useTreeStore((state) => state.deleteSubject);
 
 	const cardModals = useCardModals(node);
 
@@ -88,7 +90,19 @@ export default function Card({ id }: { id: string }) {
 				label: "CANCEL",
 			},
 			{
-				fn: () => deleteNodes(node),
+				fn: () => {
+					switch (node.type) {
+						case "game":
+							deleteGame(node);
+							break;
+						case "profile":
+							deleteProfile(node);
+							break;
+						case "subject":
+							deleteSubject(node);
+							break;
+					}
+				},
 				label: "CONFIRM",
 				btnCol: "bg-orange-700",
 			},
