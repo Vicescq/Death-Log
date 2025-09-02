@@ -10,7 +10,7 @@ import "./index.css";
 import { ErrorBoundary } from "react-error-boundary";
 import ErrorPage, { ForceError } from "./pages/ErrorPage.tsx";
 import Root from "./pages/Root.tsx";
-import Start from "./pages/Start/Start.tsx";
+import Start from "./pages/start/Start.tsx";
 import UtilityPage from "./pages/UtilityPage.tsx";
 import MainPageRouter from "./pages/deathLog/DeathLogRouter.tsx";
 
