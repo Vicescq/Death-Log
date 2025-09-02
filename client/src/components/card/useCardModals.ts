@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { DistinctTreeNode } from "../../model/TreeNodeModel";
-import type { ModalFn } from "../Modal/types";
-import useModal from "../Modal/useModal";
+import type { ModalFn } from "../modal/types";
+import useModal from "../modal/useModal";
 
 export default function useCardModals(node: DistinctTreeNode) {
     const {

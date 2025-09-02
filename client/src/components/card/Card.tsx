@@ -14,10 +14,10 @@ import {
 } from "./utils";
 import { useTreeStore } from "../../stores/useTreeStore";
 import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
-import Modal from "../Modal/Modal";
+import Modal from "../modal/Modal";
 import CardModalBody from "./CardModalBody";
 import { useEffect } from "react";
-import AlertModalBody from "../Modal/AlertModalBody";
+import AlertModalBody from "../modal/AlertModalBody";
 import useCardModals from "./useCardModals";
 
 export default function Card({ id }: { id: string }) {

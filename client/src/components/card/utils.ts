@@ -1,5 +1,5 @@
 import type { DistinctTreeNode } from "../../model/TreeNodeModel";
-import type { CardMainPageTransitionState } from "../../pages/DeathLog/DeathLogRouter";
+import type { CardMainPageTransitionState } from "../../pages/deathLog/DeathLogRouter";
 
 export function createCardCSS(
     treeNode: DistinctTreeNode,

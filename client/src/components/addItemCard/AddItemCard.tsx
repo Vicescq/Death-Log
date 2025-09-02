@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import gear from "../../assets/gear.svg";
 import filter from "../../assets/filter.svg";
-import Modal from "../Modal/Modal";
+import Modal from "../modal/Modal";
 import type {
 	AICGame,
 	AICProfile,
@@ -14,7 +14,7 @@ import type {
 } from "../SelectDropdown";
 import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
 import { useTreeStore } from "../../stores/useTreeStore";
-import AlertModalBody from "../Modal/AlertModalBody";
+import AlertModalBody from "../modal/AlertModalBody";
 import useAICModals from "./useAICModals";
 import { contextOptions } from "../../utils";
 
