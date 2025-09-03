@@ -1,15 +1,11 @@
 import { useLocation } from "react-router";
 import { useTreeStore } from "../../stores/useTreeStore";
-import type { Subject } from "../../model/TreeNodeModel";
 import add from "../../assets/add.svg";
 import minus from "../../assets/minus.svg";
-import {
-	assertIsDistinctTreeNode,
-	assertIsNonNull,
-	assertIsSubject,
-} from "../../utils";
+import { assertIsNonNull, assertIsSubject } from "../../utils";
 import useLoadDeathLog from "../deathLog/useLoadDeathLog";
 import { ForceError } from "../ErrorPage";
+import { useState } from "react";
 
 export default function DeathCounter() {
 	const location = useLocation();
@@ -19,6 +15,8 @@ export default function DeathCounter() {
 	const tree = useTreeStore((state) => state.tree);
 	const updateNodeDeaths = useTreeStore((state) => state.updateNodeDeaths);
 	const { loading, deletedID } = useLoadDeathLog(tree, nodeID);
+
+	const [counterAnimation, setCounterAnimation] = useState("");
 
 	function getSubjectDeaths() {
 		// had to make this because of typescript errors and JSX syntax
@@ -40,10 +38,11 @@ export default function DeathCounter() {
 					<h1 className="mt-4 w-70 text-center text-4xl sm:w-120 md:w-180">
 						{node.name}
 					</h1>
-					<div className="mt-38 mb-28 flex text-6xl">
+
+					<div className="mt-38 mb-16 flex text-6xl">
 						<div className="m-auto">
 							<img
-								className="bg-hunyadi border-hunyadi w-10 rounded-2xl border-4 shadow-[6px_4px_0px_rgba(0,0,0,1)]"
+								className="bg-hunyadi border-hunyadi w-8 rounded-2xl border-4 shadow-[6px_4px_0px_rgba(0,0,0,1)]"
 								src={minus}
 								onClick={() => {
 									assertIsSubject(node);
@@ -53,12 +52,14 @@ export default function DeathCounter() {
 								}}
 							/>
 						</div>
-						<span className="w-50 text-center">
+						<span
+							className={`motion-preset-pulse-sm motion w-50 text-center`}
+						>
 							{getSubjectDeaths()}
 						</span>
 						<div className="m-auto">
 							<img
-								className="bg-hunyadi border-hunyadi w-10 rounded-2xl border-4 shadow-[6px_4px_0px_rgba(0,0,0,1)]"
+								className="bg-hunyadi border-hunyadi w-8 rounded-2xl border-4 shadow-[6px_4px_0px_rgba(0,0,0,1)]"
 								src={add}
 								onClick={() => {
 									assertIsSubject(node);
@@ -66,7 +67,11 @@ export default function DeathCounter() {
 								}}
 							/>
 						</div>
+						
 					</div>
+
+					{/* <div className=" rounded-3xl border-2 line-through">III</div> */}
+					
 				</div>
 			) : null}
 		</>
