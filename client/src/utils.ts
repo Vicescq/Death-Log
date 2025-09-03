@@ -1,4 +1,4 @@
-import type { SelectDropdownOption } from "./components/SelectDropdown";
+import type { SelectDropdownOption } from "./components/SelectDropDown";
 import type { DistinctTreeNode, Game, ParentTreeNode, Profile, RootNode, Subject, TreeNode } from "./model/TreeNodeModel";
 
 export const contextOptions: SelectDropdownOption[] = [

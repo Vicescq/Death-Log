@@ -14,7 +14,7 @@ import {
 import SelectDropdown, {
 	type SelectDropdownOption,
 	type SelectDropdownSelected,
-} from "../SelectDropdown";
+} from "../SelectDropDown";
 import Toggle from "../Toggle";
 import { contextOptions } from "../../utils";
 

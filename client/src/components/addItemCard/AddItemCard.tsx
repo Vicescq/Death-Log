@@ -11,7 +11,7 @@ import type {
 import AddItemCardModalBody from "./AddItemCardModalBody";
 import type {
 	SelectDropdownSelected,
-} from "../SelectDropdown";
+} from "../SelectDropDown";
 import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
 import { useTreeStore } from "../../stores/useTreeStore";
 import AlertModalBody from "../modal/AlertModalBody";

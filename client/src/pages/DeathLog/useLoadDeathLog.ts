@@ -3,6 +3,7 @@ import IndexedDBService from "../../services/IndexedDBService";
 import { useTreeStore } from "../../stores/useTreeStore";
 import type { Tree } from "../../model/TreeNodeModel";
 import { assertIsNonNull } from "../../utils";
+import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
 
 export default function useLoadDeathLog(tree: Tree, parentID: string) {
 
@@ -35,6 +36,8 @@ export default function useLoadDeathLog(tree: Tree, parentID: string) {
             }
         }
     }, [tree.size]);
+
+    useConsoleLogOnStateChange(tree, "TREE:", tree)
 
     return { loading, deletedID }
 }
