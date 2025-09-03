@@ -1,7 +1,5 @@
 import { useNavigate } from "react-router";
-import skull from "../../assets/skull.svg";
-import add from "../../assets/add.svg";
-import minus from "../../assets/minus.svg";
+
 import step_into from "../../assets/step_into.svg";
 import details from "../../assets/details.svg";
 import readonly from "../../assets/readonly.svg";
@@ -19,6 +17,7 @@ import CardModalBody from "./CardModalBody";
 import { useEffect } from "react";
 import AlertModalBody from "../modal/AlertModalBody";
 import useCardModals from "./useCardModals";
+import tally from "../../assets/tally.svg";
 
 export default function Card({ id }: { id: string }) {
 	let navigate = useNavigate();
@@ -44,7 +43,6 @@ export default function Card({ id }: { id: string }) {
 		createCardCSS(node);
 	const deathCount = getCardDeathCount(node);
 
-	
 	function showSaveReconfirm() {
 		if (isCardModalStateEqual(cardModals.card.state, node)) {
 			cardModals.alert.set(
@@ -171,18 +169,17 @@ export default function Card({ id }: { id: string }) {
 
 	return (
 		<div
-			className={`flex border-4 border-black font-semibold ${cardCSS} h-54 w-60 rounded-xl p-2 shadow-[10px_8px_0px_rgba(0,0,0,1)] duration-200 ease-in-out hover:shadow-[20px_10px_0px_rgba(0,0,0,1)]`}
+			className={`flex border-4 border-black font-semibold ${cardCSS} h-42 w-72 rounded-xl p-2 shadow-[10px_8px_0px_rgba(0,0,0,1)] duration-200 ease-in-out hover:shadow-[20px_10px_0px_rgba(0,0,0,1)]`}
 		>
-			<div className="flex w-38 flex-col">
-				<div className="bg-indianred flex gap-1 rounded-2xl border-2 border-black p-1 px-3 shadow-[4px_4px_0px_rgba(0,0,0,1)]">
-					<img className="w-6" src={skull} alt="" />
+			<div className="flex w-50 flex-col">
+				<div className="bg-indianred flex gap-1 rounded-2xl border-2 border-black px-2 shadow-[2px_2px_0px_rgba(0,0,0,1)]">
 					<p className="mt-auto mb-auto truncate text-xl">
 						{deathCount}
 					</p>
 				</div>
 
 				<div className="mt-auto rounded-xl text-2xl">
-					<p className="line-clamp-4 break-words">{node.name}</p>
+					<p className="line-clamp-3 break-words">{node.name}</p>
 				</div>
 			</div>
 
@@ -196,30 +193,17 @@ export default function Card({ id }: { id: string }) {
 							navigate("/death-log", {
 								state: mainPageTransitionState,
 							})
-							
 						}
 					/>
 				) : (
-					<>
-						<img
-							className={`w-9 cursor-pointer ${settersCSS}`}
-							src={add}
-							alt=""
-							onClick={() => {
-								updateNodeDeaths(node, "add");
-							}}
-						/>
-						<img
-							className={`w-9 cursor-pointer ${settersCSS}`}
-							src={minus}
-							alt=""
-							onClick={() => {
-								if (node.deaths != 0) {
-									updateNodeDeaths(node, "subtract");
-								}
-							}}
-						/>
-					</>
+					<img
+						className={`w-9 cursor-pointer ${settersCSS}`}
+						src={tally}
+						alt=""
+						onClick={() => {
+							navigate("/death-counter", { state: node.id });
+						}}
+					/>
 				)}
 				<img
 					className={`w-9 cursor-pointer ${highlightingCSS}`}
