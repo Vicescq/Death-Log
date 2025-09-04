@@ -5,7 +5,7 @@ import minus from "../../assets/minus.svg";
 import { assertIsNonNull, assertIsSubject } from "../../utils";
 import useLoadDeathLog from "../deathLog/useLoadDeathLog";
 import { ForceError } from "../ErrorPage";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import up from "../../assets/up.svg";
 import down from "../../assets/down.svg";
 
@@ -16,9 +16,10 @@ export default function DeathCounter() {
 	const node = useTreeStore((state) => state.tree.get(nodeID));
 	const tree = useTreeStore((state) => state.tree);
 	const updateNodeDeaths = useTreeStore((state) => state.updateNodeDeaths);
+	const updateNodeTimeSpent = useTreeStore(
+		(state) => state.updateNodeTimeSpent,
+	);
 	const { loading, deletedID } = useLoadDeathLog(tree, nodeID);
-
-	const [counterAnimation, setCounterAnimation] = useState("");
 
 	function getSubjectDeaths() {
 		// had to make this because of typescript errors and JSX syntax
@@ -26,6 +27,8 @@ export default function DeathCounter() {
 		assertIsSubject(node);
 		return node.deaths;
 	}
+
+	
 
 	return (
 		<>
@@ -37,7 +40,7 @@ export default function DeathCounter() {
 				/>
 			) : node ? (
 				<div className="flex flex-col">
-					<h1 className="mt-4 text-center text-4xl mx-6 md:text-6xl break-all">
+					<h1 className="mx-6 mt-4 text-center text-4xl break-all md:text-6xl">
 						{node.name}
 					</h1>
 
@@ -68,8 +71,6 @@ export default function DeathCounter() {
 							/>
 						</span>
 					</div>
-
-					{/* <div className=" rounded-3xl border-2 line-through">III</div> */}
 				</div>
 			) : null}
 		</>

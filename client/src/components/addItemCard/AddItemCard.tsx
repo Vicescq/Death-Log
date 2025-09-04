@@ -9,9 +9,7 @@ import type {
 	AICSubjectOverrides,
 } from "./types";
 import AddItemCardModalBody from "./AddItemCardModalBody";
-import type {
-	SelectDropdownSelected,
-} from "../SelectDropDown";
+import type { SelectDropdownSelected } from "../SelectDropDown";
 import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
 import { useTreeStore } from "../../stores/useTreeStore";
 import AlertModalBody from "../modal/AlertModalBody";
@@ -36,6 +34,10 @@ export default function AddItemCard({ pageType, parentID }: Props) {
 			} else if (pageType === "subject") {
 				addNode("subject", inputText, parentID, aicModals.aic.state);
 			}
+			if (inputRef.current) {
+				inputRef.current.value = "";
+			}
+			setInputText("");
 		} catch (e) {
 			if (e instanceof Error) {
 				aicModals.alert.set(e.message);
@@ -67,10 +69,12 @@ export default function AddItemCard({ pageType, parentID }: Props) {
 		<header className="mb-8 flex w-full flex-col gap-4 border-b-4 bg-amber-200 p-4 font-semibold text-black md:w-xl md:border-4 md:border-black md:shadow-[8px_5px_0px_rgba(0,0,0,1)]">
 			<div className="flex gap-4">
 				<input
+					value={inputText}
 					type="text"
 					className="w-full rounded-xl border-2 p-1 shadow-[8px_5px_0px_rgba(0,0,0,1)]"
 					onChange={(e) => setInputText(e.target.value)}
 					ref={inputRef}
+					onBlur={(e) => setInputText(() => e.target.value.trim())}
 				/>
 
 				{pageType == "game" || pageType == "profile" ? (
@@ -92,12 +96,7 @@ export default function AddItemCard({ pageType, parentID }: Props) {
 			</div>
 			<div className="flex gap-4">
 				<button
-					onClick={() => {
-						handleAdd();
-						if (inputRef.current) {
-							inputRef.current.value = "";
-						}
-					}}
+					onClick={() => handleAdd()}
 					className="bg-zomp w-full rounded-2xl border-4 text-2xl font-bold shadow-[4px_2px_0px_rgba(0,0,0,1)]"
 				>
 					Add {pageType}

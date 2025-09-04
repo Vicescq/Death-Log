@@ -31,7 +31,10 @@ export default function useLoadDeathLog(tree: Tree, parentID: string) {
         }
         if (tree.size != 0) {
             setLoading(false);
-            if (parentID != "ROOT_NODE" && !tree.get(parentID)) {
+            // if (parentID != "ROOT_NODE" && !tree.get(parentID)) {
+            //     setDeletedID(true);
+            // }
+            if (!tree.get(parentID)) {
                 setDeletedID(true);
             }
         }

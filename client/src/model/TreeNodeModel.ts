@@ -55,6 +55,7 @@ export type Subject = TreeNode & {
     deaths: number
     reoccurring: boolean,
     context: SubjectContext,
+    timeSpent: string | null
 }
 
 

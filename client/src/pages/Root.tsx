@@ -1,8 +1,8 @@
 import { Outlet } from "react-router";
 import NavBar from "../components/NavBar";
-import { useTreeStore } from "../stores/useTreeStore";
-import { useEffect } from "react";
+import useMultipleTabsWarning from "../hooks/useMultipleTabsWarning";
 export default function Root() {
+	useMultipleTabsWarning();
 	return (
 		<>
 			<NavBar />

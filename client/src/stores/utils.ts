@@ -161,7 +161,8 @@ export function createSubject(
         dateEnd: null,
         deaths: 0,
         reoccurring: false,
-        context: "boss"
+        context: "boss",
+        timeSpent: null
     };
     return defaultSubject
 }

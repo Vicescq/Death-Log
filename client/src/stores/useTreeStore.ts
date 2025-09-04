@@ -15,6 +15,7 @@ type TreeState = {
     updateNodeDeaths: (subject: Subject, operation: "add" | "subtract") => void;
     updateNodeCompletion: (node: DistinctTreeNode) => void;
     updateModalEditedNode: (node: DistinctTreeNode, overrides: DistinctTreeNode) => void;
+    updateNodeTimeSpent: (node: Subject, timeSpent: string | null) => void;
 }
 
 export const useTreeStore = create<TreeState>((set) => ({
@@ -261,6 +262,15 @@ export const useTreeStore = create<TreeState>((set) => ({
             updatedAlready ? null : IndexedDBService.updateNode(updatedNode, localStorageRes);
 
             return { tree: updatedTree }
+        })
+    },
+
+    updateNodeTimeSpent: (node, timeSpent) => {
+        set((state) => {
+            const updatedTree = new Map(state.tree);
+            const updatedNode: Subject = {...node, timeSpent: timeSpent}
+            updatedTree.set(updatedNode.id, updatedNode);
+            return {tree: updatedTree}
         })
     },
 

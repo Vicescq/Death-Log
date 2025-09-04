@@ -9,6 +9,7 @@ import Start from "./pages/start/Start.tsx";
 import UtilityPage from "./pages/UtilityPage.tsx";
 import MainPageRouter from "./pages/deathLog/DeathLogRouter.tsx";
 import DeathCounter from "./pages/deathCounter/DeathCounter.tsx";
+import MultipleTabs from "./pages/MultipleTabs.tsx";
 
 createRoot(document.getElementById("root")!).render(
 	<StrictMode>
@@ -36,7 +37,7 @@ function AppRoutes() {
 						element={<ForceError msg={"URL NOT FOUND!"} />}
 					/>
 				</Route>
-				<Route />
+				<Route path="/__MULTIPLE_TABS__" element={<MultipleTabs />} />
 			</Routes>
 		</ErrorBoundary>
 	);
