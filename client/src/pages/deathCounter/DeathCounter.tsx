@@ -6,6 +6,8 @@ import { assertIsNonNull, assertIsSubject } from "../../utils";
 import useLoadDeathLog from "../deathLog/useLoadDeathLog";
 import { ForceError } from "../ErrorPage";
 import { useState } from "react";
+import up from "../../assets/up.svg";
+import down from "../../assets/down.svg";
 
 export default function DeathCounter() {
 	const location = useLocation();
@@ -34,16 +36,29 @@ export default function DeathCounter() {
 					}
 				/>
 			) : node ? (
-				<div className="flex flex-col items-center justify-center">
-					<h1 className="mt-4 w-70 text-center text-4xl sm:w-120 md:w-180">
+				<div className="flex flex-col">
+					<h1 className="mt-4 text-center text-2xl mx-6 md:text-3xl break-all">
 						{node.name}
 					</h1>
 
-					<div className="mt-38 mb-16 flex text-6xl">
-						<div className="m-auto">
+					<div className="mt-20 mb-16 flex flex-col gap-4 text-6xl">
+						<span>
 							<img
-								className="bg-hunyadi border-hunyadi w-8 rounded-2xl border-4 shadow-[6px_4px_0px_rgba(0,0,0,1)]"
-								src={minus}
+								src={up}
+								className="border-hunyadi m-auto mt-15 w-8 rounded-2xl border-3 shadow-[6px_4px_0px_rgba(0,0,0,1)]"
+								onClick={() => {
+									assertIsSubject(node);
+									updateNodeDeaths(node, "add");
+								}}
+							/>
+						</span>
+						<span className={`text-center`}>
+							{getSubjectDeaths()}
+						</span>
+						<span>
+							<img
+								src={down}
+								className="border-indianred m-auto w-8 rounded-2xl border-3 shadow-[6px_4px_0px_rgba(0,0,0,1)]"
 								onClick={() => {
 									assertIsSubject(node);
 									if (node.deaths > 0) {
@@ -51,27 +66,10 @@ export default function DeathCounter() {
 									}
 								}}
 							/>
-						</div>
-						<span
-							className={`motion-preset-pulse-sm motion w-50 text-center`}
-						>
-							{getSubjectDeaths()}
 						</span>
-						<div className="m-auto">
-							<img
-								className="bg-hunyadi border-hunyadi w-8 rounded-2xl border-4 shadow-[6px_4px_0px_rgba(0,0,0,1)]"
-								src={add}
-								onClick={() => {
-									assertIsSubject(node);
-									updateNodeDeaths(node, "add");
-								}}
-							/>
-						</div>
-						
 					</div>
 
 					{/* <div className=" rounded-3xl border-2 line-through">III</div> */}
-					
 				</div>
 			) : null}
 		</>
