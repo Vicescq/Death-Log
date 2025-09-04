@@ -37,11 +37,11 @@ export default function DeathCounter() {
 				/>
 			) : node ? (
 				<div className="flex flex-col">
-					<h1 className="mt-4 text-center text-2xl mx-6 md:text-3xl break-all">
+					<h1 className="mt-4 text-center text-4xl mx-6 md:text-6xl break-all">
 						{node.name}
 					</h1>
 
-					<div className="mt-20 mb-16 flex flex-col gap-4 text-6xl">
+					<div className="mt-8 mb-16 flex flex-col gap-4">
 						<span>
 							<img
 								src={up}
@@ -52,7 +52,7 @@ export default function DeathCounter() {
 								}}
 							/>
 						</span>
-						<span className={`text-center`}>
+						<span className={`text-center text-6xl`}>
 							{getSubjectDeaths()}
 						</span>
 						<span>
