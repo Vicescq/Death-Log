@@ -70,7 +70,7 @@ export const useTreeStore = create<TreeState>((set) => ({
 
             if (parentNodeCopy.id == "ROOT_NODE") {
                 IndexedDBService.addNode(node, localStorageRes);
-                IndexedDBService.setAddEvent(node, localStorageRes);
+                // IndexedDBService.setAddEvent(node, localStorageRes);
             }
             else {
                 assertIsDistinctTreeNode(parentNodeCopy);

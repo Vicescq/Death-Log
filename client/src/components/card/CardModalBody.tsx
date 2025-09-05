@@ -55,20 +55,7 @@ export default function CardModalBody<T extends DistinctTreeNode>({
 					value={defaultCardModalDateFormat(modalState.dateStart)}
 					type="date"
 					className="w-44 border-b-2 outline-0"
-					onChange={(e) => {
-						const processedDate = isCardModalDateAtLimit(
-							e.target.value,
-						);
-						const isoSTR =
-							convertDefaultCardModalDateFormatToISO(
-								processedDate,
-							);
-						setModalState((prev) => ({
-							...prev,
-							dateStart: isoSTR,
-						}));
-					}}
-					max={defaultCardModalDateFormat(new Date().toISOString())}
+					readOnly
 				/>
 			</li>
 
@@ -79,23 +66,7 @@ export default function CardModalBody<T extends DistinctTreeNode>({
 						value={defaultCardModalDateFormat(modalState.dateEnd!)}
 						type="date"
 						className="w-44 border-b-2 outline-0"
-						onChange={(e) => {
-							const processedDate = isCardModalDateAtLimit(
-								e.target.value,
-							);
-							const isoSTR =
-								convertDefaultCardModalDateFormatToISO(
-									processedDate,
-								);
-							setModalState((prev) => ({
-								...prev,
-								dateEnd: isoSTR,
-							}));
-						}}
-						min={defaultCardModalDateFormat(modalState.dateStart)}
-						max={defaultCardModalDateFormat(
-							new Date().toISOString(),
-						)}
+						readOnly
 					/>
 				</li>
 			) : null}
