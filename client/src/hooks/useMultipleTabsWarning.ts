@@ -1,27 +1,29 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
+import { useTrueInitLoadStore } from "../stores/useTrueInitLoadStore";
 
 export default function useMultipleTabsWarning() {
-    const webAppBroadcast = new BroadcastChannel("webApp");
+    const passInitPhase = useTrueInitLoadStore((state) => state.passInitPhase);
+    const trueInitLoad = useTrueInitLoadStore((state) => state.trueInitLoad);
     let navigate = useNavigate();
-    const [multipleTabsErr, setMultipleTabsErr] = useState(false);
-
+    
     useEffect(() => {
+        const webAppBroadcast = new BroadcastChannel("webApp");
+
         webAppBroadcast.postMessage("newTab");
+
         webAppBroadcast.onmessage = (event) => {
             if (event.data == "newTab") {
                 webAppBroadcast.postMessage("pleaseCloseTab");
             }
             if (event.data == "pleaseCloseTab") {
-                setMultipleTabsErr(true);
+                navigate("/__MULTIPLE_TABS__");
                 webAppBroadcast.close();
             }
         };
-    }, []);
-
-    useEffect(() => {
-        if (multipleTabsErr) {
-            navigate("/__MULTIPLE_TABS__");
+        return () => {
+            webAppBroadcast.close()
         }
-    }, [multipleTabsErr]);
+
+    }, []);
 }

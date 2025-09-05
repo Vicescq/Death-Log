@@ -2,6 +2,7 @@ import { Outlet } from "react-router";
 import NavBar from "../components/NavBar";
 import useMultipleTabsWarning from "../hooks/useMultipleTabsWarning";
 export default function Root() {
+	
 	useMultipleTabsWarning();
 	return (
 		<>
