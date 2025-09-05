@@ -1,23 +1,21 @@
-import admin from "firebase-admin"
-import serviceAccount from "../serviceAccountKey.json" with {type: "json"};
+import { getAuth, clerkClient } from "@clerk/express";
+import { Request, Response, NextFunction } from "express";
 
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount)
-});
+export const verifyUser = async (req: Request, res: Response, next: NextFunction) => {
 
-export async function verifyToken(req, res, next) {
-    try{
-        const token = req.headers.authorization.split(" ")[1];
-        const verifiedToken = await admin.auth().verifyIdToken(token);
-        if (verifiedToken){
-            return next();
-        }
-        else{
-            return res.sendStatus(403);
+    if (!req.auth().isAuthenticated) {
+        res.sendStatus(401);
+        return;
+    }
+
+    else {
+        const authObj = getAuth(req);
+        if (authObj.userId) {
+            const user = await clerkClient.users.getUser(authObj.userId)
+            req.email = user.primaryEmailAddress?.emailAddress
+            next();
+            return;
         }
     }
-    catch(error){
-        console.log(error)
-        return res.sendStatus(403);
-    }
+    res.sendStatus(400);
 }

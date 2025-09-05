@@ -1,9 +1,11 @@
 import { create } from 'zustand'
 import type { DistinctTreeNode, Game, ParentTreeNode, Profile, RootNode, Subject, Tree, TreeNode } from '../model/TreeNodeModel';
 import type { AICSubjectOverrides } from '../components/addItemCard/types';
-import IndexedDBService from '../services/IndexedDBService';
 import { sortChildIDS, sanitizeTreeNodeEntry, identifyDeletedSelfAndChildrenIDS, createGame, createProfile, createSubject, createRootNode, updateProfileDeathEntriesOnSubjectDelete } from './utils';
-import { assertIsDistinctTreeNode, assertIsGame, assertIsNonNull, assertIsProfile, assertIsRootNode } from '../utils';
+import { assertIsDistinctTreeNode, assertIsGame, assertIsGameOrProfile, assertIsNonNull, assertIsProfile, assertIsRootNode } from '../utils';
+import Backend from '../services/Backend';
+import type { DeleteGameEvent } from '../model/EventModel';
+import LocalDB from '../services/LocalDB';
 
 type TreeState = {
     tree: Tree;
@@ -39,6 +41,7 @@ export const useTreeStore = create<TreeState>((set) => ({
     },
 
     addNode: (pageType, inputText, parentID, overrides) => {
+
         set((state) => {
             const name = sanitizeTreeNodeEntry(inputText, state.tree, parentID);
             let node: DistinctTreeNode;
@@ -58,9 +61,6 @@ export const useTreeStore = create<TreeState>((set) => ({
             const updatedTree = new Map(state.tree);
             updatedTree.set(node.id, node);
 
-            const localStorageRes = localStorage.getItem("email");
-            assertIsNonNull(localStorageRes);
-
             const parentNode = updatedTree.get(parentID);
             assertIsNonNull(parentNode);
             const parentNodeCopy: TreeNode = { ...parentNode, childIDS: [...parentNode.childIDS, node.id] };
@@ -69,24 +69,23 @@ export const useTreeStore = create<TreeState>((set) => ({
             updatedTree.set(parentID, parentNodeCopy);
 
             if (parentNodeCopy.id == "ROOT_NODE") {
-                IndexedDBService.addNode(node, localStorageRes);
+                LocalDB.addNode(node, LocalDB.getUserEmail());
+
             }
             else {
                 assertIsDistinctTreeNode(parentNodeCopy);
-                IndexedDBService.addNode(node, localStorageRes, parentNodeCopy);
+                LocalDB.addNode(node, LocalDB.getUserEmail(), parentNodeCopy);
             }
 
             return { tree: updatedTree }
         })
     },
 
-    deleteGame(node) {
+    deleteGame: (node) => {
         set((state) => {
             const updatedTree = new Map(state.tree);
             const nodeIDSToBeDeleted = identifyDeletedSelfAndChildrenIDS(node, updatedTree);
             nodeIDSToBeDeleted.forEach((id) => updatedTree.delete(id));
-            const localStorageRes = localStorage.getItem("email");
-            assertIsNonNull(localStorageRes);
 
             const parentNode = updatedTree.get(node.parentID);
             assertIsNonNull(parentNode);
@@ -95,7 +94,10 @@ export const useTreeStore = create<TreeState>((set) => ({
             parentNodeCopy.childIDS = sortChildIDS(parentNodeCopy, updatedTree);
 
             updatedTree.set(parentNodeCopy.id, parentNodeCopy);
-            IndexedDBService.deleteGame(nodeIDSToBeDeleted);
+
+            // const delGameEvent: DeleteGameEvent = { data: node.id, subtype: "game", type: 'delete', sideEffects: { deletedLineage: nodeIDSToBeDeleted.slice(1) } };
+            LocalDB.deleteGame(nodeIDSToBeDeleted);
+
             return { tree: updatedTree }
         })
     },
@@ -105,8 +107,6 @@ export const useTreeStore = create<TreeState>((set) => ({
             const updatedTree = new Map(state.tree);
             const nodeIDSToBeDeleted = identifyDeletedSelfAndChildrenIDS(node, updatedTree);
             nodeIDSToBeDeleted.forEach((id) => updatedTree.delete(id));
-            const localStorageRes = localStorage.getItem("email");
-            assertIsNonNull(localStorageRes);
 
             const parentNode = updatedTree.get(node.parentID);
             assertIsNonNull(parentNode);
@@ -115,7 +115,7 @@ export const useTreeStore = create<TreeState>((set) => ({
             parentNodeCopy.totalDeaths -= node.deathEntries.length;
 
             updatedTree.set(parentNodeCopy.id, parentNodeCopy);
-            IndexedDBService.deleteProfile(nodeIDSToBeDeleted, parentNodeCopy, localStorageRes);
+            LocalDB.deleteProfile(nodeIDSToBeDeleted, parentNodeCopy, LocalDB.getUserEmail());
             return { tree: updatedTree }
         })
     },
@@ -125,8 +125,6 @@ export const useTreeStore = create<TreeState>((set) => ({
             const updatedTree = new Map(state.tree);
             const nodeIDSToBeDeleted = identifyDeletedSelfAndChildrenIDS(node, updatedTree);
             nodeIDSToBeDeleted.forEach((id) => updatedTree.delete(id));
-            const localStorageRes = localStorage.getItem("email");
-            assertIsNonNull(localStorageRes);
 
             const profileNode = updatedTree.get(node.parentID);
             assertIsNonNull(profileNode);
@@ -143,7 +141,7 @@ export const useTreeStore = create<TreeState>((set) => ({
 
             updatedTree.set(profileNodeCopy.id, profileNodeCopy);
             updatedTree.set(gameNodeCopy.id, gameNodeCopy);
-            IndexedDBService.deleteSubject(nodeIDSToBeDeleted, gameNodeCopy, profileNodeCopy, localStorageRes);
+            LocalDB.deleteSubject(nodeIDSToBeDeleted, gameNodeCopy, profileNodeCopy, LocalDB.getUserEmail());
             return { tree: updatedTree }
         })
     },
@@ -156,8 +154,8 @@ export const useTreeStore = create<TreeState>((set) => ({
             const updatedTree = new Map(state.tree);
             let updatedSubject: Subject;
 
-            const localStorageRes = localStorage.getItem("email");
-            assertIsNonNull(localStorageRes);
+            // const localStorageRes = localStorage.getItem("email");
+            // assertIsNonNull(localStorageRes);
 
             // card already verifies negative values
             if (operation == "add") {
@@ -170,21 +168,21 @@ export const useTreeStore = create<TreeState>((set) => ({
             const parentNode = updatedTree.get(updatedSubject.parentID);
             assertIsNonNull(parentNode);
             assertIsProfile(parentNode);
-            const parentNodeCopy: Profile = { ...parentNode, deathEntries: [...parentNode.deathEntries] };
-            operation == "add" ? parentNodeCopy.deathEntries.push({ id: updatedSubject.id, timestamp: new Date().toISOString() }) : parentNodeCopy.deathEntries.pop();
+            const profileNodeCopy: Profile = { ...parentNode, deathEntries: [...parentNode.deathEntries] };
+            operation == "add" ? profileNodeCopy.deathEntries.push({ id: updatedSubject.id, timestamp: new Date().toISOString() }) : profileNodeCopy.deathEntries.pop();
 
             // grandparent updates
-            const grandParentNode = updatedTree.get(parentNodeCopy.parentID);
+            const grandParentNode = updatedTree.get(profileNodeCopy.parentID);
             assertIsNonNull(grandParentNode);
             assertIsGame(grandParentNode);
             const gameNodeCopy: Game = { ...grandParentNode };
             operation == "add" ? gameNodeCopy.totalDeaths++ : gameNodeCopy.totalDeaths--;
 
             updatedTree.set(updatedSubject.id, updatedSubject);
-            updatedTree.set(parentNodeCopy.id, parentNodeCopy);
+            updatedTree.set(profileNodeCopy.id, profileNodeCopy);
             updatedTree.set(gameNodeCopy.id, gameNodeCopy);
 
-            IndexedDBService.updateNodeLineage(updatedSubject, parentNodeCopy, gameNodeCopy, localStorageRes);
+            LocalDB.updateNodeLineage(updatedSubject, profileNodeCopy, gameNodeCopy, LocalDB.getUserEmail());
 
             return { tree: updatedTree }
         })
@@ -200,8 +198,8 @@ export const useTreeStore = create<TreeState>((set) => ({
             updatedNode.dateEnd = updatedNode.completed ? new Date().toISOString() : null;
             updatedTree.set(updatedNode.id, updatedNode);
 
-            const localStorageRes = localStorage.getItem("email");
-            assertIsNonNull(localStorageRes);
+            // const localStorageRes = localStorage.getItem("email");
+            // assertIsNonNull(localStorageRes);
 
             const parentNode = updatedTree.get(updatedNode.parentID);
             assertIsNonNull(parentNode);
@@ -212,11 +210,11 @@ export const useTreeStore = create<TreeState>((set) => ({
             updatedTree.set(parentNodeCopy.id, parentNodeCopy);
 
             if (parentNodeCopy.id == "ROOT_NODE") {
-                IndexedDBService.updateNodeAndParent(updatedNode, localStorageRes);
+                LocalDB.updateNodeAndParent(updatedNode, LocalDB.getUserEmail());
             }
             else {
                 assertIsDistinctTreeNode(parentNodeCopy);
-                IndexedDBService.updateNodeAndParent(updatedNode, localStorageRes, parentNodeCopy);
+                LocalDB.updateNodeAndParent(updatedNode, LocalDB.getUserEmail(), parentNodeCopy);
             }
 
             return { tree: updatedTree };
@@ -231,8 +229,8 @@ export const useTreeStore = create<TreeState>((set) => ({
             const updatedTree = new Map(state.tree);
             let updatedAlready = false;
 
-            const localStorageRes = localStorage.getItem("email");
-            assertIsNonNull(localStorageRes);
+            // const localStorageRes = localStorage.getItem("email");
+            // assertIsNonNull(localStorageRes);
 
             if (node.name != overrides.name) { // card modal state already trims the overrides
                 sanitizeTreeNodeEntry(overrides.name, updatedTree, node.parentID);
@@ -250,16 +248,16 @@ export const useTreeStore = create<TreeState>((set) => ({
                 updatedTree.set(parentNodeCopy.id, parentNodeCopy);
 
                 if (parentNodeCopy.id == "ROOT_NODE") {
-                    IndexedDBService.updateNodeAndParent(updatedNode, localStorageRes);
+                    LocalDB.updateNodeAndParent(updatedNode, LocalDB.getUserEmail());
                 }
                 else {
                     assertIsDistinctTreeNode(parentNodeCopy);
-                    IndexedDBService.updateNodeAndParent(updatedNode, localStorageRes, parentNodeCopy);
+                    LocalDB.updateNodeAndParent(updatedNode, LocalDB.getUserEmail(), parentNodeCopy);
                 }
                 updatedAlready = true
             }
 
-            updatedAlready ? null : IndexedDBService.updateNode(updatedNode, localStorageRes);
+            updatedAlready ? null : LocalDB.updateNode(updatedNode, LocalDB.getUserEmail());
 
             return { tree: updatedTree }
         })
@@ -268,9 +266,9 @@ export const useTreeStore = create<TreeState>((set) => ({
     updateNodeTimeSpent: (node, timeSpent) => {
         set((state) => {
             const updatedTree = new Map(state.tree);
-            const updatedNode: Subject = {...node, timeSpent: timeSpent}
+            const updatedNode: Subject = { ...node, timeSpent: timeSpent }
             updatedTree.set(updatedNode.id, updatedNode);
-            return {tree: updatedTree}
+            return { tree: updatedTree }
         })
     },
 

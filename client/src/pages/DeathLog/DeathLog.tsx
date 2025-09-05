@@ -4,8 +4,7 @@ import Card from "../../components/card/Card";
 import CardWrapper from "../../components/card/CardWrapper";
 import { useTreeStore } from "../../stores/useTreeStore";
 import { ForceError } from "../ErrorPage";
-import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
-import useLoadDeathLog from "./useLoadDeathLog";
+import useLoadDeathLogCorrectly from "./useLoadDeathLogCorrectly";
 
 type Props = {
 	type: "game" | "profile" | "subject";
@@ -14,25 +13,23 @@ type Props = {
 
 export default function DeathLog({ type, parentID }: Props) {
 	const tree = useTreeStore((state) => state.tree);
-	const { loading, deletedID } = useLoadDeathLog(tree, parentID);
-	
+	const { loading, deletedID } = useLoadDeathLogCorrectly(tree, parentID);
+
 	const childIDS = tree.get(parentID)?.childIDS || [];
 	const cards = useMemo(() => {
 		return childIDS.map((nodeID) => <Card key={nodeID} id={nodeID} />);
 	}, [childIDS, parentID]);
-
-	useConsoleLogOnStateChange(tree, "TREE:", tree);
 
 	return (
 		<>
 			{loading ? null : deletedID ? (
 				<ForceError msg="This page does not exist anymore! You probably deleted something and pressed forward in the browser history!" />
 			) : (
-				<>
+				<div className="flex flex-col items-center justify-center">
 					<AddItemCard pageType={type} parentID={parentID} />
 
 					<CardWrapper cards={cards} />
-				</>
+				</div>
 			)}
 		</>
 	);

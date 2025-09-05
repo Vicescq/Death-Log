@@ -1,8 +1,10 @@
-import { db } from "../model/IndexedDBSchema";
+import type { AddEvent } from "../model/EventModel";
+import { db } from "../model/LocalDBSchema";
 import type { DistinctTreeNode, Game, Profile, Subject } from "../model/TreeNodeModel";
-import { assertIsNonNull } from "../utils";
+import { assertIsGame, assertIsNonNull, assertIsProfile } from "../utils";
+import { v4 as uuidv4 } from 'uuid';
 
-export default class IndexedDBService {
+export default class LocalDB {
     constructor() { }
 
     static async addNode(node: DistinctTreeNode, email: string, parentNode?: DistinctTreeNode) {
@@ -60,5 +62,80 @@ export default class IndexedDBService {
         const rows = await db.nodes.where("email").equals(email).toArray();
         const nodes = rows.map((node) => { return node.node });
         return nodes;
+    }
+
+    static setUserEmail(email: string) {
+        localStorage.setItem("email", email);
+    }
+
+    static getUserEmail() {
+        const email = localStorage.getItem("email");
+        assertIsNonNull(email);
+        return email;
+    }
+
+    static async getCurrentEventState() {
+        return await db.currentEventState.where("email").equalsIgnoreCase(LocalDB.getUserEmail()).first();
+    }
+
+    static async setCurrentEventState() {
+        db.transaction("rw", db.currentEventState, async () => {
+            const currentEventState = await LocalDB.getCurrentEventState()
+            if (currentEventState) {
+                await db.currentEventState.delete(currentEventState.id)
+            }
+            db.currentEventState.add({ id: uuidv4(), email: LocalDB.getUserEmail(), created_at: new Date().toISOString(), created_at_INT: new Date().getTime() })
+        })
+    }
+
+    static async getEventStateHistory() {
+
+    }
+
+    static async updateEventStateHistory() {
+
+    }
+
+    static async createAddEvent(addedNode: DistinctTreeNode, email: string, parent?: Game | Profile) {
+        let event: AddEvent;
+        switch (addedNode.type) {
+            case "game":
+                event = { data: addedNode, type: "add" };
+                break;
+            case "profile":
+                assertIsNonNull(parent)
+                assertIsGame(parent)
+                event = { data: addedNode, type: "add", sideEffects: { updatedParent: parent } };
+                break;
+            case "subject":
+                assertIsNonNull(parent)
+                assertIsProfile(parent)
+                event = { data: addedNode, type: "add", sideEffects: { updatedParent: parent } };
+        }
+        // db.events.add({ event: event, email: email, created_at: new Date().toISOString(), edited_at: new Date().toISOString() })
+    }
+
+    static async createDeleteGameEvent() {
+
+    }
+
+    static async createDeleteProfileEvent() {
+
+    }
+
+    static async createDeleteSubjectEvent() {
+
+    }
+
+    static async createIsoUpdateEvent() {
+
+    }
+
+    static async createSortUpdateEvent() {
+
+    }
+
+    static async createLineageUpdateEvent() {
+
     }
 }

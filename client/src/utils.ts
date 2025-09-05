@@ -45,3 +45,15 @@ export function assertIsNonNull<T>(value: T): asserts value is NonNullable<T> {
     }
 }
 
+export function assertIsGameOrProfile(node: TreeNode): asserts node is (Game | Profile) {
+    if (!(node.type == "game" || node.type == "profile")) {
+        throw new Error("DEV ERROR! expected game|profile type is somehow wrong!")
+    }
+}
+
+export async function getTokenWrapper(getToken: (options?: any) => Promise<string | null>, cb: (token: string) => void) {
+    const token = await getToken();
+    if (token) {
+        cb(token);
+    }
+}

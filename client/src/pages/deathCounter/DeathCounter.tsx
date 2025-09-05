@@ -3,7 +3,7 @@ import { useTreeStore } from "../../stores/useTreeStore";
 import add from "../../assets/add.svg";
 import minus from "../../assets/minus.svg";
 import { assertIsNonNull, assertIsSubject } from "../../utils";
-import useLoadDeathLog from "../deathLog/useLoadDeathLog";
+import useLoadDeathLogCorrectly from "../deathLog/useLoadDeathLogCorrectly";
 import { ForceError } from "../ErrorPage";
 import { useEffect, useRef, useState } from "react";
 import up from "../../assets/up.svg";
@@ -19,7 +19,7 @@ export default function DeathCounter() {
 	const updateNodeTimeSpent = useTreeStore(
 		(state) => state.updateNodeTimeSpent,
 	);
-	const { loading, deletedID } = useLoadDeathLog(tree, nodeID);
+	const { loading, deletedID } = useLoadDeathLogCorrectly(tree, nodeID);
 
 	function getSubjectDeaths() {
 		// had to make this because of typescript errors and JSX syntax
