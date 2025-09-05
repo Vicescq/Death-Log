@@ -3,7 +3,7 @@ import type { DistinctTreeNode, Game, ParentTreeNode, Profile, RootNode, Subject
 import type { AICSubjectOverrides } from '../components/addItemCard/types';
 import IndexedDBService from '../services/IndexedDBService';
 import { sortChildIDS, sanitizeTreeNodeEntry, identifyDeletedSelfAndChildrenIDS, createGame, createProfile, createSubject, createRootNode, updateProfileDeathEntriesOnSubjectDelete } from './utils';
-import { assertIsDistinctTreeNode, assertIsGame, assertIsNonNull, assertIsProfile, assertIsRootNode } from '../utils';
+import { assertIsDistinctTreeNode, assertIsGame, assertIsGameOrProfile, assertIsNonNull, assertIsProfile, assertIsRootNode } from '../utils';
 
 type TreeState = {
     tree: Tree;
@@ -74,7 +74,9 @@ export const useTreeStore = create<TreeState>((set) => ({
             }
             else {
                 assertIsDistinctTreeNode(parentNodeCopy);
-                // IndexedDBService.addNode(node, localStorageRes, parentNodeCopy);
+                assertIsGameOrProfile(parentNodeCopy);
+                IndexedDBService.addNode(node, localStorageRes, parentNodeCopy);
+                IndexedDBService.setAddEvent(node, localStorageRes, parentNodeCopy);
             }
 
             return { tree: updatedTree }

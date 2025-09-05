@@ -1,7 +1,8 @@
 import Dexie, { type EntityTable, type Table } from 'dexie';
 import type { DistinctTreeNode, TreeNode } from './TreeNodeModel';
+import type { Event } from './EventModel';
 
-type Node = {
+type NodeEntry = {
     email: string
     node_id: string,
     node: DistinctTreeNode,
@@ -9,7 +10,7 @@ type Node = {
     edited_at: string
 }
 
-type Event = {
+type EventEntry = {
     id: number
     email: string,
     event: Event,
@@ -18,8 +19,8 @@ type Event = {
 }
 
 export const db = new Dexie('DeathLogDB') as Dexie & {
-    nodes: Table<Node, string>
-    events: EntityTable<Event, "id">
+    nodes: Table<NodeEntry, string>
+    events: EntityTable<EventEntry, "id">
 };
 
 db.version(1).stores({

@@ -45,3 +45,8 @@ export function assertIsNonNull<T>(value: T): asserts value is NonNullable<T> {
     }
 }
 
+export function assertIsGameOrProfile(node: TreeNode): asserts node is (Game | Profile) {
+    if (!(node.type == "game" || node.type == "profile")) {
+        throw new Error("DEV ERROR! expected game|profile type is somehow wrong!")
+    }
+}
