@@ -1,12 +1,9 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router";
-import { useTrueInitLoadStore } from "../stores/useTrueInitLoadStore";
 
 export default function useMultipleTabsWarning() {
-    const passInitPhase = useTrueInitLoadStore((state) => state.passInitPhase);
-    const trueInitLoad = useTrueInitLoadStore((state) => state.trueInitLoad);
     let navigate = useNavigate();
-    
+
     useEffect(() => {
         const webAppBroadcast = new BroadcastChannel("webApp");
 

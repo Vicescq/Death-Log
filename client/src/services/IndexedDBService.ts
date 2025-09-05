@@ -1,6 +1,7 @@
+import type { AddEvent } from "../model/EventModel";
 import { db } from "../model/IndexedDBSchema";
 import type { DistinctTreeNode, Game, Profile, Subject } from "../model/TreeNodeModel";
-import { assertIsNonNull } from "../utils";
+import { assertIsGame, assertIsNonNull, assertIsProfile } from "../utils";
 
 export default class IndexedDBService {
     constructor() { }
@@ -60,5 +61,24 @@ export default class IndexedDBService {
         const rows = await db.nodes.where("email").equals(email).toArray();
         const nodes = rows.map((node) => { return node.node });
         return nodes;
+    }
+
+    static setAddEvent(addedNode: DistinctTreeNode, email: string, parent?: Game | Profile) {
+        let event: AddEvent;
+        switch (addedNode.type) {
+            case "game":
+                event = { data: addedNode, type: "add" };
+                break;
+            case "profile":
+                assertIsNonNull(parent)
+                assertIsGame(parent)
+                event = { data: addedNode, type: "add", sideEffects: { updatedParent: parent } };
+                break;
+            case "subject":
+                assertIsNonNull(parent)
+                assertIsProfile(parent)
+                event = { data: addedNode, type: "add", sideEffects: { updatedParent: parent } };
+        }
+        db.events.add({ event: event, email: email, created_at: new Date().toISOString(), edited_at: new Date().toISOString() })
     }
 }
