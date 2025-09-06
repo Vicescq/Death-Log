@@ -21,7 +21,7 @@ type TreeState = {
 export const useTreeStore = create<TreeState>((set) => ({
     tree: new Map(),
 
-    initTree: (nodes) => {
+    initTree: async (nodes) => {
         set(() => {
             const rootNode: RootNode = createRootNode();
             const tree: Tree = new Map();
@@ -33,7 +33,7 @@ export const useTreeStore = create<TreeState>((set) => ({
                     rootNode.childIDS = sortChildIDS(rootNode, tree);
                 }
             })
-
+            
             return { tree: tree, root: rootNode }
         })
     },
