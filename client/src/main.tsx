@@ -19,9 +19,11 @@ if (!PUBLISHABLE_KEY) {
 
 createRoot(document.getElementById("root")!).render(
 	<StrictMode>
-		<BrowserRouter>
-			<AppRoutes />
-		</BrowserRouter>
+		<ClerkProvider publishableKey={PUBLISHABLE_KEY}>
+			<BrowserRouter>
+				<AppRoutes />
+			</BrowserRouter>
+		</ClerkProvider>
 	</StrictMode>,
 );
 

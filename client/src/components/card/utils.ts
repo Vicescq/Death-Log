@@ -17,7 +17,7 @@ export function createCardCSS(
         default: "bg-zomp text-black",
         completed: "bg-raisinblack text-amber-200",
         composite: "bg-cyan-800 text-black",
-        reoccurring: "bg-lime-300 text-black",
+        reoccurring: "bg-hunyadi text-black",
         compositeANDreoccurring: "bg-purple-400 text-black",
     }
 

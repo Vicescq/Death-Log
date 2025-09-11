@@ -32,12 +32,7 @@ export default function AddItemCard({ pageType, parentID }: Props) {
 			} else if (pageType === "profile") {
 				addNode("profile", inputText, parentID);
 			} else if (pageType === "subject") {
-				addNode(
-					"subject",
-					inputText,
-					parentID,
-					aicModals.aic.state,
-				);
+				addNode("subject", inputText, parentID, aicModals.aic.state);
 			}
 			if (inputRef.current) {
 				inputRef.current.value = "";
@@ -71,7 +66,7 @@ export default function AddItemCard({ pageType, parentID }: Props) {
 	}
 
 	return (
-		<header className="mb-8 flex w-full flex-col gap-4 border-b-4 bg-amber-200 p-4 font-semibold text-black md:mt-10 md:w-2xl md:border-4 md:border-black md:shadow-[8px_5px_0px_rgba(0,0,0,1)]">
+		<header className="bg-hunyadi mb-8 flex w-full flex-col gap-4 border-b-4 p-4 font-semibold text-black md:mt-10 md:w-2xl md:rounded-2xl md:border-4 md:border-black md:shadow-[8px_5px_0px_rgba(0,0,0,1)]">
 			<div className="flex gap-4">
 				<input
 					value={inputText}
