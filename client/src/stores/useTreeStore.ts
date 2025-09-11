@@ -68,13 +68,17 @@ export const useTreeStore = create<TreeState>((set) => ({
 
             updatedTree.set(parentID, parentNodeCopy);
 
+            LocalDB.handleEventStateUpdate();
+
             if (parentNodeCopy.id == "ROOT_NODE") {
                 LocalDB.addNode(node, LocalDB.getUserEmail());
-
+                LocalDB.createAddEvent(node, LocalDB.getUserEmail());
             }
             else {
                 assertIsDistinctTreeNode(parentNodeCopy);
+                assertIsGameOrProfile(parentNodeCopy);
                 LocalDB.addNode(node, LocalDB.getUserEmail(), parentNodeCopy);
+                LocalDB.createAddEvent(node, LocalDB.getUserEmail(), parentNodeCopy);
             }
 
             return { tree: updatedTree }

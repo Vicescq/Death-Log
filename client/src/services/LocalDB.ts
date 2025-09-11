@@ -1,5 +1,5 @@
 import type { AddEvent } from "../model/EventModel";
-import { db } from "../model/LocalDBSchema";
+import { db, type StateEntry } from "../model/LocalDBSchema";
 import type { DistinctTreeNode, Game, Profile, Subject } from "../model/TreeNodeModel";
 import { assertIsGame, assertIsNonNull, assertIsProfile } from "../utils";
 import { v4 as uuidv4 } from 'uuid';
@@ -64,36 +64,49 @@ export default class LocalDB {
         return nodes;
     }
 
-    static setUserEmail(email: string) {
-        localStorage.setItem("email", email);
-    }
-
     static getUserEmail() {
         const email = localStorage.getItem("email");
         assertIsNonNull(email);
         return email;
     }
 
-    static async getCurrentEventState() {
-        return await db.currentEventState.where("email").equalsIgnoreCase(LocalDB.getUserEmail()).first();
-    }
-
-    static async setCurrentEventState() {
-        db.transaction("rw", db.currentEventState, async () => {
-            const currentEventState = await LocalDB.getCurrentEventState()
-            if (currentEventState) {
-                await db.currentEventState.delete(currentEventState.id)
-            }
-            db.currentEventState.add({ id: uuidv4(), email: LocalDB.getUserEmail(), created_at: new Date().toISOString(), created_at_INT: new Date().getTime() })
-        })
+    static setUserEmail(email: string) {
+        localStorage.setItem("email", email);
     }
 
     static async getEventStateHistory() {
+        return await db.eventStateHistory.where("email").equalsIgnoreCase(LocalDB.getUserEmail()).toArray();
+    }
+
+    static async setEventStateHistory() {
 
     }
 
-    static async updateEventStateHistory() {
+    static async updateEventState() {
+        const eventState = { id: uuidv4(), email: LocalDB.getUserEmail(), created_at: new Date().toISOString(), created_at_INT: new Date().getTime() }
+        db.transaction("rw", db.currentEventState, async () => {
+            const currentEventState = await db.currentEventState.where("email").equalsIgnoreCase(LocalDB.getUserEmail()).first();
+            if (currentEventState) {
+                await db.currentEventState.delete(currentEventState.id)
+            }
+            db.currentEventState.add(eventState);
+        })
+        db.eventStateHistory.add(eventState);
+    }
 
+    static async getEvents() {
+        return await db.events.where("email").equalsIgnoreCase(LocalDB.getUserEmail()).toArray()
+    }
+
+    static async clearEvents() {
+
+    }
+
+    static async handleEventStateUpdate() {
+        const events = await LocalDB.getEvents();
+        if(events.length == 0){
+            await LocalDB.updateEventState();
+        }
     }
 
     static async createAddEvent(addedNode: DistinctTreeNode, email: string, parent?: Game | Profile) {
@@ -112,7 +125,7 @@ export default class LocalDB {
                 assertIsProfile(parent)
                 event = { data: addedNode, type: "add", sideEffects: { updatedParent: parent } };
         }
-        // db.events.add({ event: event, email: email, created_at: new Date().toISOString(), edited_at: new Date().toISOString() })
+        db.events.add({ event: event, email: email, created_at: new Date().toISOString(), edited_at: new Date().toISOString() })
     }
 
     static async createDeleteGameEvent() {

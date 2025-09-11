@@ -19,18 +19,13 @@ export default function useInitApp() {
             else {
                 LocalDB.setUserEmail("__LOCAL__");
             }
-
-
-            LocalDB.getNodes(LocalDB.getUserEmail()).then((nodes) => {
-                initTree(nodes);
-            }).catch((e) => {
-                if (e instanceof Error) throw e
-            })
         }
 
-        else if (!navigator.onLine) {
-
-        }
+        LocalDB.getNodes(LocalDB.getUserEmail()).then((nodes) => {
+            initTree(nodes);
+        }).catch((e) => {
+            if (e instanceof Error) throw e
+        })
 
 
     }, [user, isLoaded, isSignedIn]);
