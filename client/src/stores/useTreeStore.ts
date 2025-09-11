@@ -75,6 +75,7 @@ export const useTreeStore = create<TreeState>((set) => ({
                 assertIsDistinctTreeNode(parentNodeCopy);
                 LocalDB.addNode(node, parentNodeCopy);
             }
+            LocalDB.incrementCRUDCounter();
 
             return { tree: updatedTree }
         })
@@ -94,8 +95,8 @@ export const useTreeStore = create<TreeState>((set) => ({
 
             updatedTree.set(parentNodeCopy.id, parentNodeCopy);
 
-            // const delGameEvent: DeleteGameEvent = { data: node.id, subtype: "game", type: 'delete', sideEffects: { deletedLineage: nodeIDSToBeDeleted.slice(1) } };
             LocalDB.deleteGame(nodeIDSToBeDeleted);
+            LocalDB.incrementCRUDCounter();
 
             return { tree: updatedTree }
         })
@@ -115,6 +116,7 @@ export const useTreeStore = create<TreeState>((set) => ({
 
             updatedTree.set(parentNodeCopy.id, parentNodeCopy);
             LocalDB.deleteProfile(nodeIDSToBeDeleted, parentNodeCopy);
+            LocalDB.incrementCRUDCounter();
             return { tree: updatedTree }
         })
     },
@@ -140,7 +142,8 @@ export const useTreeStore = create<TreeState>((set) => ({
 
             updatedTree.set(profileNodeCopy.id, profileNodeCopy);
             updatedTree.set(gameNodeCopy.id, gameNodeCopy);
-            LocalDB.deleteSubject(nodeIDSToBeDeleted, gameNodeCopy, profileNodeCopy, LocalDB.getUserEmail());
+            LocalDB.deleteSubject(nodeIDSToBeDeleted, gameNodeCopy, profileNodeCopy);
+            LocalDB.incrementCRUDCounter();
             return { tree: updatedTree }
         })
     },
@@ -182,6 +185,7 @@ export const useTreeStore = create<TreeState>((set) => ({
             updatedTree.set(gameNodeCopy.id, gameNodeCopy);
 
             LocalDB.updateNodeLineage(updatedSubject, profileNodeCopy, gameNodeCopy);
+            LocalDB.incrementCRUDCounter();
 
             return { tree: updatedTree }
         })
@@ -215,6 +219,7 @@ export const useTreeStore = create<TreeState>((set) => ({
                 assertIsDistinctTreeNode(parentNodeCopy);
                 LocalDB.updateNodeAndParent(updatedNode, parentNodeCopy);
             }
+            LocalDB.incrementCRUDCounter();
 
             return { tree: updatedTree };
         })
@@ -257,18 +262,20 @@ export const useTreeStore = create<TreeState>((set) => ({
             }
 
             updatedAlready ? null : LocalDB.updateNode(updatedNode);
+            LocalDB.incrementCRUDCounter();
 
             return { tree: updatedTree }
         })
     },
 
     updateNodeTimeSpent: (node, timeSpent) => {
-        set((state) => {
-            const updatedTree = new Map(state.tree);
-            const updatedNode: Subject = { ...node, timeSpent: timeSpent }
-            updatedTree.set(updatedNode.id, updatedNode);
-            return { tree: updatedTree }
-        })
+        // set((state) => {
+        //     const updatedTree = new Map(state.tree);
+        //     const updatedNode: Subject = { ...node, timeSpent: timeSpent }
+        //     updatedTree.set(updatedNode.id, updatedNode);
+        //     LocalDB.incrementCRUDCounter();
+        //     return { tree: updatedTree }
+        // })
     },
 
 }))

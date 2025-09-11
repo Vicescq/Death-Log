@@ -26,7 +26,7 @@ export default class LocalDB {
         })
     }
 
-    static async deleteSubject(ids: string[], gameParent: Game, profileParent: Profile, email: string) {
+    static async deleteSubject(ids: string[], gameParent: Game, profileParent: Profile) {
         db.transaction("rw", db.nodes, async () => {
             await db.nodes.bulkDelete(ids);
             await db.nodes.update(gameParent.id, { node_id: gameParent.id, node: gameParent, edited_at: new Date().toISOString() });
@@ -62,13 +62,15 @@ export default class LocalDB {
         return nodes;
     }
 
-    static getUserEmail() {
-        const email = localStorage.getItem("email");
-        assertIsNonNull(email);
-        return email;
-    }
-
-    static setUserEmail(email: string) {
-        localStorage.setItem("email", email);
+    static incrementCRUDCounter() {
+        const prev = localStorage.getItem("DEATHLOG_CRUD_COUNTER");
+        let current;
+        if (prev) {
+            current = Number(prev) + 1
+        }
+        else {
+            current = 0
+        }
+        localStorage.setItem("DEATHLOG_CRUD_COUNTER", String(current))
     }
 }
