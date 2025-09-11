@@ -2,7 +2,6 @@ import { useNavigate } from "react-router";
 import { Link } from "react-router";
 import home from "../assets/home.svg";
 import utility from "../assets/utility.svg";
-import { SignedIn, UserButton } from "@clerk/clerk-react";
 
 export default function NavBar() {
 	const navigate = useNavigate();
@@ -24,11 +23,6 @@ export default function NavBar() {
 					<Link to="/info">INFO</Link>
 				</li>
 
-				<SignedIn>
-					<li className="ml-auto flex items-center">
-						<UserButton />
-					</li>
-				</SignedIn>
 			</ul>
 		</nav>
 	);

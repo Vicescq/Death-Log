@@ -68,17 +68,12 @@ export const useTreeStore = create<TreeState>((set) => ({
 
             updatedTree.set(parentID, parentNodeCopy);
 
-            LocalDB.handleEventStateUpdate();
-
             if (parentNodeCopy.id == "ROOT_NODE") {
-                LocalDB.addNode(node, LocalDB.getUserEmail());
-                LocalDB.createAddEvent(node, LocalDB.getUserEmail());
+                LocalDB.addNode(node);
             }
             else {
                 assertIsDistinctTreeNode(parentNodeCopy);
-                assertIsGameOrProfile(parentNodeCopy);
-                LocalDB.addNode(node, LocalDB.getUserEmail(), parentNodeCopy);
-                LocalDB.createAddEvent(node, LocalDB.getUserEmail(), parentNodeCopy);
+                LocalDB.addNode(node, parentNodeCopy);
             }
 
             return { tree: updatedTree }
@@ -119,7 +114,7 @@ export const useTreeStore = create<TreeState>((set) => ({
             parentNodeCopy.totalDeaths -= node.deathEntries.length;
 
             updatedTree.set(parentNodeCopy.id, parentNodeCopy);
-            LocalDB.deleteProfile(nodeIDSToBeDeleted, parentNodeCopy, LocalDB.getUserEmail());
+            LocalDB.deleteProfile(nodeIDSToBeDeleted, parentNodeCopy);
             return { tree: updatedTree }
         })
     },
@@ -186,7 +181,7 @@ export const useTreeStore = create<TreeState>((set) => ({
             updatedTree.set(profileNodeCopy.id, profileNodeCopy);
             updatedTree.set(gameNodeCopy.id, gameNodeCopy);
 
-            LocalDB.updateNodeLineage(updatedSubject, profileNodeCopy, gameNodeCopy, LocalDB.getUserEmail());
+            LocalDB.updateNodeLineage(updatedSubject, profileNodeCopy, gameNodeCopy);
 
             return { tree: updatedTree }
         })
@@ -214,11 +209,11 @@ export const useTreeStore = create<TreeState>((set) => ({
             updatedTree.set(parentNodeCopy.id, parentNodeCopy);
 
             if (parentNodeCopy.id == "ROOT_NODE") {
-                LocalDB.updateNodeAndParent(updatedNode, LocalDB.getUserEmail());
+                LocalDB.updateNodeAndParent(updatedNode);
             }
             else {
                 assertIsDistinctTreeNode(parentNodeCopy);
-                LocalDB.updateNodeAndParent(updatedNode, LocalDB.getUserEmail(), parentNodeCopy);
+                LocalDB.updateNodeAndParent(updatedNode, parentNodeCopy);
             }
 
             return { tree: updatedTree };
@@ -252,16 +247,16 @@ export const useTreeStore = create<TreeState>((set) => ({
                 updatedTree.set(parentNodeCopy.id, parentNodeCopy);
 
                 if (parentNodeCopy.id == "ROOT_NODE") {
-                    LocalDB.updateNodeAndParent(updatedNode, LocalDB.getUserEmail());
+                    LocalDB.updateNodeAndParent(updatedNode);
                 }
                 else {
                     assertIsDistinctTreeNode(parentNodeCopy);
-                    LocalDB.updateNodeAndParent(updatedNode, LocalDB.getUserEmail(), parentNodeCopy);
+                    LocalDB.updateNodeAndParent(updatedNode, parentNodeCopy);
                 }
                 updatedAlready = true
             }
 
-            updatedAlready ? null : LocalDB.updateNode(updatedNode, LocalDB.getUserEmail());
+            updatedAlready ? null : LocalDB.updateNode(updatedNode);
 
             return { tree: updatedTree }
         })

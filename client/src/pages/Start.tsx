@@ -1,4 +1,3 @@
-import { SignedIn, SignedOut, SignInButton } from "@clerk/clerk-react";
 import { useNavigate } from "react-router";
 
 export default function Start() {
@@ -10,28 +9,12 @@ export default function Start() {
 				DeathLog
 			</h1>
 			<div className="flex flex-col gap-4 text-black">
-				<SignedOut>
-					<SignInButton>
-						<button className="bg-indianred min-w-40 rounded-2xl border-4 border-black p-1 font-bold shadow-[4px_4px_0px_rgba(0,0,0,1)] sm:min-w-80">
-							GOOGLE SIGN IN
-						</button>
-					</SignInButton>
-					<button
-						className="bg-hunyadi min-w-40 rounded-2xl border-4 border-black p-1 font-bold shadow-[4px_4px_0px_rgba(0,0,0,1)] sm:min-w-80"
-						onClick={() => navigate("/death-log")}
-					>
-						CONTINUE AS GUEST
-					</button>
-				</SignedOut>
-
-				<SignedIn>
-					<button
-						className="bg-hunyadi min-w-40 rounded-2xl border-4 border-black p-1 font-bold shadow-[4px_4px_0px_rgba(0,0,0,1)] sm:min-w-80"
-						onClick={() => navigate("/death-log")}
-					>
-						CONTINUE
-					</button>
-				</SignedIn>
+				<button
+					className="bg-hunyadi min-w-40 rounded-2xl border-4 border-black p-1 font-bold shadow-[4px_4px_0px_rgba(0,0,0,1)] sm:min-w-80"
+					onClick={() => navigate("/death-log")}
+				>
+					CONTINUE
+				</button>
 			</div>
 		</div>
 	);
