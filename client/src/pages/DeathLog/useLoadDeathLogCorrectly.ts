@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import type { Tree } from "../../model/TreeNodeModel";
-import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
 
 export default function useLoadDeathLogCorrectly(tree: Tree, parentID: string) {
 
@@ -17,8 +16,6 @@ export default function useLoadDeathLogCorrectly(tree: Tree, parentID: string) {
             }
         }
     }, [tree.size]);
-
-    useConsoleLogOnStateChange(tree, "TREE:", tree);
 
     return { loading, deletedID }
 }

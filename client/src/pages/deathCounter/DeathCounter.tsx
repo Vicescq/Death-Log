@@ -1,5 +1,5 @@
 import { useLocation } from "react-router";
-import { useTreeStore } from "../../stores/useTreeStore";
+import { useDeathLogStore } from "../../stores/useDeathLogStore";
 import add from "../../assets/add.svg";
 import minus from "../../assets/minus.svg";
 import { assertIsNonNull, assertIsSubject } from "../../utils";
@@ -13,10 +13,10 @@ export default function DeathCounter() {
 	const location = useLocation();
 	const nodeID: string = location.state;
 
-	const node = useTreeStore((state) => state.tree.get(nodeID));
-	const tree = useTreeStore((state) => state.tree);
-	const updateNodeDeaths = useTreeStore((state) => state.updateNodeDeaths);
-	const updateNodeTimeSpent = useTreeStore(
+	const node = useDeathLogStore((state) => state.tree.get(nodeID));
+	const tree = useDeathLogStore((state) => state.tree);
+	const updateNodeDeaths = useDeathLogStore((state) => state.updateNodeDeaths);
+	const updateNodeTimeSpent = useDeathLogStore(
 		(state) => state.updateNodeTimeSpent,
 	);
 	const { loading, deletedID } = useLoadDeathLogCorrectly(tree, nodeID);

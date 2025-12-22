@@ -1,14 +1,14 @@
 import { create } from 'zustand'
-import type { DistinctTreeNode, Game, ParentTreeNode, Profile, RootNode, Subject, Tree, TreeNode } from '../model/TreeNodeModel';
+import type { DistinctTreeNode, Game, ParentTreeNode, Profile, RootNode, Subject, Tree, TreeNode, URLMap } from '../model/TreeNodeModel';
 import type { AICSubjectOverrides } from '../components/addItemCard/types';
 import { sortChildIDS, sanitizeTreeNodeEntry, identifyDeletedSelfAndChildrenIDS, createGame, createProfile, createSubject, createRootNode, updateProfileDeathEntriesOnSubjectDelete } from './utils';
 import { assertIsDistinctTreeNode, assertIsGame, assertIsGameOrProfile, assertIsNonNull, assertIsProfile, assertIsRootNode } from '../utils';
-import Backend from '../services/Backend';
-import type { DeleteGameEvent } from '../model/EventModel';
 import LocalDB from '../services/LocalDB';
 
-type TreeState = {
+type DeathLogState = {
     tree: Tree;
+    urlMap: URLMap
+    
     initTree: (nodes: DistinctTreeNode[]) => void;
     addNode: (pageType: "game" | "profile" | "subject", inputText: string, parentID: string, overrides?: AICSubjectOverrides) => void;
     deleteGame: (node: Game) => void;
@@ -20,8 +20,9 @@ type TreeState = {
     updateNodeTimeSpent: (node: Subject, timeSpent: string | null) => void;
 }
 
-export const useTreeStore = create<TreeState>((set) => ({
+export const useDeathLogStore = create<DeathLogState>((set) => ({
     tree: new Map(),
+    urlMap: new Map(),
 
     initTree: (nodes) => {
         set(() => {

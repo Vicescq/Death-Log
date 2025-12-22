@@ -1,14 +1,12 @@
 import { useLocation } from "react-router";
 import DeathLog from "./DeathLog";
-import { useEffect } from "react";
-import  { useTreeStore } from "../../stores/useTreeStore";
 
 export type CardMainPageTransitionState = {
 	type: "GameToProfiles" | "ProfileToSubjects" | "Terminal";
 	parentID: string;
 };
 
-export default function MainPageRouter() {
+export default function DeathLogRouter() {
 	
 
 	let location = useLocation();

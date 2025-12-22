@@ -7,7 +7,7 @@ import ErrorPage, { ForceError } from "./pages/ErrorPage.tsx";
 import Root from "./pages/Root.tsx";
 import Start from "./pages/Start.tsx";
 import Utility from "./pages/Utility.tsx";
-import MainPageRouter from "./pages/deathLog/DeathLogRouter.tsx";
+import DeathLogRouter from "./pages/deathLog/DeathLogRouter.tsx";
 import DeathCounter from "./pages/deathCounter/DeathCounter.tsx";
 import MultipleTabs from "./pages/MultipleTabs.tsx";
 import { ClerkProvider } from "@clerk/clerk-react";
@@ -38,7 +38,7 @@ function AppRoutes() {
 			<Routes>
 				<Route path="/" element={<Root />}>
 					<Route index element={<Start />} />
-					<Route path="death-log" element={<MainPageRouter />} />
+					<Route path="log" element={<DeathLogRouter />} />
 					<Route path="death-counter" element={<DeathCounter />} />
 					<Route path="utility" element={<Utility />} />
 					<Route

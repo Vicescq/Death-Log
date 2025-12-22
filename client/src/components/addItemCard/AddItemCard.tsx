@@ -11,7 +11,7 @@ import type {
 import AddItemCardModalBody from "./AddItemCardModalBody";
 import type { SelectDropdownSelected } from "../SelectDropDown";
 import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
-import { useTreeStore } from "../../stores/useTreeStore";
+import { useDeathLogStore } from "../../stores/useDeathLogStore";
 import AlertModalBody from "../modal/AlertModalBody";
 import useAICModals from "./useAICModals";
 import { contextOptions } from "../../utils";
@@ -19,7 +19,7 @@ import { contextOptions } from "../../utils";
 type Props = AICGame | AICProfile | AICSubject;
 
 export default function AddItemCard({ pageType, parentID }: Props) {
-	const addNode = useTreeStore((state) => state.addNode);
+	const addNode = useDeathLogStore((state) => state.addNode);
 	const [inputText, setInputText] = useState("");
 	const inputRef = useRef<HTMLInputElement>(null);
 	const aicModals = useAICModals();

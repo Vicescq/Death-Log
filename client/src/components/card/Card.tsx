@@ -10,7 +10,7 @@ import {
 	getCardDeathCount,
 	isCardModalStateEqual,
 } from "./utils";
-import { useTreeStore } from "../../stores/useTreeStore";
+import { useDeathLogStore } from "../../stores/useDeathLogStore";
 import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
 import Modal from "../modal/Modal";
 import CardModalBody from "./CardModalBody";
@@ -22,19 +22,19 @@ import tally from "../../assets/tally.svg";
 export default function Card({ id }: { id: string }) {
 	let navigate = useNavigate();
 
-	const node = useTreeStore((state) =>
+	const node = useDeathLogStore((state) =>
 		state.tree.get(id),
 	) as DistinctTreeNode;
-	const updateModalEditedNode = useTreeStore(
+	const updateModalEditedNode = useDeathLogStore(
 		(state) => state.updateModalEditedNode,
 	);
-	const updateNodeCompletion = useTreeStore(
+	const updateNodeCompletion = useDeathLogStore(
 		(state) => state.updateNodeCompletion,
 	);
-	const updateNodeDeaths = useTreeStore((state) => state.updateNodeDeaths);
-	const deleteGame = useTreeStore((state) => state.deleteGame);
-	const deleteProfile = useTreeStore((state) => state.deleteProfile);
-	const deleteSubject = useTreeStore((state) => state.deleteSubject);
+	const updateNodeDeaths = useDeathLogStore((state) => state.updateNodeDeaths);
+	const deleteGame = useDeathLogStore((state) => state.deleteGame);
+	const deleteProfile = useDeathLogStore((state) => state.deleteProfile);
+	const deleteSubject = useDeathLogStore((state) => state.deleteSubject);
 
 	const cardModals = useCardModals(node);
 

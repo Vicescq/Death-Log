@@ -18,7 +18,7 @@ export default function Start() {
 					</SignInButton>
 					<button
 						className="bg-hunyadi min-w-40 rounded-2xl border-4 border-black p-1 font-bold shadow-[4px_4px_0px_rgba(0,0,0,1)] sm:min-w-80"
-						onClick={() => navigate("/death-log")}
+						onClick={() => navigate("/log")}
 					>
 						CONTINUE AS GUEST
 					</button>
@@ -27,7 +27,7 @@ export default function Start() {
 				<SignedIn>
 					<button
 						className="bg-hunyadi min-w-40 rounded-2xl border-4 border-black p-1 font-bold shadow-[4px_4px_0px_rgba(0,0,0,1)] sm:min-w-80"
-						onClick={() => navigate("/death-log")}
+						onClick={() => navigate("log")}
 					>
 						CONTINUE
 					</button>

@@ -2,9 +2,10 @@ import { useMemo } from "react";
 import AddItemCard from "../../components/addItemCard/AddItemCard";
 import Card from "../../components/card/Card";
 import CardWrapper from "../../components/card/CardWrapper";
-import { useTreeStore } from "../../stores/useTreeStore";
+import { useDeathLogStore } from "../../stores/useDeathLogStore";
 import { ForceError } from "../ErrorPage";
 import useLoadDeathLogCorrectly from "./useLoadDeathLogCorrectly";
+import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
 
 type Props = {
 	type: "game" | "profile" | "subject";
@@ -12,8 +13,12 @@ type Props = {
 };
 
 export default function DeathLog({ type, parentID }: Props) {
-	const tree = useTreeStore((state) => state.tree);
+	const tree = useDeathLogStore((state) => state.tree);
+	const urlMap = useDeathLogStore((state) => state.urlMap)
 	const { loading, deletedID } = useLoadDeathLogCorrectly(tree, parentID);
+	
+	useConsoleLogOnStateChange(tree, "TREE:", tree);
+	useConsoleLogOnStateChange(urlMap, "URL MAP:", urlMap);
 
 	const childIDS = tree.get(parentID)?.childIDS || [];
 	const cards = useMemo(() => {
