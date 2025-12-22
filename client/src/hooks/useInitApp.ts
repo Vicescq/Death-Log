@@ -3,6 +3,7 @@ import LocalDB from "../services/LocalDB";
 import { useTreeStore } from "../stores/useTreeStore";
 import { useUser } from "@clerk/clerk-react";
 import { assertIsNonNull } from "../utils";
+import useConsoleLogOnStateChange from "./useConsoleLogOnStateChange";
 
 export default function useInitApp() {
 
@@ -24,9 +25,13 @@ export default function useInitApp() {
         LocalDB.getNodes().then((nodes) => {
             initTree(nodes);
         }).catch((e) => {
-            if (e instanceof Error) throw e
+            if (e instanceof Error) {
+                console.error(e)
+                // throw e
+            }
         })
 
 
     }, [user, isLoaded, isSignedIn]);
+
 }

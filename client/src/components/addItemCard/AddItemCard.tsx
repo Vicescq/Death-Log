@@ -22,7 +22,6 @@ export default function AddItemCard({ pageType, parentID }: Props) {
 	const addNode = useTreeStore((state) => state.addNode);
 	const [inputText, setInputText] = useState("");
 	const inputRef = useRef<HTMLInputElement>(null);
-
 	const aicModals = useAICModals();
 
 	function handleAdd() {

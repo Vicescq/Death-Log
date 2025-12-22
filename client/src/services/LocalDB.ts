@@ -83,4 +83,12 @@ export default class LocalDB {
     static setUserEmail(email: string) {
         localStorage.setItem("email", email);
     }
+
+    static async clearDataByEmail() {
+        await db.nodes.where("email").equals(LocalDB.getUserEmail()).delete()
+    }
+
+    static async importDL(){
+        
+    }
 }
