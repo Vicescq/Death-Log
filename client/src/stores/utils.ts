@@ -1,4 +1,3 @@
-
 import type { TreeNode, Subject, DistinctTreeNode, Game, Profile, RootNode, Tree } from "../model/TreeNodeModel";
 import { v4 as uuidv4 } from 'uuid';
 import { assertIsDistinctTreeNode, assertIsNonNull } from "../utils";
@@ -103,7 +102,7 @@ export function isNodeNameUnique(tree: Tree, parentID: string, name: string) {
 }
 
 export function createRootNode() {
-    const rootNode: RootNode = { type: "ROOT_NODE", id: "ROOT_NODE", childIDS: [], parentID: "NONE", name: "", completed: false, notes: "", dateStart: "", dateEnd: "" };
+    const rootNode: RootNode = { type: "ROOT_NODE", id: "ROOT_NODE", childIDS: [], parentID: "NONE", name: "", completed: false, notes: "", dateStart: "", dateEnd: "", urlID: "ROOT_NODE" };
     return rootNode
 }
 
@@ -120,7 +119,8 @@ export function createGame(
         notes: "",
         dateStart: new Date().toISOString(),
         dateEnd: null,
-        totalDeaths: 0
+        totalDeaths: 0,
+        urlID: uuidv4().slice(0, 7)
     };
     return defaultGame
 }
@@ -140,7 +140,8 @@ export function createProfile(
         dateStart: new Date().toISOString(),
         dateEnd: null,
         milestones: [],
-        deathEntries: []
+        deathEntries: [],
+        urlID: uuidv4().slice(0, 7)
     };
     return defaultProfile
 }
@@ -162,7 +163,8 @@ export function createSubject(
         deaths: 0,
         reoccurring: false,
         context: "boss",
-        timeSpent: null
+        timeSpent: null,
+        urlID: uuidv4().slice(0, 7)
     };
     return defaultSubject
 }

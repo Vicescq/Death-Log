@@ -24,6 +24,7 @@ export type TreeNode = {
     notes: string
     dateStart: string,
     dateEnd: string | null,
+    urlID: string
 }
 
 export type RootNode = TreeNode & {
