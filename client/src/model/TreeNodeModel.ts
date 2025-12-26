@@ -1,5 +1,4 @@
 export type Tree = Map<string, TreeNode>;
-export type URLMap = Map<string, string>;
 
 export type SubjectContext = "boss" | "location" | "other" | "genericEnemy" | "miniBoss";
 export type Milestone = {
@@ -24,7 +23,6 @@ export type TreeNode = {
     notes: string
     dateStart: string,
     dateEnd: string | null,
-    urlID: string
 }
 
 export type RootNode = TreeNode & {
@@ -59,6 +57,3 @@ export type Subject = TreeNode & {
     context: SubjectContext,
     timeSpent: string | null
 }
-
-
-

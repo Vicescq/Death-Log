@@ -190,9 +190,7 @@ export default function Card({ id }: { id: string }) {
 						src={step_into}
 						alt=""
 						onClick={() =>
-							navigate("/death-log", {
-								state: mainPageTransitionState,
-							})
+							navigate(`/${node.id}`)
 						}
 					/>
 				) : (

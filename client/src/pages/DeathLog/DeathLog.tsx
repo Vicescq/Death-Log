@@ -14,11 +14,9 @@ type Props = {
 
 export default function DeathLog({ type, parentID }: Props) {
 	const tree = useDeathLogStore((state) => state.tree);
-	const urlMap = useDeathLogStore((state) => state.urlMap)
 	const { loading, deletedID } = useLoadDeathLogCorrectly(tree, parentID);
 	
 	useConsoleLogOnStateChange(tree, "TREE:", tree);
-	useConsoleLogOnStateChange(urlMap, "URL MAP:", urlMap);
 
 	const childIDS = tree.get(parentID)?.childIDS || [];
 	const cards = useMemo(() => {

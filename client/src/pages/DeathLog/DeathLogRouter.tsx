@@ -1,5 +1,6 @@
 import { useLocation } from "react-router";
 import DeathLog from "./DeathLog";
+import { useDeathLogStore } from "../../stores/useDeathLogStore";
 
 export type CardMainPageTransitionState = {
 	type: "GameToProfiles" | "ProfileToSubjects" | "Terminal";
@@ -8,7 +9,6 @@ export type CardMainPageTransitionState = {
 
 export default function DeathLogRouter() {
 	
-
 	let location = useLocation();
 	let mainPageState: CardMainPageTransitionState | undefined = location.state;
 

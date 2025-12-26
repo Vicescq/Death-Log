@@ -1,14 +1,13 @@
 import { create } from 'zustand'
-import type { DistinctTreeNode, Game, ParentTreeNode, Profile, RootNode, Subject, Tree, TreeNode, URLMap } from '../model/TreeNodeModel';
+import type { DistinctTreeNode, Game, ParentTreeNode, Profile, RootNode, Subject, Tree, TreeNode } from '../model/TreeNodeModel';
 import type { AICSubjectOverrides } from '../components/addItemCard/types';
-import { sortChildIDS, sanitizeTreeNodeEntry, identifyDeletedSelfAndChildrenIDS, createGame, createProfile, createSubject, createRootNode, updateProfileDeathEntriesOnSubjectDelete } from './utils';
+import { sortChildIDS, validateNodeString, identifyDeletedSelfAndChildrenIDS, createGame, createProfile, createSubject, createRootNode, updateProfileDeathEntriesOnSubjectDelete } from './utils';
 import { assertIsDistinctTreeNode, assertIsGame, assertIsGameOrProfile, assertIsNonNull, assertIsProfile, assertIsRootNode } from '../utils';
 import LocalDB from '../services/LocalDB';
 
 type DeathLogState = {
     tree: Tree;
-    urlMap: URLMap
-    
+
     initTree: (nodes: DistinctTreeNode[]) => void;
     addNode: (pageType: "game" | "profile" | "subject", inputText: string, parentID: string, overrides?: AICSubjectOverrides) => void;
     deleteGame: (node: Game) => void;
@@ -22,7 +21,6 @@ type DeathLogState = {
 
 export const useDeathLogStore = create<DeathLogState>((set) => ({
     tree: new Map(),
-    urlMap: new Map(),
 
     initTree: (nodes) => {
         set(() => {
@@ -44,17 +42,17 @@ export const useDeathLogStore = create<DeathLogState>((set) => ({
     addNode: (pageType, inputText, parentID, overrides) => {
 
         set((state) => {
-            const name = sanitizeTreeNodeEntry(inputText, state.tree, parentID);
+            const name = validateNodeString(inputText, state.tree, parentID);
             let node: DistinctTreeNode;
             switch (pageType) {
                 case "game":
-                    node = createGame(name);
+                    node = createGame(name, state.tree);
                     break;
                 case "profile":
-                    node = createProfile(name, parentID);
+                    node = createProfile(name, parentID, state.tree);
                     break;
                 case "subject":
-                    node = createSubject(name, parentID);
+                    node = createSubject(name, parentID, state.tree);
                     node = { ...node, ...overrides }
                     break;
             }
@@ -238,7 +236,7 @@ export const useDeathLogStore = create<DeathLogState>((set) => ({
             // assertIsNonNull(localStorageRes);
 
             if (node.name != overrides.name) { // card modal state already trims the overrides
-                sanitizeTreeNodeEntry(overrides.name, updatedTree, node.parentID);
+                validateNodeString(overrides.name, updatedTree, node.parentID);
             }
             const updatedNode: DistinctTreeNode = { ...node, ...overrides };
             updatedTree.set(updatedNode.id, updatedNode);

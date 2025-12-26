@@ -1,8 +1,8 @@
 import type { TreeNode, Subject, DistinctTreeNode, Game, Profile, RootNode, Tree } from "../model/TreeNodeModel";
-import { v4 as uuidv4 } from 'uuid';
 import { assertIsDistinctTreeNode, assertIsNonNull } from "../utils";
+import { nanoid } from "nanoid";
 
-export function sanitizeTreeNodeEntry(inputText: string, tree: Tree, parentID: string) {
+export function validateNodeString(inputText: string, tree: Tree, parentID: string) {
     inputText = inputText.trim();
     if (typeof inputText != "string") {
         throw new Error("Text has to be of type string!");
@@ -101,17 +101,23 @@ export function isNodeNameUnique(tree: Tree, parentID: string, name: string) {
     return !siblingNames.includes(name);
 }
 
+export function isURLIDUnique(){
+    
+}
+
 export function createRootNode() {
-    const rootNode: RootNode = { type: "ROOT_NODE", id: "ROOT_NODE", childIDS: [], parentID: "NONE", name: "", completed: false, notes: "", dateStart: "", dateEnd: "", urlID: "ROOT_NODE" };
+    const rootNode: RootNode = { type: "ROOT_NODE", id: "ROOT_NODE", childIDS: [], parentID: "NONE", name: "", completed: false, notes: "", dateStart: "", dateEnd: ""};
     return rootNode
 }
 
 export function createGame(
     inputText: string,
+    tree: Tree
 ) {
+    const id = generateAndValidateID(tree);
     const defaultGame: Game = {
         type: "game",
-        id: uuidv4(),
+        id: id,
         childIDS: [],
         parentID: "ROOT_NODE",
         name: inputText,
@@ -120,7 +126,6 @@ export function createGame(
         dateStart: new Date().toISOString(),
         dateEnd: null,
         totalDeaths: 0,
-        urlID: uuidv4().slice(0, 7)
     };
     return defaultGame
 }
@@ -128,10 +133,12 @@ export function createGame(
 export function createProfile(
     inputText: string,
     parentID: string,
+    tree: Tree
 ) {
+    const id = generateAndValidateID(tree);
     const defaultProfile: Profile = {
         type: "profile",
-        id: uuidv4(),
+        id: id,
         childIDS: [],
         parentID: parentID,
         name: inputText,
@@ -141,7 +148,6 @@ export function createProfile(
         dateEnd: null,
         milestones: [],
         deathEntries: [],
-        urlID: uuidv4().slice(0, 7)
     };
     return defaultProfile
 }
@@ -149,10 +155,12 @@ export function createProfile(
 export function createSubject(
     inputText: string,
     parentID: string,
+    tree: Tree
 ) {
+    const id = generateAndValidateID(tree);
     const defaultSubject: Subject = {
         type: "subject",
-        id: uuidv4(),
+        id: id,
         childIDS: [],
         parentID: parentID,
         name: inputText,
@@ -164,7 +172,6 @@ export function createSubject(
         reoccurring: false,
         context: "boss",
         timeSpent: null,
-        urlID: uuidv4().slice(0, 7)
     };
     return defaultSubject
 }
@@ -180,4 +187,17 @@ export function updateProfileDeathEntriesOnSubjectDelete(profile: Profile, delet
         return !targetedIndices.includes(i);
     });
     return updatedDeathEntries;
+}
+
+export function generateAndValidateID(tree: Tree){
+    let id: string;
+    let counter = 0
+    do {
+        id = nanoid(8)
+        counter += 1;
+    } while (tree.has(id) && counter <= 100)
+    if (counter > 100){
+        throw new Error("ERROR! You somehow generated 100 duplicated IDs of length 8 in a row. Either you messed something in the local db or youre an insanely lucky person! :)")
+    }
+    return id
 }
