@@ -1,7 +1,7 @@
 import Dexie, { type Table } from 'dexie';
 import type { DistinctTreeNode } from './TreeNodeModel';
 
-type NodeEntry = {
+export type NodeEntry = {
     node_id: string,
     node: DistinctTreeNode,
     created_at: string,

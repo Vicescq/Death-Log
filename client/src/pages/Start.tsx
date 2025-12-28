@@ -5,7 +5,7 @@ export default function Start() {
 	const navigate = useNavigate();
 
 	return (
-		<div className="mt-10 flex flex-5 flex-col items-center justify-center gap-20">
+		<div className="mt-10 flex flex-col items-center justify-center gap-20">
 			<h1 className="m-auto text-6xl text-amber-200 underline sm:text-8xl">
 				DeathLog
 			</h1>

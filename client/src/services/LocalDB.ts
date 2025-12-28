@@ -1,5 +1,5 @@
-import { db } from "../model/LocalDBSchema";
-import type { DistinctTreeNode, Game, Profile, Subject } from "../model/TreeNodeModel";
+import { db, type NodeEntry } from "../model/LocalDBSchema";
+import type { DistinctTreeNode, Game, Profile, Subject, TreeNode } from "../model/TreeNodeModel";
 import { assertIsNonNull } from "../utils";
 
 export default class LocalDB {
@@ -84,11 +84,20 @@ export default class LocalDB {
         localStorage.setItem("email", email);
     }
 
-    static async clearDataByEmail() {
-        await db.nodes.where("email").equals(LocalDB.getUserEmail()).delete()
+    static async clearData() {
+        await db.nodes.where("email").equals(LocalDB.getUserEmail()).delete();
     }
 
-    static async importDL(){
-        
+    static async insertData(nodes: DistinctTreeNode[]) {
+        nodes.forEach(async (node) => {
+            await db.nodes.add({ node_id: node.id, email: LocalDB.getUserEmail(), node: node, created_at: new Date().toISOString(), edited_at: new Date().toISOString() })
+        })
+    }
+
+    static async clearAndInsertData(nodes: DistinctTreeNode[]) {
+        db.transaction("rw", db.nodes, async () => {
+            await LocalDB.clearData();
+            await LocalDB.insertData(nodes);
+        })
     }
 }

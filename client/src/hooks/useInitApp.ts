@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import LocalDB from "../services/LocalDB";
 import { useDeathLogStore } from "../stores/useDeathLogStore";
 import { useUser } from "@clerk/clerk-react";
-import { assertIsNonNull } from "../utils";
+import { assertIsNonNull, refreshTree } from "../utils";
 
 export default function useInitApp() {
 
@@ -21,16 +21,7 @@ export default function useInitApp() {
             }
         }
 
-        LocalDB.getNodes().then((nodes) => {
-            initTree(nodes);
-        }).catch((e) => {
-            if (e instanceof Error) {
-                console.error(e)
-                // throw e
-            }
-        })
-
+        refreshTree(initTree);
 
     }, [user, isLoaded, isSignedIn]);
-
 }

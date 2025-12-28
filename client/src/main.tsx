@@ -6,7 +6,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import ErrorPage, { ForceError } from "./pages/ErrorPage.tsx";
 import Root from "./pages/Root.tsx";
 import Start from "./pages/Start.tsx";
-import Utility from "./pages/Utility.tsx";
+import DataManagement from "./pages/DataManagement.tsx";
 import DeathLogRouter from "./pages/deathLog/DeathLogRouter.tsx";
 import DeathCounter from "./pages/deathCounter/DeathCounter.tsx";
 import MultipleTabs from "./pages/MultipleTabs.tsx";
@@ -40,7 +40,7 @@ function AppRoutes() {
 					<Route index element={<Start />} />
 					<Route path="log" element={<DeathLogRouter />} />
 					<Route path="death-counter" element={<DeathCounter />} />
-					<Route path="utility" element={<Utility />} />
+					<Route path="data-management" element={<DataManagement />} />
 					<Route
 						path="*"
 						element={<ForceError msg={"URL NOT FOUND!"} />}

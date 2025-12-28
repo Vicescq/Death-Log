@@ -1,5 +1,6 @@
 import type { SelectDropdownOption } from "./components/SelectDropDown";
 import type { DistinctTreeNode, Game, ParentTreeNode, Profile, RootNode, Subject, TreeNode } from "./model/TreeNodeModel";
+import LocalDB from "./services/LocalDB";
 
 export const contextOptions: SelectDropdownOption[] = [
     { value: "boss", text: "Boss" },
@@ -56,4 +57,15 @@ export async function getTokenWrapper(getToken: (options?: any) => Promise<strin
     if (token) {
         cb(token);
     }
+}
+
+export async function refreshTree(initTree: (nodes: DistinctTreeNode[]) => void) {
+    LocalDB.getNodes().then((nodes) => {
+        initTree(nodes);
+    }).catch((e) => {
+        if (e instanceof Error) {
+            console.error(e)
+            // throw e
+        }
+    })
 }

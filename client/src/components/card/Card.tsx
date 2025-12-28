@@ -11,7 +11,6 @@ import {
 	isCardModalStateEqual,
 } from "./utils";
 import { useDeathLogStore } from "../../stores/useDeathLogStore";
-import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
 import Modal from "../modal/Modal";
 import CardModalBody from "./CardModalBody";
 import { useEffect } from "react";
@@ -46,7 +45,7 @@ export default function Card({ id }: { id: string }) {
 	function showSaveReconfirm() {
 		if (isCardModalStateEqual(cardModals.card.state, node)) {
 			cardModals.alert.set(
-				"No changes have been saved since you edited nothing!",
+				"No changes have been saved because you edited nothing!",
 			);
 			cardModals.alert.props.set([
 				{

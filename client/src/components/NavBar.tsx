@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router";
 import { Link } from "react-router";
 import home from "../assets/home.svg";
-import utility from "../assets/utility.svg";
+import save from "../assets/save.svg";
 import { SignedIn, UserButton } from "@clerk/clerk-react";
 
 export default function NavBar() {
@@ -16,8 +16,8 @@ export default function NavBar() {
 					</Link>
 				</li>
 				<li className="font-bold">
-					<Link to="/utility">
-						<img className="w-10" src={utility} alt="" />
+					<Link to="/data-management">
+						<img className="w-10" src={save} alt="" />
 					</Link>
 				</li>
 				<li className="font-bold">
