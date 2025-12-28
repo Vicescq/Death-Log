@@ -89,13 +89,13 @@ export default class LocalDB {
     }
 
     static async insertData(nodes: DistinctTreeNode[]) {
-        nodes.forEach(async (node) => {
+        for (let node of nodes){
             await db.nodes.add({ node_id: node.id, email: LocalDB.getUserEmail(), node: node, created_at: new Date().toISOString(), edited_at: new Date().toISOString() })
-        })
+        }
     }
 
     static async clearAndInsertData(nodes: DistinctTreeNode[]) {
-        db.transaction("rw", db.nodes, async () => {
+        await db.transaction("rw", db.nodes, async () => {
             await LocalDB.clearData();
             await LocalDB.insertData(nodes);
         })

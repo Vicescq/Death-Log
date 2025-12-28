@@ -31,8 +31,14 @@ export default function DataManagement({}: Props) {
 	} as const;
 
 	const importProblem = {
-		msg: "The import could not be completed, please try again. Make sure to give a valid JSON file.",
-		modalFn: undefined,
+		msg: "The import could not be completed, please try again. Make sure to give a valid JSON file. For more info make sure to read the documentation.",
+		modalFn: {
+			fn: () => {
+				// nav to docs!
+			},
+			label: "SEE DOCS",
+			btnCol: "bg-lime-800",
+		},
 		modalCloseFn: {
 			fn: () => modalRef.current?.close(),
 			label: "CLOSE",
@@ -40,7 +46,7 @@ export default function DataManagement({}: Props) {
 	} as const;
 
 	const [modalMsg, setModalMsg] = useState<string>(deleteNotify.msg);
-	const [modalFn, setModalFn] = useState<ModalFn | undefined>(deleteNotify.modalFn);
+	const [modalFn, setModalFn] = useState<ModalFn>(deleteNotify.modalFn);
 	const [modalCloseFn, setModalCloseFn] = useState<ModalFn>(
 		deleteNotify.modalCloseFn,
 	);

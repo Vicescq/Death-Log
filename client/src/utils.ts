@@ -60,12 +60,6 @@ export async function getTokenWrapper(getToken: (options?: any) => Promise<strin
 }
 
 export async function refreshTree(initTree: (nodes: DistinctTreeNode[]) => void) {
-    LocalDB.getNodes().then((nodes) => {
-        initTree(nodes);
-    }).catch((e) => {
-        if (e instanceof Error) {
-            console.error(e)
-            // throw e
-        }
-    })
+    const nodes = await LocalDB.getNodes()
+    initTree(nodes);
 }
