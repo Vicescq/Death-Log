@@ -36,19 +36,6 @@ export function createCardCSS(
     return { cardCSS, settersCSS, highlightingCSS, reoccurringCSS }
 }
 
-export function createCardMainPageTransitionState(node: DistinctTreeNode): CardMainPageTransitionState {
-    switch (node.type) {
-        case "game":
-            return { type: "GameToProfiles", parentID: node.id };
-
-        case "profile":
-            return { type: "ProfileToSubjects", parentID: node.id };
-
-        case "subject":
-            return { type: "Terminal", parentID: "__TERMINAL__" };
-    }
-}
-
 export function isCardModalStateEqual(cardModalState: DistinctTreeNode, node: DistinctTreeNode) {
 
     const keys = Object.keys(cardModalState);

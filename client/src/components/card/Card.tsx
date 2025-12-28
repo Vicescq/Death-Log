@@ -6,7 +6,6 @@ import readonly from "../../assets/readonly.svg";
 import type { DistinctTreeNode } from "../../model/TreeNodeModel";
 import {
 	createCardCSS,
-	createCardMainPageTransitionState,
 	getCardDeathCount,
 	isCardModalStateEqual,
 } from "./utils";
@@ -37,7 +36,6 @@ export default function Card({ id }: { id: string }) {
 
 	const cardModals = useCardModals(node);
 
-	const mainPageTransitionState = createCardMainPageTransitionState(node);
 	const { cardCSS, settersCSS, highlightingCSS, reoccurringCSS } =
 		createCardCSS(node);
 	const deathCount = getCardDeathCount(node);
@@ -189,7 +187,7 @@ export default function Card({ id }: { id: string }) {
 						src={step_into}
 						alt=""
 						onClick={() =>
-							navigate(`/${node.id}`)
+							navigate(`${node.id}`)
 						}
 					/>
 				) : (
@@ -198,7 +196,7 @@ export default function Card({ id }: { id: string }) {
 						src={tally}
 						alt=""
 						onClick={() => {
-							navigate("/death-counter", { state: node.id });
+							navigate(`${node.id}`);
 						}}
 					/>
 				)}

@@ -22,7 +22,7 @@ export default function DataManagement({}: Props) {
 				modalRef.current?.close();
 			},
 			label: "CONFIRM",
-			btnCol: "bg-orange-600",
+			btnCol: "bg-red-700",
 		},
 		modalCloseFn: {
 			fn: () => modalRef.current?.close(),
@@ -37,7 +37,7 @@ export default function DataManagement({}: Props) {
 				// nav to docs!
 			},
 			label: "SEE DOCS",
-			btnCol: "bg-lime-800",
+			btnCol: "bg-lime-600",
 		},
 		modalCloseFn: {
 			fn: () => modalRef.current?.close(),

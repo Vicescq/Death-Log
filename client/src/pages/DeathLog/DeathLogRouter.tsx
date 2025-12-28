@@ -1,6 +1,9 @@
-import { useLocation } from "react-router";
+import { useParams } from "react-router";
 import DeathLog from "./DeathLog";
 import { useDeathLogStore } from "../../stores/useDeathLogStore";
+import DeathCounter from "../deathCounter/DeathCounter";
+import ErrorPage from "../ErrorPage";
+import { BarLoader } from "react-spinners";
 
 export type CardMainPageTransitionState = {
 	type: "GameToProfiles" | "ProfileToSubjects" | "Terminal";
@@ -8,31 +11,29 @@ export type CardMainPageTransitionState = {
 };
 
 export default function DeathLogRouter() {
-	
-	let location = useLocation();
-	let mainPageState: CardMainPageTransitionState | undefined = location.state;
+	let params = useParams();
 
-	if (!mainPageState) {
-		return <DeathLog key={"ROOT_NODE"} type="game" parentID="ROOT_NODE" />;
+	const tree = useDeathLogStore((state) => state.tree);
+
+	const gameID = params.gameID;
+	const profileID = params.profileID;
+	const subjectID = params.subjectID;
+
+	if (tree.size == 0){ // handles ErrorPage sudden flicker
+		return <></>
 	}
 
-	switch (mainPageState?.type) {
-		case "GameToProfiles":
-			return (
-				<DeathLog
-					key={mainPageState.parentID}
-					type="profile"
-					parentID={mainPageState.parentID}
-				/>
-			);
-
-		case "ProfileToSubjects":
-			return (
-				<DeathLog
-					key={mainPageState.parentID}
-					type="subject"
-					parentID={mainPageState.parentID}
-				/>
-			);
+	if (gameID && !profileID && !subjectID && tree.has(gameID)) {
+		return <DeathLog parentID={gameID} type="profile" key={gameID} />;
 	}
+
+	if (profileID && !subjectID && tree.has(profileID)) {
+		return <DeathLog parentID={profileID} type="subject" key={profileID} />;
+	}
+
+	if (subjectID && tree.has(subjectID)) {
+		return <DeathCounter subjectID={subjectID} />;
+	}
+
+	return <ErrorPage error={new Error("URL not found!")} />;
 }

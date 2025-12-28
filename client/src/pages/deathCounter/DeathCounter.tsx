@@ -1,25 +1,24 @@
-import { useLocation } from "react-router";
 import { useDeathLogStore } from "../../stores/useDeathLogStore";
-import add from "../../assets/add.svg";
-import minus from "../../assets/minus.svg";
 import { assertIsNonNull, assertIsSubject } from "../../utils";
 import useLoadDeathLogCorrectly from "../deathLog/useLoadDeathLogCorrectly";
-import { ForceError } from "../ErrorPage";
-import { useEffect, useRef, useState } from "react";
+import ErrorPage from "../ErrorPage";
 import up from "../../assets/up.svg";
 import down from "../../assets/down.svg";
 
-export default function DeathCounter() {
-	const location = useLocation();
-	const nodeID: string = location.state;
+type Props = {
+	subjectID: string;
+};
 
-	const node = useDeathLogStore((state) => state.tree.get(nodeID));
+export default function DeathCounter({ subjectID }: Props) {
+	const node = useDeathLogStore((state) => state.tree.get(subjectID));
 	const tree = useDeathLogStore((state) => state.tree);
-	const updateNodeDeaths = useDeathLogStore((state) => state.updateNodeDeaths);
+	const updateNodeDeaths = useDeathLogStore(
+		(state) => state.updateNodeDeaths,
+	);
 	const updateNodeTimeSpent = useDeathLogStore(
 		(state) => state.updateNodeTimeSpent,
 	);
-	const { loading, deletedID } = useLoadDeathLogCorrectly(tree, nodeID);
+	const { loading, deletedID } = useLoadDeathLogCorrectly(tree, subjectID);
 
 	function getSubjectDeaths() {
 		// had to make this because of typescript errors and JSX syntax
@@ -28,14 +27,14 @@ export default function DeathCounter() {
 		return node.deaths;
 	}
 
-	
-
 	return (
 		<>
 			{loading ? null : deletedID ? (
-				<ForceError
-					msg={
-						"This page does not exist anymore! You probably deleted something and pressed forward in the browser history!"
+				<ErrorPage
+					error={
+						new Error(
+							"This page does not exist anymore! You probably deleted something and pressed forward in the browser history!",
+						)
 					}
 				/>
 			) : node ? (

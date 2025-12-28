@@ -8,6 +8,7 @@ export default function useInitApp() {
 
     const initTree = useDeathLogStore((state) => state.initTree);
     const { isSignedIn, user, isLoaded } = useUser();
+    
 
     useEffect(() => {
 
