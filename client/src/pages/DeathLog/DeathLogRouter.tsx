@@ -1,9 +1,8 @@
 import { useParams } from "react-router";
 import DeathLog from "./DeathLog";
 import { useDeathLogStore } from "../../stores/useDeathLogStore";
-import DeathCounter from "../deathCounter/DeathCounter";
+import DeathCounter from "./DeathCounter";
 import ErrorPage from "../ErrorPage";
-import { BarLoader } from "react-spinners";
 
 export type CardMainPageTransitionState = {
 	type: "GameToProfiles" | "ProfileToSubjects" | "Terminal";

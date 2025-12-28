@@ -1,7 +1,5 @@
 import { useDeathLogStore } from "../../stores/useDeathLogStore";
 import { assertIsNonNull, assertIsSubject } from "../../utils";
-import useLoadDeathLogCorrectly from "../deathLog/useLoadDeathLogCorrectly";
-import ErrorPage from "../ErrorPage";
 import up from "../../assets/up.svg";
 import down from "../../assets/down.svg";
 
@@ -18,7 +16,6 @@ export default function DeathCounter({ subjectID }: Props) {
 	const updateNodeTimeSpent = useDeathLogStore(
 		(state) => state.updateNodeTimeSpent,
 	);
-	const { loading, deletedID } = useLoadDeathLogCorrectly(tree, subjectID);
 
 	function getSubjectDeaths() {
 		// had to make this because of typescript errors and JSX syntax
@@ -29,15 +26,7 @@ export default function DeathCounter({ subjectID }: Props) {
 
 	return (
 		<>
-			{loading ? null : deletedID ? (
-				<ErrorPage
-					error={
-						new Error(
-							"This page does not exist anymore! You probably deleted something and pressed forward in the browser history!",
-						)
-					}
-				/>
-			) : node ? (
+			{node ? (
 				<div className="flex flex-col">
 					<h1 className="mx-6 mt-4 text-center text-4xl break-all md:text-6xl">
 						{node.name}
