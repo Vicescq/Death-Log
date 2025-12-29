@@ -31,17 +31,33 @@ export default function DataManagement({}: Props) {
 	} as const;
 
 	const importProblem = {
-		msg: "The import could not be completed, please try again. Make sure to give a valid JSON file. For more info make sure to read the documentation.",
+		msg: "The import could not be completed, please try again. Make sure to give a valid JSON file. For more info make sure to read the FAQ.",
 		modalFn: {
 			fn: () => {
 				// nav to docs!
 			},
-			label: "SEE DOCS",
+			label: "SEE FAQ",
 			btnCol: "bg-lime-600",
 		},
 		modalCloseFn: {
 			fn: () => modalRef.current?.close(),
 			label: "CLOSE",
+		},
+	} as const;
+
+	const importConfirm = {
+		msg: "Importing a file will clear your current account data and will replace it with its contents. Do you want to proceed?",
+		modalFn: {
+			fn: () => {
+				importRef.current?.click();
+				modalRef.current?.close();
+			},
+			label: "PROCEED",
+			btnCol: "bg-lime-700",
+		},
+		modalCloseFn: {
+			fn: () => modalRef.current?.close(),
+			label: "CANCEL",
 		},
 	} as const;
 
@@ -85,7 +101,7 @@ export default function DataManagement({}: Props) {
 		if (importRef.current.files.length > 0) {
 			try {
 				const importedFile = importRef.current.files[0];
-				importRef.current.value = '';   // refire input tag onChange, edge case: user imports same invalid file multiple times
+				importRef.current.value = ""; // refire input tag onChange, edge case: user imports same invalid file multiple times
 				const importedFileTxt = await importedFile.text();
 				const importedFileFinal = JSON.parse(importedFileTxt);
 
@@ -144,7 +160,12 @@ export default function DataManagement({}: Props) {
 			/>
 			<button
 				className="bg-hunyadi min-w-40 rounded-2xl border-4 border-black p-1 font-bold text-black shadow-[4px_4px_0px_rgba(0,0,0,1)] sm:min-w-80"
-				onClick={() => importRef.current?.click()}
+				onClick={() => {
+					setModalFn(importConfirm.modalFn);
+					setModalMsg(importConfirm.msg);
+					setModalCloseFn(importConfirm.modalCloseFn);
+					modalRef.current?.showModal();
+				}}
 			>
 				IMPORT
 			</button>

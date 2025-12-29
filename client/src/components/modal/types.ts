@@ -14,7 +14,8 @@ export type ModalLabel = "CANCEL" |
 	"TRY AGAIN" |
 	"SAVE" |
 	"CONFIRM" |
-	"SEE DOCS";
+	"SEE FAQ" |
+	"PROCEED"
 	
 export type ModalStyle = "alert" | "utility";
 

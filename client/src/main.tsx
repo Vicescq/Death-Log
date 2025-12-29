@@ -27,8 +27,8 @@ createRoot(document.getElementById("root")!).render(
 	</StrictMode>,
 );
 
-function X(){
-	throw new Error("a")
+function ErrorBoundaryTest(){
+	throw new Error("testtesttesttesttesttest")
 	return (
 		<></>
 	)
@@ -73,7 +73,7 @@ function AppRoutes() {
 
 					<Route
 						path="x"
-						element={<X/>}
+						element={<ErrorBoundaryTest/>}
 					/>
 
 					<Route

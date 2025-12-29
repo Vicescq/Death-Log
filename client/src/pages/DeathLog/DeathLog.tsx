@@ -3,7 +3,6 @@ import AddItemCard from "../../components/addItemCard/AddItemCard";
 import Card from "../../components/card/Card";
 import CardWrapper from "../../components/card/CardWrapper";
 import { useDeathLogStore } from "../../stores/useDeathLogStore";
-import ErrorPage from "../ErrorPage";
 
 type Props = {
 	type: "game" | "profile" | "subject";

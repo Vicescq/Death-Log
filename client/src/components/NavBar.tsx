@@ -2,6 +2,7 @@ import { useNavigate } from "react-router";
 import { Link } from "react-router";
 import home from "../assets/home.svg";
 import save from "../assets/save.svg";
+import dl from "../assets/death-log-nav.svg";
 import { SignedIn, UserButton } from "@clerk/clerk-react";
 
 export default function NavBar() {
@@ -9,10 +10,15 @@ export default function NavBar() {
 
 	return (
 		<nav className="bg-zomp border-b-4 border-b-black px-3 text-black">
-			<ul className="flex h-12 items-center gap-2">
+			<ul className="flex h-12 items-center gap-4">
 				<li className="font-bold">
 					<Link to="/">
 						<img className="w-10" src={home} alt="" />
+					</Link>
+				</li>
+				<li className="font-bold">
+					<Link to="/log">
+						<img className="w-10" src={dl} alt="" />
 					</Link>
 				</li>
 				<li className="font-bold">
@@ -21,7 +27,7 @@ export default function NavBar() {
 					</Link>
 				</li>
 				<li className="font-bold">
-					<Link to="/info">INFO</Link>
+					<Link to="/FAQ">FAQ</Link>
 				</li>
 				<SignedIn>
 					<li className="ml-auto flex items-center">
