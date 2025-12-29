@@ -29,7 +29,7 @@ export default function Card({ id }: { id: string }) {
 	const updateNodeCompletion = useDeathLogStore(
 		(state) => state.updateNodeCompletion,
 	);
-	const updateNodeDeaths = useDeathLogStore((state) => state.updateNodeDeaths);
+
 	const deleteGame = useDeathLogStore((state) => state.deleteGame);
 	const deleteProfile = useDeathLogStore((state) => state.deleteProfile);
 	const deleteSubject = useDeathLogStore((state) => state.deleteSubject);
