@@ -8,20 +8,29 @@ export default function ErrorPage({
 	resetErrorBoundary?: any;
 }) {
 	let navigate = useNavigate();
-	const msg = resetErrorBoundary ? "Something unexpected happened" : error.message;
+	const msg = resetErrorBoundary
+		? "Something unexpected happened"
+		: error.message;
 	const icon = resetErrorBoundary ? "(ಠ_ಠ)" : "(˃̣̣̥﹏˂̣̣̥)";
 	return (
-		<>
-			<div className="flex min-h-[65vh] flex-col items-center justify-center gap-10 text-2xl">
-				<span className="mb-5 text-6xl">{icon}</span>
-				<button
-					onClick={() => resetErrorBoundary ? resetErrorBoundary() : navigate("/")}
-					className="mb-12 rounded-2xl border-4 border-black bg-red-500 p-2 font-bold shadow-[6px_6px_0px_rgba(0,0,0,1)]"
-				>
-					Click me to go back home!
-				</button>
-				<p className="max-w-3xl">{msg}</p>
+		<div className="hero bg-base-200 min-h-screen">
+			<div className="hero-content text-center">
+				<div className="max-w-md">
+					<h1 className="text-5xl font-bold">{icon}</h1>
+					<button
+						className="btn btn-accent mt-12"
+						onClick={() =>
+							resetErrorBoundary
+								? resetErrorBoundary()
+								: navigate("/")
+						}
+					>
+						Click me to go back home!
+					</button>
+					<div className="divider"></div>
+					<p className="text-xl sm:text-3xl">{msg}</p>
+				</div>
 			</div>
-		</>
+		</div>
 	);
 }

@@ -3,6 +3,7 @@ import AddItemCard from "../../components/addItemCard/AddItemCard";
 import Card from "../../components/card/Card";
 import CardWrapper from "../../components/card/CardWrapper";
 import { useDeathLogStore } from "../../stores/useDeathLogStore";
+import NavBar from "../../components/NavBar";
 
 type Props = {
 	type: "game" | "profile" | "subject";
@@ -18,10 +19,13 @@ export default function DeathLog({ type, parentID }: Props) {
 	}, [childIDS, parentID]);
 
 	return (
-		<div className="mb-8 flex flex-col items-center justify-center">
-			{/* <AddItemCard pageType={type} parentID={parentID} />
+		<>
+			<NavBar />
+			<div className="mb-8 flex flex-col items-center justify-center">
+				{/* <AddItemCard pageType={type} parentID={parentID} />
 
 			<CardWrapper cards={cards} /> */}
-		</div>
+			</div>
+		</>
 	);
 }

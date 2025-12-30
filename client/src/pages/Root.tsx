@@ -12,19 +12,7 @@ export default function Root() {
 	useMultipleTabsWarning();
 	useConsoleLogOnStateChange(tree, "TREE:", tree);
 
-	// const loooadd = useDelayedComponent(tree.size == 0, 600);
-	// if (loooadd) {
-	// 	return (
-	// 		<div className="m-auto flex items-center justify-center">
-	// 			<BarLoader color="#3ea38d" width={200} />
-	// 		</div>
-	// 	);
-	// }
-
 	return (
-		<>
-			<NavBar />
 			<Outlet />
-		</>
 	);
 }
