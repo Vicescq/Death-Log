@@ -1,37 +1,41 @@
 import { SignedOut, SignInButton, SignedIn } from "@clerk/clerk-react";
 import { useNavigate } from "react-router";
+import GoogleSignInBtn from "../components/GoogleSignInBtn";
 
 export default function Start() {
 	const navigate = useNavigate();
 
 	return (
-		<div className="mt-10 flex flex-col items-center justify-center gap-20">
-			<h1 className="m-auto text-6xl text-amber-200 underline sm:text-8xl">
-				DeathLog
-			</h1>
-			<div className="flex flex-col gap-4 text-black">
-				<SignedOut>
-					<SignInButton>
-						<button className="bg-indianred min-w-40 rounded-2xl border-4 border-black p-1 font-bold shadow-[4px_4px_0px_rgba(0,0,0,1)] sm:min-w-80">
-							GOOGLE SIGN IN
-						</button>
-					</SignInButton>
-					<button
-						className="bg-hunyadi min-w-40 rounded-2xl border-4 border-black p-1 font-bold shadow-[4px_4px_0px_rgba(0,0,0,1)] sm:min-w-80"
-						onClick={() => navigate("/log")}
-					>
-						CONTINUE AS GUEST
-					</button>
-				</SignedOut>
+		<div className="hero bg-base-200 min-h-screen">
+			<div className="hero-content text-center">
+				<div className="max-w-md">
+					<h1 className="text-5xl font-bold underline sm:text-8xl">
+						Death Log
+					</h1>
 
-				<SignedIn>
-					<button
-						className="bg-hunyadi min-w-40 rounded-2xl border-4 border-black p-1 font-bold shadow-[4px_4px_0px_rgba(0,0,0,1)] sm:min-w-80"
-						onClick={() => navigate("log")}
-					>
-						CONTINUE
-					</button>
-				</SignedIn>
+					<div className="my-10 flex flex-col gap-4">
+						<SignedOut>
+							<SignInButton>
+								<GoogleSignInBtn />
+							</SignInButton>
+							<button
+								className="btn btn-neutral"
+								onClick={() => navigate("log")}
+							>
+								Continue as guest
+							</button>
+						</SignedOut>
+
+						<SignedIn>
+							<button
+								className="btn btn-neutral"
+								onClick={() => navigate("log")}
+							>
+								Continue
+							</button>
+						</SignedIn>
+					</div>
+				</div>
 			</div>
 		</div>
 	);
