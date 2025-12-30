@@ -1,5 +1,5 @@
 import { Outlet } from "react-router";
-import NavBar from "../components/NavBar";
+import NavBar from "../components/navBar/NavBar";
 import useMultipleTabsWarning from "../hooks/useMultipleTabsWarning";
 import useInitApp from "../hooks/useInitApp";
 import { BarLoader } from "react-spinners";
