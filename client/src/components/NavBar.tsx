@@ -2,39 +2,35 @@ import { useNavigate } from "react-router";
 import { Link } from "react-router";
 import home from "../assets/home.svg";
 import save from "../assets/save.svg";
-import dl from "../assets/death-log-nav.svg";
+import dl from "../assets/death-log.svg";
 import { SignedIn, UserButton } from "@clerk/clerk-react";
 
 export default function NavBar() {
 	const navigate = useNavigate();
 
 	return (
-		<nav className="bg-zomp border-b-4 border-b-black px-3 text-black">
-			<ul className="flex h-12 items-center gap-4">
-				<li className="font-bold">
-					<Link to="/">
-						<img className="w-10" src={home} alt="" />
-					</Link>
-				</li>
-				<li className="font-bold">
-					<Link to="/log">
-						<img className="w-10" src={dl} alt="" />
-					</Link>
-				</li>
-				<li className="font-bold">
-					<Link to="/data-management">
-						<img className="w-10" src={save} alt="" />
-					</Link>
-				</li>
-				<li className="font-bold">
-					<Link to="/FAQ">FAQ</Link>
-				</li>
+		<div className="navbar bg-base-100 shadow-lg">
+			<div className="flex-none">
+				<button className="btn btn-square btn-ghost">
+					<img src={home} alt="" className="h-8 w-8" />
+				</button>
+			</div>
+			<div className="flex-1">
+				<button className="btn btn-square btn-ghost">
+					<img src={dl} alt="" className="h-8 w-8" />
+				</button>
+				<button className="btn btn-square btn-ghost">
+					<img src={save} alt="" className="h-8 w-8" />
+				</button>
+				<a className="btn btn-ghost text-xl">FAQ</a>
+			</div>
+			<div className="flex-none">
 				<SignedIn>
-					<li className="ml-auto flex items-center">
+					<button className="btn btn-square btn-ghost">
 						<UserButton />
-					</li>
+					</button>
 				</SignedIn>
-			</ul>
-		</nav>
+			</div>
+		</div>
 	);
 }

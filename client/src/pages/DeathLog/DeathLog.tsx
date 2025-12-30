@@ -19,9 +19,9 @@ export default function DeathLog({ type, parentID }: Props) {
 
 	return (
 		<div className="mb-8 flex flex-col items-center justify-center">
-			<AddItemCard pageType={type} parentID={parentID} />
+			{/* <AddItemCard pageType={type} parentID={parentID} />
 
-			<CardWrapper cards={cards} />
+			<CardWrapper cards={cards} /> */}
 		</div>
 	);
 }

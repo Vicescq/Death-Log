@@ -1,8 +1,10 @@
 @import "tailwindcss";
+@plugin "daisyui" {
+	themes:
+		abyss;
+}
 
 :root {
-	background-color: #242429;
-	color: white;
 	font-family: "Urbanist";
 	font-weight: 500;
 }
@@ -20,4 +22,6 @@
 	--color-indianred: #d16666;
 	--color-hunyadi: #e9b44c;
 	--color-englishvio: #3f3644;
+	--color-abysslight: #ffd6a7;
+	--color-abyssdark: #001e29;
 }
