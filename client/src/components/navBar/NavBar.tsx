@@ -4,10 +4,11 @@ import save from "../../assets/save.svg";
 import dl from "../../assets/death-log.svg";
 import { SignedIn, UserButton } from "@clerk/clerk-react";
 import NavBarDrawer from "./NavBarDrawer";
+import AddItemBtn from "../addItemBtn/AddItemBtn";
 
 export default function NavBar() {
 	const navigate = useNavigate();
-
+	
 	return (
 		<div className="navbar bg-base-100">
 			<div className="navbar-start">
@@ -35,13 +36,14 @@ export default function NavBar() {
 						</button>
 					</li>
 					<li>
-						<a onClick={() => navigate("/x")}>FAQ</a>
+						<button onClick={() => navigate("/x")}>FAQ</button>
 					</li>
 				</ul>
 			</div>
 
 			<div className="navbar-center">
-				<a className="btn btn-neutral text-xl">Add game</a>
+				<AddItemBtn/>
+				
 			</div>
 
 			<div className="navbar-end">

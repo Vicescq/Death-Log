@@ -42,7 +42,7 @@ export default function NavBarDrawer() {
 						</button>
 					</li>
 					<li>
-						<a onClick={() => navigate("/x")}>FAQ</a>
+						<button onClick={() => navigate("/x")}>FAQ</button>
 					</li>
 				</ul>
 			</div>
