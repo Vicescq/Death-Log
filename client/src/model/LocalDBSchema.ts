@@ -9,7 +9,6 @@ export type NodeEntry = {
     email: string
 }
 
-
 export const db = new Dexie('DeathLogDB') as Dexie & {
     nodes: Table<NodeEntry, string>
 };

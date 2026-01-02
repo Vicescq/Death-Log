@@ -4,10 +4,11 @@ import save from "../../assets/save.svg";
 import dl from "../../assets/death-log.svg";
 import { SignedIn, UserButton } from "@clerk/clerk-react";
 import NavBarDrawer from "./NavBarDrawer";
-import AddItemBtn from "../addItemBtn/AddItemBtn";
+import { useActiveNavBarCSS } from "./useActiveNavBarCSS";
 
-export default function NavBar({ isDL }: { isDL: boolean }) {
+export default function NavBar() {
 	const navigate = useNavigate();
+	const { activeDLCSS, activeDMCSS, activeFAQCSS } = useActiveNavBarCSS("bg");
 
 	return (
 		<div className="navbar bg-base-100">
@@ -20,23 +21,44 @@ export default function NavBar({ isDL }: { isDL: boolean }) {
 							<img src={home} alt="" className="h-5 w-5" />
 						</button>
 					</li>
+
+					<div className="divider divider-horizontal divider-neutral m-0"></div>
+
 					<li>
-						<button onClick={() => navigate("/log")}>
+						<button
+							onClick={() => navigate("/log")}
+							className={activeDLCSS}
+						>
 							<img src={dl} alt="" className="h-5 w-5" />
 						</button>
 					</li>
 					<li>
-						<button onClick={() => navigate("/data-management")}>
+						<button
+							onClick={() => navigate("/data-management")}
+							className={activeDMCSS}
+						>
 							<img src={save} alt="" className="h-5 w-5" />
 						</button>
 					</li>
 					<li>
-						<button onClick={() => navigate("/x")}>FAQ</button>
+						<button
+							onClick={() => navigate("/FAQ")}
+							className={activeFAQCSS}
+						>
+							FAQ
+						</button>
+					</li>
+					<li>
+						<button
+							onClick={() => navigate("/x")}
+						>
+							TEST
+						</button>
 					</li>
 				</ul>
 			</div>
 
-			<div className="navbar-center">{isDL ? <AddItemBtn /> : null}</div>
+			<div className="navbar-center"></div>
 
 			<div className="navbar-end">
 				<SignedIn>

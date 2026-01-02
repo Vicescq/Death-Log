@@ -11,6 +11,7 @@ import DeathLogRouter from "./pages/deathLog/DeathLogRouter.tsx";
 import MultipleTabs from "./pages/MultipleTabs.tsx";
 import { ClerkProvider } from "@clerk/clerk-react";
 import DeathLog from "./pages/deathLog/DeathLog.tsx";
+import FAQ from "./pages/FAQ.tsx";
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 if (!PUBLISHABLE_KEY) {
@@ -27,11 +28,9 @@ createRoot(document.getElementById("root")!).render(
 	</StrictMode>,
 );
 
-function ErrorBoundaryTest(){
-	throw new Error("testtesttesttesttesttest")
-	return (
-		<></>
-	)
+function ErrorBoundaryTest() {
+	throw new Error("testtesttesttesttesttest");
+	return <></>;
 }
 
 function AppRoutes() {
@@ -71,14 +70,15 @@ function AppRoutes() {
 						element={<DataManagement />}
 					/>
 
-					<Route
-						path="x"
-						element={<ErrorBoundaryTest/>}
-					/>
+					<Route path="FAQ" element={<FAQ />} />
+
+					<Route path="x" element={<ErrorBoundaryTest />} />
 
 					<Route
 						path="*"
-						element={<ErrorPage error={new Error("URL not found!")}/>}
+						element={
+							<ErrorPage error={new Error("URL not found!")} />
+						}
 					/>
 				</Route>
 				<Route path="/__MULTIPLE_TABS__" element={<MultipleTabs />} />
