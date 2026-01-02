@@ -1,4 +1,4 @@
-import { db, type NodeEntry } from "../model/LocalDBSchema";
+import { db } from "../model/LocalDBSchema";
 import type { DistinctTreeNode, Game, Profile, Subject, TreeNode } from "../model/TreeNodeModel";
 import { assertIsNonNull } from "../utils";
 
@@ -89,7 +89,7 @@ export default class LocalDB {
     }
 
     static async insertData(nodes: DistinctTreeNode[]) {
-        for (let node of nodes){
+        for (let node of nodes) {
             await db.nodes.add({ node_id: node.id, email: LocalDB.getUserEmail(), node: node, created_at: new Date().toISOString(), edited_at: new Date().toISOString() })
         }
     }

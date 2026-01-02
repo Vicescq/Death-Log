@@ -6,12 +6,27 @@ export default function AddItemBtn() {
 	return (
 		<>
 			<button
-				className="btn  text-xl"
+				className="btn text-xl"
 				onClick={() => modalRef.current?.showModal()}
 			>
 				Add game
 			</button>
-			<Modal ref={modalRef} />
+			<Modal
+				ref={modalRef}
+				header="Game title"
+				content={
+					<div className="join mt-6 w-full">
+						<input
+							type="text"
+							placeholder="Type here"
+							className="input join-item"
+						/>
+						<button className="btn join-item">Confirm</button>
+					</div>
+				}
+				closeBtnName="Close"
+				modalBtns={[]}
+			/>
 		</>
 	);
 }

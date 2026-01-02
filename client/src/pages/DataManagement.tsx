@@ -1,98 +1,155 @@
 import { useRef, useState } from "react";
 import LocalDB from "../services/LocalDB";
 import { assertIsNonNull, refreshTree } from "../utils";
-import Modal from "../components/modal/Modal";
-import AlertModalBody from "../components/modal/AlertModalBody";
+import Modal, { type ModalBtn } from "../components/modal/Modal";
 import { useDeathLogStore } from "../stores/useDeathLogStore";
-import type { ModalFn } from "../components/modal/types";
+import NavBar from "../components/navBar/NavBar";
+import skull from "../assets/skull.svg";
+import { db } from "../model/LocalDBSchema";
+import FeedbackToast from "../components/FeedbackToast";
+import type { DistinctTreeNode, TreeNode } from "../model/TreeNodeModel";
 
-type Props = {};
+type DeathLogBackup = {
+	type: "DEATH-LOG Backup";
+	version: number;
+	details: "Please do not edit this JSON in a significant way. Doing so might corrupt the data and importing this file in the site will no longer work.";
+	date: string;
+	data: DistinctTreeNode[];
+};
 
-export default function DataManagement({}: Props) {
+export default function DataManagement() {
 	const initTree = useDeathLogStore((state) => state.initTree);
 	const importRef = useRef<HTMLInputElement>(null);
-	const modalRef = useRef<HTMLDialogElement>(null);
+	const ref = useRef<HTMLDialogElement>(null);
 
-	const deleteNotify = {
-		msg: "Are you sure you want clear all your DeathLog data for the current account? Guest data will be deleted if no account is logged in.",
-		modalFn: {
-			fn: async () => {
-				await LocalDB.clearData();
-				await refreshTree(initTree);
-				modalRef.current?.close();
+	const [feedbackToastMsg, setFeedbackToastMsg] = useState("");
+	const [feedbackToastDisplay, setFeedbackToastDisplay] = useState(false);
+	const [feedbackToastCSS, setFeedbackToastCSS] = useState("success");
+
+	const [modalContent, setModalContent] = useState<React.JSX.Element>(<></>);
+	const [modalHeader, setModalHeader] = useState("");
+	const [modalCloseBtnName, setModalCloseBtnName] = useState("Close");
+	const [modalBtns, setModalBtns] = useState<ModalBtn[]>([]);
+
+	const deleteModalProps = {
+		content: <></>,
+		header: "Are you sure you want to clear all your data for the current account? Guest data will be deleted if no account is logged in.",
+		closeBtnName: "CANCEL",
+		modalBtns: [
+			{
+				text: "DELETE",
+				fn: async () => {
+					try {
+						await LocalDB.clearData();
+						await refreshTree(initTree);
+						ref.current?.close();
+						setFeedbackToastMsg("Deletion process was a success!");
+						setFeedbackToastCSS("success");
+					} catch (e) {
+						if (e instanceof Error) {
+							ref.current?.close();
+							setFeedbackToastMsg(
+								"Something unexpected happened during the deletion process. Please try again.",
+							);
+							setFeedbackToastCSS("error");
+						}
+					} finally {
+						setFeedbackToastDisplay(true);
+					}
+				},
+				css: "mt-8 btn-error",
 			},
-			label: "CONFIRM",
-			btnCol: "bg-red-700",
-		},
-		modalCloseFn: {
-			fn: () => modalRef.current?.close(),
-			label: "CANCEL",
-		},
+		],
 	} as const;
 
-	const importProblem = {
-		msg: "The import could not be completed, please try again. Make sure to give a valid JSON file. For more info make sure to read the FAQ.",
-		modalFn: {
-			fn: () => {
-				// nav to docs!
+	const eraseAllModalProps = {
+		content: <></>,
+		header: "Are you sure you want to erase all Death Log data including other accounts? This should be done if the app does not work and as a worst case scenario if other methods can't fix your data.",
+		closeBtnName: "CANCEL",
+		modalBtns: [
+			{
+				text: "ERASE ALL",
+				fn: async () => {
+					try {
+						await db.delete();
+						await db.open();
+						await refreshTree(initTree);
+						ref.current?.close();
+						setFeedbackToastMsg("Deletion process was a success!");
+						setFeedbackToastCSS("success");
+					} catch (e) {
+						if (e instanceof Error) {
+							ref.current?.close();
+							setFeedbackToastMsg(
+								"Something unexpected happened during the deletion process. Please try again.",
+							);
+							setFeedbackToastCSS("error");
+						}
+					} finally {
+						setFeedbackToastDisplay(true);
+					}
+				},
+				css: "mt-8 btn-error",
 			},
-			label: "SEE FAQ",
-			btnCol: "bg-lime-600",
-		},
-		modalCloseFn: {
-			fn: () => modalRef.current?.close(),
-			label: "CLOSE",
-		},
+		],
 	} as const;
 
-	const importConfirm = {
-		msg: "Importing a file will clear your current account data and will replace it with its contents. Do you want to proceed?",
-		modalFn: {
-			fn: () => {
-				importRef.current?.click();
-				modalRef.current?.close();
+	const importModalProps = {
+		content: <></>,
+		header: "Importing a file will clear your current account data and will replace it with its contents. Do you want to proceed?",
+		closeBtnName: "CANCEL",
+		modalBtns: [
+			{
+				text: "PROCEED",
+				fn: () => {
+					importRef.current?.click();
+					ref.current?.close();
+				},
+				css: "mt-8 btn-info",
 			},
-			label: "PROCEED",
-			btnCol: "bg-lime-700",
-		},
-		modalCloseFn: {
-			fn: () => modalRef.current?.close(),
-			label: "CANCEL",
-		},
+		],
 	} as const;
-
-	const [modalMsg, setModalMsg] = useState<string>(deleteNotify.msg);
-	const [modalFn, setModalFn] = useState<ModalFn>(deleteNotify.modalFn);
-	const [modalCloseFn, setModalCloseFn] = useState<ModalFn>(
-		deleteNotify.modalCloseFn,
-	);
 
 	function migrateGuest() {}
 
 	async function exportDL() {
-		const date = new Date();
-		const iso = date.toISOString();
+		try {
+			const date = new Date();
+			const iso = date.toISOString();
+			const nodes = await LocalDB.getNodes();
+			const finalJSON: DeathLogBackup = {
+				type: "DEATH-LOG Backup",
+				version: db.verno,
+				details:
+					"Please do not edit this JSON in a significant way. Doing so might corrupt the data and importing this file in the site will no longer work.",
+				date: iso,
+				data: nodes,
+			};
 
-		const nodes = await LocalDB.getNodes();
-		const finalJSON = {
-			type: "DEATH-LOG Backup",
-			details:
-				"Please do not edit this JSON in a significant way. Doing so might corrupt the data and importing this file in the site will no longer work.",
-			date: iso,
-			data: nodes,
-		};
+			const blob = new Blob([JSON.stringify(finalJSON)], {
+				type: "application/json",
+			});
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement("a");
+			a.href = url;
+			a.download = `Death Log ${date.toString()}.json`;
+			document.body.appendChild(a);
+			a.click();
+			document.body.removeChild(a);
+			URL.revokeObjectURL(url);
 
-		const blob = new Blob([JSON.stringify(finalJSON)], {
-			type: "application/json",
-		});
-		const url = URL.createObjectURL(blob);
-		const a = document.createElement("a");
-		a.href = url;
-		a.download = `Death-Log ${date.toString()}.json`;
-		document.body.appendChild(a);
-		a.click();
-		document.body.removeChild(a);
-		URL.revokeObjectURL(url);
+			setFeedbackToastMsg("Successful export!");
+			setFeedbackToastCSS("success");
+			setFeedbackToastDisplay(true);
+		} catch (e) {
+			if (e instanceof Error) {
+				setFeedbackToastMsg(
+					"The export could not be completed, please try again.",
+				);
+				setFeedbackToastCSS("error");
+				setFeedbackToastDisplay(true);
+			}
+		}
 	}
 
 	async function importDL() {
@@ -108,48 +165,155 @@ export default function DataManagement({}: Props) {
 				validateJSON(importedFileFinal);
 
 				await LocalDB.clearAndInsertData(importedFileFinal.data);
-				refreshTree(initTree);
+				await refreshTree(initTree);
+				setFeedbackToastMsg("Successful import!");
+				setFeedbackToastCSS("success");
+				setFeedbackToastDisplay(true);
 			} catch (e) {
 				if (e instanceof Error) {
-					setModalMsg(importProblem.msg);
-					setModalFn(importProblem.modalFn);
-					setModalCloseFn(importProblem.modalCloseFn);
-					modalRef.current?.showModal();
+					setFeedbackToastMsg(
+						"The import could not be completed, please try again. Make sure to give a valid JSON file. For more info make sure to read the FAQ.",
+					);
+					setFeedbackToastCSS("error");
+					setFeedbackToastDisplay(true);
 				}
 			}
 		}
 	}
 
 	function validateJSON(parsedJSON: any) {
-		// light validation!
+		const deathLogBackupKeys = [
+			"type",
+			"version",
+			"details",
+			"date",
+			"data",
+		];
+		const keys = Object.keys(parsedJSON);
+		console.log(keys);
+		if (keys.length != deathLogBackupKeys.length) {
+			throw new Error("Invalid JSON");
+		}
+		keys.forEach((key) => {
+			if (!deathLogBackupKeys.includes(key)) {
+				throw new Error("Invalid JSON");
+			}
+		});
 
-		if (!(parsedJSON.type == "DEATH-LOG Backup")) {
-			throw new Error();
+		if (parsedJSON.type != "DEATH-LOG Backup") {
+			throw new Error("Invalid JSON");
 		}
 
+		if (
+			parsedJSON.details !=
+			"Please do not edit this JSON in a significant way. Doing so might corrupt the data and importing this file in the site will no longer work."
+		) {
+			throw new Error("Invalid JSON");
+		}
+
+		// light validation!
 		if (parsedJSON.data.length > 0) {
-			const supposedNode = parsedJSON.data[0];
-			if (!(supposedNode.type || supposedNode.id || supposedNode.name))
-				throw new Error();
+			parsedJSON.data.forEach((supposedNode: TreeNode) => {
+				if (!(supposedNode.type && supposedNode.id && supposedNode.name))
+					throw new Error("Invalid JSON");
+			})
+		}
+
+		if (parsedJSON.version != db.verno){
+			throw new Error("Invalid JSON"); // temp
+			// implement migrations
 		}
 	}
 
 	return (
-		<div className="mt-24 flex flex-col items-center justify-center gap-3">
-			<h1 className="mb-12 text-4xl underline">Manage your data</h1>
+		<>
+			<NavBar isDL={false} />
+			<FeedbackToast
+				msg={feedbackToastMsg}
+				bgCSS={feedbackToastCSS}
+				displayed={feedbackToastDisplay}
+				handleDisplay={() => setFeedbackToastDisplay((val) => !val)}
+			/>
+			<Modal
+				ref={ref}
+				content={modalContent}
+				header={modalHeader}
+				closeBtnName={modalCloseBtnName}
+				modalBtns={modalBtns}
+			/>
 
-			<button
-				className="bg-hunyadi min-w-40 rounded-2xl border-4 border-black p-1 font-bold text-black shadow-[4px_4px_0px_rgba(0,0,0,1)] sm:min-w-80"
-				onClick={migrateGuest}
-			>
-				MIGRATE TO ACCOUNT
-			</button>
-			<button
-				className="bg-hunyadi min-w-40 rounded-2xl border-4 border-black p-1 font-bold text-black shadow-[4px_4px_0px_rgba(0,0,0,1)] sm:min-w-80"
-				onClick={exportDL}
-			>
-				EXPORT
-			</button>
+			<div className="hero bg-base-100 min-h-screen">
+				<div className="hero-content text-center">
+					<div className="h-[70vh] max-w-md">
+						<h1 className="mb-10 text-5xl font-bold underline">
+							Data Management
+						</h1>
+						<div className="flex flex-col gap-4">
+							<button
+								className="btn btn-success text-xl"
+								onClick={() => {
+									setModalHeader(importModalProps.header);
+									setModalBtns([
+										...importModalProps.modalBtns,
+									]);
+									setModalCloseBtnName(
+										importModalProps.closeBtnName,
+									);
+									setModalContent(importModalProps.content);
+									ref.current?.showModal();
+								}}
+							>
+								IMPORT
+							</button>
+
+							<button
+								className="btn btn-success text-xl"
+								onClick={exportDL}
+							>
+								EXPORT
+							</button>
+							<button className="btn btn-success text-xl">
+								MIGRATE TO ACCOUNT
+							</button>
+							<div className="divider">
+								<img src={skull} alt="" />
+							</div>
+							<button
+								className="btn btn-error text-xl"
+								onClick={() => {
+									setModalHeader(deleteModalProps.header);
+									setModalBtns([
+										...deleteModalProps.modalBtns,
+									]);
+									setModalCloseBtnName(
+										deleteModalProps.closeBtnName,
+									);
+									setModalContent(deleteModalProps.content);
+									ref.current?.showModal();
+								}}
+							>
+								DELETE
+							</button>
+							<button
+								className="btn btn-error text-xl"
+								onClick={() => {
+									setModalHeader(eraseAllModalProps.header);
+									setModalBtns([
+										...eraseAllModalProps.modalBtns,
+									]);
+									setModalCloseBtnName(
+										eraseAllModalProps.closeBtnName,
+									);
+									setModalContent(eraseAllModalProps.content);
+									ref.current?.showModal();
+								}}
+							>
+								ERASE ALL
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
 
 			<input
 				type="file"
@@ -158,34 +322,6 @@ export default function DataManagement({}: Props) {
 				onChange={importDL}
 				accept="application/json"
 			/>
-			<button
-				className="bg-hunyadi min-w-40 rounded-2xl border-4 border-black p-1 font-bold text-black shadow-[4px_4px_0px_rgba(0,0,0,1)] sm:min-w-80"
-				onClick={() => {
-					setModalFn(importConfirm.modalFn);
-					setModalMsg(importConfirm.msg);
-					setModalCloseFn(importConfirm.modalCloseFn);
-					modalRef.current?.showModal();
-				}}
-			>
-				IMPORT
-			</button>
-			<button
-				className="bg-indianred min-w-40 rounded-2xl border-4 border-black p-1 font-bold text-black shadow-[4px_4px_0px_rgba(0,0,0,1)] sm:min-w-80"
-				onClick={() => {
-					setModalFn(deleteNotify.modalFn);
-					modalRef.current?.showModal();
-				}}
-			>
-				DELETE
-			</button>
-
-			<Modal
-				modalStyle="alert"
-				body={<AlertModalBody msg={modalMsg} />}
-				modalRef={modalRef}
-				closeFn={modalCloseFn}
-				fn={modalFn}
-			/>
-		</div>
+		</>
 	);
 }

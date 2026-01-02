@@ -6,9 +6,9 @@ import { SignedIn, UserButton } from "@clerk/clerk-react";
 import NavBarDrawer from "./NavBarDrawer";
 import AddItemBtn from "../addItemBtn/AddItemBtn";
 
-export default function NavBar() {
+export default function NavBar({ isDL }: { isDL: boolean }) {
 	const navigate = useNavigate();
-	
+
 	return (
 		<div className="navbar bg-base-100">
 			<div className="navbar-start">
@@ -26,13 +26,8 @@ export default function NavBar() {
 						</button>
 					</li>
 					<li>
-						<button>
-							<img
-								src={save}
-								alt=""
-								className="h-5 w-5"
-								onClick={() => navigate("/data-management")}
-							/>
+						<button onClick={() => navigate("/data-management")}>
+							<img src={save} alt="" className="h-5 w-5" />
 						</button>
 					</li>
 					<li>
@@ -41,14 +36,11 @@ export default function NavBar() {
 				</ul>
 			</div>
 
-			<div className="navbar-center">
-				<AddItemBtn/>
-				
-			</div>
+			<div className="navbar-center">{isDL ? <AddItemBtn /> : null}</div>
 
 			<div className="navbar-end">
 				<SignedIn>
-					<button className="btn btn-square ">
+					<button className="btn btn-square">
 						<UserButton />
 					</button>
 				</SignedIn>
