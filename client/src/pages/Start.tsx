@@ -8,7 +8,7 @@ export default function Start() {
 		<div className="hero bg-base-200 min-h-screen">
 			<div className="hero-content text-center">
 				<div className="max-w-md">
-					<h1 className="text-5xl font-bold underline sm:text-8xl">
+					<h1 className="font-bold underline text-6xl sm:text-8xl">
 						Death Log
 					</h1>
 

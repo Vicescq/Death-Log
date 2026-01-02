@@ -214,12 +214,14 @@ export default function DataManagement() {
 		// light validation!
 		if (parsedJSON.data.length > 0) {
 			parsedJSON.data.forEach((supposedNode: TreeNode) => {
-				if (!(supposedNode.type && supposedNode.id && supposedNode.name))
+				if (
+					!(supposedNode.type && supposedNode.id && supposedNode.name)
+				)
 					throw new Error("Invalid JSON");
-			})
+			});
 		}
 
-		if (parsedJSON.version != db.verno){
+		if (parsedJSON.version != db.verno) {
 			throw new Error("Invalid JSON"); // temp
 			// implement migrations
 		}
@@ -227,7 +229,7 @@ export default function DataManagement() {
 
 	return (
 		<>
-			<NavBar isDL={false} />
+			<NavBar />
 			<FeedbackToast
 				msg={feedbackToastMsg}
 				bgCSS={feedbackToastCSS}
@@ -241,76 +243,67 @@ export default function DataManagement() {
 				closeBtnName={modalCloseBtnName}
 				modalBtns={modalBtns}
 			/>
+			<div className="bg-base-100 flex mt-14 items-center justify-center">
+				<div className="sm:w-md w-[19rem]">
+					<h1 className="mb-10 text-5xl font-bold sm:text-center  underline">
+						Data Management
+					</h1>
+					<div className="flex flex-col gap-4">
+						<button
+							className="btn btn-success text-xl"
+							onClick={() => {
+								setModalHeader(importModalProps.header);
+								setModalBtns([...importModalProps.modalBtns]);
+								setModalCloseBtnName(
+									importModalProps.closeBtnName,
+								);
+								setModalContent(importModalProps.content);
+								ref.current?.showModal();
+							}}
+						>
+							IMPORT
+						</button>
 
-			<div className="hero bg-base-100 min-h-screen">
-				<div className="hero-content text-center">
-					<div className="h-[70vh] max-w-md">
-						<h1 className="mb-10 text-5xl font-bold underline">
-							Data Management
-						</h1>
-						<div className="flex flex-col gap-4">
-							<button
-								className="btn btn-success text-xl"
-								onClick={() => {
-									setModalHeader(importModalProps.header);
-									setModalBtns([
-										...importModalProps.modalBtns,
-									]);
-									setModalCloseBtnName(
-										importModalProps.closeBtnName,
-									);
-									setModalContent(importModalProps.content);
-									ref.current?.showModal();
-								}}
-							>
-								IMPORT
-							</button>
-
-							<button
-								className="btn btn-success text-xl"
-								onClick={exportDL}
-							>
-								EXPORT
-							</button>
-							<button className="btn btn-success text-xl">
-								MIGRATE TO ACCOUNT
-							</button>
-							<div className="divider">
-								<img src={skull} alt="" />
-							</div>
-							<button
-								className="btn btn-error text-xl"
-								onClick={() => {
-									setModalHeader(deleteModalProps.header);
-									setModalBtns([
-										...deleteModalProps.modalBtns,
-									]);
-									setModalCloseBtnName(
-										deleteModalProps.closeBtnName,
-									);
-									setModalContent(deleteModalProps.content);
-									ref.current?.showModal();
-								}}
-							>
-								DELETE
-							</button>
-							<button
-								className="btn btn-error text-xl"
-								onClick={() => {
-									setModalHeader(eraseAllModalProps.header);
-									setModalBtns([
-										...eraseAllModalProps.modalBtns,
-									]);
-									setModalCloseBtnName(
-										eraseAllModalProps.closeBtnName,
-									);
-									setModalContent(eraseAllModalProps.content);
-									ref.current?.showModal();
-								}}
-							>
-								ERASE ALL
-							</button>
+						<button
+							className="btn btn-success text-xl"
+							onClick={exportDL}
+						>
+							EXPORT
+						</button>
+						<button className="btn btn-success text-xl">
+							MIGRATE TO ACCOUNT
+						</button>
+						<div className="divider">
+							<img src={skull} alt="" />
 						</div>
+						<button
+							className="btn btn-error text-xl"
+							onClick={() => {
+								setModalHeader(deleteModalProps.header);
+								setModalBtns([...deleteModalProps.modalBtns]);
+								setModalCloseBtnName(
+									deleteModalProps.closeBtnName,
+								);
+								setModalContent(deleteModalProps.content);
+								ref.current?.showModal();
+							}}
+						>
+							DELETE
+						</button>
+						<button
+							className="btn btn-error text-xl"
+							onClick={() => {
+								setModalHeader(eraseAllModalProps.header);
+								setModalBtns([...eraseAllModalProps.modalBtns]);
+								setModalCloseBtnName(
+									eraseAllModalProps.closeBtnName,
+								);
+								setModalContent(eraseAllModalProps.content);
+								ref.current?.showModal();
+							}}
+						>
+							ERASE ALL
+						</button>
 					</div>
 				</div>
 			</div>

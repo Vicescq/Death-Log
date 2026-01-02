@@ -28,8 +28,8 @@ export default function DeathLogCard({
 					/>
 				</div>
 			</div>
-			<div>
-				<div className="line-clamp-3 sm:line-clamp-2 ">{node.name}</div>
+			<div className="flex flex-col justify-center">
+				<div className="line-clamp-4 sm:line-clamp-2">{node.name}</div>
 				<div className="text-xs font-semibold uppercase opacity-60">
 					{deaths}
 				</div>

@@ -10,7 +10,7 @@ export default function FeedbackToast({
 	handleDisplay: () => void;
 }) {
 	return displayed ? (
-		<div className="toast toast-top toast-center">
+		<div className="toast toast-top toast-center z-[1001]">
 			<div className={`alert alert-${bgCSS}`}>
 				<button
 					className="btn btn-xs btn-ghost btn-circle"

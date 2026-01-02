@@ -48,13 +48,13 @@ export default function NavBar() {
 							FAQ
 						</button>
 					</li>
-					<li>
+					{/* <li>
 						<button
 							onClick={() => navigate("/x")}
 						>
 							TEST
 						</button>
-					</li>
+					</li> */}
 				</ul>
 			</div>
 

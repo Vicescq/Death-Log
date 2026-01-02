@@ -55,7 +55,7 @@ export default function DeathLog({ type, parentID }: Props) {
 	return (
 		<>
 			<NavBar />
-			<div className="my-8 flex justify-center">
+			<div className="my-6 mb-14 flex justify-center">
 				<ul className="list bg-base-100 rounded-box flex w-screen lg:hidden">
 					{bothArr}
 				</ul>

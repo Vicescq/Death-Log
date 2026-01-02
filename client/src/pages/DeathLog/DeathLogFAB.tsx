@@ -3,6 +3,7 @@ import add from "../../assets/add.svg";
 import fabEdit from "../../assets/fab_edit.svg";
 import filter from "../../assets/filter.svg";
 import sort from "../../assets/sort.svg";
+import up from "../../assets/up.svg";
 import Modal from "../../components/modal/Modal";
 
 export default function DeathLogFAB({ type }: { type: string }) {
@@ -33,15 +34,30 @@ export default function DeathLogFAB({ type }: { type: string }) {
 					</button>
 				</div>
 				<div>
-					Sort {type}
+					Sort {type}s
 					<button className="btn btn-lg btn-circle btn-neutral">
 						<img src={sort} alt="" />
 					</button>
 				</div>
 				<div>
-					Filter {type}
+					Filter {type}s
 					<button className="btn btn-lg btn-circle">
 						<img src={filter} alt="" />
+					</button>
+				</div>
+				<div>
+					Back to top
+					<button
+						className="btn btn-lg btn-circle btn-accent"
+						onClick={() =>
+							window.scrollTo({
+								top: 0,
+								left: 0,
+								behavior: "smooth",
+							})
+						}
+					>
+						<img src={up} alt="" />
 					</button>
 				</div>
 			</div>
