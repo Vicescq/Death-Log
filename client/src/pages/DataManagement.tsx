@@ -24,7 +24,7 @@ export default function DataManagement() {
 
 	const [feedbackToastMsg, setFeedbackToastMsg] = useState("");
 	const [feedbackToastDisplay, setFeedbackToastDisplay] = useState(false);
-	const [feedbackToastCSS, setFeedbackToastCSS] = useState("success");
+	const [feedbackToastCSS, setFeedbackToastCSS] = useState<"success" | "error">("success");
 
 	const [modalContent, setModalContent] = useState<React.JSX.Element>(<></>);
 	const [modalHeader, setModalHeader] = useState("");
@@ -62,13 +62,13 @@ export default function DataManagement() {
 		],
 	} as const;
 
-	const eraseAllModalProps = {
+	const deleteAllModalProps = {
 		content: <></>,
-		header: "Are you sure you want to erase all Death Log data including other accounts? This should be done if the app does not work and as a worst case scenario if other methods can't fix your data.",
+		header: "Are you sure you want to delete all Death Log data? This includes any Death Log account that logged on this device. This is a factory reset.",
 		closeBtnName: "CANCEL",
 		modalBtns: [
 			{
-				text: "ERASE ALL",
+				text: "DELETE ALL",
 				fn: async () => {
 					try {
 						await db.delete();
@@ -243,9 +243,9 @@ export default function DataManagement() {
 				closeBtnName={modalCloseBtnName}
 				modalBtns={modalBtns}
 			/>
-			<div className="bg-base-100 flex mt-14 items-center justify-center">
-				<div className="sm:w-md w-[19rem]">
-					<h1 className="mb-10 text-5xl font-bold sm:text-center  underline">
+			<div className="bg-base-100 mt-14 flex items-center justify-center">
+				<div className="w-[19rem] sm:w-md">
+					<h1 className="mb-10 text-5xl font-bold underline sm:text-center">
 						Data Management
 					</h1>
 					<div className="flex flex-col gap-4">
@@ -293,16 +293,16 @@ export default function DataManagement() {
 						<button
 							className="btn btn-error text-xl"
 							onClick={() => {
-								setModalHeader(eraseAllModalProps.header);
-								setModalBtns([...eraseAllModalProps.modalBtns]);
+								setModalHeader(deleteAllModalProps.header);
+								setModalBtns([...deleteAllModalProps.modalBtns]);
 								setModalCloseBtnName(
-									eraseAllModalProps.closeBtnName,
+									deleteAllModalProps.closeBtnName,
 								);
-								setModalContent(eraseAllModalProps.content);
+								setModalContent(deleteAllModalProps.content);
 								ref.current?.showModal();
 							}}
 						>
-							ERASE ALL
+							DELETE ALL
 						</button>
 					</div>
 				</div>

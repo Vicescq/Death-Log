@@ -5,9 +5,12 @@ import filter from "../../assets/filter.svg";
 import sort from "../../assets/sort.svg";
 import up from "../../assets/up.svg";
 import Modal from "../../components/modal/Modal";
+import { useDeathLogStore } from "../../stores/useDeathLogStore";
 
 export default function DeathLogFAB({ type }: { type: string }) {
+	const addNode = useDeathLogStore((state) => state.addNode);
 	const modalRef = useRef<HTMLDialogElement>(null);
+
 	return (
 		<>
 			<div className="fab">
@@ -63,15 +66,23 @@ export default function DeathLogFAB({ type }: { type: string }) {
 			</div>
 			<Modal
 				ref={modalRef}
-				header="Game title"
+				header={`${type[0].toUpperCase() + type.slice(1)} title`}
 				content={
 					<div className="join mt-6 w-full">
-						<input
-							type="text"
-							placeholder="Type here"
-							className="input join-item"
-						/>
-						<button className="btn join-item">Confirm</button>
+						<div className="join-item w-full">
+							<input
+								type="text"
+								placeholder="Type here"
+								className="input validator required"
+							/>
+							{/* <div className="text-sm mt-2 text-error">
+								{alertPrompts.empty}
+							</div> */}
+						</div>
+
+						<button className="btn join-item" onClick={() => {
+							// addNode(type, "", )
+						}}>Confirm</button>
 					</div>
 				}
 				closeBtnName="Close"
