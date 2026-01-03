@@ -1,13 +1,13 @@
 import type { DistinctTreeNode } from "../../model/TreeNodeModel";
 import DeathLogCardOptions from "./DeathLogCardOptions";
 
-export default function DeathLogCard({
-	node,
-	entryNum,
-}: {
+type Props = {
 	node: DistinctTreeNode;
 	entryNum: number;
-}) {
+	handleEdit: () => void;
+};
+
+export default function DeathLogCard({ node, entryNum, handleEdit }: Props) {
 	const deaths =
 		node.type == "game"
 			? node.totalDeaths
@@ -28,13 +28,13 @@ export default function DeathLogCard({
 					/>
 				</div>
 			</div>
-			<div className="flex flex-col justify-center">
+			<div className="flex flex-col justify-center ">
 				<div className="line-clamp-4 sm:line-clamp-2">{node.name}</div>
 				<div className="text-xs font-semibold uppercase opacity-60">
 					{deaths}
 				</div>
 			</div>
-			<DeathLogCardOptions node={node} />
+			<DeathLogCardOptions node={node} handleEdit={handleEdit} />
 		</li>
 	);
 }

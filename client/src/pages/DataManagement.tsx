@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import LocalDB from "../services/LocalDB";
 import { assertIsNonNull, refreshTree } from "../utils";
-import Modal, { type ModalBtn } from "../components/modal/Modal";
+import Modal, { type ModalBtn } from "../components/Modal";
 import { useDeathLogStore } from "../stores/useDeathLogStore";
 import NavBar from "../components/navBar/NavBar";
 import skull from "../assets/skull.svg";

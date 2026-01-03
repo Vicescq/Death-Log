@@ -1,12 +1,12 @@
 import useModal from "../modal/useModal";
-import type { AICSubjectOverrides } from "./types";
+import type { EditableSubjectField } from "./types";
 
 export default function useAICModals() {
     const {
         modalRef: aicModalRef,
         modalState: aicModalState,
         setModalState: setAICModalState,
-    } = useModal<AICSubjectOverrides>({
+    } = useModal<EditableSubjectField>({
         reoccurring: false,
         context: "boss",
     });

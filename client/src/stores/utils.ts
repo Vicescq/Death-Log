@@ -10,9 +10,6 @@ export function validateNodeString(inputText: string, tree: Tree, parentID: stri
     if (inputText == "") {
         throw new Error("Name cannot be empty!");
     }
-    if (inputText.includes("?")) {
-        throw new Error("Invalid symbols are found!");
-    }
     if (!isNodeNameUnique(tree, parentID, inputText)) {
         throw new Error("Name has to be unique!")
     }
@@ -101,12 +98,12 @@ export function isNodeNameUnique(tree: Tree, parentID: string, name: string) {
     return !siblingNames.includes(name);
 }
 
-export function isURLIDUnique(){
-    
+export function isURLIDUnique() {
+
 }
 
 export function createRootNode() {
-    const rootNode: RootNode = { type: "ROOT_NODE", id: "ROOT_NODE", childIDS: [], parentID: "NONE", name: "", completed: false, notes: "", dateStart: "", dateEnd: ""};
+    const rootNode: RootNode = { type: "ROOT_NODE", id: "ROOT_NODE", childIDS: [], parentID: "NONE", name: "", completed: false, notes: "", dateStart: "", dateEnd: "" };
     return rootNode
 }
 
@@ -189,14 +186,14 @@ export function updateProfileDeathEntriesOnSubjectDelete(profile: Profile, delet
     return updatedDeathEntries;
 }
 
-export function generateAndValidateID(tree: Tree){
+export function generateAndValidateID(tree: Tree) {
     let id: string;
     let counter = 0
     do {
         id = nanoid(8)
         counter += 1;
     } while (tree.has(id) && counter <= 100)
-    if (counter > 100){
+    if (counter > 100) {
         throw new Error("ERROR! You somehow generated 100 duplicated IDs of length 8 in a row. Either you messed something in the local db or youre an insanely lucky person! :)")
     }
     return id

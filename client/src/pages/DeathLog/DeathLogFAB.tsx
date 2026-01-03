@@ -1,15 +1,31 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import add from "../../assets/add.svg";
 import fabEdit from "../../assets/fab_edit.svg";
 import filter from "../../assets/filter.svg";
 import sort from "../../assets/sort.svg";
 import up from "../../assets/up.svg";
-import Modal from "../../components/modal/Modal";
+import Modal from "../../components/Modal";
 import { useDeathLogStore } from "../../stores/useDeathLogStore";
 
-export default function DeathLogFAB({ type }: { type: string }) {
+export default function DeathLogFAB({
+	type,
+	parentID,
+}: {
+	type: "game" | "profile" | "subject";
+	parentID: string;
+}) {
 	const addNode = useDeathLogStore((state) => state.addNode);
 	const modalRef = useRef<HTMLDialogElement>(null);
+	const [inputText, setInputText] = useState("");
+	const [inputTextError, setInputTextError] = useState("");
+	const [inputTextErrorIsDisplayed, setInputTextErrorIsDisplayed] =
+		useState(false);
+
+	useEffect(() => {
+		if (inputText == "") {
+			setInputTextErrorIsDisplayed(false);
+		}
+	}, [inputText]);
 
 	return (
 		<>
@@ -71,22 +87,49 @@ export default function DeathLogFAB({ type }: { type: string }) {
 					<div className="join mt-6 w-full">
 						<div className="join-item w-full">
 							<input
-								type="text"
+								type="search"
 								placeholder="Type here"
-								className="input validator required"
+								className="input"
+								onChange={(e) =>
+									setInputText(e.currentTarget.value)
+								}
+								onBlur={(e) =>
+									setInputText(e.currentTarget.value.trim())
+								}
+								value={inputText}
 							/>
-							{/* <div className="text-sm mt-2 text-error">
-								{alertPrompts.empty}
-							</div> */}
+							<div
+								className={`text-error mt-2 ml-2 ${inputTextErrorIsDisplayed ? "" : "hidden"} text-sm`}
+							>
+								{inputTextError}
+							</div>
 						</div>
 
-						<button className="btn join-item" onClick={() => {
-							// addNode(type, "", )
-						}}>Confirm</button>
+						<button
+							className="btn join-item"
+							onClick={() => {
+								try {
+									addNode(type, inputText, parentID);
+									modalRef.current?.close();
+									setInputTextErrorIsDisplayed(false);
+								} catch (e) {
+									if (e instanceof Error) {
+										setInputTextError(e.message);
+										setInputTextErrorIsDisplayed(true);
+									}
+								}
+							}}
+						>
+							Confirm
+						</button>
 					</div>
 				}
 				closeBtnName="Close"
 				modalBtns={[]}
+				handleOnClose={() => {
+					setInputText("");
+					setInputTextErrorIsDisplayed(false);
+				}}
 			/>
 		</>
 	);

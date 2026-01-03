@@ -10,7 +10,7 @@ export type HandleAddProfile = (
 
 export type HandleAddSubject = (
     inputText: string,
-    overrides: AICSubjectOverrides
+    overrides: EditableSubjectField
 ) => void;
 
 export type AICGame = {
@@ -31,4 +31,4 @@ export type AICSubject = {
     parentID: string;
 }
 
-export type AICSubjectOverrides = Pick<Subject, "reoccurring" | "context">
+export type EditableSubjectField = Pick<Subject, "reoccurring" | "context">

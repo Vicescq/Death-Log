@@ -5,19 +5,21 @@ import type { DistinctTreeNode } from "../../model/TreeNodeModel";
 
 export default function DeathLogCardOptions({
 	node,
+	handleEdit,
 }: {
 	node: DistinctTreeNode;
+	handleEdit: () => void;
 }) {
 	let navigate = useNavigate();
 	return (
-		<ul className="menu menu-horizontal menu-xs rounded-box p-0 m-auto">
+		<ul className="menu menu-horizontal menu-xs rounded-box m-auto p-0">
 			<li>
 				<button onClick={() => navigate(`${node.id}`)}>
 					<img src={stepInto} alt="" className="h-5 w-5" />
 				</button>
 			</li>
 			<li>
-				<button onClick={() => 1}>
+				<button onClick={handleEdit}>
 					<img src={edit} alt="" className="h-5 w-5" />
 				</button>
 			</li>

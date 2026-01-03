@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import gear from "../../assets/gear.svg";
 import filter from "../../assets/filter.svg";
-import Modal from "../modal/Modal";
+import Modal from "../Modal";
 import type {
 	AICGame,
 	AICProfile,
 	AICSubject,
-	AICSubjectOverrides,
+	EditableSubjectField,
 } from "./types";
 import AddItemCardModalBody from "./AddItemCardModalBody";
 import type { SelectDropdownSelected } from "../SelectDropDown";
@@ -46,7 +46,7 @@ export default function AddItemCard({ pageType, parentID }: Props) {
 	}
 
 	function handleModalEdit(
-		setting: keyof AICSubjectOverrides,
+		setting: keyof EditableSubjectField,
 		selected?: SelectDropdownSelected,
 	) {
 		if (setting != "context") {

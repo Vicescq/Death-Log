@@ -1,12 +1,12 @@
 
 import SelectDropdown, { type SelectDropdownSelected, type SelectDropdownOption } from "../SelectDropDown";
 import Toggle from "../Toggle";
-import type { AICSubjectOverrides } from "./types";
+import type { EditableSubjectField } from "./types";
 
 type Props = {
-	state: AICSubjectOverrides;
+	state: EditableSubjectField;
 	handleEdit: (
-		setting: keyof AICSubjectOverrides,
+		setting: keyof EditableSubjectField,
 		selected?: SelectDropdownSelected,
 	) => void;
 	contextOptions: SelectDropdownOption[];

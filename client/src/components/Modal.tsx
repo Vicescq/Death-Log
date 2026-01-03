@@ -12,6 +12,7 @@ type Props = {
 	content: React.JSX.Element;
 	closeBtnName: string;
 	modalBtns: ModalBtn[];
+	handleOnClose?: () => void;
 };
 
 export default function Modal({
@@ -20,10 +21,11 @@ export default function Modal({
 	content,
 	closeBtnName,
 	modalBtns,
+	handleOnClose
 }: Props) {
 	return (
 		<>
-			<dialog ref={ref} className="modal">
+			<dialog ref={ref} className="modal" onClose={handleOnClose}>
 				<div className="modal-box max-w-96">
 					<h3 className="text-lg font-bold">{header}</h3>
 
@@ -32,7 +34,7 @@ export default function Modal({
 					{modalBtns.map((modalBtn) => {
 						return (
 							<button
-								className={`btn w-full ${modalBtn.css}`}
+								className={`btn w-full mt-4 ${modalBtn.css}`}
 								onClick={modalBtn.fn}
 							>
 								{modalBtn.text}
@@ -41,7 +43,7 @@ export default function Modal({
 					})}
 
 					<form method="dialog">
-						<button className="btn mt-4 w-full">
+						<button className="btn mt-2 w-full">
 							{closeBtnName}
 						</button>
 					</form>

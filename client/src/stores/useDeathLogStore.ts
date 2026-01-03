@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import type { DistinctTreeNode, Game, ParentTreeNode, Profile, RootNode, Subject, Tree, TreeNode } from '../model/TreeNodeModel';
-import type { AICSubjectOverrides } from '../components/addItemCard/types';
+import type { EditableSubjectField } from '../components/addItemCard/types';
 import { sortChildIDS, validateNodeString, identifyDeletedSelfAndChildrenIDS, createGame, createProfile, createSubject, createRootNode, updateProfileDeathEntriesOnSubjectDelete } from './utils';
 import { assertIsDistinctTreeNode, assertIsGame, assertIsGameOrProfile, assertIsNonNull, assertIsProfile, assertIsRootNode } from '../utils';
 import LocalDB from '../services/LocalDB';
@@ -9,7 +9,7 @@ type DeathLogState = {
     tree: Tree;
 
     initTree: (nodes: DistinctTreeNode[]) => void;
-    addNode: (pageType: "game" | "profile" | "subject", inputText: string, parentID: string, overrides?: AICSubjectOverrides) => void;
+    addNode: (pageType: "game" | "profile" | "subject", inputText: string, parentID: string, overrides?: EditableSubjectField) => void;
     deleteGame: (node: Game) => void;
     deleteProfile: (node: Profile) => void;
     deleteSubject: (node: Subject) => void;
