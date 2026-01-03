@@ -1,7 +1,7 @@
-import stepInto from "../../assets/step_into.svg";
-import edit from "../../assets/edit.svg";
+import stepInto from "../../../assets/step_into.svg";
+import edit from "../../../assets/edit.svg";
 import { useNavigate } from "react-router";
-import type { DistinctTreeNode } from "../../model/TreeNodeModel";
+import type { DistinctTreeNode } from "../../../model/TreeNodeModel";
 
 export default function DeathLogCardOptions({
 	node,

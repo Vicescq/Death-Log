@@ -1,13 +1,10 @@
-import { useEffect, useRef, useState } from "react";
 import { useDeathLogStore } from "../../stores/useDeathLogStore";
 import NavBar from "../../components/navBar/NavBar";
-import DeathLogCard from "./DeathLogCard";
+import DeathLogCard from "./Card/DeathLogCard";
 import { assertIsDistinctTreeNode, assertIsNonNull } from "../../utils";
 import React from "react";
 import DeathLogFAB from "./DeathLogFAB";
-import Modal from "../../components/Modal";
-import type { DistinctTreeNode } from "../../model/TreeNodeModel";
-import DeathLogModalEditBody from "./Modal/DeathLogModalEditBody";
+import { nanoid } from "nanoid";
 
 type Props = {
 	type: "game" | "profile" | "subject";
@@ -16,21 +13,6 @@ type Props = {
 
 export default function DeathLog({ type, parentID }: Props) {
 	const tree = useDeathLogStore((state) => state.tree);
-	const editModalRef = useRef<HTMLDialogElement>(null);
-
-	const [currModalNode, setCurrModalNode] = useState<DistinctTreeNode>({
-		id: "__PLACEHOLDER__",
-		childIDS: [],
-		completed: false,
-		dateStart: "Placeholder",
-		dateEnd: "Placeholder",
-		type: "game",
-		name: "Placeholder",
-		notes: "",
-		parentID: "__PLACEHOLDER",
-		totalDeaths: 0,
-	});
-
 	const childIDS = tree.get(parentID)?.childIDS || [];
 	const nodes = childIDS.map((nodeID) => {
 		// for typscript auto complete
@@ -42,42 +24,30 @@ export default function DeathLog({ type, parentID }: Props) {
 
 	const evenArr: React.JSX.Element[] = [];
 	const oddArr: React.JSX.Element[] = [];
-	const bothArr: React.JSX.Element[] = [];
+	let bothArr: React.JSX.Element[] = [];
 	nodes.forEach((node, i) => {
 		bothArr.push(
-			<DeathLogCard
-				node={node}
-				key={node.id}
-				entryNum={i + 1}
-				handleEdit={() => {
-					setCurrModalNode(node);
-					editModalRef.current?.showModal();
-				}}
-			/>,
+			<DeathLogCard node={node} key={node.id} entryNum={i + 1} />,
 		);
+
+		// just in case if duplicated node id in bothArr
+		let id1: string;
+		let id2: string;
+		const idTracker = new Set();
+		do {
+			id1 = nanoid();
+			id2 = nanoid();
+		} while (idTracker.has(id1) || idTracker.has(id2));
+		idTracker.add(id1);
+		idTracker.add(id2);
+
 		if (i % 2 == 0) {
 			evenArr.push(
-				<DeathLogCard
-					node={node}
-					key={node.id + i}
-					entryNum={i + 1}
-					handleEdit={() => {
-						setCurrModalNode(node);
-						editModalRef.current?.showModal();
-					}}
-				/>,
+				<DeathLogCard node={node} key={id1} entryNum={i + 1} />,
 			);
 		} else {
 			oddArr.push(
-				<DeathLogCard
-					node={node}
-					key={node.id + i + 1}
-					entryNum={i + 1}
-					handleEdit={() => {
-						setCurrModalNode(node);
-						editModalRef.current?.showModal();
-					}}
-				/>,
+				<DeathLogCard node={node} key={id2} entryNum={i + 1} />,
 			);
 		}
 	});
@@ -102,15 +72,6 @@ export default function DeathLog({ type, parentID }: Props) {
 				</ul>
 			</div>
 			<DeathLogFAB type={type} parentID={parentID} />
-			<Modal
-				closeBtnName="Close"
-				content={
-					<DeathLogModalEditBody currModalNode={currModalNode} />
-				}
-				header="View & Edit Entry"
-				ref={editModalRef}
-				modalBtns={[]}
-			/>
 		</>
 	);
 }

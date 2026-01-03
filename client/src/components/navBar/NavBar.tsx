@@ -5,11 +5,12 @@ import dl from "../../assets/death-log.svg";
 import { SignedIn, UserButton } from "@clerk/clerk-react";
 import NavBarDrawer from "./NavBarDrawer";
 import { useActiveNavBarCSS } from "./useActiveNavBarCSS";
+import usePagination from "../../hooks/usePagination";
 
 export default function NavBar() {
 	const navigate = useNavigate();
 	const { activeDLCSS, activeDMCSS, activeFAQCSS } = useActiveNavBarCSS("bg");
-
+	// const { page, handlePageState, handlePageTurn } = usePagination(5);
 	return (
 		<div className="navbar bg-base-100">
 			<div className="navbar-start">
@@ -58,7 +59,27 @@ export default function NavBar() {
 				</ul>
 			</div>
 
-			<div className="navbar-center"></div>
+			<div className="navbar-center">
+				<div className="join flex">
+					<button
+						className="join-item btn"
+						onClick={() => {
+							1;
+						}}
+					>
+						«
+					</button>
+					<button className="join-item btn flex-1">Page 1</button>
+					<button
+						className="join-item btn"
+						onClick={() => {
+							1;
+						}}
+					>
+						»
+					</button>
+				</div>
+			</div>
 
 			<div className="navbar-end">
 				<SignedIn>
