@@ -232,9 +232,6 @@ export const useDeathLogStore = create<DeathLogState>((set) => ({
             const updatedTree = new Map(state.tree);
             let updatedAlready = false;
 
-            // const localStorageRes = localStorage.getItem("email");
-            // assertIsNonNull(localStorageRes);
-
             if (node.name != overrides.name) { // card modal state already trims the overrides
                 validateNodeString(overrides.name, updatedTree, node.parentID);
             }

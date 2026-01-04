@@ -1,24 +1,29 @@
 import type { DistinctTreeNode } from "../../../model/TreeNodeModel";
-import DeathLogModalEditBodyP1 from "./DeathLogModalEditBodyP1";
-import DeathLogModalEditBodyP2 from "./DeathLogModalEditBodyP2";
+import DeathLogModalEditBodyPage1 from "./DeathLogModalEditBodyPage1";
+import DeathLogModalEditBodyPage2 from "./DeathLogModalEditBodyPage2";
 
 type Props = {
 	node: DistinctTreeNode;
 	page: number;
 	handlePageState: (isRight: boolean) => void;
+	handleOnEditChange: (newModalState: DistinctTreeNode) => void;
 };
 
 export default function DeathLogModalEditBodyWrapper({
 	node,
 	page,
 	handlePageState,
+	handleOnEditChange,
 }: Props) {
 	return (
 		<>
 			{page == 1 ? (
-				<DeathLogModalEditBodyP1 node={node} />
+				<DeathLogModalEditBodyPage1
+					node={node}
+					handleOnEditChange={handleOnEditChange}
+				/>
 			) : (
-				<DeathLogModalEditBodyP2 node={node} />
+				<DeathLogModalEditBodyPage2 node={node} />
 			)}
 
 			<div className="join mt-4 flex">

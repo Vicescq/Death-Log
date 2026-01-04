@@ -2,7 +2,7 @@ import { useDeathLogStore } from "../../stores/useDeathLogStore";
 import NavBar from "../../components/navBar/NavBar";
 import DeathLogCard from "./Card/DeathLogCard";
 import { assertIsDistinctTreeNode, assertIsNonNull } from "../../utils";
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import DeathLogFAB from "./DeathLogFAB";
 import { nanoid } from "nanoid";
 
@@ -55,10 +55,24 @@ export default function DeathLog({ type, parentID }: Props) {
 	// better UX for 1 death log element
 	const vwOddCSS = bothArr.length == 1 ? "w-[0vw]" : "w-[40vw]";
 
+	const [pageOpacity, setPageOpacity] = useState("");
+	const [deathLogIsInert, setDeathLogIsInert] = useState(false);
+	
+
+	function handleFabOnFocus(){
+		setPageOpacity("opacity-25");
+		setDeathLogIsInert(true);
+	}
+
+	function handleFabOnBlur(){
+		setPageOpacity("");
+		setDeathLogIsInert(false);
+	}
+
 	return (
 		<>
-			<NavBar />
-			<div className="my-6 mb-14 flex justify-center">
+			<NavBar isDL={true} />
+			<div className={`my-6 mb-14 flex justify-center ${pageOpacity}`} inert={deathLogIsInert}>
 				<ul className="list bg-base-100 rounded-box flex w-screen lg:hidden">
 					{bothArr}
 				</ul>
@@ -71,7 +85,12 @@ export default function DeathLog({ type, parentID }: Props) {
 					{oddArr}
 				</ul>
 			</div>
-			<DeathLogFAB type={type} parentID={parentID} />
+			<DeathLogFAB
+				type={type}
+				parentID={parentID}
+				handleFabOnFocus={handleFabOnFocus}
+				handleFabOnBlur={handleFabOnBlur}
+			/>
 		</>
 	);
 }

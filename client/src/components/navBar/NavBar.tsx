@@ -7,7 +7,7 @@ import NavBarDrawer from "./NavBarDrawer";
 import { useActiveNavBarCSS } from "./useActiveNavBarCSS";
 import usePagination from "../../hooks/usePagination";
 
-export default function NavBar() {
+export default function NavBar({ isDL }: { isDL: boolean }) {
 	const navigate = useNavigate();
 	const { activeDLCSS, activeDMCSS, activeFAQCSS } = useActiveNavBarCSS("bg");
 	// const { page, handlePageState, handlePageTurn } = usePagination(5);
@@ -60,25 +60,27 @@ export default function NavBar() {
 			</div>
 
 			<div className="navbar-center">
-				<div className="join flex">
-					<button
-						className="join-item btn"
-						onClick={() => {
-							1;
-						}}
-					>
-						«
-					</button>
-					<button className="join-item btn flex-1">Page 1</button>
-					<button
-						className="join-item btn"
-						onClick={() => {
-							1;
-						}}
-					>
-						»
-					</button>
-				</div>
+				{isDL ? (
+					<div className="join flex">
+						<button
+							className="join-item btn"
+							onClick={() => {
+								1;
+							}}
+						>
+							«
+						</button>
+						<button className="join-item btn flex-1">Page 1</button>
+						<button
+							className="join-item btn"
+							onClick={() => {
+								1;
+							}}
+						>
+							»
+						</button>
+					</div>
+				) : null}
 			</div>
 
 			<div className="navbar-end">

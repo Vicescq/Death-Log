@@ -1,18 +1,46 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import Modal from "../../../components/Modal";
 import type { DistinctTreeNode } from "../../../model/TreeNodeModel";
 import DeathLogModalEditBodyWrapper from "../Modal/DeathLogModalEditBodyWrapper";
 import DeathLogCardOptions from "./DeathLogCardOptions";
 import usePagination from "../../../hooks/usePagination";
+import { useDeathLogStore } from "../../../stores/useDeathLogStore";
 
 type Props = {
 	node: DistinctTreeNode;
 	entryNum: number;
 };
 
+export type DeathLogModalTarget =
+	| "name"
+	| "dateStart"
+	| "dateEnd"
+	| "notes"
+	| "dateStartReliable"
+	| "dateEndReliable";
+
 export default function DeathLogCard({ node, entryNum }: Props) {
 	const editModalRef = useRef<HTMLDialogElement>(null);
 	const { page, handlePageState, handlePageTurn } = usePagination(2);
+	const updateModalEditedNode = useDeathLogStore(
+		(state) => state.updateModalEditedNode,
+	);
+
+	const [modalState, setModalState] = useState<DistinctTreeNode>({ ...node });
+
+	function handleOnEditSubmit(target: DeathLogModalTarget) {
+		switch (target) {
+			case "name":
+				updateModalEditedNode(node, { ...node, name: modalState.name });
+				break;
+			case "dateStart":
+				updateModalEditedNode(node, {
+					...node,
+					dateStart: modalState.dateStart,
+				});
+				break;
+		}
+	}
 
 	const deaths =
 		node.type == "game"
@@ -23,7 +51,7 @@ export default function DeathLogCard({ node, entryNum }: Props) {
 
 	return (
 		<>
-			<li className="list-row sm:h-20">
+			<li className="list-row sm:h-20" inert={false}>
 				<div className="flex items-center justify-center">
 					<span className="text-accent line-clamp-1 w-8 text-xs">
 						{entryNum}
@@ -53,15 +81,30 @@ export default function DeathLogCard({ node, entryNum }: Props) {
 				closeBtnName="Close"
 				content={
 					<DeathLogModalEditBodyWrapper
-						node={node}
+						node={modalState}
 						page={page}
 						handlePageState={(isRight) => handlePageTurn(isRight)}
+						handleOnEditChange={(newModalState) =>
+							setModalState(newModalState)
+						}
 					/>
 				}
 				header="View & Edit Entry"
 				ref={editModalRef}
-				modalBtns={[]}
-				handleOnClose={() => handlePageState(1)}
+				modalBtns={[
+					{
+						text: "Confirm Edits",
+						css: "btn-neutral",
+						fn: () => {
+							updateModalEditedNode(node, modalState);
+						},
+					},
+				]}
+				handleOnClose={async () => {
+					await new Promise((resolve) => setTimeout(resolve, 650)); // if not used, ui flicker from page turn happens
+					handlePageState(1);
+					setModalState(node);
+				}}
 			/>
 		</>
 	);

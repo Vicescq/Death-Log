@@ -7,13 +7,19 @@ import up from "../../assets/up.svg";
 import Modal from "../../components/Modal";
 import { useDeathLogStore } from "../../stores/useDeathLogStore";
 
+type Props = {
+	type: "game" | "profile" | "subject";
+	parentID: string;
+	handleFabOnFocus: () => void;
+	handleFabOnBlur: () => void;
+};
+
 export default function DeathLogFAB({
 	type,
 	parentID,
-}: {
-	type: "game" | "profile" | "subject";
-	parentID: string;
-}) {
+	handleFabOnFocus,
+	handleFabOnBlur,
+}: Props) {
 	const addNode = useDeathLogStore((state) => state.addNode);
 	const modalRef = useRef<HTMLDialogElement>(null);
 	const [inputText, setInputText] = useState("");
@@ -26,14 +32,17 @@ export default function DeathLogFAB({
 			setInputTextErrorIsDisplayed(false);
 		}
 	}, [inputText]);
-
+	console.log(document.activeElement)
 	return (
 		<>
-			<div className="fab">
+			<div className="fab" >
 				<div
 					tabIndex={0}
 					role="button"
 					className="btn btn-lg btn-circle bg-success"
+					onFocus={handleFabOnFocus}
+					onBlur={handleFabOnBlur}
+					id="___FAB___"
 				>
 					<img src={fabEdit} alt="" />
 				</div>
@@ -54,13 +63,13 @@ export default function DeathLogFAB({
 				</div>
 				<div>
 					Sort {type}s
-					<button className="btn btn-lg btn-circle btn-neutral">
+					<button className="btn btn-lg btn-circle btn-neutral" onClick={() => modalRef.current?.showModal()}>
 						<img src={sort} alt="" />
 					</button>
 				</div>
 				<div>
 					Filter {type}s
-					<button className="btn btn-lg btn-circle">
+					<button className="btn btn-lg btn-circle" onClick={() => modalRef.current?.showModal()}>
 						<img src={filter} alt="" />
 					</button>
 				</div>
@@ -68,13 +77,17 @@ export default function DeathLogFAB({
 					Back to top
 					<button
 						className="btn btn-lg btn-circle btn-accent"
-						onClick={() =>
+						onClick={() => {
 							window.scrollTo({
 								top: 0,
 								left: 0,
 								behavior: "smooth",
-							})
-						}
+							});
+
+							if (document.activeElement instanceof HTMLElement) {
+								document.activeElement.blur();
+							}
+						}}
 					>
 						<img src={up} alt="" />
 					</button>

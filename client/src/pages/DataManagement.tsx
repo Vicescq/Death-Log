@@ -190,7 +190,6 @@ export default function DataManagement() {
 			"data",
 		];
 		const keys = Object.keys(parsedJSON);
-		console.log(keys);
 		if (keys.length != deathLogBackupKeys.length) {
 			throw new Error("Invalid JSON");
 		}
@@ -229,7 +228,7 @@ export default function DataManagement() {
 
 	return (
 		<>
-			<NavBar />
+			<NavBar isDL={false}/>
 			<FeedbackToast
 				msg={feedbackToastMsg}
 				bgCSS={feedbackToastCSS}
