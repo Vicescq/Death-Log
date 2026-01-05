@@ -7,25 +7,22 @@ import { useDeathLogStore } from "../../../stores/useDeathLogStore";
 import useInputTextError from "./useInputTextError";
 import DeathLogModalEditBodyPage1 from "./DeathLogModalEditBodyPage1";
 import DeathLogModalEditBodyPage2 from "./DeathLogModalEditBodyPage2";
+import loop from "../../../assets/loop.svg";
+import skullRed from "../../../assets/skull_red.svg";
 
 type Props = {
 	node: DistinctTreeNode;
 	entryNum: number;
 };
 
-export type DeathLogModalTarget =
-	| "name"
-	| "dateStart"
-	| "dateEnd"
-	| "notes"
-	| "dateStartReliable"
-	| "dateEndReliable";
-
 export default function DeathLogCard({ node, entryNum }: Props) {
 	const editModalRef = useRef<HTMLDialogElement>(null);
 	const { page, handlePageState, handlePageTurn } = usePagination(2);
 	const updateModalEditedNode = useDeathLogStore(
 		(state) => state.updateModalEditedNode,
+	);
+	const updateNodeCompletion = useDeathLogStore(
+		(state) => state.updateNodeCompletion,
 	);
 
 	const [modalState, setModalState] = useState<DistinctTreeNode>({ ...node });
@@ -43,26 +40,41 @@ export default function DeathLogCard({ node, entryNum }: Props) {
 			: node.type == "profile"
 				? node.deathEntries.length
 				: node.deaths;
+
+	const completionNotifyModalRef = useRef<HTMLDialogElement>(null);
+	const [checked, setChecked] = useState(node.completed);
+	const completedCSSStrike = node.completed ? "line-through" : "";
+
 	return (
 		<>
-			<li className="list-row" inert={false}>
+			<li className={`list-row rounded-none`} inert={false}>
 				<div className="flex items-center justify-center">
 					<span className="text-accent line-clamp-1 w-8 text-xs">
 						{entryNum}
 					</span>
-					<div className="ml-2">
-						<input
-							type="checkbox"
-							defaultChecked={node.completed}
-							className="checkbox checkbox-sm checkbox-success"
-						/>
+					<div>
+						{node.type == "subject" && node.reoccurring ? (
+							<img src={loop} alt="" className="w-6" />
+						) : (
+							<input
+								type="checkbox"
+								checked={checked}
+								className="checkbox checkbox-sm checkbox-success"
+								onChange={() =>
+									completionNotifyModalRef.current?.showModal()
+								}
+							/>
+						)}
 					</div>
 				</div>
-				<div className="flex flex-col justify-center">
-					<div className="line-clamp-4 sm:line-clamp-2">
+				<div
+					className={`flex flex-col justify-center ${completedCSSStrike}`}
+				>
+					<div className="line-clamp-4 text-lg sm:line-clamp-2">
 						{node.name}
 					</div>
-					<div className="text-xs font-semibold uppercase opacity-60">
+					<div className="flex gap-2 font-semibold uppercase opacity-60">
+						<img src={skullRed} alt="" className="w-4" />
 						{deaths}
 					</div>
 				</div>
@@ -111,6 +123,7 @@ export default function DeathLogCard({ node, entryNum }: Props) {
 									»
 								</button>
 							</div>
+							{/* <span className="text-lg"> Do you want to mark this as completed?</span> */}
 						</>
 					}
 					header="View & Edit Entry"
@@ -140,6 +153,26 @@ export default function DeathLogCard({ node, entryNum }: Props) {
 						setModalState(node);
 						setInputTextErrorIsDisplayed(false);
 					}}
+				/>
+				<Modal
+					closeBtnName="Cancel"
+					content={<></>}
+					ref={completionNotifyModalRef}
+					header={`Do you want to mark this as ${!checked ? "complete?" : "incomplete?"}`}
+					modalBtns={[
+						{
+							text: "Confirm",
+							css: "btn-success",
+							fn: async () => {
+								completionNotifyModalRef.current?.close();
+								await new Promise((resolve) =>
+									setTimeout(resolve, 210),
+								);
+								setChecked(!checked);
+								updateNodeCompletion(node);
+							},
+						},
+					]}
 				/>
 			</li>
 		</>

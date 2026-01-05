@@ -73,27 +73,28 @@ export default function DeathLog({ type, parentID }: Props) {
 		<>
 			<NavBar
 				midNavContent={
-					<div className="join flex">
-						<button
-							className="join-item btn"
-							onClick={() => {
-								handlePageTurn(false);
-							}}
-						>
-							«
-						</button>
-						<button className="join-item btn flex-1">
-							Page {page}
-						</button>
-						<button
-							className="join-item btn"
-							onClick={() => {
-								handlePageTurn(true);
-							}}
-						>
-							»
-						</button>
-					</div>
+					// <div className="join flex">
+					// 	<button
+					// 		className="join-item btn"
+					// 		onClick={() => {
+					// 			handlePageTurn(false);
+					// 		}}
+					// 	>
+					// 		«
+					// 	</button>
+					// 	<button className="join-item btn flex-1">
+					// 		Page {page}
+					// 	</button>
+					// 	<button
+					// 		className="join-item btn"
+					// 		onClick={() => {
+					// 			handlePageTurn(true);
+					// 		}}
+					// 	>
+					// 		»
+					// 	</button>
+					// </div>
+					<></>
 				}
 			/>
 

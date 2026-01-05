@@ -200,9 +200,6 @@ export const useDeathLogStore = create<DeathLogState>((set) => ({
             updatedNode.dateEnd = updatedNode.completed ? new Date().toISOString() : null;
             updatedTree.set(updatedNode.id, updatedNode);
 
-            // const localStorageRes = localStorage.getItem("email");
-            // assertIsNonNull(localStorageRes);
-
             const parentNode = updatedTree.get(updatedNode.parentID);
             assertIsNonNull(parentNode);
             const parentNodeCopy: TreeNode = { ...parentNode, childIDS: [...parentNode.childIDS] };
