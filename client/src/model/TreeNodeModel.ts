@@ -1,6 +1,7 @@
 export type Tree = Map<string, TreeNode>;
 
 export type SubjectContext = "boss" | "location" | "other" | "genericEnemy" | "miniBoss";
+
 export type Milestone = {
     name: string
     start: number,

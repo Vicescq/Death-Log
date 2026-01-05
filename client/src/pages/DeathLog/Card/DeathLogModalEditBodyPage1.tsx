@@ -48,9 +48,9 @@ export default function DeathLogModalEditBodyPage1({
 			</fieldset>
 			<fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-full border p-4">
 				<legend className="fieldset-legend">
-					{node.completed ? "Creation & End Dates" : "Creation Date"}
+					{node.completed ? "Creation (1st) & Completion (2nd) Dates" : "Creation Date"}
 				</legend>
-
+				
 				<input
 					type="date"
 					className="input join-item"
@@ -94,7 +94,7 @@ export default function DeathLogModalEditBodyPage1({
 				) : null}
 				<div className="divider my-2">↓ Reliability ↓</div>
 				<div className="flex">
-					<span className="text-[1rem]">Created Date</span>
+					<span className="text-[1rem]">Creation Date</span>
 					<input
 						type="checkbox"
 						defaultChecked
@@ -103,7 +103,7 @@ export default function DeathLogModalEditBodyPage1({
 				</div>
 				{node.completed ? (
 					<div className="flex">
-						<span className="text-[1rem]">Completed Date</span>
+						<span className="text-[1rem]">Completion Date</span>
 						<input
 							type="checkbox"
 							defaultChecked

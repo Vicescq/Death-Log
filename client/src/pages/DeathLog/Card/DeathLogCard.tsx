@@ -9,6 +9,8 @@ import DeathLogModalEditBodyPage1 from "./DeathLogModalEditBodyPage1";
 import DeathLogModalEditBodyPage2 from "./DeathLogModalEditBodyPage2";
 import loop from "../../../assets/loop.svg";
 import skullRed from "../../../assets/skull_red.svg";
+import { useNavigate } from "react-router";
+import DeathLogModalEditBodyPage3 from "./DeathLogModalEditBodyPage3";
 
 type Props = {
 	node: DistinctTreeNode;
@@ -17,7 +19,9 @@ type Props = {
 
 export default function DeathLogCard({ node, entryNum }: Props) {
 	const editModalRef = useRef<HTMLDialogElement>(null);
-	const { page, handlePageState, handlePageTurn } = usePagination(2);
+	const { page, handlePageState, handlePageTurn } = usePagination(
+		node.type != "subject" ? 2 : 3,
+	);
 	const updateModalEditedNode = useDeathLogStore(
 		(state) => state.updateModalEditedNode,
 	);
@@ -44,6 +48,8 @@ export default function DeathLogCard({ node, entryNum }: Props) {
 	const completionNotifyModalRef = useRef<HTMLDialogElement>(null);
 	const [checked, setChecked] = useState(node.completed);
 	const completedCSSStrike = node.completed ? "line-through" : "";
+
+	const navigate = useNavigate();
 
 	return (
 		<>
@@ -95,12 +101,17 @@ export default function DeathLogCard({ node, entryNum }: Props) {
 										inputTextErrorIsDisplayed
 									}
 								/>
-							) : (
+							) : page == 2 ? (
 								<DeathLogModalEditBodyPage2
 									node={modalState}
 									handleOnEditChange={setModalState}
 								/>
-							)}
+							) : modalState.type == "subject" ? (
+								<DeathLogModalEditBodyPage3
+									node={modalState}
+									handleOnEditChange={setModalState}
+								/>
+							) : null}
 
 							<div className="join mt-4 flex">
 								<button
@@ -130,8 +141,13 @@ export default function DeathLogCard({ node, entryNum }: Props) {
 					ref={editModalRef}
 					modalBtns={[
 						{
-							text: "Close (Save changes)",
+							text: "Check FAQ",
 							css: "btn-neutral",
+							fn: () => navigate("/FAQ"),
+						},
+						{
+							text: "Close (Save changes)",
+							css: "btn-success",
 							fn: () => {
 								try {
 									updateModalEditedNode(node, modalState);

@@ -40,7 +40,7 @@ export default function DeathLog({ type, parentID }: Props) {
 
 	let cards: React.JSX.Element[] = [];
 	nodes.forEach((node, i) => {
-		cards.push(<DeathLogCard node={node} key={node.id} entryNum={i + 1} />);
+		cards.push(<DeathLogCard node={node} entryNum={i + 1} />);
 	});
 
 	const [pageOpacity, setPageOpacity] = useState("");
@@ -71,41 +71,19 @@ export default function DeathLog({ type, parentID }: Props) {
 
 	return (
 		<>
-			<NavBar
-				midNavContent={
-					// <div className="join flex">
-					// 	<button
-					// 		className="join-item btn"
-					// 		onClick={() => {
-					// 			handlePageTurn(false);
-					// 		}}
-					// 	>
-					// 		«
-					// 	</button>
-					// 	<button className="join-item btn flex-1">
-					// 		Page {page}
-					// 	</button>
-					// 	<button
-					// 		className="join-item btn"
-					// 		onClick={() => {
-					// 			handlePageTurn(true);
-					// 		}}
-					// 	>
-					// 		»
-					// 	</button>
-					// </div>
-					<></>
-				}
-			/>
+			<NavBar midNavContent={<></>} />
 
 			<Virtuoso
 				ref={virtuosoRef}
 				data={nodes}
 				itemContent={(i, node) => (
-					<DeathLogCard node={node} key={node.id} entryNum={i + 1} />
+					<DeathLogCard node={node} entryNum={i + 1} />
 				)}
 				className={`mt-4 mb-12 !h-[80vh]`}
 				components={{ List: DeathLogCardWrapper }}
+				computeItemKey={(_, node) => {
+					return node.id;
+				}}
 			/>
 
 			<DeathLogFAB

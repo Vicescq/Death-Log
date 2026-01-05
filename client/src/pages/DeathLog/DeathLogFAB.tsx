@@ -9,6 +9,8 @@ import Modal from "../../components/Modal";
 import { useDeathLogStore } from "../../stores/useDeathLogStore";
 import useInputTextError from "./Card/useInputTextError";
 import type { VirtuosoHandle } from "react-virtuoso";
+import type { SubjectContext } from "../../model/TreeNodeModel";
+import * as Utils from "./utils";
 
 type Props = {
 	type: "game" | "profile" | "subject";
@@ -28,6 +30,9 @@ export default function DeathLogFAB({
 	const addNode = useDeathLogStore((state) => state.addNode);
 	const modalRef = useRef<HTMLDialogElement>(null);
 	const [inputText, setInputText] = useState("");
+	const [subjectContext, setSubjectContext] =
+		useState<SubjectContext>("boss");
+	const [reoccurring, setReoccurring] = useState(false);
 
 	const {
 		inputTextError,
@@ -35,6 +40,13 @@ export default function DeathLogFAB({
 		inputTextErrorIsDisplayed,
 		setInputTextErrorIsDisplayed,
 	} = useInputTextError(inputText);
+
+	const header =
+		type != "subject"
+			? type[0].toUpperCase() + type.slice(1) + " title"
+			: type[0].toUpperCase() +
+				type.slice(1) +
+				" title & Characteristics";
 
 	return (
 		<>
@@ -121,47 +133,116 @@ export default function DeathLogFAB({
 			</div>
 			<Modal
 				ref={modalRef}
-				header={`${type[0].toUpperCase() + type.slice(1)} title`}
+				header={header}
 				content={
-					<div className="join mt-6 w-full">
-						<div className="join-item w-full">
-							<input
-								type="search"
-								placeholder="Type here"
-								className="input"
-								onChange={(e) =>
-									setInputText(e.currentTarget.value)
-								}
-								onBlur={(e) =>
-									setInputText(e.currentTarget.value.trim())
-								}
-								value={inputText}
-							/>
-							<div
-								className={`text-error mt-2 ml-2 ${inputTextErrorIsDisplayed ? "" : "hidden"} text-sm`}
-							>
-								{inputTextError}
-							</div>
-						</div>
+					<>
+						<fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-full border p-4">
+							<legend className="fieldset-legend"></legend>
 
-						<button
-							className="btn join-item"
-							onClick={() => {
-								try {
-									addNode(type, inputText, parentID);
-									modalRef.current?.close();
-									setInputTextErrorIsDisplayed(false);
-								} catch (e) {
-									if (e instanceof Error) {
-										setInputTextError(e.message);
-										setInputTextErrorIsDisplayed(true);
-									}
-								}
-							}}
-						>
-							Confirm
-						</button>
-					</div>
+							<div className="join w-full">
+								<div className="join-item w-full">
+									<input
+										type="search"
+										placeholder="Type here"
+										className="input"
+										onChange={(e) =>
+											setInputText(e.currentTarget.value)
+										}
+										onBlur={(e) =>
+											setInputText(
+												e.currentTarget.value.trim(),
+											)
+										}
+										value={inputText}
+									/>
+									<div
+										className={`text-error mt-2 ml-2 ${inputTextErrorIsDisplayed ? "" : "hidden"} text-sm`}
+									>
+										{inputTextError}
+									</div>
+								</div>
+
+								<button
+									className="btn join-item btn-neutral"
+									onClick={() => {
+										try {
+											if (type != "subject") {
+												addNode(
+													type,
+													inputText,
+													parentID,
+												);
+											} else {
+												addNode(
+													type,
+													inputText,
+													parentID,
+													{
+														context: subjectContext,
+														reoccurring:
+															reoccurring,
+													},
+												);
+											}
+											modalRef.current?.close();
+											setInputTextErrorIsDisplayed(false);
+										} catch (e) {
+											if (e instanceof Error) {
+												setInputTextError(e.message);
+												setInputTextErrorIsDisplayed(
+													true,
+												);
+											}
+										}
+									}}
+								>
+									Confirm
+								</button>
+							</div>
+
+							{type == "subject" ? (
+								<>
+									<fieldset className="fieldset">
+										<legend className="fieldset-legend"></legend>
+										<select
+											className="select"
+											value={Utils.mapContextKeyToProperStr(
+												subjectContext,
+											)}
+											onChange={(e) =>
+												setSubjectContext(
+													Utils.mapProperStrToContextKey(
+														e.currentTarget.value,
+													),
+												)
+											}
+										>
+											<option>Boss</option>
+											<option>Location</option>
+											<option>Generic Enemy</option>
+											<option>Mini Boss</option>
+											<option>Other</option>
+										</select>
+									</fieldset>
+									<div className="flex">
+										<span className="text-[1rem]">
+											Reoccurring
+										</span>
+										<input
+											type="checkbox"
+											checked={reoccurring}
+											className="toggle toggle-primary ml-auto"
+											onChange={(e) =>
+												setReoccurring(
+													e.currentTarget.checked,
+												)
+											}
+										/>
+									</div>
+								</>
+							) : null}
+						</fieldset>
+					</>
 				}
 				closeBtnName="Close"
 				modalBtns={[]}
