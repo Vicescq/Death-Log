@@ -12,7 +12,5 @@ export default function Root() {
 	useMultipleTabsWarning();
 	useConsoleLogOnStateChange(tree, "TREE:", tree);
 
-	return (
-			<Outlet />
-	);
+	return <Outlet />;
 }

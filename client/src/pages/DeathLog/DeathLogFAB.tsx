@@ -32,17 +32,15 @@ export default function DeathLogFAB({
 			setInputTextErrorIsDisplayed(false);
 		}
 	}, [inputText]);
-	console.log(document.activeElement)
 	return (
 		<>
-			<div className="fab" >
+			<div className="fab " >
 				<div
 					tabIndex={0}
 					role="button"
-					className="btn btn-lg btn-circle bg-success"
+					className="btn btn-lg btn-circle bg-success opacity-100"
 					onFocus={handleFabOnFocus}
 					onBlur={handleFabOnBlur}
-					id="___FAB___"
 				>
 					<img src={fabEdit} alt="" />
 				</div>

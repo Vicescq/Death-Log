@@ -71,33 +71,3 @@ export function convertDefaultCardModalDateFormatToISO(cardModalDateFormat: stri
     const dateObj = new Date(Number(parsedDate[0]), Number(parsedDate[1]) - 1, Number(parsedDate[2]));
     return dateObj.toISOString();
 }
-
-export function isCardModalDateAtLimit(date: string) {
-    if (
-        Date.parse(
-            convertDefaultCardModalDateFormatToISO(
-                date,
-            ),
-        ) >= Date.parse(new Date().toISOString())
-    ) {
-        date = defaultCardModalDateFormat(
-            new Date().toISOString(),
-        );
-    }
-    return date
-}
-
-export function getCardDeathCount(node: DistinctTreeNode) {
-    let deathCount = 0;
-    switch (node.type) {
-        case "game":
-            deathCount = node.totalDeaths;
-            break;
-        case "profile":
-            deathCount = node.deathEntries.length;
-            break;
-        case "subject":
-            deathCount = node.deaths;
-    }
-    return deathCount;
-}

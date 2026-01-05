@@ -21,7 +21,7 @@ export default function Modal({
 	content,
 	closeBtnName,
 	modalBtns,
-	handleOnClose
+	handleOnClose,
 }: Props) {
 	return (
 		<>
@@ -31,11 +31,12 @@ export default function Modal({
 
 					{content}
 
-					{modalBtns.map((modalBtn) => {
+					{modalBtns.map((modalBtn, i) => {
 						return (
 							<button
-								className={`btn w-full mt-4 ${modalBtn.css}`}
+								className={`btn mt-4 w-full ${modalBtn.css}`}
 								onClick={modalBtn.fn}
+								key={i}
 							>
 								{modalBtn.text}
 							</button>

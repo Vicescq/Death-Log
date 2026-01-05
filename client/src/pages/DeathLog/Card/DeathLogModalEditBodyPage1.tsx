@@ -1,8 +1,9 @@
 import type { DistinctTreeNode } from "../../../model/TreeNodeModel";
 import { assertIsNonNull } from "../../../utils";
-import { defaultCardModalDateFormat } from "../../../components/card/utils";
-import editSingle from "../../../assets/edit_single.svg";
-import type { DeathLogModalTarget } from "../Card/DeathLogCard";
+import {
+	convertDefaultCardModalDateFormatToISO,
+	defaultCardModalDateFormat,
+} from "../../../components/card/utils";
 
 type Props = {
 	node: DistinctTreeNode;
@@ -42,9 +43,15 @@ export default function DeathLogModalEditBodyPage1({
 					onChange={(e) =>
 						handleOnEditChange({
 							...node,
-							dateStart: e.currentTarget.value,
+							dateStart:
+								e.currentTarget.value == ""
+									? node.dateStart
+									: convertDefaultCardModalDateFormatToISO(
+											e.currentTarget.value,
+										),
 						})
 					}
+					max={defaultCardModalDateFormat(new Date().toISOString())}
 				/>
 
 				{node.completed ? (
@@ -56,7 +63,18 @@ export default function DeathLogModalEditBodyPage1({
 							assertIsNonNull(dateEnd);
 							return defaultCardModalDateFormat(dateEnd);
 						})()}
-						onChange={(e) => e.currentTarget.value}
+						onChange={(e) =>
+							handleOnEditChange({
+								...node,
+								dateEnd:
+									e.currentTarget.value == ""
+										? node.dateEnd
+										: convertDefaultCardModalDateFormatToISO(
+												e.currentTarget.value,
+											),
+							})
+						}
+						min={defaultCardModalDateFormat(node.dateStart)}
 					/>
 				) : null}
 				<div className="divider my-2">↓ Reliability ↓</div>

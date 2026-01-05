@@ -9,7 +9,7 @@ import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
 import {
 	convertDefaultCardModalDateFormatToISO,
 	defaultCardModalDateFormat,
-	isCardModalDateAtLimit,
+	determineCardModalDateLimit,
 } from "./utils";
 import SelectDropdown, {
 	type SelectDropdownOption,

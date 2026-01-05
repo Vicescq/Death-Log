@@ -1,10 +1,11 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Modal from "../../../components/Modal";
 import type { DistinctTreeNode } from "../../../model/TreeNodeModel";
-import DeathLogModalEditBodyWrapper from "../Modal/DeathLogModalEditBodyWrapper";
+import DeathLogModalEditBodyWrapper from "./DeathLogModalEditBodyWrapper";
 import DeathLogCardOptions from "./DeathLogCardOptions";
 import usePagination from "../../../hooks/usePagination";
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
+import useConsoleLogOnStateChange from "../../../hooks/useConsoleLogOnStateChange";
 
 type Props = {
 	node: DistinctTreeNode;
@@ -28,30 +29,15 @@ export default function DeathLogCard({ node, entryNum }: Props) {
 
 	const [modalState, setModalState] = useState<DistinctTreeNode>({ ...node });
 
-	function handleOnEditSubmit(target: DeathLogModalTarget) {
-		switch (target) {
-			case "name":
-				updateModalEditedNode(node, { ...node, name: modalState.name });
-				break;
-			case "dateStart":
-				updateModalEditedNode(node, {
-					...node,
-					dateStart: modalState.dateStart,
-				});
-				break;
-		}
-	}
-
 	const deaths =
 		node.type == "game"
 			? node.totalDeaths
 			: node.type == "profile"
 				? node.deathEntries.length
 				: node.deaths;
-
 	return (
 		<>
-			<li className="list-row sm:h-20" inert={false}>
+			<li className="list-row" inert={false}>
 				<div className="flex items-center justify-center">
 					<span className="text-accent line-clamp-1 w-8 text-xs">
 						{entryNum}
@@ -59,7 +45,7 @@ export default function DeathLogCard({ node, entryNum }: Props) {
 					<div className="ml-2">
 						<input
 							type="checkbox"
-							defaultChecked
+							defaultChecked={node.completed}
 							className="checkbox checkbox-sm checkbox-success"
 						/>
 					</div>
@@ -78,7 +64,7 @@ export default function DeathLogCard({ node, entryNum }: Props) {
 				/>
 			</li>
 			<Modal
-				closeBtnName="Close"
+				closeBtnName="Close (Cancel changes)"
 				content={
 					<DeathLogModalEditBodyWrapper
 						node={modalState}
@@ -93,10 +79,11 @@ export default function DeathLogCard({ node, entryNum }: Props) {
 				ref={editModalRef}
 				modalBtns={[
 					{
-						text: "Confirm Edits",
+						text: "Close (Save changes)",
 						css: "btn-neutral",
 						fn: () => {
 							updateModalEditedNode(node, modalState);
+							editModalRef.current?.close();
 						},
 					},
 				]}

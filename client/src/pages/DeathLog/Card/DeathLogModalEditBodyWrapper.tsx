@@ -23,7 +23,7 @@ export default function DeathLogModalEditBodyWrapper({
 					handleOnEditChange={handleOnEditChange}
 				/>
 			) : (
-				<DeathLogModalEditBodyPage2 node={node} />
+				<DeathLogModalEditBodyPage2 node={node} handleOnEditChange={handleOnEditChange}/>
 			)}
 
 			<div className="join mt-4 flex">

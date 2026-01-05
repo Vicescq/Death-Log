@@ -3,11 +3,15 @@ import trash from "../../../assets/trash.svg";
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
 import { useEffect, useState } from "react";
 
+type Props = {
+	node: DistinctTreeNode;
+	handleOnEditChange: (newModalState: DistinctTreeNode) => void;
+};
+
 export default function DeathLogModalEditBodyPage2({
 	node,
-}: {
-	node: DistinctTreeNode;
-}) {
+	handleOnEditChange,
+}: Props) {
 	const deleteGame = useDeathLogStore((state) => state.deleteGame);
 	const deleteProfile = useDeathLogStore((state) => state.deleteProfile);
 	const deleteSubject = useDeathLogStore((state) => state.deleteSubject);
@@ -31,7 +35,12 @@ export default function DeathLogModalEditBodyPage2({
 					className="textarea"
 					placeholder="Type here"
 					value={node.notes}
-					onChange={(e) => e.currentTarget.value}
+					onChange={(e) =>
+						handleOnEditChange({
+							...node,
+							notes: e.currentTarget.value,
+						})
+					}
 				></textarea>
 			</fieldset>
 			<fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-full border p-4">
