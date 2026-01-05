@@ -7,7 +7,7 @@ import DeathLogFAB from "./DeathLogFAB";
 import usePagination from "../../hooks/usePagination";
 import * as Utils from "./utils";
 import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
-import { Virtuoso } from "react-virtuoso";
+import { Virtuoso, type Components } from "react-virtuoso";
 
 type Props = {
 	type: "game" | "profile" | "subject";
@@ -55,6 +55,21 @@ export default function DeathLog({ type, parentID }: Props) {
 		setDeathLogIsInert(false);
 	}
 
+	const DeathLogCardWrapper: Components["List"] = React.forwardRef(
+		(props, ref) => {
+			return (
+				<ul
+					ref={ref as React.Ref<HTMLUListElement>} // no other workaround ?
+					{...props}
+					className={`list rounded-box ${pageOpacity}`}
+					inert={deathLogIsInert}
+				>
+					{props.children}
+				</ul>
+			);
+		},
+	);
+
 	return (
 		<>
 			<NavBar
@@ -83,43 +98,24 @@ export default function DeathLog({ type, parentID }: Props) {
 				}
 			/>
 
-			{/* <ul
-				className={`list rounded-box my-6 mb-14 ${pageOpacity}`}
-				inert={deathLogIsInert}
-			>
-				{paginatedCards[page-1]}
-				{cards}
-			</ul> */}
-
 			<Virtuoso
 				data={nodes}
 				itemContent={(i, node) => (
 					<DeathLogCard node={node} key={node.id} entryNum={i + 1} />
 				)}
-				className={`!h-[85vh] `}
-				components={{
-					List: React.forwardRef(
-						({ style, children, ...props }, ref) => (
-							<ul
-								ref={ref}
-								{...props}
-								style={style}
-								className={`list rounded-box ${pageOpacity}`}
-								inert={deathLogIsInert}
-							>
-								{children}
-							</ul>
-						),
-					),
-				}}
+				className={`mt-4 mb-12 !h-[80vh]`}
+				components={{ List: DeathLogCardWrapper }}
+				
 			/>
 
-			<DeathLogFAB
-				type={type}
-				parentID={parentID}
-				handleFabOnFocus={handleFabOnFocus}
-				handleFabOnBlur={handleFabOnBlur}
-			/>
+			
+				<DeathLogFAB
+					type={type}
+					parentID={parentID}
+					handleFabOnFocus={handleFabOnFocus}
+					handleFabOnBlur={handleFabOnBlur}
+				/>
+			
 		</>
 	);
 }
