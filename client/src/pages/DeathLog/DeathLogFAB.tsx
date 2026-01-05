@@ -38,7 +38,7 @@ export default function DeathLogFAB({
 				<div
 					tabIndex={0}
 					role="button"
-					className="btn btn-lg btn-circle bg-success opacity-100"
+					className="btn btn-lg btn-circle bg-success"
 					onFocus={handleFabOnFocus}
 					onBlur={handleFabOnBlur}
 				>
