@@ -2,12 +2,12 @@ import { useDeathLogStore } from "../../stores/useDeathLogStore";
 import NavBar from "../../components/navBar/NavBar";
 import DeathLogCard from "./Card/DeathLogCard";
 import { assertIsDistinctTreeNode, assertIsNonNull } from "../../utils";
-import React, { useState } from "react";
+import React, { forwardRef, useRef, useState } from "react";
 import DeathLogFAB from "./DeathLogFAB";
 import usePagination from "../../hooks/usePagination";
 import * as Utils from "./utils";
 import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
-import { Virtuoso, type Components } from "react-virtuoso";
+import { Virtuoso, type Components, type VirtuosoHandle } from "react-virtuoso";
 
 type Props = {
 	type: "game" | "profile" | "subject";
@@ -16,6 +16,7 @@ type Props = {
 
 export default function DeathLog({ type, parentID }: Props) {
 	const tree = useDeathLogStore((state) => state.tree);
+	const virtuosoRef = useRef<VirtuosoHandle>(null);
 
 	const childIDS = tree.get(parentID)?.childIDS || [];
 	const nodes = childIDS.map((nodeID) => {
@@ -55,20 +56,18 @@ export default function DeathLog({ type, parentID }: Props) {
 		setDeathLogIsInert(false);
 	}
 
-	const DeathLogCardWrapper: Components["List"] = React.forwardRef(
-		(props, ref) => {
-			return (
-				<ul
-					ref={ref as React.Ref<HTMLUListElement>} // no other workaround ?
-					{...props}
-					className={`list rounded-box ${pageOpacity}`}
-					inert={deathLogIsInert}
-				>
-					{props.children}
-				</ul>
-			);
-		},
-	);
+	const DeathLogCardWrapper: Components["List"] = forwardRef((props, ref) => {
+		return (
+			<ul
+				ref={ref as React.Ref<HTMLUListElement>} // no other workaround ?
+				{...props}
+				className={`list rounded-box ${pageOpacity}`}
+				inert={deathLogIsInert}
+			>
+				{props.children}
+			</ul>
+		);
+	});
 
 	return (
 		<>
@@ -99,23 +98,22 @@ export default function DeathLog({ type, parentID }: Props) {
 			/>
 
 			<Virtuoso
+				ref={virtuosoRef}
 				data={nodes}
 				itemContent={(i, node) => (
 					<DeathLogCard node={node} key={node.id} entryNum={i + 1} />
 				)}
 				className={`mt-4 mb-12 !h-[80vh]`}
 				components={{ List: DeathLogCardWrapper }}
-				
 			/>
 
-			
-				<DeathLogFAB
-					type={type}
-					parentID={parentID}
-					handleFabOnFocus={handleFabOnFocus}
-					handleFabOnBlur={handleFabOnBlur}
-				/>
-			
+			<DeathLogFAB
+				virtuosoRef={virtuosoRef}
+				type={type}
+				parentID={parentID}
+				handleFabOnFocus={handleFabOnFocus}
+				handleFabOnBlur={handleFabOnBlur}
+			/>
 		</>
 	);
 }

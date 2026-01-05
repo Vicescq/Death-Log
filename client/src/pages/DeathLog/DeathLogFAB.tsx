@@ -4,15 +4,18 @@ import fabEdit from "../../assets/fab_edit.svg";
 import filter from "../../assets/filter.svg";
 import sort from "../../assets/sort.svg";
 import up from "../../assets/up.svg";
+import down from "../../assets/down.svg";
 import Modal from "../../components/Modal";
 import { useDeathLogStore } from "../../stores/useDeathLogStore";
 import useInputTextError from "./Card/useInputTextError";
+import type { VirtuosoHandle } from "react-virtuoso";
 
 type Props = {
 	type: "game" | "profile" | "subject";
 	parentID: string;
 	handleFabOnFocus: () => void;
 	handleFabOnBlur: () => void;
+	virtuosoRef: React.RefObject<VirtuosoHandle | null>;
 };
 
 export default function DeathLogFAB({
@@ -20,6 +23,7 @@ export default function DeathLogFAB({
 	parentID,
 	handleFabOnFocus,
 	handleFabOnBlur,
+	virtuosoRef,
 }: Props) {
 	const addNode = useDeathLogStore((state) => state.addNode);
 	const modalRef = useRef<HTMLDialogElement>(null);
@@ -78,11 +82,29 @@ export default function DeathLogFAB({
 					</button>
 				</div>
 				<div>
-					Back to top
+					Bottom
 					<button
 						className="btn btn-lg btn-circle btn-accent"
 						onClick={() => {
-							window.scrollTo({
+							virtuosoRef.current?.scrollToIndex({
+								index: "LAST",
+								behavior: "smooth",
+							});
+
+							if (document.activeElement instanceof HTMLElement) {
+								document.activeElement.blur();
+							}
+						}}
+					>
+						<img src={down} alt="" />
+					</button>
+				</div>
+				<div>
+					Top
+					<button
+						className="btn btn-lg btn-circle btn-accent"
+						onClick={() => {
+							virtuosoRef.current?.scrollTo({
 								top: 0,
 								left: 0,
 								behavior: "smooth",
