@@ -6,6 +6,7 @@ import sort from "../../assets/sort.svg";
 import up from "../../assets/up.svg";
 import Modal from "../../components/Modal";
 import { useDeathLogStore } from "../../stores/useDeathLogStore";
+import useInputTextError from "./Card/useInputTextError";
 
 type Props = {
 	type: "game" | "profile" | "subject";
@@ -23,18 +24,17 @@ export default function DeathLogFAB({
 	const addNode = useDeathLogStore((state) => state.addNode);
 	const modalRef = useRef<HTMLDialogElement>(null);
 	const [inputText, setInputText] = useState("");
-	const [inputTextError, setInputTextError] = useState("");
-	const [inputTextErrorIsDisplayed, setInputTextErrorIsDisplayed] =
-		useState(false);
 
-	useEffect(() => {
-		if (inputText == "") {
-			setInputTextErrorIsDisplayed(false);
-		}
-	}, [inputText]);
+	const {
+		inputTextError,
+		setInputTextError,
+		inputTextErrorIsDisplayed,
+		setInputTextErrorIsDisplayed,
+	} = useInputTextError(inputText);
+
 	return (
 		<>
-			<div className="fab " >
+			<div className="fab">
 				<div
 					tabIndex={0}
 					role="button"
@@ -61,13 +61,19 @@ export default function DeathLogFAB({
 				</div>
 				<div>
 					Sort {type}s
-					<button className="btn btn-lg btn-circle btn-neutral" onClick={() => modalRef.current?.showModal()}>
+					<button
+						className="btn btn-lg btn-circle btn-neutral"
+						onClick={() => modalRef.current?.showModal()}
+					>
 						<img src={sort} alt="" />
 					</button>
 				</div>
 				<div>
 					Filter {type}s
-					<button className="btn btn-lg btn-circle" onClick={() => modalRef.current?.showModal()}>
+					<button
+						className="btn btn-lg btn-circle"
+						onClick={() => modalRef.current?.showModal()}
+					>
 						<img src={filter} alt="" />
 					</button>
 				</div>

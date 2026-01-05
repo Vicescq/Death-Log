@@ -8,10 +8,14 @@ import {
 type Props = {
 	node: DistinctTreeNode;
 	handleOnEditChange: (newModalState: DistinctTreeNode) => void;
+	inputTextError: string;
+	inputTextErrorIsDisplayed: boolean;
 };
 
 export default function DeathLogModalEditBodyPage1({
 	node,
+	inputTextError,
+	inputTextErrorIsDisplayed,
 	handleOnEditChange,
 }: Props) {
 	return (
@@ -29,7 +33,18 @@ export default function DeathLogModalEditBodyPage1({
 							name: e.currentTarget.value,
 						})
 					}
+					onBlur={(e) =>
+						handleOnEditChange({
+							...node,
+							name: e.currentTarget.value.trim(),
+						})
+					}
 				/>
+				<div
+					className={`text-error mt-2 ml-2 ${inputTextErrorIsDisplayed ? "" : "hidden"} text-sm`}
+				>
+					{inputTextError}
+				</div>
 			</fieldset>
 			<fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-full border p-4">
 				<legend className="fieldset-legend">

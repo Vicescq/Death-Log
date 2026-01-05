@@ -4,6 +4,10 @@ import DeathLogCard from "./Card/DeathLogCard";
 import { assertIsDistinctTreeNode, assertIsNonNull } from "../../utils";
 import React, { useState } from "react";
 import DeathLogFAB from "./DeathLogFAB";
+import usePagination from "../../hooks/usePagination";
+import * as Utils from "./utils";
+import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
+import { Virtuoso } from "react-virtuoso";
 
 type Props = {
 	type: "game" | "profile" | "subject";
@@ -22,11 +26,20 @@ export default function DeathLog({ type, parentID }: Props) {
 		return node;
 	});
 
-	let bothArr: React.JSX.Element[] = [];
+	const maxItemPerPage = 30;
+	const maxPage = Utils.calcRequiredPages(nodes.length, maxItemPerPage);
+	const { page, handlePageState, handlePageTurn } = usePagination(maxPage);
+
+	// const paginatedCards: React.JSX.Element[][] = [];
+	// let cards: React.JSX.Element[] = [];
+	// nodes.forEach((node, i) => {
+	// 	cards.push(<DeathLogCard node={node} key={node.id} entryNum={i + 1} />);
+	// });
+	// Utils.paginateCardArray(paginatedCards, cards, maxPage, maxItemPerPage);
+
+	let cards: React.JSX.Element[] = [];
 	nodes.forEach((node, i) => {
-		bothArr.push(
-			<DeathLogCard node={node} key={node.id} entryNum={i + 1} />,
-		);
+		cards.push(<DeathLogCard node={node} key={node.id} entryNum={i + 1} />);
 	});
 
 	const [pageOpacity, setPageOpacity] = useState("");
@@ -44,13 +57,48 @@ export default function DeathLog({ type, parentID }: Props) {
 
 	return (
 		<>
-			<NavBar isDL={true} />
-			<ul
-				className={`list bg-base-100 rounded-box my-6 mb-14 flex ${pageOpacity}`}
+			<NavBar
+				midNavContent={
+					<div className="join flex">
+						<button
+							className="join-item btn"
+							onClick={() => {
+								handlePageTurn(false);
+							}}
+						>
+							«
+						</button>
+						<button className="join-item btn flex-1">
+							Page {page}
+						</button>
+						<button
+							className="join-item btn"
+							onClick={() => {
+								handlePageTurn(true);
+							}}
+						>
+							»
+						</button>
+					</div>
+				}
+			/>
+
+			{/* <ul
+				className={`list rounded-box my-6 mb-14 ${pageOpacity}`}
 				inert={deathLogIsInert}
 			>
-				{bothArr}
-			</ul>
+				{paginatedCards[page-1]}
+				{cards}
+			</ul> */}
+
+			<Virtuoso
+				data={nodes}
+				itemContent={(i, node) => (
+					<DeathLogCard node={node} key={node.id} entryNum={i + 1} />
+				)}
+				className={`!h-[85vh] list rounded-box my-6 ${pageOpacity}`}
+			/>
+
 			<DeathLogFAB
 				type={type}
 				parentID={parentID}

@@ -54,6 +54,7 @@ export default function DeathLogModalEditBodyPage2({
 						onChange={(e) =>
 							setDelConfirmStr(e.currentTarget.value)
 						}
+						onBlur={(e) => setDelConfirmStr(e.currentTarget.value.trim())}
 					/>
 					<button
 						className={`btn join-item ${delBtnCSS} p-3`}

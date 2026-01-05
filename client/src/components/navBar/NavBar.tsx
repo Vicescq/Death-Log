@@ -5,9 +5,12 @@ import dl from "../../assets/death-log.svg";
 import { SignedIn, UserButton } from "@clerk/clerk-react";
 import NavBarDrawer from "./NavBarDrawer";
 import { useActiveNavBarCSS } from "./useActiveNavBarCSS";
-import usePagination from "../../hooks/usePagination";
 
-export default function NavBar({ isDL }: { isDL: boolean }) {
+export default function NavBar({
+	midNavContent,
+}: {
+	midNavContent: React.JSX.Element;
+}) {
 	const navigate = useNavigate();
 	const { activeDLCSS, activeDMCSS, activeFAQCSS } = useActiveNavBarCSS("bg");
 	// const { page, handlePageState, handlePageTurn } = usePagination(5);
@@ -59,29 +62,7 @@ export default function NavBar({ isDL }: { isDL: boolean }) {
 				</ul>
 			</div>
 
-			<div className="navbar-center">
-				{isDL ? (
-					<div className="join flex">
-						<button
-							className="join-item btn"
-							onClick={() => {
-								1;
-							}}
-						>
-							«
-						</button>
-						<button className="join-item btn flex-1">Page 1</button>
-						<button
-							className="join-item btn"
-							onClick={() => {
-								1;
-							}}
-						>
-							»
-						</button>
-					</div>
-				) : null}
-			</div>
+			<div className="navbar-center">{midNavContent}</div>
 
 			<div className="navbar-end">
 				<SignedIn>
