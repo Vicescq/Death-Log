@@ -96,7 +96,22 @@ export default function DeathLog({ type, parentID }: Props) {
 				itemContent={(i, node) => (
 					<DeathLogCard node={node} key={node.id} entryNum={i + 1} />
 				)}
-				className={`!h-[85vh] list rounded-box my-6 ${pageOpacity}`}
+				className={`!h-[85vh] `}
+				components={{
+					List: React.forwardRef(
+						({ style, children, ...props }, ref) => (
+							<ul
+								ref={ref}
+								{...props}
+								style={style}
+								className={`list rounded-box ${pageOpacity}`}
+								inert={deathLogIsInert}
+							>
+								{children}
+							</ul>
+						),
+					),
+				}}
 			/>
 
 			<DeathLogFAB
