@@ -12,7 +12,7 @@ import type { VirtuosoHandle } from "react-virtuoso";
 import type { Subject, SubjectContext } from "../../model/TreeNodeModel";
 import * as Utils from "./utils";
 
-export type EditableSubjectField = Pick<Subject, "reoccurring" | "context">
+export type EditableSubjectField = Pick<Subject, "reoccurring" | "context">;
 
 type Props = {
 	type: "game" | "profile" | "subject";
@@ -152,7 +152,9 @@ export default function DeathLogFAB({
 										}
 										onBlur={(e) =>
 											setInputText(
-												e.currentTarget.value.trim(),
+												e.currentTarget.value
+													.replace(/\s+/g, " ")
+													.trim(),
 											)
 										}
 										value={inputText}

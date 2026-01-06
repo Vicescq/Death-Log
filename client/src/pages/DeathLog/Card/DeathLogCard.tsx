@@ -11,6 +11,7 @@ import loop from "../../../assets/loop.svg";
 import skullRed from "../../../assets/skull_red.svg";
 import { useNavigate } from "react-router";
 import DeathLogModalEditBodyPage3 from "./DeathLogModalEditBodyPage3";
+import * as Utils from "../utils";
 
 type Props = {
 	node: DistinctTreeNode;
@@ -38,15 +39,14 @@ export default function DeathLogCard({ node, entryNum }: Props) {
 		setInputTextErrorIsDisplayed,
 	} = useInputTextError(modalState.name);
 
-	const deaths =
-		node.type == "game" ? 1 : node.type == "profile" ? 1 : node.deaths;
+	const tree = useDeathLogStore((state) => state.tree);
+	const deaths = Utils.calcDeaths(node, tree);
 
 	const completionNotifyModalRef = useRef<HTMLDialogElement>(null);
 	const [checked, setChecked] = useState(node.completed);
 	const completedCSSStrike = node.completed ? "line-through" : "";
 
 	const navigate = useNavigate();
-
 	return (
 		<>
 			<li className={`list-row rounded-none`} inert={false}>
@@ -72,7 +72,7 @@ export default function DeathLogCard({ node, entryNum }: Props) {
 				<div
 					className={`flex flex-col justify-center ${completedCSSStrike}`}
 				>
-					<div className="line-clamp-4  sm:line-clamp-2">
+					<div className="line-clamp-4 sm:line-clamp-2">
 						{node.name}
 					</div>
 					<div className="flex gap-2 font-semibold uppercase opacity-60">

@@ -1,4 +1,5 @@
-import type { DistinctTreeNode, SubjectContext } from "../../model/TreeNodeModel";
+import type { DistinctTreeNode, SubjectContext, Tree } from "../../model/TreeNodeModel";
+import { assertIsNonNull, assertIsProfile, assertIsSubject } from "../../utils";
 
 export function calcRequiredPages(size: number, pageSize: number) {
     return Math.max(1, Math.ceil(size / pageSize));
@@ -36,9 +37,36 @@ export function mapProperStrToContextKey(properStr: string): SubjectContext {
     return properStrMap[properStr]
 }
 
-export function calcDeaths(node: DistinctTreeNode){
+export function calcDeaths(node: DistinctTreeNode, tree: Tree) {
 
+    let sum = 0;
+    switch (node.type) {
+        case "game":
+            node.childIDS.forEach((id) => {
+                const profile = tree.get(id);
+                assertIsNonNull(profile);
+                assertIsProfile(profile);
+                profile.childIDS.forEach((id) => {
+                    const subject = tree.get(id);
+                    assertIsNonNull(subject);
+                    assertIsSubject(subject);
+                    sum += subject.deaths;
+                })
+            })
+            return sum
+        case "profile":
+            node.childIDS.forEach((id) => {
+                const subject = tree.get(id);
+                assertIsNonNull(subject);
+                assertIsSubject(subject);
+                sum += subject.deaths;
+            })
+            return sum;
+        default:
+            return node.deaths;
+    }
 }
+
 export function defaultCardModalDateFormat(isoSTR: string) {
     const dateObj = new Date(isoSTR);
     const year = String(dateObj.getFullYear());
@@ -51,9 +79,10 @@ export function defaultCardModalDateFormat(isoSTR: string) {
         day = "0" + day;
     }
     return `${year}-${month}-${day}`;
-}export function convertDefaultCardModalDateFormatToISO(cardModalDateFormat: string) {
+}
+
+export function convertDefaultCardModalDateFormatToISO(cardModalDateFormat: string) {
     const parsedDate = cardModalDateFormat.split("-");
     const dateObj = new Date(Number(parsedDate[0]), Number(parsedDate[1]) - 1, Number(parsedDate[2]));
     return dateObj.toISOString();
 }
-

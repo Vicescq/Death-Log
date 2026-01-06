@@ -190,6 +190,7 @@ export function generateAndValidateID(tree: Tree) {
     }
     return id
 }
+
 export async function refreshTree(initTree: (nodes: DistinctTreeNode[]) => void) {
     const nodes = await LocalDB.getNodes();
     initTree(nodes);
