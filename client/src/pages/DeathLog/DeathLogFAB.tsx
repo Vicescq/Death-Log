@@ -249,6 +249,8 @@ export default function DeathLogFAB({
 				handleOnClose={() => {
 					setInputText("");
 					setInputTextErrorIsDisplayed(false);
+					setSubjectContext("boss");
+					setReoccurring(false);
 				}}
 			/>
 		</>
