@@ -34,14 +34,6 @@ export default class LocalDB {
         })
     }
 
-    static async updateNodeLineage(subject: Subject, profile: Profile, game: Game) {
-        db.transaction("rw", db.nodes, async () => {
-            await db.nodes.update(subject.id, { node_id: subject.id, node: subject, edited_at: new Date().toISOString(), email: LocalDB.getUserEmail() });
-            await db.nodes.update(profile.id, { node_id: profile.id, node: profile, edited_at: new Date().toISOString(), email: LocalDB.getUserEmail() });
-            await db.nodes.update(game.id, { node_id: game.id, node: game, edited_at: new Date().toISOString(), email: LocalDB.getUserEmail() });
-        })
-    }
-
     static async updateNodeAndParent(node: DistinctTreeNode, parentNode?: DistinctTreeNode) {
         db.transaction("rw", db.nodes, async () => {
             await db.nodes.update(node.id, { node_id: node.id, node: node, edited_at: new Date().toISOString(), email: LocalDB.getUserEmail() });

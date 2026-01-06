@@ -39,11 +39,7 @@ export default function DeathLogCard({ node, entryNum }: Props) {
 	} = useInputTextError(modalState.name);
 
 	const deaths =
-		node.type == "game"
-			? node.totalDeaths
-			: node.type == "profile"
-				? node.deathEntries.length
-				: node.deaths;
+		node.type == "game" ? 1 : node.type == "profile" ? 1 : node.deaths;
 
 	const completionNotifyModalRef = useRef<HTMLDialogElement>(null);
 	const [checked, setChecked] = useState(node.completed);
@@ -76,7 +72,7 @@ export default function DeathLogCard({ node, entryNum }: Props) {
 				<div
 					className={`flex flex-col justify-center ${completedCSSStrike}`}
 				>
-					<div className="line-clamp-4 text-lg sm:line-clamp-2">
+					<div className="line-clamp-4  sm:line-clamp-2">
 						{node.name}
 					</div>
 					<div className="flex gap-2 font-semibold uppercase opacity-60">

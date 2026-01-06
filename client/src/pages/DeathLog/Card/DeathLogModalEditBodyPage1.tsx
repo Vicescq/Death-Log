@@ -1,9 +1,7 @@
 import type { DistinctTreeNode } from "../../../model/TreeNodeModel";
 import { assertIsNonNull } from "../../../utils";
-import {
-	convertDefaultCardModalDateFormatToISO,
-	defaultCardModalDateFormat,
-} from "../../../components/card/utils";
+import { convertDefaultCardModalDateFormatToISO } from "../utils";
+import { defaultCardModalDateFormat } from "../utils";
 
 type Props = {
 	node: DistinctTreeNode;

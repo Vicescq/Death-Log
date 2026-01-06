@@ -1,4 +1,5 @@
 import type { TreeNode, Subject, DistinctTreeNode, Game, Profile, RootNode, Tree } from "../model/TreeNodeModel";
+import LocalDB from "../services/LocalDB";
 import { assertIsDistinctTreeNode, assertIsNonNull } from "../utils";
 import { nanoid } from "nanoid";
 
@@ -103,7 +104,7 @@ export function isURLIDUnique() {
 }
 
 export function createRootNode() {
-    const rootNode: RootNode = { type: "ROOT_NODE", id: "ROOT_NODE", childIDS: [], parentID: "NONE", name: "", completed: false, notes: "", dateStart: "", dateEnd: "" };
+    const rootNode: RootNode = { type: "ROOT_NODE", id: "ROOT_NODE", childIDS: [], parentID: "NONE", name: "", completed: false, notes: "", dateStart: "", dateEnd: "", dateStartRel: true, dateEndRel: true };
     return rootNode
 }
 
@@ -122,7 +123,8 @@ export function createGame(
         notes: "",
         dateStart: new Date().toISOString(),
         dateEnd: null,
-        totalDeaths: 0,
+        dateStartRel: true,
+        dateEndRel: true // maybe should be null?
     };
     return defaultGame
 }
@@ -143,8 +145,9 @@ export function createProfile(
         notes: "",
         dateStart: new Date().toISOString(),
         dateEnd: null,
-        milestones: [],
-        deathEntries: [],
+        groupings: [],
+        dateStartRel: true,
+        dateEndRel: true
     };
     return defaultProfile
 }
@@ -169,21 +172,10 @@ export function createSubject(
         reoccurring: false,
         context: "boss",
         timeSpent: null,
+        dateStartRel: true,
+        dateEndRel: true
     };
     return defaultSubject
-}
-
-export function updateProfileDeathEntriesOnSubjectDelete(profile: Profile, deletedSubject: Subject) {
-    const targetedIndices: number[] = [];
-    for (let i = profile.deathEntries.length - 1; i >= 0; i--) {
-        if (profile.deathEntries[i].id == deletedSubject.id) {
-            targetedIndices.push(i);
-        }
-    }
-    const updatedDeathEntries = profile.deathEntries.filter((_, i) => {
-        return !targetedIndices.includes(i);
-    });
-    return updatedDeathEntries;
 }
 
 export function generateAndValidateID(tree: Tree) {
@@ -197,4 +189,8 @@ export function generateAndValidateID(tree: Tree) {
         throw new Error("ERROR! You somehow generated 100 duplicated IDs of length 8 in a row. Either you messed something in the local db or youre an insanely lucky person! :)")
     }
     return id
+}
+export async function refreshTree(initTree: (nodes: DistinctTreeNode[]) => void) {
+    const nodes = await LocalDB.getNodes();
+    initTree(nodes);
 }

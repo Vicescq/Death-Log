@@ -1,14 +1,4 @@
-import type { SelectDropdownOption } from "./components/SelectDropDown";
-import type { DistinctTreeNode, Game, ParentTreeNode, Profile, RootNode, Subject, TreeNode } from "./model/TreeNodeModel";
-import LocalDB from "./services/LocalDB";
-
-export const contextOptions: SelectDropdownOption[] = [
-    { value: "boss", text: "Boss" },
-    { text: "Mini Boss", value: "miniBoss" },
-    { text: "Generic Enemy", value: "genericEnemy" },
-    { value: "location", text: "Location" },
-    { value: "other", text: "Other" },
-];
+import type { DistinctTreeNode, Game, Profile, RootNode, Subject, TreeNode } from "./model/TreeNodeModel";
 
 export function assertIsRootNode(node: TreeNode): asserts node is RootNode {
     if (node.type != "ROOT_NODE") {
@@ -50,16 +40,4 @@ export function assertIsGameOrProfile(node: TreeNode): asserts node is (Game | P
     if (!(node.type == "game" || node.type == "profile")) {
         throw new Error("DEV ERROR! expected game|profile type is somehow wrong!")
     }
-}
-
-export async function getTokenWrapper(getToken: (options?: any) => Promise<string | null>, cb: (token: string) => void) {
-    const token = await getToken();
-    if (token) {
-        cb(token);
-    }
-}
-
-export async function refreshTree(initTree: (nodes: DistinctTreeNode[]) => void) {
-    const nodes = await LocalDB.getNodes()
-    initTree(nodes);
 }

@@ -1,9 +1,9 @@
 import { create } from 'zustand'
-import type { DistinctTreeNode, Game, ParentTreeNode, Profile, RootNode, Subject, Tree, TreeNode } from '../model/TreeNodeModel';
-import type { EditableSubjectField } from '../components/addItemCard/types';
-import { sortChildIDS, validateNodeString, identifyDeletedSelfAndChildrenIDS, createGame, createProfile, createSubject, createRootNode, updateProfileDeathEntriesOnSubjectDelete } from './utils';
+import type { DistinctTreeNode, Game, Profile, RootNode, Subject, Tree, TreeNode } from '../model/TreeNodeModel';
+import { sortChildIDS, validateNodeString, identifyDeletedSelfAndChildrenIDS, createGame, createProfile, createSubject, createRootNode } from './utils';
 import { assertIsDistinctTreeNode, assertIsGame, assertIsGameOrProfile, assertIsNonNull, assertIsProfile, assertIsRootNode } from '../utils';
 import LocalDB from '../services/LocalDB';
+import type { EditableSubjectField } from '../pages/deathLog/DeathLogFAB';
 
 type DeathLogState = {
     tree: Tree;
@@ -111,7 +111,6 @@ export const useDeathLogStore = create<DeathLogState>((set) => ({
             assertIsNonNull(parentNode);
             assertIsGame(parentNode);
             const parentNodeCopy: Game = { ...parentNode, childIDS: parentNode.childIDS.filter((id) => id != node.id) };
-            parentNodeCopy.totalDeaths -= node.deathEntries.length;
 
             updatedTree.set(parentNodeCopy.id, parentNodeCopy);
             LocalDB.deleteProfile(nodeIDSToBeDeleted, parentNodeCopy);
@@ -131,13 +130,10 @@ export const useDeathLogStore = create<DeathLogState>((set) => ({
             assertIsProfile(profileNode)
             const profileNodeCopy: Profile = { ...profileNode, childIDS: profileNode.childIDS.filter((id) => id != node.id) };
 
-            profileNodeCopy.deathEntries = updateProfileDeathEntriesOnSubjectDelete(profileNodeCopy, node);
-
             const game = updatedTree.get(profileNodeCopy.parentID);
             assertIsNonNull(game);
             assertIsGame(game);
             const gameNodeCopy: Game = { ...game };
-            gameNodeCopy.totalDeaths -= node.deaths;
 
             updatedTree.set(profileNodeCopy.id, profileNodeCopy);
             updatedTree.set(gameNodeCopy.id, gameNodeCopy);
@@ -155,9 +151,6 @@ export const useDeathLogStore = create<DeathLogState>((set) => ({
             const updatedTree = new Map(state.tree);
             let updatedSubject: Subject;
 
-            // const localStorageRes = localStorage.getItem("email");
-            // assertIsNonNull(localStorageRes);
-
             // card already verifies negative values
             if (operation == "add") {
                 updatedSubject = { ...subject, deaths: subject.deaths + 1 };
@@ -166,24 +159,8 @@ export const useDeathLogStore = create<DeathLogState>((set) => ({
                 updatedSubject = { ...subject, deaths: subject.deaths - 1 };
             }
 
-            const parentNode = updatedTree.get(updatedSubject.parentID);
-            assertIsNonNull(parentNode);
-            assertIsProfile(parentNode);
-            const profileNodeCopy: Profile = { ...parentNode, deathEntries: [...parentNode.deathEntries] };
-            operation == "add" ? profileNodeCopy.deathEntries.push({ id: updatedSubject.id, timestamp: new Date().toISOString() }) : profileNodeCopy.deathEntries.pop();
-
-            // grandparent updates
-            const grandParentNode = updatedTree.get(profileNodeCopy.parentID);
-            assertIsNonNull(grandParentNode);
-            assertIsGame(grandParentNode);
-            const gameNodeCopy: Game = { ...grandParentNode };
-            operation == "add" ? gameNodeCopy.totalDeaths++ : gameNodeCopy.totalDeaths--;
-
             updatedTree.set(updatedSubject.id, updatedSubject);
-            updatedTree.set(profileNodeCopy.id, profileNodeCopy);
-            updatedTree.set(gameNodeCopy.id, gameNodeCopy);
-
-            LocalDB.updateNodeLineage(updatedSubject, profileNodeCopy, gameNodeCopy);
+            LocalDB.updateNode(updatedSubject);
             LocalDB.incrementCRUDCounter();
 
             return { tree: updatedTree }
@@ -271,6 +248,6 @@ export const useDeathLogStore = create<DeathLogState>((set) => ({
         // })
     },
 
-    
+
 
 }))

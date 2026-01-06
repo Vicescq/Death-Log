@@ -9,8 +9,10 @@ import Modal from "../../components/Modal";
 import { useDeathLogStore } from "../../stores/useDeathLogStore";
 import useInputTextError from "./Card/useInputTextError";
 import type { VirtuosoHandle } from "react-virtuoso";
-import type { SubjectContext } from "../../model/TreeNodeModel";
+import type { Subject, SubjectContext } from "../../model/TreeNodeModel";
 import * as Utils from "./utils";
+
+export type EditableSubjectField = Pick<Subject, "reoccurring" | "context">
 
 type Props = {
 	type: "game" | "profile" | "subject";
