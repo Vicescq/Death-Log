@@ -1,7 +1,7 @@
 import { useParams } from "react-router";
 import DeathLog from "./DeathLog";
 import { useDeathLogStore } from "../../stores/useDeathLogStore";
-import DeathCounter from "./DeathCounter";
+import DeathLogCounter from "./DeathLogCounter";
 import ErrorPage from "../ErrorPage";
 
 export type CardMainPageTransitionState = {
@@ -31,7 +31,7 @@ export default function DeathLogRouter() {
 	}
 
 	if (subjectID && tree.has(subjectID)) {
-		return <DeathCounter subjectID={subjectID} />;
+		return <DeathLogCounter subjectID={subjectID} />;
 	}
 
 	return <ErrorPage error={new Error("URL not found!")} />;

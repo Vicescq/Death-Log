@@ -23,13 +23,7 @@ export default function DeathLogCard({ node, entryNum }: Props) {
 	const { page, handlePageState, handlePageTurn } = usePagination(
 		node.type != "subject" ? 2 : 3,
 	);
-	const updateModalEditedNode = useDeathLogStore(
-		(state) => state.updateModalEditedNode,
-	);
-	const updateNodeCompletion = useDeathLogStore(
-		(state) => state.updateNodeCompletion,
-	);
-
+	const updateNode = useDeathLogStore((state) => state.updateNode);
 	const [modalState, setModalState] = useState<DistinctTreeNode>({ ...node });
 
 	const {
@@ -130,7 +124,6 @@ export default function DeathLogCard({ node, entryNum }: Props) {
 									»
 								</button>
 							</div>
-							{/* <span className="text-lg"> Do you want to mark this as completed?</span> */}
 						</>
 					}
 					header="View & Edit Entry"
@@ -146,7 +139,7 @@ export default function DeathLogCard({ node, entryNum }: Props) {
 							css: "btn-neutral",
 							fn: () => {
 								try {
-									updateModalEditedNode(node, modalState);
+									updateNode(node, modalState);
 									editModalRef.current?.close();
 								} catch (e) {
 									if (e instanceof Error) {
@@ -180,8 +173,21 @@ export default function DeathLogCard({ node, entryNum }: Props) {
 								await new Promise((resolve) =>
 									setTimeout(resolve, 210),
 								);
-								setChecked(!checked);
-								updateNodeCompletion(node);
+								const newChecked = !checked;
+								if (newChecked) {
+									updateNode(node, {
+										...node,
+										completed: newChecked,
+										dateEnd: new Date().toISOString(),
+									});
+								} else {
+									updateNode(node, {
+										...node,
+										completed: newChecked,
+										dateEnd: null,
+									});
+								}
+								setChecked(newChecked);
 							},
 						},
 					]}

@@ -14,9 +14,7 @@ type DeathLogState = {
     deleteProfile: (node: Profile) => void;
     deleteSubject: (node: Subject) => void;
     updateNodeDeaths: (subject: Subject, operation: "add" | "subtract") => void;
-    updateNodeCompletion: (node: DistinctTreeNode) => void;
-    updateModalEditedNode: (node: DistinctTreeNode, overrides: DistinctTreeNode) => void;
-    updateNodeTimeSpent: (node: Subject, timeSpent: string | null) => void;
+    updateNode: (node: DistinctTreeNode, overrides: DistinctTreeNode) => void;
 }
 
 export const useDeathLogStore = create<DeathLogState>((set) => ({
@@ -167,46 +165,17 @@ export const useDeathLogStore = create<DeathLogState>((set) => ({
         })
     },
 
-    updateNodeCompletion: (node) => {
+
+
+    updateNode: (node, overrides) => {
         /**
-         * Updates node completion and implictly updates the subject's direct non-rootNode parent
-         */
-        set((state) => {
-            const updatedTree = new Map(state.tree);
-            const updatedNode: DistinctTreeNode = { ...node, completed: !node.completed };
-            updatedNode.dateEnd = updatedNode.completed ? new Date().toISOString() : null;
-            updatedTree.set(updatedNode.id, updatedNode);
-
-            const parentNode = updatedTree.get(updatedNode.parentID);
-            assertIsNonNull(parentNode);
-            const parentNodeCopy: TreeNode = { ...parentNode, childIDS: [...parentNode.childIDS] };
-            parentNodeCopy.childIDS = sortChildIDS(parentNodeCopy, updatedTree);
-
-
-            updatedTree.set(parentNodeCopy.id, parentNodeCopy);
-
-            if (parentNodeCopy.id == "ROOT_NODE") {
-                LocalDB.updateNodeAndParent(updatedNode);
-            }
-            else {
-                assertIsDistinctTreeNode(parentNodeCopy);
-                LocalDB.updateNodeAndParent(updatedNode, parentNodeCopy);
-            }
-            LocalDB.incrementCRUDCounter();
-
-            return { tree: updatedTree };
-        })
-    },
-
-    updateModalEditedNode: (node, overrides) => {
-        /**
-         * Updates node with modal edits and in certain cases, implictly updates the subject's direct non-rootNode parent
+         * Updates a node field
          */
         set((state) => {
             const updatedTree = new Map(state.tree);
             let updatedAlready = false;
 
-            if (node.name != overrides.name) { // card modal state already trims the overrides
+            if (node.name != overrides.name) {
                 validateNodeString(overrides.name, updatedTree, node.parentID);
             }
             const updatedNode: DistinctTreeNode = { ...node, ...overrides };
@@ -237,17 +206,4 @@ export const useDeathLogStore = create<DeathLogState>((set) => ({
             return { tree: updatedTree }
         })
     },
-
-    updateNodeTimeSpent: (node, timeSpent) => {
-        // set((state) => {
-        //     const updatedTree = new Map(state.tree);
-        //     const updatedNode: Subject = { ...node, timeSpent: timeSpent }
-        //     updatedTree.set(updatedNode.id, updatedNode);
-        //     LocalDB.incrementCRUDCounter();
-        //     return { tree: updatedTree }
-        // })
-    },
-
-
-
 })) 

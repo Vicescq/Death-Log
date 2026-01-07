@@ -7,14 +7,11 @@ type Props = {
 	subjectID: string;
 };
 
-export default function DeathCounter({ subjectID }: Props) {
+export default function DeathLogCounter({ subjectID }: Props) {
 	const node = useDeathLogStore((state) => state.tree.get(subjectID));
 	const tree = useDeathLogStore((state) => state.tree);
 	const updateNodeDeaths = useDeathLogStore(
 		(state) => state.updateNodeDeaths,
-	);
-	const updateNodeTimeSpent = useDeathLogStore(
-		(state) => state.updateNodeTimeSpent,
 	);
 
 	function getSubjectDeaths() {
