@@ -13,7 +13,7 @@ type DeathLogState = {
     deleteGame: (node: Game) => void;
     deleteProfile: (node: Profile) => void;
     deleteSubject: (node: Subject) => void;
-    updateNodeDeaths: (subject: Subject, operation: "add" | "subtract") => void;
+    deleteNode: (node: DistinctTreeNode) => void;
     updateNode: (node: DistinctTreeNode, overrides: DistinctTreeNode) => void;
 }
 
@@ -141,31 +141,9 @@ export const useDeathLogStore = create<DeathLogState>((set) => ({
         })
     },
 
-    updateNodeDeaths: (subject, operation) => {
-        /**
-         * Updates node deaths
-         */
-        set((state) => {
-            const updatedTree = new Map(state.tree);
-            let updatedSubject: Subject;
+    deleteNode: (node) => {
 
-            // card already verifies negative values
-            if (operation == "add") {
-                updatedSubject = { ...subject, deaths: subject.deaths + 1 };
-            }
-            else {
-                updatedSubject = { ...subject, deaths: subject.deaths - 1 };
-            }
-
-            updatedTree.set(updatedSubject.id, updatedSubject);
-            LocalDB.updateNode(updatedSubject);
-            LocalDB.incrementCRUDCounter();
-
-            return { tree: updatedTree }
-        })
     },
-
-
 
     updateNode: (node, overrides) => {
         /**

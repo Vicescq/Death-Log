@@ -9,10 +9,7 @@ type Props = {
 
 export default function DeathLogCounter({ subjectID }: Props) {
 	const node = useDeathLogStore((state) => state.tree.get(subjectID));
-	const tree = useDeathLogStore((state) => state.tree);
-	const updateNodeDeaths = useDeathLogStore(
-		(state) => state.updateNodeDeaths,
-	);
+	const updateNode = useDeathLogStore((state) => state.updateNode);
 
 	function getSubjectDeaths() {
 		// had to make this because of typescript errors and JSX syntax
@@ -36,7 +33,10 @@ export default function DeathLogCounter({ subjectID }: Props) {
 								className="border-hunyadi m-auto mt-15 w-8 rounded-2xl border-3 shadow-[6px_4px_0px_rgba(0,0,0,1)]"
 								onClick={() => {
 									assertIsSubject(node);
-									updateNodeDeaths(node, "add");
+									updateNode(node, {
+										...node,
+										deaths: node.deaths + 1,
+									});
 								}}
 							/>
 						</span>
@@ -50,7 +50,10 @@ export default function DeathLogCounter({ subjectID }: Props) {
 								onClick={() => {
 									assertIsSubject(node);
 									if (node.deaths > 0) {
-										updateNodeDeaths(node, "subtract");
+										updateNode(node, {
+											...node,
+											deaths: node.deaths - 1,
+										});
 									}
 								}}
 							/>
