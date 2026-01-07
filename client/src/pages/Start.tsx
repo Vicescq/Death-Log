@@ -66,11 +66,17 @@ export default function Start() {
 							</button>
 						</SignedIn>
 						<button
-								className="btn btn-neutral"
-								onClick={() => navigate("data-management")}
-							>
-								Manage Data
-							</button>
+							className="btn btn-neutral"
+							onClick={() => navigate("data-management")}
+						>
+							Manage Data
+						</button>
+						<button
+							className="btn btn-neutral"
+							onClick={() => navigate("FAQ")}
+						>
+							FAQ
+						</button>
 					</div>
 				</div>
 			</div>

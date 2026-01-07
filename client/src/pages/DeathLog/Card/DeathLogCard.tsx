@@ -85,7 +85,7 @@ export default function DeathLogCard({ node, entryNum }: Props) {
 					handleEdit={() => editModalRef.current?.showModal()}
 				/>
 				<Modal
-					closeBtnName="Close (Cancel changes)"
+					closeBtnName="Cancel"
 					content={
 						<>
 							{page == 1 ? (
@@ -142,8 +142,8 @@ export default function DeathLogCard({ node, entryNum }: Props) {
 							fn: () => navigate("/FAQ"),
 						},
 						{
-							text: "Close (Save changes)",
-							css: "btn-success",
+							text: "Save edits",
+							css: "btn-neutral",
 							fn: () => {
 								try {
 									updateModalEditedNode(node, modalState);

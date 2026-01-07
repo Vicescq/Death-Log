@@ -44,7 +44,9 @@ export default function DeathLogModalEditBodyPage3({
 
 				<div className="flex">
 					<span className="text-[1rem]">Time Spent</span>
-					<button className="ml-auto">N / A</button>
+					<button className="ml-auto">
+						{node.timeSpent == null ? "N / A" : node.timeSpent}
+					</button>
 					{/* 3h 18m 5s */}
 				</div>
 

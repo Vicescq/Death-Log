@@ -145,7 +145,7 @@ export const useDeathLogStore = create<DeathLogState>((set) => ({
 
     updateNodeDeaths: (subject, operation) => {
         /**
-         * Updates node deaths and implictly updates the subject's lineage with the updated count
+         * Updates node deaths
          */
         set((state) => {
             const updatedTree = new Map(state.tree);
@@ -250,4 +250,4 @@ export const useDeathLogStore = create<DeathLogState>((set) => ({
 
 
 
-}))
+})) 

@@ -8,6 +8,7 @@ import usePagination from "../../hooks/usePagination";
 import * as Utils from "./utils";
 import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
 import { Virtuoso, type Components, type VirtuosoHandle } from "react-virtuoso";
+import NavBarBreadCrumb from "../../components/navBar/NavBarBreadCrumb";
 
 type Props = {
 	type: "game" | "profile" | "subject";
