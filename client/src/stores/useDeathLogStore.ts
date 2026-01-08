@@ -10,9 +10,6 @@ type DeathLogState = {
 
     initTree: (nodes: DistinctTreeNode[]) => void;
     addNode: (pageType: "game" | "profile" | "subject", inputText: string, parentID: string, overrides?: EditableSubjectField) => void;
-    deleteGame: (node: Game) => void;
-    deleteProfile: (node: Profile) => void;
-    deleteSubject: (node: Subject) => void;
     deleteNode: (node: DistinctTreeNode) => void;
     updateNode: (node: DistinctTreeNode, overrides: DistinctTreeNode) => void;
 }
@@ -78,71 +75,39 @@ export const useDeathLogStore = create<DeathLogState>((set) => ({
         })
     },
 
-    deleteGame: (node) => {
-        set((state) => {
-            const updatedTree = new Map(state.tree);
-            const nodeIDSToBeDeleted = identifyDeletedSelfAndChildrenIDS(node, updatedTree);
-            nodeIDSToBeDeleted.forEach((id) => updatedTree.delete(id));
-
-            const parentNode = updatedTree.get(node.parentID);
-            assertIsNonNull(parentNode);
-            assertIsRootNode(parentNode)
-            const parentNodeCopy: RootNode = { ...parentNode, childIDS: parentNode.childIDS.filter((id) => id != node.id) };
-            parentNodeCopy.childIDS = sortChildIDS(parentNodeCopy, updatedTree);
-
-            updatedTree.set(parentNodeCopy.id, parentNodeCopy);
-
-            LocalDB.deleteGame(nodeIDSToBeDeleted);
-            LocalDB.incrementCRUDCounter();
-
-            return { tree: updatedTree }
-        })
-    },
-
-    deleteProfile(node) {
-        set((state) => {
-            const updatedTree = new Map(state.tree);
-            const nodeIDSToBeDeleted = identifyDeletedSelfAndChildrenIDS(node, updatedTree);
-            nodeIDSToBeDeleted.forEach((id) => updatedTree.delete(id));
-
-            const parentNode = updatedTree.get(node.parentID);
-            assertIsNonNull(parentNode);
-            assertIsGame(parentNode);
-            const parentNodeCopy: Game = { ...parentNode, childIDS: parentNode.childIDS.filter((id) => id != node.id) };
-
-            updatedTree.set(parentNodeCopy.id, parentNodeCopy);
-            LocalDB.deleteProfile(nodeIDSToBeDeleted, parentNodeCopy);
-            LocalDB.incrementCRUDCounter();
-            return { tree: updatedTree }
-        })
-    },
-
-    deleteSubject(node) {
-        set((state) => {
-            const updatedTree = new Map(state.tree);
-            const nodeIDSToBeDeleted = identifyDeletedSelfAndChildrenIDS(node, updatedTree);
-            nodeIDSToBeDeleted.forEach((id) => updatedTree.delete(id));
-
-            const profileNode = updatedTree.get(node.parentID);
-            assertIsNonNull(profileNode);
-            assertIsProfile(profileNode)
-            const profileNodeCopy: Profile = { ...profileNode, childIDS: profileNode.childIDS.filter((id) => id != node.id) };
-
-            const game = updatedTree.get(profileNodeCopy.parentID);
-            assertIsNonNull(game);
-            assertIsGame(game);
-            const gameNodeCopy: Game = { ...game };
-
-            updatedTree.set(profileNodeCopy.id, profileNodeCopy);
-            updatedTree.set(gameNodeCopy.id, gameNodeCopy);
-            LocalDB.deleteSubject(nodeIDSToBeDeleted, gameNodeCopy, profileNodeCopy);
-            LocalDB.incrementCRUDCounter();
-            return { tree: updatedTree }
-        })
-    },
-
     deleteNode: (node) => {
+        set((state) => {
+            const updatedTree = new Map(state.tree);
+            const nodeIDSToBeDeleted = identifyDeletedSelfAndChildrenIDS(node, updatedTree);
+            nodeIDSToBeDeleted.forEach((id) => updatedTree.delete(id));
 
+            const parentNode = updatedTree.get(node.parentID);
+            assertIsNonNull(parentNode);
+
+            switch (parentNode.type) {
+                case "ROOT_NODE":
+                    assertIsRootNode(parentNode);
+                    const rootNodeCopy: RootNode = { ...parentNode, childIDS: parentNode.childIDS.filter((id) => id != node.id) };
+                    updatedTree.set(rootNodeCopy.id, rootNodeCopy);
+                    LocalDB.deleteNode(nodeIDSToBeDeleted);
+                    break;
+                case "game":
+                    assertIsGame(parentNode);
+                    const gameNodeCopy: Game = { ...parentNode, childIDS: parentNode.childIDS.filter((id) => id != node.id) };
+                    updatedTree.set(gameNodeCopy.id, gameNodeCopy);
+                    LocalDB.deleteNode(nodeIDSToBeDeleted, gameNodeCopy);
+                    break;
+                case "profile":
+                    assertIsProfile(parentNode);
+                    const profileNodeCopy: Profile = { ...parentNode, childIDS: parentNode.childIDS.filter((id) => id != node.id) };
+                    updatedTree.set(profileNodeCopy.id, profileNodeCopy);
+                    LocalDB.deleteNode(nodeIDSToBeDeleted, profileNodeCopy);
+                    break;
+            }
+
+            LocalDB.incrementCRUDCounter();
+            return { tree: updatedTree }
+        })
     },
 
     updateNode: (node, overrides) => {
@@ -169,11 +134,11 @@ export const useDeathLogStore = create<DeathLogState>((set) => ({
                 updatedTree.set(parentNodeCopy.id, parentNodeCopy);
 
                 if (parentNodeCopy.id == "ROOT_NODE") {
-                    LocalDB.updateNodeAndParent(updatedNode);
+                    LocalDB.updateNode(updatedNode);
                 }
                 else {
                     assertIsDistinctTreeNode(parentNodeCopy);
-                    LocalDB.updateNodeAndParent(updatedNode, parentNodeCopy);
+                    LocalDB.updateNode(updatedNode, parentNodeCopy);
                 }
                 updatedAlready = true
             }

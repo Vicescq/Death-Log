@@ -12,9 +12,7 @@ export default function DeathLogModalEditBodyPage2({
 	node,
 	handleOnEditChange,
 }: Props) {
-	const deleteGame = useDeathLogStore((state) => state.deleteGame);
-	const deleteProfile = useDeathLogStore((state) => state.deleteProfile);
-	const deleteSubject = useDeathLogStore((state) => state.deleteSubject);
+	const deleteNode = useDeathLogStore((state) => state.deleteNode);
 
 	const [delConfirmStr, setDelConfirmStr] = useState("");
 	const [delBtnCSS, setDelBtnCSS] = useState("btn-accent");
@@ -60,17 +58,7 @@ export default function DeathLogModalEditBodyPage2({
 						className={`btn join-item ${delBtnCSS} p-3`}
 						onClick={() => {
 							if (delConfirmStr == "DEL") {
-								switch (node.type) {
-									case "game":
-										deleteGame(node);
-										break;
-									case "profile":
-										deleteProfile(node);
-										break;
-									default:
-										deleteSubject(node);
-								}
-							} else {
+								deleteNode(node);
 							}
 						}}
 					>

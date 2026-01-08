@@ -15,37 +15,20 @@ export default class LocalDB {
         })
     }
 
-    static async deleteGame(ids: string[]) {
-        await db.nodes.bulkDelete(ids);
-    }
-
-    static async deleteProfile(ids: string[], gameParent: Game) {
+    static async deleteNode(ids: string[], parentNode?: DistinctTreeNode) {
         db.transaction("rw", db.nodes, async () => {
             await db.nodes.bulkDelete(ids);
-            await db.nodes.update(gameParent.id, { node_id: gameParent.id, node: gameParent, edited_at: new Date().toISOString(), email: LocalDB.getUserEmail() });
-        })
-    }
-
-    static async deleteSubject(ids: string[], gameParent: Game, profileParent: Profile) {
-        db.transaction("rw", db.nodes, async () => {
-            await db.nodes.bulkDelete(ids);
-            await db.nodes.update(gameParent.id, { node_id: gameParent.id, node: gameParent, edited_at: new Date().toISOString(), email: LocalDB.getUserEmail() });
-            await db.nodes.update(profileParent.id, { node_id: profileParent.id, node: profileParent, edited_at: new Date().toISOString(), email: LocalDB.getUserEmail() });
-        })
-    }
-
-    static async updateNodeAndParent(node: DistinctTreeNode, parentNode?: DistinctTreeNode) {
-        db.transaction("rw", db.nodes, async () => {
-            await db.nodes.update(node.id, { node_id: node.id, node: node, edited_at: new Date().toISOString(), email: LocalDB.getUserEmail() });
-            if (node.type != "game") {
-                assertIsNonNull(parentNode);
+            if (parentNode) {
                 await db.nodes.update(parentNode.id, { node_id: parentNode.id, node: parentNode, edited_at: new Date().toISOString(), email: LocalDB.getUserEmail() });
             }
         })
     }
 
-    static async updateNode(node: DistinctTreeNode) {
+    static async updateNode(node: DistinctTreeNode, parentNode?: DistinctTreeNode) {
         await db.nodes.update(node.id, { node_id: node.id, node: node, edited_at: new Date().toISOString(), email: LocalDB.getUserEmail() });
+        if (parentNode){
+            await db.nodes.update(parentNode.id, { node_id: parentNode.id, node: parentNode, edited_at: new Date().toISOString(), email: LocalDB.getUserEmail() });
+        }
     }
 
     static async getNodes() {

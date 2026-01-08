@@ -43,7 +43,7 @@ export default function DeathLogCard({ node, entryNum }: Props) {
 	const navigate = useNavigate();
 	return (
 		<>
-			<li className={`list-row rounded-none`} inert={false}>
+			<li className={`list-row rounded-none hover:bg-neutral`} inert={false}>
 				<div className="flex items-center justify-center">
 					<span className="text-accent line-clamp-1 w-8 text-xs">
 						{entryNum}

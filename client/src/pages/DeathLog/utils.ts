@@ -38,28 +38,29 @@ export function mapProperStrToContextKey(properStr: string): SubjectContext {
 }
 
 export function calcDeaths(node: DistinctTreeNode, tree: Tree) {
-
     let sum = 0;
     switch (node.type) {
         case "game":
             node.childIDS.forEach((id) => {
                 const profile = tree.get(id);
-                assertIsNonNull(profile);
-                assertIsProfile(profile);
-                profile.childIDS.forEach((id) => {
-                    const subject = tree.get(id);
-                    assertIsNonNull(subject);
-                    assertIsSubject(subject);
-                    sum += subject.deaths;
-                })
+                if (profile) { // assertIsNonNull bug during deleteNode, so decided to use if {...} instead
+                    profile.childIDS.forEach((id) => {
+                        const subject = tree.get(id);
+                        if (subject) {
+                            assertIsSubject(subject);
+                            sum += subject.deaths;
+                        }
+                    })
+                }
             })
             return sum
         case "profile":
             node.childIDS.forEach((id) => {
                 const subject = tree.get(id);
-                assertIsNonNull(subject);
-                assertIsSubject(subject);
-                sum += subject.deaths;
+                if (subject) {
+                    assertIsSubject(subject);
+                    sum += subject.deaths;
+                }
             })
             return sum;
         default:
