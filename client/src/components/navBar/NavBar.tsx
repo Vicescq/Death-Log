@@ -6,20 +6,28 @@ import { SignedIn, UserButton } from "@clerk/clerk-react";
 import NavBarDrawer from "./NavBarDrawer";
 import { useActiveNavBarCSS } from "./useActiveNavBarCSS";
 
+type Props = {
+	midNavContent?: React.JSX.Element;
+	endNavContent?: React.JSX.Element;
+	endNavContentCSS?: string;
+	startNavContentCSS?: string;
+};
+
 export default function NavBar({
 	midNavContent,
-}: {
-	midNavContent: React.JSX.Element;
-}) {
+	endNavContent,
+	endNavContentCSS,
+	startNavContentCSS,
+}: Props) {
 	const navigate = useNavigate();
 	const { activeDLCSS, activeDMCSS, activeFAQCSS } = useActiveNavBarCSS("bg");
 	// const { page, handlePageState, handlePageTurn } = usePagination(5);
 	return (
 		<div className="navbar bg-base-100">
-			<div className="navbar-start">
+			<div className={`navbar-start ${startNavContentCSS}`}>
 				<NavBarDrawer />
 
-				<ul className="menu menu-horizontal bg-base-200 rounded-box hidden sm:flex">
+				<ul className="menu menu-horizontal bg-base-200 rounded-box hidden items-center justify-center md:flex">
 					<li>
 						<button onClick={() => navigate("/")}>
 							<img src={home} alt="" className="h-5 w-5" />
@@ -52,6 +60,13 @@ export default function NavBar({
 							FAQ
 						</button>
 					</li>
+					<li>
+						<SignedIn>
+							<button>
+								<UserButton />
+							</button>
+						</SignedIn>
+					</li>
 					{/* <li>
 						<button
 							onClick={() => navigate("/x")}
@@ -64,12 +79,8 @@ export default function NavBar({
 
 			<div className="navbar-center">{midNavContent}</div>
 
-			<div className="navbar-end">
-				<SignedIn>
-					<button className="btn btn-square">
-						<UserButton />
-					</button>
-				</SignedIn>
+			<div className={`navbar-end ${endNavContentCSS}`}>
+				{endNavContent}
 			</div>
 		</div>
 	);

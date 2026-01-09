@@ -8,7 +8,8 @@ import usePagination from "../../hooks/usePagination";
 import * as Utils from "./utils";
 import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
 import { Virtuoso, type Components, type VirtuosoHandle } from "react-virtuoso";
-import NavBarBreadCrumb from "../../components/navBar/NavBarBreadCrumb";
+import DeathLogBreadcrumb from "./DeathLogBreadcrumb";
+import useBreadcrumbMembers from "./useBreadcrumbMembers";
 
 type Props = {
 	type: "game" | "profile" | "subject";
@@ -57,6 +58,8 @@ export default function DeathLog({ type, parentID }: Props) {
 		setDeathLogIsInert(false);
 	}
 
+	const breadcrumbMembers = useBreadcrumbMembers();
+
 	const DeathLogCardWrapper: Components["List"] = forwardRef((props, ref) => {
 		return (
 			<ul
@@ -72,7 +75,14 @@ export default function DeathLog({ type, parentID }: Props) {
 
 	return (
 		<>
-			<NavBar midNavContent={<></>} />
+			<NavBar
+				midNavContent={<></>}
+				endNavContent={
+					<DeathLogBreadcrumb breadcrumbMembers={breadcrumbMembers} />
+				}
+				endNavContentCSS="mr-0.5 w-[60%]"
+				startNavContentCSS="w-[40%]"
+			/>
 
 			<Virtuoso
 				ref={virtuosoRef}

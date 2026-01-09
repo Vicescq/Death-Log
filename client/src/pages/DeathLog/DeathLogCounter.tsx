@@ -2,6 +2,8 @@ import { useDeathLogStore } from "../../stores/useDeathLogStore";
 import { assertIsNonNull, assertIsSubject } from "../../utils";
 import up from "../../assets/up.svg";
 import down from "../../assets/down.svg";
+import useBreadcrumbMembers from "./useBreadcrumbMembers";
+import DeathLogBreadcrumb from "./DeathLogBreadcrumb";
 
 type Props = {
 	subjectID: string;
@@ -17,11 +19,12 @@ export default function DeathLogCounter({ subjectID }: Props) {
 		assertIsSubject(node);
 		return node.deaths;
 	}
-
+	const breadcrumbMembers = useBreadcrumbMembers();
 	return (
 		<>
 			{node ? (
 				<div className="flex flex-col">
+					<DeathLogBreadcrumb breadcrumbMembers={breadcrumbMembers} />
 					<h1 className="mx-6 mt-4 text-center text-4xl break-all md:text-6xl">
 						{node.name}
 					</h1>
