@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router";
+import { Link } from "react-router";
 import home from "../../assets/home.svg";
 import save from "../../assets/save.svg";
 import dl from "../../assets/death-log.svg";
@@ -19,9 +19,7 @@ export default function NavBar({
 	endNavContentCSS,
 	startNavContentCSS,
 }: Props) {
-	const navigate = useNavigate();
 	const { activeDLCSS, activeDMCSS, activeFAQCSS } = useActiveNavBarCSS("bg");
-	// const { page, handlePageState, handlePageTurn } = usePagination(5);
 	return (
 		<div className="navbar bg-base-100">
 			<div className={`navbar-start ${startNavContentCSS}`}>
@@ -29,36 +27,33 @@ export default function NavBar({
 
 				<ul className="menu menu-horizontal bg-base-200 rounded-box hidden items-center justify-center md:flex">
 					<li>
-						<button onClick={() => navigate("/")}>
+						<Link to={{ pathname: "/" }}>
 							<img src={home} alt="" className="h-5 w-5" />
-						</button>
+						</Link>
 					</li>
 
 					<div className="divider divider-horizontal divider-neutral m-0"></div>
 
 					<li>
-						<button
-							onClick={() => navigate("/log")}
-							className={activeDLCSS}
-						>
+						<Link className={activeDLCSS} to={{ pathname: "/log" }}>
 							<img src={dl} alt="" className="h-5 w-5" />
-						</button>
+						</Link>
 					</li>
 					<li>
-						<button
-							onClick={() => navigate("/data-management")}
+						<Link
 							className={activeDMCSS}
+							to={{ pathname: "/data-management" }}
 						>
 							<img src={save} alt="" className="h-5 w-5" />
-						</button>
+						</Link>
 					</li>
 					<li>
-						<button
-							onClick={() => navigate("/FAQ")}
+						<Link
 							className={activeFAQCSS}
+							to={{ pathname: "/FAQ" }}
 						>
 							FAQ
-						</button>
+						</Link>
 					</li>
 					<li>
 						<SignedIn>

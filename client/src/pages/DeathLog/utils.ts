@@ -1,5 +1,6 @@
 import type { DistinctTreeNode, SubjectContext, Tree } from "../../model/TreeNodeModel";
 import { assertIsNonNull, assertIsProfile, assertIsSubject } from "../../utils";
+import type { BreadcrumbMember } from "./DeathLogBreadcrumb";
 
 export function calcRequiredPages(size: number, pageSize: number) {
     return Math.max(1, Math.ceil(size / pageSize));
@@ -86,4 +87,42 @@ export function convertDefaultCardModalDateFormatToISO(cardModalDateFormat: stri
     const parsedDate = cardModalDateFormat.split("-");
     const dateObj = new Date(Number(parsedDate[0]), Number(parsedDate[1]) - 1, Number(parsedDate[2]));
     return dateObj.toISOString();
+}
+
+export function formatBreadcrumbMembers(breadcrumbMembers: BreadcrumbMember[], vpMatchedHighest: boolean, vpMatchedHigh: boolean, vpMatchedMid: boolean): BreadcrumbMember[] {
+    let formattedBreadcrumbMembers: BreadcrumbMember[] = [
+        { name: "Death Log", link: "/log" },
+        ...breadcrumbMembers,
+    ];
+
+    if (formattedBreadcrumbMembers.length == 4) {
+        if (!vpMatchedMid) { // condense first 3
+            formattedBreadcrumbMembers = [{ link: "", name: "...", condensedMembers: [{ name: formattedBreadcrumbMembers[0].name, link: formattedBreadcrumbMembers[0].link }, { name: formattedBreadcrumbMembers[1].name, link: formattedBreadcrumbMembers[1].link }, { name: formattedBreadcrumbMembers[2].name, link: formattedBreadcrumbMembers[2].link }] }, ...formattedBreadcrumbMembers.slice(3)];
+        }
+
+        else if (!vpMatchedHigh) { // condense first 2
+            formattedBreadcrumbMembers = [{ link: "", name: "...", condensedMembers: [{ name: formattedBreadcrumbMembers[0].name, link: formattedBreadcrumbMembers[0].link }, { name: formattedBreadcrumbMembers[1].name, link: formattedBreadcrumbMembers[1].link }] }, ...formattedBreadcrumbMembers.slice(2)];
+        }
+
+        else if (!vpMatchedHighest) { // condense first
+            formattedBreadcrumbMembers = [{ link: "", name: "...", condensedMembers: [{ name: formattedBreadcrumbMembers[0].name, link: formattedBreadcrumbMembers[0].link }] }, ...formattedBreadcrumbMembers.slice(1)];
+        }
+    }
+
+    else if (formattedBreadcrumbMembers.length == 3) {
+        if (!vpMatchedMid) { // condense first 2
+            formattedBreadcrumbMembers = [{ link: "", name: "...", condensedMembers: [{ name: formattedBreadcrumbMembers[0].name, link: formattedBreadcrumbMembers[0].link }, { name: formattedBreadcrumbMembers[1].name, link: formattedBreadcrumbMembers[1].link }] }, ...formattedBreadcrumbMembers.slice(2)];
+        }
+
+        else if (!vpMatchedHigh) { // condense first
+            formattedBreadcrumbMembers = [{ link: "", name: "...", condensedMembers: [{ name: formattedBreadcrumbMembers[0].name, link: formattedBreadcrumbMembers[0].link }] }, ...formattedBreadcrumbMembers.slice(1)];
+        }
+    }
+
+    else if (formattedBreadcrumbMembers.length == 2) {
+        if (!vpMatchedMid) { // condense first
+            formattedBreadcrumbMembers = [{ link: "", name: "...", condensedMembers: [{ name: formattedBreadcrumbMembers[0].name, link: formattedBreadcrumbMembers[0].link }] }, ...formattedBreadcrumbMembers.slice(1)];
+        }
+    }
+    return formattedBreadcrumbMembers
 }

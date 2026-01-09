@@ -12,7 +12,7 @@ export default function useBreadcrumbMembers(): BreadcrumbMember[] {
     if (ids.length >= 1 && tree.size >= 1) {
         const names = ids.map((id) => {
             const node = tree.get(id);
-            assertIsNonNull(node)
+            assertIsNonNull(node);
             return node.name
         })
         let currLink = "/log";

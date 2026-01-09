@@ -13,6 +13,7 @@ type Props = {
 	closeBtnName: string;
 	modalBtns: ModalBtn[];
 	handleOnClose?: () => void;
+	css?: string;
 };
 
 export default function Modal({
@@ -22,10 +23,15 @@ export default function Modal({
 	closeBtnName,
 	modalBtns,
 	handleOnClose,
+	css,
 }: Props) {
 	return (
 		<>
-			<dialog ref={ref} className="modal" onClose={handleOnClose}>
+			<dialog
+				ref={ref}
+				className={`modal ${css ?? ""}`}
+				onClose={handleOnClose}
+			>
 				<div className="modal-box max-w-96">
 					<h3 className="text-lg font-bold">{header}</h3>
 

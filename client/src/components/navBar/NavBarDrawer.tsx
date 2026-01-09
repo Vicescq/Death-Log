@@ -2,12 +2,11 @@ import home from "../../assets/home.svg";
 import save from "../../assets/save.svg";
 import dl from "../../assets/death-log.svg";
 import navPanel from "../../assets/nav_panel.svg";
-import { useNavigate } from "react-router";
+import { Link } from "react-router";
 import { useActiveNavBarCSS } from "./useActiveNavBarCSS";
 import { SignedIn, UserButton } from "@clerk/clerk-react";
 
 export default function NavBarDrawer() {
-	const navigate = useNavigate();
 	const { activeDLCSS, activeDMCSS, activeFAQCSS } =
 		useActiveNavBarCSS("btn");
 
@@ -27,29 +26,35 @@ export default function NavBarDrawer() {
 					className="drawer-overlay"
 				></label>
 				<ul className="menu bg-base-100 min-h-full w-48 gap-2 p-4">
-					<li onClick={() => navigate("/")}>
-						<button className="btn">
+					<li>
+						<Link className="btn" to={{ pathname: "/" }}>
 							<img src={home} alt="" className="h-5 w-5" />
-						</button>
+						</Link>
 					</li>
 					<div className="divider divider-neutral m-0"></div>
-					<li onClick={() => navigate("/log")}>
-						<button className={`btn ${activeDLCSS}`}>
+					<li>
+						<Link
+							className={`btn ${activeDLCSS}`}
+							to={{ pathname: "/log" }}
+						>
 							<img src={dl} alt="" className="h-5 w-5" />
-						</button>
-					</li>
-					<li onClick={() => navigate("/data-management")}>
-						<button className={`btn ${activeDMCSS}`}>
-							<img src={save} alt="" className="h-5 w-5" />
-						</button>
+						</Link>
 					</li>
 					<li>
-						<button
+						<Link
+							className={`btn ${activeDMCSS}`}
+							to={{ pathname: "/data-management" }}
+						>
+							<img src={save} alt="" className="h-5 w-5" />
+						</Link>
+					</li>
+					<li>
+						<Link
 							className={`btn ${activeFAQCSS}`}
-							onClick={() => navigate("/FAQ")}
+							to={{ pathname: "/FAQ" }}
 						>
 							FAQ
-						</button>
+						</Link>
 					</li>
 					<SignedIn>
 						<li>

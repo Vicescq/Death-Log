@@ -43,7 +43,10 @@ export default function DeathLogCard({ node, entryNum }: Props) {
 	const navigate = useNavigate();
 	return (
 		<>
-			<li className={`list-row rounded-none hover:bg-neutral`} inert={false}>
+			<li
+				className={`list-row hover:bg-neutral rounded-none`}
+				inert={false}
+			>
 				<div className="flex items-center justify-center">
 					<span className="text-accent line-clamp-1 w-8 text-xs">
 						{entryNum}
@@ -91,13 +94,13 @@ export default function DeathLogCard({ node, entryNum }: Props) {
 										inputTextErrorIsDisplayed
 									}
 								/>
-							) : page == 2 ? (
-								<DeathLogModalEditBodyPage2
+							) : page == 2 && modalState.type == "subject" ? (
+								<DeathLogModalEditBodyPage3
 									node={modalState}
 									handleOnEditChange={setModalState}
 								/>
-							) : modalState.type == "subject" ? (
-								<DeathLogModalEditBodyPage3
+							) : page == 2 || page == 3 ? (
+								<DeathLogModalEditBodyPage2
 									node={modalState}
 									handleOnEditChange={setModalState}
 								/>
@@ -130,13 +133,8 @@ export default function DeathLogCard({ node, entryNum }: Props) {
 					ref={editModalRef}
 					modalBtns={[
 						{
-							text: "Check FAQ",
-							css: "btn-neutral",
-							fn: () => navigate("/FAQ"),
-						},
-						{
 							text: "Save edits",
-							css: "btn-neutral",
+							css: "btn-neutral mt-12",
 							fn: () => {
 								try {
 									updateNode(node, modalState);

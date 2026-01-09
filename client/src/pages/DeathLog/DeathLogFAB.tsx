@@ -118,12 +118,11 @@ export default function DeathLogFAB({
 					<button
 						className="btn btn-lg btn-circle btn-accent"
 						onClick={() => {
-							virtuosoRef.current?.scrollTo({
+							window.scrollTo({
 								top: 0,
 								left: 0,
 								behavior: "smooth",
 							});
-
 							if (document.activeElement instanceof HTMLElement) {
 								document.activeElement.blur();
 							}

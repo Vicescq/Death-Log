@@ -65,7 +65,7 @@ export default function DeathLog({ type, parentID }: Props) {
 			<ul
 				ref={ref as React.Ref<HTMLUListElement>} // no other workaround ?
 				{...props}
-				className={`list rounded-box ${pageOpacity}`}
+				className={`list rounded-box max-w-[900px] m-auto ${pageOpacity}`}
 				inert={deathLogIsInert}
 			>
 				{props.children}
@@ -90,12 +90,15 @@ export default function DeathLog({ type, parentID }: Props) {
 				itemContent={(i, node) => (
 					<DeathLogCard node={node} entryNum={i + 1} />
 				)}
-				className={`mt-4 mb-12 !h-[80vh]`}
+				className={``}
 				components={{ List: DeathLogCardWrapper }}
 				computeItemKey={(_, node) => {
 					return node.id;
 				}}
+				useWindowScroll
 			/>
+
+			<footer className="mb-14"></footer>
 
 			<DeathLogFAB
 				virtuosoRef={virtuosoRef}

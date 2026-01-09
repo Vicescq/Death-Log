@@ -34,7 +34,9 @@ export default function DeathLogModalEditBodyPage1({
 					onBlur={(e) =>
 						handleOnEditChange({
 							...node,
-							name: e.currentTarget.value.replace(/\s+/g, ' ').trim(),
+							name: e.currentTarget.value
+								.replace(/\s+/g, " ")
+								.trim(),
 						})
 					}
 				/>
@@ -66,7 +68,13 @@ export default function DeathLogModalEditBodyPage1({
 										),
 						})
 					}
-					max={defaultCardModalDateFormat(new Date().toISOString())}
+					max={
+						node.completed && node.dateEnd
+							? defaultCardModalDateFormat(node.dateEnd)
+							: defaultCardModalDateFormat(
+									new Date().toISOString(),
+								)
+					}
 				/>
 
 				{node.completed ? (

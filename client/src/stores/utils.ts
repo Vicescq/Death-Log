@@ -14,6 +14,9 @@ export function validateNodeString(inputText: string, tree: Tree, parentID: stri
     if (!isNodeNameUnique(tree, parentID, inputText)) {
         throw new Error("Name has to be unique!")
     }
+    if (inputText == "...") {
+        throw new Error("Please use another name!");
+    }
 
     return inputText;
 }
