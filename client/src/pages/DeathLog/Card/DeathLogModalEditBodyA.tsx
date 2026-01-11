@@ -10,7 +10,7 @@ type Props = {
 	inputTextErrorIsDisplayed: boolean;
 };
 
-export default function DeathLogModalEditBodyPage1({
+export default function DeathLogModalEditBodyA({
 	node,
 	inputTextError,
 	inputTextErrorIsDisplayed,

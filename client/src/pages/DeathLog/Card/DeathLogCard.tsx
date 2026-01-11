@@ -5,12 +5,11 @@ import DeathLogCardOptions from "./DeathLogCardOptions";
 import usePagination from "../../../hooks/usePagination";
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
 import useInputTextError from "./useInputTextError";
-import DeathLogModalEditBodyPage1 from "./DeathLogModalEditBodyPage1";
-import DeathLogModalEditBodyPage2 from "./DeathLogModalEditBodyPage2";
+import DeathLogModalEditBodyA from "./DeathLogModalEditBodyA";
+import DeathLogModalEditBodyB from "./DeathLogModalEditBodyB";
 import loop from "../../../assets/loop.svg";
 import skullRed from "../../../assets/skull_red.svg";
-import { useNavigate } from "react-router";
-import DeathLogModalEditBodyPage3 from "./DeathLogModalEditBodyPage3";
+import DeathLogModalEditBodyC from "./DeathLogModalEditBodyC";
 import * as Utils from "../utils";
 
 type Props = {
@@ -40,7 +39,6 @@ export default function DeathLogCard({ node, entryNum }: Props) {
 	const [checked, setChecked] = useState(node.completed);
 	const completedCSSStrike = node.completed ? "line-through" : "";
 
-	const navigate = useNavigate();
 	return (
 		<>
 			<li
@@ -86,7 +84,7 @@ export default function DeathLogCard({ node, entryNum }: Props) {
 					content={
 						<>
 							{page == 1 ? (
-								<DeathLogModalEditBodyPage1
+								<DeathLogModalEditBodyA
 									node={modalState}
 									handleOnEditChange={setModalState}
 									inputTextError={inputTextError}
@@ -95,12 +93,12 @@ export default function DeathLogCard({ node, entryNum }: Props) {
 									}
 								/>
 							) : page == 2 && modalState.type == "subject" ? (
-								<DeathLogModalEditBodyPage3
+								<DeathLogModalEditBodyC
 									node={modalState}
 									handleOnEditChange={setModalState}
 								/>
 							) : page == 2 || page == 3 ? (
-								<DeathLogModalEditBodyPage2
+								<DeathLogModalEditBodyB
 									node={modalState}
 									handleOnEditChange={setModalState}
 								/>
