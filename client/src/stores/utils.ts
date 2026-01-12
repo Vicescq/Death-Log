@@ -102,12 +102,20 @@ export function isNodeNameUnique(tree: Tree, parentID: string, name: string) {
     return !siblingNames.includes(name);
 }
 
-export function isURLIDUnique() {
-
-}
-
 export function createRootNode() {
-    const rootNode: RootNode = { type: "ROOT_NODE", id: "ROOT_NODE", childIDS: [], parentID: "NONE", name: "", completed: false, notes: "", dateStart: "", dateEnd: "", dateStartRel: true, dateEndRel: true };
+    const rootNode: RootNode = {
+        type: "ROOT_NODE", 
+        id: "ROOT_NODE", 
+        childIDS: [], 
+        parentID: "NONE", 
+        name: "", 
+        completed: false, 
+        notes: "", 
+        dateStart: "", 
+        dateEnd: "", 
+        dateStartRel: true, 
+        dateEndRel: true
+    };
     return rootNode
 }
 

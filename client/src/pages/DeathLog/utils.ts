@@ -64,7 +64,7 @@ export function calcDeaths(node: DistinctTreeNode, tree: Tree) {
                 }
             })
             return sum;
-        default:
+        case "subject":
             return node.deaths;
     }
 }
@@ -132,7 +132,7 @@ export function cardHasBeenEdited(original: DistinctTreeNode, modalState: Distin
         return true;
     }
 
-    if (defaultCardModalDateFormat(original.dateStart) != defaultCardModalDateFormat(modalState.dateStart)) { // time resets if change to same date
+    if (defaultCardModalDateFormat(original.dateStart) != defaultCardModalDateFormat(modalState.dateStart)) { // time resets if change to same date: if clicked on 1/1/2026, but og is 1/1/2026 10:00, it will turn into 1/1/2026 00:00
         return true;
     }
 
@@ -162,10 +162,12 @@ export function cardHasBeenEdited(original: DistinctTreeNode, modalState: Distin
         if (original.context != modalState.context) {
             return true
         }
+    }
 
-        // if (parentNode && parentModalState){
-        //     // if(parentNode.groupings)
-        // }
+    if (original.type == "profile" && modalState.type == "profile") {
+        if (original.groupings.length != modalState.groupings.length) {
+            return true
+        }
     }
 
     return false

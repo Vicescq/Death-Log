@@ -29,13 +29,13 @@ export default function DeathLogFAB({
 	virtuosoRef,
 }: Props) {
 	const addNode = useDeathLogStore((state) => state.addNode);
+
 	const modalRef = useRef<HTMLDialogElement>(null);
 	const [inputText, setInputText] = useState("");
+	const [inputTextError, setInputTextError] = useState("");
+	const [reoccurring, setReoccurring] = useState(false);
 	const [subjectContext, setSubjectContext] =
 		useState<SubjectContext>("boss");
-	const [reoccurring, setReoccurring] = useState(false);
-
-	const [inputTextError, setInputTextError] = useState("");
 
 	const header =
 		type != "subject"

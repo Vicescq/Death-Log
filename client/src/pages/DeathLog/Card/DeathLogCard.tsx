@@ -1,27 +1,14 @@
-import { useEffect, useRef, useState } from "react";
 import Modal from "../../../components/Modal";
-import type {
-	DistinctTreeNode,
-	Profile,
-	TreeNode,
-} from "../../../model/TreeNodeModel";
 import DeathLogCardOptions from "./DeathLogCardOptions";
 import usePagination from "../../../hooks/usePagination";
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
-import DeathLogModalEditBodyNameDate from "./DeathLogModalEditBodyNameDate";
-import DeathLogModalEditBodyNotesDel from "./DeathLogModalEditBodyNotesDel";
 import loop from "../../../assets/loop.svg";
 import skullRed from "../../../assets/skull_red.svg";
-import DeathLogModalEditBodySubject from "./DeathLogModalEditBodySubject";
 import * as Utils from "../utils";
-import {
-	assertIsDistinctTreeNode,
-	assertIsNonNull,
-	assertIsProfile,
-} from "../../../utils";
-import useConsoleLogOnStateChange from "../../../hooks/useConsoleLogOnStateChange";
-import DeathLogModalEditBodyProfile from "./DeathLogModalEditBodyProfile";
+import { assertIsNonNull } from "../../../utils";
 import DeathLogCardModalBody from "./DeathLogCardModalBody";
+import useCardCompletionToggle from "./useCardCompletionToggle";
+import useCardModal from "./useCardModal";
 
 type Props = {
 	nodeID: string;
@@ -34,60 +21,26 @@ export default function DeathLogCard({ nodeID, entryNum }: Props) {
 
 	const node = tree.get(nodeID);
 	assertIsNonNull(node);
-	assertIsDistinctTreeNode(node);
-	const parentNode = tree.get(node.parentID);
 	const deaths = Utils.calcDeaths(node, tree);
 
-	const editModalRef = useRef<HTMLDialogElement>(null);
-	const { page, handlePageState, handlePageTurn } = usePagination(
+	const { page, setPage, handlePageTurn } = usePagination(
 		node.type == "game" ? 2 : 3,
 	);
 
-	const [modalState, setModalState] = useState<DistinctTreeNode>({ ...node });
-	const [inputTextError, setInputTextError] = useState("");
+	const {
+		modalState,
+		setModalState,
+		inputTextError,
+		setInputTextError,
+		editModalRef,
+	} = useCardModal(node);
 
-	const completionNotifyModalRef = useRef<HTMLDialogElement>(null);
-	const [checked, setChecked] = useState(node.completed);
-	const completedCSSStrike = node.completed ? "line-through" : "";
-
-	useConsoleLogOnStateChange(modalState, "OG:", parentNode);
-
-	// function modalBody(page: number) {
-	// 	if (page == 1) {
-	// 		return (
-	// 			<DeathLogModalEditBodyNameDate
-	// 				node={modalState}
-	// 				handleOnEditChange={setModalState}
-	// 				inputTextError={inputTextError}
-	// 			/>
-	// 		);
-	// 	} else if (page == 2 && modalState.type == "subject") {
-	// 		return (
-	// 			<DeathLogModalEditBodySubject
-	// 				node={modalState}
-	// 				handleOnEditChange={setModalState}
-	// 			/>
-	// 		);
-	// 	} else if (page == 2 && modalState.type == "profile") {
-	// 		return (
-	// 			<DeathLogModalEditBodyProfile
-	// 				handleOnEditChange={(newModalState) =>
-	// 					setModalState(newModalState)
-	// 				}
-	// 				node={getParentProfileNode(modalState)}
-	// 			/>
-	// 		);
-	// 	} else if (page == 2 || page == 3) {
-	// 		return (
-	// 			<DeathLogModalEditBodyNotesDel
-	// 				node={modalState}
-	// 				handleOnEditChange={setModalState}
-	// 			/>
-	// 		);
-	// 	}
-
-	// 	return null;
-	// }
+	const {
+		completionNotifyModalRef,
+		checked,
+		setChecked,
+		completedCSSStrike,
+	} = useCardCompletionToggle(node.completed);
 
 	return (
 		<>
@@ -191,7 +144,7 @@ export default function DeathLogCard({ nodeID, entryNum }: Props) {
 						await new Promise((resolve) =>
 							setTimeout(resolve, 650),
 						); // if not used, ui flicker from page turn happens
-						handlePageState(1);
+						setPage(1);
 						setModalState(node);
 						setInputTextError("");
 					}}

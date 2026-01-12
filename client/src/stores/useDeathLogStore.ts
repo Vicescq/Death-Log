@@ -9,7 +9,7 @@ type DeathLogState = {
     tree: Tree;
 
     initTree: (nodes: DistinctTreeNode[]) => void;
-    addNode: (pageType: "game" | "profile" | "subject", inputText: string, parentID: string, overrides?: EditableSubjectField) => void;
+    addNode: (type: "game" | "profile" | "subject", inputText: string, parentID: string, overrides?: EditableSubjectField) => void;
     deleteNode: (node: DistinctTreeNode) => void;
     updateNode: (node: DistinctTreeNode, overrides: DistinctTreeNode) => void;
 }
@@ -34,12 +34,12 @@ export const useDeathLogStore = create<DeathLogState>((set) => ({
         })
     },
 
-    addNode: (pageType, inputText, parentID, overrides) => {
+    addNode: (type, inputText, parentID, overrides) => {
 
         set((state) => {
             const name = Utils.validateNodeString(inputText, state.tree, parentID);
             let node: DistinctTreeNode;
-            switch (pageType) {
+            switch (type) {
                 case "game":
                     node = Utils.createGame(name, state.tree);
                     break;
@@ -57,7 +57,7 @@ export const useDeathLogStore = create<DeathLogState>((set) => ({
 
             const parentNode = updatedTree.get(parentID);
             GenUtils.assertIsNonNull(parentNode);
-            const parentNodeCopy: TreeNode = { ...parentNode, childIDS: [...parentNode.childIDS, node.id] };
+            const parentNodeCopy: DistinctTreeNode = { ...parentNode, childIDS: [...parentNode.childIDS, node.id] };
             parentNodeCopy.childIDS = Utils.sortChildIDS(parentNodeCopy, updatedTree);
 
             updatedTree.set(parentID, parentNodeCopy);
@@ -129,7 +129,7 @@ export const useDeathLogStore = create<DeathLogState>((set) => ({
                 const parentNode = updatedTree.get(updatedNode.parentID);
                 GenUtils.assertIsNonNull(parentNode);
 
-                const parentNodeCopy: TreeNode = { ...parentNode, childIDS: [...parentNode.childIDS] };
+                const parentNodeCopy: DistinctTreeNode = { ...parentNode, childIDS: [...parentNode.childIDS] };
                 parentNodeCopy.childIDS = Utils.sortChildIDS(parentNodeCopy, updatedTree);
                 updatedTree.set(parentNodeCopy.id, parentNodeCopy);
 

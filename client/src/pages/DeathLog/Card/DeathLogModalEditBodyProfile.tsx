@@ -39,13 +39,15 @@ export default function DeathLogModalEditBodyProfile({
 									},
 								],
 							});
+							setProfileGroupText("")
 						}}
 					>
 						+
 					</button>
 				</div>
-                {/* <div className="divider m-1">↓ Active Profile Groups ↓</div> */}
-                <div className="divider m-1"></div>
+				{node.groupings.length > 0 ? (
+					<div className="divider m-1"></div>
+				) : null}
 
 				<ul className="flex max-h-24 flex-col gap-2 overflow-auto">
 					{node.groupings.map((prfoileGroup, i) => {
@@ -56,7 +58,9 @@ export default function DeathLogModalEditBodyProfile({
 										type="checkbox"
 										className="checkbox checkbox-sm checkbox-secondary"
 									/>
-									<span className="ml-2">{prfoileGroup.title}</span>
+									<span className="ml-2">
+										{prfoileGroup.title}
+									</span>
 								</label>
 							</li>
 						);

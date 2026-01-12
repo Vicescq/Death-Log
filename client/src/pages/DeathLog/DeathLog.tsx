@@ -25,6 +25,8 @@ export default function DeathLog({ type, parentID }: Props) {
 		cards.push(<DeathLogCard nodeID={id} entryNum={i + 1} />);
 	});
 
+	console.log(childIDS)
+
 	const [pageOpacity, setPageOpacity] = useState("");
 	const [deathLogIsInert, setDeathLogIsInert] = useState(false);
 

@@ -18,11 +18,11 @@ export default function DeathLogCardModalBody({
 	inputTextError,
 	modalState,
 }: Props) {
-	function getParentProfileNode(parentNode: TreeNode | undefined | null) {
+	function assertProfileNode(node: TreeNode | undefined | null) {
 		// for ts auto complete
-		assertIsNonNull(parentNode);
-		assertIsProfile(parentNode);
-		return parentNode;
+		assertIsNonNull(node);
+		assertIsProfile(node);
+		return node;
 	}
 
 	if (page == 1) {
@@ -43,8 +43,8 @@ export default function DeathLogCardModalBody({
 	} else if (page == 2 && modalState.type == "profile") {
 		return (
 			<DeathLogModalEditBodyProfile
+				node={assertProfileNode(modalState)}
 				handleOnEditChange={handleOnEditChange}
-				node={getParentProfileNode(modalState)}
 			/>
 		);
 	} else if (page == 2 || page == 3) {

@@ -1,4 +1,4 @@
-export type Tree = Map<string, TreeNode>;
+export type Tree = Map<string, DistinctTreeNode>;
 
 export type SubjectContext = "boss" | "location" | "other" | "genericEnemy" | "miniBoss";
 
@@ -17,17 +17,10 @@ export type TreeNode = {
 }
 
 export type RootNode = TreeNode & {
-    type: "ROOT_NODE",
-    id: "ROOT_NODE",
-    parentID: "NONE", // string instead of null because of annoying TS compiler warnings
-    name: "",
-    completed: false,
-    notes: "",
-    dateStart: "",
-    dateEnd: "",
+    type: "ROOT_NODE"
 }
 
-export type DistinctTreeNode = Game | Profile | Subject  // for discriminant unions
+export type DistinctTreeNode = Game | Profile | Subject | RootNode  // for discriminant unions
 
 export type Game = TreeNode & {
     type: "game"

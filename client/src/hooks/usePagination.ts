@@ -3,10 +3,6 @@ import { useState } from "react";
 export default function usePagination(maxPage: number) {
     const [page, setPage] = useState(1);
 
-    function handlePageState(num: number) {
-        setPage(num);
-    }
-
     function handlePageTurn(isRight: boolean) {
         if (isRight) {
             setPage((prev) => (prev + 1 > maxPage ? prev : prev + 1));
@@ -15,5 +11,5 @@ export default function usePagination(maxPage: number) {
         }
     }
 
-    return {page, handlePageState, handlePageTurn}
+    return {page, setPage, handlePageTurn}
 }
