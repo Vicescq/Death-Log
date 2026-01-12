@@ -1,16 +1,25 @@
 import { useEffect, useRef, useState } from "react";
 import Modal from "../../../components/Modal";
-import type { DistinctTreeNode } from "../../../model/TreeNodeModel";
+import type {
+	DistinctTreeNode,
+	Profile,
+	TreeNode,
+} from "../../../model/TreeNodeModel";
 import DeathLogCardOptions from "./DeathLogCardOptions";
 import usePagination from "../../../hooks/usePagination";
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
-import DeathLogModalEditBodyA from "./DeathLogModalEditBodyA";
-import DeathLogModalEditBodyB from "./DeathLogModalEditBodyB";
+import DeathLogModalEditBodyNameDate from "./DeathLogModalEditBodyNameDate";
+import DeathLogModalEditBodyNotesDel from "./DeathLogModalEditBodyNotesDel";
 import loop from "../../../assets/loop.svg";
 import skullRed from "../../../assets/skull_red.svg";
-import DeathLogModalEditBodyC from "./DeathLogModalEditBodyC";
+import DeathLogModalEditBodySubject from "./DeathLogModalEditBodySubject";
 import * as Utils from "../utils";
-import { assertIsDistinctTreeNode, assertIsNonNull } from "../../../utils";
+import {
+	assertIsDistinctTreeNode,
+	assertIsNonNull,
+	assertIsProfile,
+} from "../../../utils";
+import useConsoleLogOnStateChange from "../../../hooks/useConsoleLogOnStateChange";
 
 type Props = {
 	nodeID: string;
@@ -23,19 +32,43 @@ export default function DeathLogCard({ nodeID, entryNum }: Props) {
 	const node = tree.get(nodeID);
 	assertIsNonNull(node);
 	assertIsDistinctTreeNode(node);
+	const parentNode = tree.get(node.parentID);
 	const deaths = Utils.calcDeaths(node, tree);
-	
+
 	const editModalRef = useRef<HTMLDialogElement>(null);
 	const { page, handlePageState, handlePageTurn } = usePagination(
 		node.type != "subject" ? 2 : 3,
 	);
-	
+
 	const [modalState, setModalState] = useState<DistinctTreeNode>({ ...node });
 	const [inputTextError, setInputTextError] = useState("");
 
 	const completionNotifyModalRef = useRef<HTMLDialogElement>(null);
 	const [checked, setChecked] = useState(node.completed);
 	const completedCSSStrike = node.completed ? "line-through" : "";
+
+	const [parentModalState, setParentModalState] = useState<Profile | null>(
+		null,
+	);
+	useEffect(() => {
+		if (node.type == "subject") {
+			setParentModalState(getParentProfileNode(parentNode));
+		}
+	}, []);
+
+	function getParentProfileNode(parentNode: TreeNode | undefined | null) {
+		// for ts auto complete
+		assertIsNonNull(parentNode);
+		assertIsProfile(parentNode);
+		return parentNode;
+	}
+
+	useConsoleLogOnStateChange(
+		parentModalState,
+		"Modal State:",
+		parentModalState,
+	);
+	useConsoleLogOnStateChange(parentModalState, "OG:", parentNode);
 
 	return (
 		<>
@@ -82,18 +115,26 @@ export default function DeathLogCard({ nodeID, entryNum }: Props) {
 					content={
 						<>
 							{page == 1 ? (
-								<DeathLogModalEditBodyA
+								<DeathLogModalEditBodyNameDate
 									node={modalState}
 									handleOnEditChange={setModalState}
 									inputTextError={inputTextError}
 								/>
 							) : page == 2 && modalState.type == "subject" ? (
-								<DeathLogModalEditBodyC
+								<DeathLogModalEditBodySubject
 									node={modalState}
 									handleOnEditChange={setModalState}
+									handleOnEditChangeParent={(
+										newModalState,
+									) => {
+										setParentModalState(newModalState);
+									}}
+									parentNode={getParentProfileNode(
+										parentModalState,
+									)}
 								/>
 							) : page == 2 || page == 3 ? (
-								<DeathLogModalEditBodyB
+								<DeathLogModalEditBodyNotesDel
 									node={modalState}
 									handleOnEditChange={setModalState}
 								/>
@@ -127,7 +168,21 @@ export default function DeathLogCard({ nodeID, entryNum }: Props) {
 					modalBtns={[
 						{
 							text: "Save edits",
-							css: `btn-success mt-14`,
+							css: `${
+								Utils.cardHasBeenEdited(
+									node,
+									modalState,
+									parentNode?.type == "profile"
+										? (() => {
+												assertIsProfile(parentNode);
+												return parentNode;
+											})()
+										: null,
+									parentModalState,
+								)
+									? "btn-success"
+									: "btn-disabled"
+							} mt-10`,
 							fn: () => {
 								try {
 									updateNode(node, modalState);

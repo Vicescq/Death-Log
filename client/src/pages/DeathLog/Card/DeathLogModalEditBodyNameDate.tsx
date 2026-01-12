@@ -9,7 +9,7 @@ type Props = {
 	inputTextError: string;
 };
 
-export default function DeathLogModalEditBodyA({
+export default function DeathLogModalEditBodyNameDate({
 	node,
 	inputTextError,
 	handleOnEditChange,

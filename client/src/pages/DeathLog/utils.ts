@@ -1,4 +1,4 @@
-import type { DistinctTreeNode, SubjectContext, Tree } from "../../model/TreeNodeModel";
+import type { DistinctTreeNode, Profile, SubjectContext, Tree } from "../../model/TreeNodeModel";
 import { assertIsNonNull, assertIsProfile, assertIsSubject } from "../../utils";
 import type { BreadcrumbMember } from "./DeathLogBreadcrumb";
 
@@ -125,4 +125,48 @@ export function formatBreadcrumbMembers(breadcrumbMembers: BreadcrumbMember[], v
         }
     }
     return formattedBreadcrumbMembers
+}
+
+export function cardHasBeenEdited(original: DistinctTreeNode, modalState: DistinctTreeNode, parentNode: Profile | null, parentModalState: Profile | null) {
+    if (original.name != modalState.name) {
+        return true;
+    }
+
+    if (defaultCardModalDateFormat(original.dateStart) != defaultCardModalDateFormat(modalState.dateStart)) { // time resets if change to same date
+        return true;
+    }
+
+    if (original.dateEnd && modalState.dateEnd && (defaultCardModalDateFormat(original.dateEnd) != defaultCardModalDateFormat(modalState.dateEnd))) {
+        return true;
+    }
+
+    if (original.dateStartRel != modalState.dateStartRel) {
+        return true;
+    }
+
+    if (original.dateEndRel != modalState.dateEndRel) {
+        return true;
+    }
+
+    if (original.notes != modalState.notes) {
+        return true;
+    }
+
+    if (original.type == "subject" && modalState.type == "subject") {
+        if (original.reoccurring != modalState.reoccurring) {
+            return true
+        }
+        if (original.timeSpent != modalState.timeSpent) {
+            return true
+        }
+        if (original.context != modalState.context) {
+            return true
+        }
+
+        if (parentNode && parentModalState){
+            // if(parentNode.groupings)
+        }
+    }
+
+    return false
 }

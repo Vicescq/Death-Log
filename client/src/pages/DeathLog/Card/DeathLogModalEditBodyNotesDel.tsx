@@ -8,7 +8,7 @@ type Props = {
 	handleOnEditChange: (newModalState: DistinctTreeNode) => void;
 };
 
-export default function DeathLogModalEditBodyB({
+export default function DeathLogModalEditBodyNotesDel({
 	node,
 	handleOnEditChange,
 }: Props) {
