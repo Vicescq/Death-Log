@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import type { DistinctTreeNode, Game, Profile, RootNode, Subject, Tree, TreeNode } from '../model/TreeNodeModel';
-import { sortChildIDS, validateNodeString, identifyDeletedSelfAndChildrenIDS, createGame, createProfile, createSubject, createRootNode } from './utils';
-import { assertIsDistinctTreeNode, assertIsGame, assertIsGameOrProfile, assertIsNonNull, assertIsProfile, assertIsRootNode } from '../utils';
+import * as Utils from './utils';
+import * as GenUtils from '../utils';
 import LocalDB from '../services/LocalDB';
 import type { EditableSubjectField } from '../pages/deathLog/DeathLogFAB';
 
@@ -19,14 +19,14 @@ export const useDeathLogStore = create<DeathLogState>((set) => ({
 
     initTree: (nodes) => {
         set(() => {
-            const rootNode: RootNode = createRootNode();
+            const rootNode: RootNode = Utils.createRootNode();
             const tree: Tree = new Map();
             tree.set("ROOT_NODE", rootNode);
             nodes.forEach((node) => {
                 tree.set(node.id, node);
                 if (node.type == "game") {
                     rootNode.childIDS.push(node.id);
-                    rootNode.childIDS = sortChildIDS(rootNode, tree);
+                    rootNode.childIDS = Utils.sortChildIDS(rootNode, tree);
                 }
             })
 
@@ -37,17 +37,17 @@ export const useDeathLogStore = create<DeathLogState>((set) => ({
     addNode: (pageType, inputText, parentID, overrides) => {
 
         set((state) => {
-            const name = validateNodeString(inputText, state.tree, parentID);
+            const name = Utils.validateNodeString(inputText, state.tree, parentID);
             let node: DistinctTreeNode;
             switch (pageType) {
                 case "game":
-                    node = createGame(name, state.tree);
+                    node = Utils.createGame(name, state.tree);
                     break;
                 case "profile":
-                    node = createProfile(name, parentID, state.tree);
+                    node = Utils.createProfile(name, parentID, state.tree);
                     break;
                 case "subject":
-                    node = createSubject(name, parentID, state.tree);
+                    node = Utils.createSubject(name, parentID, state.tree);
                     node = { ...node, ...overrides }
                     break;
             }
@@ -56,9 +56,9 @@ export const useDeathLogStore = create<DeathLogState>((set) => ({
             updatedTree.set(node.id, node);
 
             const parentNode = updatedTree.get(parentID);
-            assertIsNonNull(parentNode);
+            GenUtils.assertIsNonNull(parentNode);
             const parentNodeCopy: TreeNode = { ...parentNode, childIDS: [...parentNode.childIDS, node.id] };
-            parentNodeCopy.childIDS = sortChildIDS(parentNodeCopy, updatedTree);
+            parentNodeCopy.childIDS = Utils.sortChildIDS(parentNodeCopy, updatedTree);
 
             updatedTree.set(parentID, parentNodeCopy);
 
@@ -66,7 +66,7 @@ export const useDeathLogStore = create<DeathLogState>((set) => ({
                 LocalDB.addNode(node);
             }
             else {
-                assertIsDistinctTreeNode(parentNodeCopy);
+                GenUtils.assertIsDistinctTreeNode(parentNodeCopy);
                 LocalDB.addNode(node, parentNodeCopy);
             }
             LocalDB.incrementCRUDCounter();
@@ -78,27 +78,27 @@ export const useDeathLogStore = create<DeathLogState>((set) => ({
     deleteNode: (node) => {
         set((state) => {
             const updatedTree = new Map(state.tree);
-            const nodeIDSToBeDeleted = identifyDeletedSelfAndChildrenIDS(node, updatedTree);
+            const nodeIDSToBeDeleted = Utils.identifyDeletedSelfAndChildrenIDS(node, updatedTree);
             nodeIDSToBeDeleted.forEach((id) => updatedTree.delete(id));
 
             const parentNode = updatedTree.get(node.parentID);
-            assertIsNonNull(parentNode);
+            GenUtils.assertIsNonNull(parentNode);
 
             switch (parentNode.type) {
                 case "ROOT_NODE":
-                    assertIsRootNode(parentNode);
+                    GenUtils.assertIsRootNode(parentNode);
                     const rootNodeCopy: RootNode = { ...parentNode, childIDS: parentNode.childIDS.filter((id) => id != node.id) };
                     updatedTree.set(rootNodeCopy.id, rootNodeCopy);
                     LocalDB.deleteNode(nodeIDSToBeDeleted);
                     break;
                 case "game":
-                    assertIsGame(parentNode);
+                    GenUtils.assertIsGame(parentNode);
                     const gameNodeCopy: Game = { ...parentNode, childIDS: parentNode.childIDS.filter((id) => id != node.id) };
                     updatedTree.set(gameNodeCopy.id, gameNodeCopy);
                     LocalDB.deleteNode(nodeIDSToBeDeleted, gameNodeCopy);
                     break;
                 case "profile":
-                    assertIsProfile(parentNode);
+                    GenUtils.assertIsProfile(parentNode);
                     const profileNodeCopy: Profile = { ...parentNode, childIDS: parentNode.childIDS.filter((id) => id != node.id) };
                     updatedTree.set(profileNodeCopy.id, profileNodeCopy);
                     LocalDB.deleteNode(nodeIDSToBeDeleted, profileNodeCopy);
@@ -119,7 +119,7 @@ export const useDeathLogStore = create<DeathLogState>((set) => ({
             let updatedAlready = false;
 
             if (node.name != overrides.name) {
-                validateNodeString(overrides.name, updatedTree, node.parentID);
+                Utils.validateNodeString(overrides.name, updatedTree, node.parentID);
             }
             const updatedNode: DistinctTreeNode = { ...node, ...overrides };
             updatedTree.set(updatedNode.id, updatedNode);
@@ -127,17 +127,17 @@ export const useDeathLogStore = create<DeathLogState>((set) => ({
             // requires sorting
             if (node.dateStart != overrides.dateStart || node.dateEnd != overrides.dateEnd) {
                 const parentNode = updatedTree.get(updatedNode.parentID);
-                assertIsNonNull(parentNode);
+                GenUtils.assertIsNonNull(parentNode);
 
                 const parentNodeCopy: TreeNode = { ...parentNode, childIDS: [...parentNode.childIDS] };
-                parentNodeCopy.childIDS = sortChildIDS(parentNodeCopy, updatedTree);
+                parentNodeCopy.childIDS = Utils.sortChildIDS(parentNodeCopy, updatedTree);
                 updatedTree.set(parentNodeCopy.id, parentNodeCopy);
 
                 if (parentNodeCopy.id == "ROOT_NODE") {
                     LocalDB.updateNode(updatedNode);
                 }
                 else {
-                    assertIsDistinctTreeNode(parentNodeCopy);
+                    GenUtils.assertIsDistinctTreeNode(parentNodeCopy);
                     LocalDB.updateNode(updatedNode, parentNodeCopy);
                 }
                 updatedAlready = true
