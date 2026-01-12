@@ -127,7 +127,7 @@ export function formatBreadcrumbMembers(breadcrumbMembers: BreadcrumbMember[], v
     return formattedBreadcrumbMembers
 }
 
-export function cardHasBeenEdited(original: DistinctTreeNode, modalState: DistinctTreeNode, parentNode: Profile | null, parentModalState: Profile | null) {
+export function cardHasBeenEdited(original: DistinctTreeNode, modalState: DistinctTreeNode) {
     if (original.name != modalState.name) {
         return true;
     }
@@ -163,9 +163,9 @@ export function cardHasBeenEdited(original: DistinctTreeNode, modalState: Distin
             return true
         }
 
-        if (parentNode && parentModalState){
-            // if(parentNode.groupings)
-        }
+        // if (parentNode && parentModalState){
+        //     // if(parentNode.groupings)
+        // }
     }
 
     return false

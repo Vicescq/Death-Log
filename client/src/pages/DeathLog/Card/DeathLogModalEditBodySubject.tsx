@@ -1,7 +1,6 @@
 import { useState } from "react";
 import type {
 	DistinctTreeNode,
-	Profile,
 	Subject,
 } from "../../../model/TreeNodeModel";
 import * as Utils from "../utils";
@@ -9,15 +8,11 @@ import * as Utils from "../utils";
 type Props = {
 	node: Subject;
 	handleOnEditChange: (newModalState: DistinctTreeNode) => void;
-	handleOnEditChangeParent: (newModalState: Profile) => void;
-	parentNode: Profile;
 };
 
 export default function DeathLogModalEditBodySubject({
 	node,
 	handleOnEditChange,
-	handleOnEditChangeParent,
-	parentNode,
 }: Props) {
 	const [profileGroupText, setProfileGroupText] = useState("");
 
@@ -84,7 +79,7 @@ export default function DeathLogModalEditBodySubject({
 					</select>
 				</fieldset>
 			</fieldset>
-			<fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-full border p-4">
+			{/* <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-full border p-4">
 				<legend className="fieldset-legend">Profile Groups</legend>
 
 				<div className="join">
@@ -133,7 +128,7 @@ export default function DeathLogModalEditBodySubject({
 						);
 					})}
 				</ul>
-			</fieldset>
+			</fieldset> */}
 		</>
 	);
 }

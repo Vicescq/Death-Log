@@ -20,6 +20,8 @@ import {
 	assertIsProfile,
 } from "../../../utils";
 import useConsoleLogOnStateChange from "../../../hooks/useConsoleLogOnStateChange";
+import DeathLogModalEditBodyProfile from "./DeathLogModalEditBodyProfile";
+import DeathLogCardModalBody from "./DeathLogCardModalBody";
 
 type Props = {
 	nodeID: string;
@@ -29,6 +31,7 @@ type Props = {
 export default function DeathLogCard({ nodeID, entryNum }: Props) {
 	const tree = useDeathLogStore((state) => state.tree);
 	const updateNode = useDeathLogStore((state) => state.updateNode);
+
 	const node = tree.get(nodeID);
 	assertIsNonNull(node);
 	assertIsDistinctTreeNode(node);
@@ -37,7 +40,7 @@ export default function DeathLogCard({ nodeID, entryNum }: Props) {
 
 	const editModalRef = useRef<HTMLDialogElement>(null);
 	const { page, handlePageState, handlePageTurn } = usePagination(
-		node.type != "subject" ? 2 : 3,
+		node.type == "game" ? 2 : 3,
 	);
 
 	const [modalState, setModalState] = useState<DistinctTreeNode>({ ...node });
@@ -47,28 +50,44 @@ export default function DeathLogCard({ nodeID, entryNum }: Props) {
 	const [checked, setChecked] = useState(node.completed);
 	const completedCSSStrike = node.completed ? "line-through" : "";
 
-	const [parentModalState, setParentModalState] = useState<Profile | null>(
-		null,
-	);
-	useEffect(() => {
-		if (node.type == "subject") {
-			setParentModalState(getParentProfileNode(parentNode));
-		}
-	}, []);
+	useConsoleLogOnStateChange(modalState, "OG:", parentNode);
 
-	function getParentProfileNode(parentNode: TreeNode | undefined | null) {
-		// for ts auto complete
-		assertIsNonNull(parentNode);
-		assertIsProfile(parentNode);
-		return parentNode;
-	}
+	// function modalBody(page: number) {
+	// 	if (page == 1) {
+	// 		return (
+	// 			<DeathLogModalEditBodyNameDate
+	// 				node={modalState}
+	// 				handleOnEditChange={setModalState}
+	// 				inputTextError={inputTextError}
+	// 			/>
+	// 		);
+	// 	} else if (page == 2 && modalState.type == "subject") {
+	// 		return (
+	// 			<DeathLogModalEditBodySubject
+	// 				node={modalState}
+	// 				handleOnEditChange={setModalState}
+	// 			/>
+	// 		);
+	// 	} else if (page == 2 && modalState.type == "profile") {
+	// 		return (
+	// 			<DeathLogModalEditBodyProfile
+	// 				handleOnEditChange={(newModalState) =>
+	// 					setModalState(newModalState)
+	// 				}
+	// 				node={getParentProfileNode(modalState)}
+	// 			/>
+	// 		);
+	// 	} else if (page == 2 || page == 3) {
+	// 		return (
+	// 			<DeathLogModalEditBodyNotesDel
+	// 				node={modalState}
+	// 				handleOnEditChange={setModalState}
+	// 			/>
+	// 		);
+	// 	}
 
-	useConsoleLogOnStateChange(
-		parentModalState,
-		"Modal State:",
-		parentModalState,
-	);
-	useConsoleLogOnStateChange(parentModalState, "OG:", parentNode);
+	// 	return null;
+	// }
 
 	return (
 		<>
@@ -114,31 +133,14 @@ export default function DeathLogCard({ nodeID, entryNum }: Props) {
 					closeBtnName="Cancel"
 					content={
 						<>
-							{page == 1 ? (
-								<DeathLogModalEditBodyNameDate
-									node={modalState}
-									handleOnEditChange={setModalState}
-									inputTextError={inputTextError}
-								/>
-							) : page == 2 && modalState.type == "subject" ? (
-								<DeathLogModalEditBodySubject
-									node={modalState}
-									handleOnEditChange={setModalState}
-									handleOnEditChangeParent={(
-										newModalState,
-									) => {
-										setParentModalState(newModalState);
-									}}
-									parentNode={getParentProfileNode(
-										parentModalState,
-									)}
-								/>
-							) : page == 2 || page == 3 ? (
-								<DeathLogModalEditBodyNotesDel
-									node={modalState}
-									handleOnEditChange={setModalState}
-								/>
-							) : null}
+							<DeathLogCardModalBody
+								page={page}
+								handleOnEditChange={(newModalState) =>
+									setModalState(newModalState)
+								}
+								inputTextError={inputTextError}
+								modalState={modalState}
+							/>
 
 							<div className="join mt-4 flex">
 								<button
@@ -169,17 +171,7 @@ export default function DeathLogCard({ nodeID, entryNum }: Props) {
 						{
 							text: "Save edits",
 							css: `${
-								Utils.cardHasBeenEdited(
-									node,
-									modalState,
-									parentNode?.type == "profile"
-										? (() => {
-												assertIsProfile(parentNode);
-												return parentNode;
-											})()
-										: null,
-									parentModalState,
-								)
+								Utils.cardHasBeenEdited(node, modalState)
 									? "btn-success"
 									: "btn-disabled"
 							} mt-10`,
