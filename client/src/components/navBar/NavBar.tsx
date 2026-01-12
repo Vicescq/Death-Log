@@ -55,13 +55,13 @@ export default function NavBar({
 							FAQ
 						</Link>
 					</li>
-					<li>
-						<SignedIn>
+					<SignedIn>
+						<li>
 							<button>
 								<UserButton />
 							</button>
-						</SignedIn>
-					</li>
+						</li>
+					</SignedIn>
 					{/* <li>
 						<button
 							onClick={() => navigate("/x")}

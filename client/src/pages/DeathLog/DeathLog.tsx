@@ -1,10 +1,8 @@
 import { useDeathLogStore } from "../../stores/useDeathLogStore";
 import NavBar from "../../components/navBar/NavBar";
 import DeathLogCard from "./card/DeathLogCard";
-import { assertIsDistinctTreeNode, assertIsNonNull } from "../../utils";
 import React, { forwardRef, useRef, useState } from "react";
 import DeathLogFAB from "./DeathLogFAB";
-import usePagination from "../../hooks/usePagination";
 import * as Utils from "./utils";
 import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
 import { Virtuoso, type Components, type VirtuosoHandle } from "react-virtuoso";
@@ -21,28 +19,10 @@ export default function DeathLog({ type, parentID }: Props) {
 	const virtuosoRef = useRef<VirtuosoHandle>(null);
 
 	const childIDS = tree.get(parentID)?.childIDS || [];
-	const nodes = childIDS.map((nodeID) => {
-		// for typscript auto complete
-		const node = tree.get(nodeID);
-		assertIsNonNull(node);
-		assertIsDistinctTreeNode(node);
-		return node;
-	});
-
-	const maxItemPerPage = 30;
-	const maxPage = Utils.calcRequiredPages(nodes.length, maxItemPerPage);
-	const { page, handlePageState, handlePageTurn } = usePagination(maxPage);
-
-	// const paginatedCards: React.JSX.Element[][] = [];
-	// let cards: React.JSX.Element[] = [];
-	// nodes.forEach((node, i) => {
-	// 	cards.push(<DeathLogCard node={node} key={node.id} entryNum={i + 1} />);
-	// });
-	// Utils.paginateCardArray(paginatedCards, cards, maxPage, maxItemPerPage);
 
 	let cards: React.JSX.Element[] = [];
-	nodes.forEach((node, i) => {
-		cards.push(<DeathLogCard node={node} entryNum={i + 1} />);
+	childIDS.forEach((id, i) => {
+		cards.push(<DeathLogCard nodeID={id} entryNum={i + 1} />);
 	});
 
 	const [pageOpacity, setPageOpacity] = useState("");
@@ -86,14 +66,13 @@ export default function DeathLog({ type, parentID }: Props) {
 
 			<Virtuoso
 				ref={virtuosoRef}
-				data={nodes}
-				itemContent={(i, node) => (
-					<DeathLogCard node={node} entryNum={i + 1} />
+				data={childIDS}
+				itemContent={(i, id) => (
+					<DeathLogCard nodeID={id} entryNum={i + 1} />
 				)}
-				className={``}
 				components={{ List: DeathLogCardWrapper }}
-				computeItemKey={(_, node) => {
-					return node.id;
+				computeItemKey={(_, id) => {
+					return id;
 				}}
 				useWindowScroll
 			/>

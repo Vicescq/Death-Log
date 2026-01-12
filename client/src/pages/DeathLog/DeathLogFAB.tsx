@@ -7,7 +7,6 @@ import up from "../../assets/up.svg";
 import down from "../../assets/down.svg";
 import Modal from "../../components/Modal";
 import { useDeathLogStore } from "../../stores/useDeathLogStore";
-import useInputTextError from "./card/useInputTextError";
 import type { VirtuosoHandle } from "react-virtuoso";
 import type { Subject, SubjectContext } from "../../model/TreeNodeModel";
 import * as Utils from "./utils";
@@ -36,12 +35,7 @@ export default function DeathLogFAB({
 		useState<SubjectContext>("boss");
 	const [reoccurring, setReoccurring] = useState(false);
 
-	const {
-		inputTextError,
-		setInputTextError,
-		inputTextErrorIsDisplayed,
-		setInputTextErrorIsDisplayed,
-	} = useInputTextError(inputText);
+	const [inputTextError, setInputTextError] = useState("");
 
 	const header =
 		type != "subject"
@@ -159,7 +153,7 @@ export default function DeathLogFAB({
 										value={inputText}
 									/>
 									<div
-										className={`text-error mt-2 ml-2 ${inputTextErrorIsDisplayed ? "" : "hidden"} text-sm`}
+										className={`text-error mt-2 ml-2 ${inputTextError != "" ? "" : "hidden"} text-sm`}
 									>
 										{inputTextError}
 									</div>
@@ -188,13 +182,10 @@ export default function DeathLogFAB({
 												);
 											}
 											modalRef.current?.close();
-											setInputTextErrorIsDisplayed(false);
+											setInputText("");
 										} catch (e) {
 											if (e instanceof Error) {
 												setInputTextError(e.message);
-												setInputTextErrorIsDisplayed(
-													true,
-												);
 											}
 										}
 									}}
@@ -251,7 +242,7 @@ export default function DeathLogFAB({
 				modalBtns={[]}
 				handleOnClose={() => {
 					setInputText("");
-					setInputTextErrorIsDisplayed(false);
+					setInputTextError("");
 					setSubjectContext("boss");
 					setReoccurring(false);
 				}}

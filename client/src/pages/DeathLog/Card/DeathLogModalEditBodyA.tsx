@@ -7,13 +7,11 @@ type Props = {
 	node: DistinctTreeNode;
 	handleOnEditChange: (newModalState: DistinctTreeNode) => void;
 	inputTextError: string;
-	inputTextErrorIsDisplayed: boolean;
 };
 
 export default function DeathLogModalEditBodyA({
 	node,
 	inputTextError,
-	inputTextErrorIsDisplayed,
 	handleOnEditChange,
 }: Props) {
 	return (
@@ -41,7 +39,7 @@ export default function DeathLogModalEditBodyA({
 					}
 				/>
 				<div
-					className={`text-error mt-2 ml-2 ${inputTextErrorIsDisplayed ? "" : "hidden"} text-sm`}
+					className={`text-error mt-2 ml-2 ${inputTextError != "" ? "" : "hidden"} text-sm`}
 				>
 					{inputTextError}
 				</div>

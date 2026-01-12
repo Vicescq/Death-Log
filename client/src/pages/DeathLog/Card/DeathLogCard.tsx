@@ -4,36 +4,34 @@ import type { DistinctTreeNode } from "../../../model/TreeNodeModel";
 import DeathLogCardOptions from "./DeathLogCardOptions";
 import usePagination from "../../../hooks/usePagination";
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
-import useInputTextError from "./useInputTextError";
 import DeathLogModalEditBodyA from "./DeathLogModalEditBodyA";
 import DeathLogModalEditBodyB from "./DeathLogModalEditBodyB";
 import loop from "../../../assets/loop.svg";
 import skullRed from "../../../assets/skull_red.svg";
 import DeathLogModalEditBodyC from "./DeathLogModalEditBodyC";
 import * as Utils from "../utils";
+import { assertIsDistinctTreeNode, assertIsNonNull } from "../../../utils";
 
 type Props = {
-	node: DistinctTreeNode;
+	nodeID: string;
 	entryNum: number;
 };
 
-export default function DeathLogCard({ node, entryNum }: Props) {
+export default function DeathLogCard({ nodeID, entryNum }: Props) {
+	const tree = useDeathLogStore((state) => state.tree);
+	const updateNode = useDeathLogStore((state) => state.updateNode);
+	const node = tree.get(nodeID);
+	assertIsNonNull(node);
+	assertIsDistinctTreeNode(node);
+	const deaths = Utils.calcDeaths(node, tree);
+	
 	const editModalRef = useRef<HTMLDialogElement>(null);
 	const { page, handlePageState, handlePageTurn } = usePagination(
 		node.type != "subject" ? 2 : 3,
 	);
-	const updateNode = useDeathLogStore((state) => state.updateNode);
+	
 	const [modalState, setModalState] = useState<DistinctTreeNode>({ ...node });
-
-	const {
-		inputTextError,
-		setInputTextError,
-		inputTextErrorIsDisplayed,
-		setInputTextErrorIsDisplayed,
-	} = useInputTextError(modalState.name);
-
-	const tree = useDeathLogStore((state) => state.tree);
-	const deaths = Utils.calcDeaths(node, tree);
+	const [inputTextError, setInputTextError] = useState("");
 
 	const completionNotifyModalRef = useRef<HTMLDialogElement>(null);
 	const [checked, setChecked] = useState(node.completed);
@@ -88,9 +86,6 @@ export default function DeathLogCard({ node, entryNum }: Props) {
 									node={modalState}
 									handleOnEditChange={setModalState}
 									inputTextError={inputTextError}
-									inputTextErrorIsDisplayed={
-										inputTextErrorIsDisplayed
-									}
 								/>
 							) : page == 2 && modalState.type == "subject" ? (
 								<DeathLogModalEditBodyC
@@ -132,14 +127,13 @@ export default function DeathLogCard({ node, entryNum }: Props) {
 					modalBtns={[
 						{
 							text: "Save edits",
-							css: "btn-neutral mt-12",
+							css: `btn-success mt-14`,
 							fn: () => {
 								try {
 									updateNode(node, modalState);
 									editModalRef.current?.close();
 								} catch (e) {
 									if (e instanceof Error) {
-										setInputTextErrorIsDisplayed(true);
 										setInputTextError(e.message);
 									}
 								}
@@ -152,7 +146,7 @@ export default function DeathLogCard({ node, entryNum }: Props) {
 						); // if not used, ui flicker from page turn happens
 						handlePageState(1);
 						setModalState(node);
-						setInputTextErrorIsDisplayed(false);
+						setInputTextError("");
 					}}
 				/>
 				<Modal
