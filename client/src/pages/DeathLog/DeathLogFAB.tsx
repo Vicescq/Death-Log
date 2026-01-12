@@ -7,7 +7,7 @@ import up from "../../assets/up.svg";
 import down from "../../assets/down.svg";
 import Modal from "../../components/Modal";
 import { useDeathLogStore } from "../../stores/useDeathLogStore";
-import useInputTextError from "./Card/useInputTextError";
+import useInputTextError from "./card/useInputTextError";
 import type { VirtuosoHandle } from "react-virtuoso";
 import type { Subject, SubjectContext } from "../../model/TreeNodeModel";
 import * as Utils from "./utils";

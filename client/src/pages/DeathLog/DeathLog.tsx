@@ -1,6 +1,6 @@
 import { useDeathLogStore } from "../../stores/useDeathLogStore";
 import NavBar from "../../components/navBar/NavBar";
-import DeathLogCard from "./Card/DeathLogCard";
+import DeathLogCard from "./card/DeathLogCard";
 import { assertIsDistinctTreeNode, assertIsNonNull } from "../../utils";
 import React, { forwardRef, useRef, useState } from "react";
 import DeathLogFAB from "./DeathLogFAB";
