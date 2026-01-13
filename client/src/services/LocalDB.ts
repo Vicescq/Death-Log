@@ -50,8 +50,13 @@ export default class LocalDB {
 
     static getUserEmail() {
         const email = localStorage.getItem("email");
-        assertIsNonNull(email);
-        return email;
+        if (email == null){
+            LocalDB.setUserEmail("__LOCAL__");
+            return "__LOCAL__"
+        }
+        else{
+            return email;
+        }
     }
 
     static setUserEmail(email: string) {

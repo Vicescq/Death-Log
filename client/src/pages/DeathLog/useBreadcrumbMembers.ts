@@ -1,6 +1,7 @@
 import { useLocation } from "react-router";
 import { useDeathLogStore } from "../../stores/useDeathLogStore";
 import type { BreadcrumbMember } from "./DeathLogBreadcrumb";
+import * as Utils from "../../utils";
 
 export default function useBreadcrumbMembers(): BreadcrumbMember[] {
     const location = useLocation();
@@ -11,12 +12,8 @@ export default function useBreadcrumbMembers(): BreadcrumbMember[] {
     if (ids.length >= 1 && tree.size >= 1) {
         const names = ids.map((id) => {
             const node = tree.get(id);
-            if (node) {
-                return node.name
-            }
-            else {
-                return "__BREADCRUMB_PLACEHOLDER__"
-            }
+            Utils.assertIsNonNull(node);
+            return node.name
         })
         let currLink = "/log";
         return names.map((name, i) => {

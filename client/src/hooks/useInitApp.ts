@@ -21,6 +21,8 @@ export default function useInitApp() {
             }
         }
 
+        else { }// offline case
+
         refreshTree(initTree);
 
     }, [user, isLoaded, isSignedIn]);
