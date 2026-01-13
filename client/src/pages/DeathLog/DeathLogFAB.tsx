@@ -53,6 +53,7 @@ export default function DeathLogFAB({
 					className="btn btn-lg btn-circle bg-success"
 					onFocus={handleFabOnFocus}
 					onBlur={handleFabOnBlur}
+					aria-label="Open FAB"
 				>
 					<img src={fabEdit} alt="" />
 				</div>
@@ -65,6 +66,8 @@ export default function DeathLogFAB({
 				<div>
 					Add {type}
 					<button
+						role="button"
+						aria-label="Add item"
 						className="btn btn-lg btn-circle btn-success"
 						onClick={() => modalRef.current?.showModal()}
 					>

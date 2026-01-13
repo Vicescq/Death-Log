@@ -21,7 +21,7 @@ export default function NavBar({
 }: Props) {
 	const { activeDLCSS, activeDMCSS, activeFAQCSS } = useActiveNavBarCSS("bg");
 	return (
-		<div className="navbar bg-base-100">
+		<div className="navbar sticky top-0 z-10 bg-base-100">
 			<div className={`navbar-start ${startNavContentCSS}`}>
 				<NavBarDrawer />
 
