@@ -1,5 +1,4 @@
 import type { DistinctTreeNode, TreeNode } from "../../../model/TreeNodeModel";
-import { assertIsNonNull, assertIsProfile } from "../../../utils";
 import DeathLogModalEditBodyNameDate from "./DeathLogModalEditBodyNameDate";
 import DeathLogModalEditBodyNotesDel from "./DeathLogModalEditBodyNotesDel";
 import DeathLogModalEditBodyProfile from "./DeathLogModalEditBodyProfile";
@@ -18,13 +17,6 @@ export default function DeathLogCardModalBody({
 	inputTextError,
 	modalState,
 }: Props) {
-	function assertProfileNode(node: TreeNode | undefined | null) {
-		// for ts auto complete
-		assertIsNonNull(node);
-		assertIsProfile(node);
-		return node;
-	}
-
 	if (page == 1) {
 		return (
 			<DeathLogModalEditBodyNameDate
@@ -43,7 +35,7 @@ export default function DeathLogCardModalBody({
 	} else if (page == 2 && modalState.type == "profile") {
 		return (
 			<DeathLogModalEditBodyProfile
-				node={assertProfileNode(modalState)}
+				node={modalState}
 				handleOnEditChange={handleOnEditChange}
 			/>
 		);

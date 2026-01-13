@@ -5,23 +5,19 @@ import { useDeathLogStore } from "../../../stores/useDeathLogStore";
 import loop from "../../../assets/loop.svg";
 import skullRed from "../../../assets/skull_red.svg";
 import * as Utils from "../utils";
-import { assertIsNonNull } from "../../../utils";
 import DeathLogCardModalBody from "./DeathLogCardModalBody";
 import useCardCompletionToggle from "./useCardCompletionToggle";
 import useCardModal from "./useCardModal";
+import type { DistinctTreeNode } from "../../../model/TreeNodeModel";
 
 type Props = {
-	nodeID: string;
+	node: DistinctTreeNode;
 	entryNum: number;
 };
 
-export default function DeathLogCard({ nodeID, entryNum }: Props) {
+export default function DeathLogCard({ node, entryNum }: Props) {
 	const tree = useDeathLogStore((state) => state.tree);
 	const updateNode = useDeathLogStore((state) => state.updateNode);
-
-	const node = tree.get(nodeID);
-	assertIsNonNull(node);
-	const deaths = Utils.calcDeaths(node, tree);
 
 	const { page, setPage, handlePageTurn } = usePagination(
 		node.type == "game" ? 2 : 3,
@@ -75,7 +71,7 @@ export default function DeathLogCard({ nodeID, entryNum }: Props) {
 					</div>
 					<div className="flex gap-2 font-semibold uppercase opacity-60">
 						<img src={skullRed} alt="" className="w-4" />
-						{deaths}
+						{Utils.calcDeaths(node, tree)}
 					</div>
 				</div>
 				<DeathLogCardOptions

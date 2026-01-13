@@ -1,5 +1,4 @@
-import type { DistinctTreeNode, Profile, SubjectContext, Tree } from "../../model/TreeNodeModel";
-import { assertIsNonNull, assertIsProfile, assertIsSubject } from "../../utils";
+import type { DistinctTreeNode, SubjectContext, Tree } from "../../model/TreeNodeModel";
 import type { BreadcrumbMember } from "./DeathLogBreadcrumb";
 
 export function calcRequiredPages(size: number, pageSize: number) {
@@ -44,11 +43,10 @@ export function calcDeaths(node: DistinctTreeNode, tree: Tree) {
         case "game":
             node.childIDS.forEach((id) => {
                 const profile = tree.get(id);
-                if (profile) { // assertIsNonNull bug during deleteNode, so decided to use if {...} instead
+                if (profile) {
                     profile.childIDS.forEach((id) => {
                         const subject = tree.get(id);
-                        if (subject) {
-                            assertIsSubject(subject);
+                        if (subject && subject.type == "subject") {
                             sum += subject.deaths;
                         }
                     })
@@ -58,8 +56,7 @@ export function calcDeaths(node: DistinctTreeNode, tree: Tree) {
         case "profile":
             node.childIDS.forEach((id) => {
                 const subject = tree.get(id);
-                if (subject) {
-                    assertIsSubject(subject);
+                if (subject && subject.type == "subject") {
                     sum += subject.deaths;
                 }
             })

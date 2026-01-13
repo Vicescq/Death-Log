@@ -1,5 +1,5 @@
 import { db } from "../model/LocalDBSchema";
-import type { DistinctTreeNode, Game, Profile, Subject, TreeNode } from "../model/TreeNodeModel";
+import type { DistinctTreeNode } from "../model/TreeNodeModel";
 import { assertIsNonNull } from "../utils";
 
 export default class LocalDB {
@@ -8,8 +8,7 @@ export default class LocalDB {
     static async addNode(node: DistinctTreeNode, parentNode?: DistinctTreeNode) {
         db.transaction("rw", db.nodes, async () => {
             await db.nodes.add({ node_id: node.id, node: node, email: LocalDB.getUserEmail(), created_at: new Date().toISOString(), edited_at: new Date().toISOString() });
-            if (node.type != "game") {
-                assertIsNonNull(parentNode);
+            if (node.type != "game" && parentNode) {
                 await db.nodes.update(parentNode.id, { node_id: parentNode.id, node: parentNode, edited_at: new Date().toISOString(), email: LocalDB.getUserEmail() });
             }
         })
@@ -26,7 +25,7 @@ export default class LocalDB {
 
     static async updateNode(node: DistinctTreeNode, parentNode?: DistinctTreeNode) {
         await db.nodes.update(node.id, { node_id: node.id, node: node, edited_at: new Date().toISOString(), email: LocalDB.getUserEmail() });
-        if (parentNode){
+        if (parentNode) {
             await db.nodes.update(parentNode.id, { node_id: parentNode.id, node: parentNode, edited_at: new Date().toISOString(), email: LocalDB.getUserEmail() });
         }
     }

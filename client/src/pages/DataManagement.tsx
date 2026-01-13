@@ -1,6 +1,5 @@
 import { useRef, useState } from "react";
 import LocalDB from "../services/LocalDB";
-import { assertIsNonNull } from "../utils";
 import { refreshTree } from "../stores/utils";
 import Modal, { type ModalBtn } from "../components/Modal";
 import { useDeathLogStore } from "../stores/useDeathLogStore";
@@ -25,7 +24,9 @@ export default function DataManagement() {
 
 	const [feedbackToastMsg, setFeedbackToastMsg] = useState("");
 	const [feedbackToastDisplay, setFeedbackToastDisplay] = useState(false);
-	const [feedbackToastCSS, setFeedbackToastCSS] = useState<"success" | "error">("success");
+	const [feedbackToastCSS, setFeedbackToastCSS] = useState<
+		"success" | "error"
+	>("success");
 
 	const [modalContent, setModalContent] = useState<React.JSX.Element>(<></>);
 	const [modalHeader, setModalHeader] = useState("");
@@ -154,9 +155,11 @@ export default function DataManagement() {
 	}
 
 	async function importDL() {
-		assertIsNonNull(importRef.current);
-		assertIsNonNull(importRef.current.files);
-		if (importRef.current.files.length > 0) {
+		if (
+			importRef.current &&
+			importRef.current.files &&
+			importRef.current.files.length > 0
+		) {
 			try {
 				const importedFile = importRef.current.files[0];
 				importRef.current.value = ""; // refire input tag onChange, edge case: user imports same invalid file multiple times
@@ -229,7 +232,7 @@ export default function DataManagement() {
 
 	return (
 		<>
-			<NavBar midNavContent={<></>}/>
+			<NavBar midNavContent={<></>} />
 			<FeedbackToast
 				msg={feedbackToastMsg}
 				bgCSS={feedbackToastCSS}
@@ -294,7 +297,9 @@ export default function DataManagement() {
 							className="btn btn-error text-xl"
 							onClick={() => {
 								setModalHeader(deleteAllModalProps.header);
-								setModalBtns([...deleteAllModalProps.modalBtns]);
+								setModalBtns([
+									...deleteAllModalProps.modalBtns,
+								]);
 								setModalCloseBtnName(
 									deleteAllModalProps.closeBtnName,
 								);

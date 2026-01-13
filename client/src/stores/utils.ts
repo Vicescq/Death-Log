@@ -1,6 +1,6 @@
 import type { TreeNode, Subject, DistinctTreeNode, Game, Profile, RootNode, Tree } from "../model/TreeNodeModel";
 import LocalDB from "../services/LocalDB";
-import { assertIsDistinctTreeNode, assertIsNonNull } from "../utils";
+import { assertIsNonNull } from "../utils";
 import { nanoid } from "nanoid";
 
 export function validateNodeString(inputText: string, tree: Tree, parentID: string) {
@@ -28,8 +28,6 @@ export function sortChildIDS(parentNode: TreeNode, tree: Tree) {
 
         assertIsNonNull(nodeA);
         assertIsNonNull(nodeB);
-        assertIsDistinctTreeNode(nodeA);
-        assertIsDistinctTreeNode(nodeB);
 
         let result = 0;
 
@@ -80,7 +78,6 @@ export function identifyDeletedSelfAndChildrenIDS(node: DistinctTreeNode, tree: 
         for (let i = 0; i < node.childIDS.length; i++) {
             const childNode = tree.get(node.childIDS[i]);
             assertIsNonNull(childNode);
-            assertIsDistinctTreeNode(childNode);
             deleteSelfAndChildren(childNode);
         }
 
@@ -104,16 +101,16 @@ export function isNodeNameUnique(tree: Tree, parentID: string, name: string) {
 
 export function createRootNode() {
     const rootNode: RootNode = {
-        type: "ROOT_NODE", 
-        id: "ROOT_NODE", 
-        childIDS: [], 
-        parentID: "NONE", 
-        name: "", 
-        completed: false, 
-        notes: "", 
-        dateStart: "", 
-        dateEnd: "", 
-        dateStartRel: true, 
+        type: "ROOT_NODE",
+        id: "ROOT_NODE",
+        childIDS: [],
+        parentID: "NONE",
+        name: "",
+        completed: false,
+        notes: "",
+        dateStart: "",
+        dateEnd: "",
+        dateStartRel: true,
         dateEndRel: true
     };
     return rootNode
@@ -205,4 +202,8 @@ export function generateAndValidateID(tree: Tree) {
 export async function refreshTree(initTree: (nodes: DistinctTreeNode[]) => void) {
     const nodes = await LocalDB.getNodes();
     initTree(nodes);
+}
+
+export function validateProfileGroup(){
+    
 }

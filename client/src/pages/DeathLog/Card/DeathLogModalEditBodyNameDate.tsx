@@ -1,5 +1,4 @@
 import type { DistinctTreeNode } from "../../../model/TreeNodeModel";
-import { assertIsNonNull } from "../../../utils";
 import { convertDefaultCardModalDateFormatToISO } from "../utils";
 import { defaultCardModalDateFormat } from "../utils";
 
@@ -79,11 +78,11 @@ export default function DeathLogModalEditBodyNameDate({
 					<input
 						type="date"
 						className="input join-item"
-						value={(() => {
-							const dateEnd = node.dateEnd;
-							assertIsNonNull(dateEnd);
-							return defaultCardModalDateFormat(dateEnd);
-						})()}
+						value={
+							node.dateEnd
+								? defaultCardModalDateFormat(node.dateEnd)
+								: undefined
+						}
 						onChange={(e) =>
 							handleOnEditChange({
 								...node,

@@ -66,7 +66,6 @@ export const useDeathLogStore = create<DeathLogState>((set) => ({
                 LocalDB.addNode(node);
             }
             else {
-                GenUtils.assertIsDistinctTreeNode(parentNodeCopy);
                 LocalDB.addNode(node, parentNodeCopy);
             }
             LocalDB.incrementCRUDCounter();
@@ -83,25 +82,18 @@ export const useDeathLogStore = create<DeathLogState>((set) => ({
 
             const parentNode = updatedTree.get(node.parentID);
             GenUtils.assertIsNonNull(parentNode);
+            const parentNodeCopy: DistinctTreeNode = { ...parentNode, childIDS: parentNode.childIDS.filter((id) => id != node.id) };
+            updatedTree.set(parentNodeCopy.id, parentNodeCopy);
 
             switch (parentNode.type) {
                 case "ROOT_NODE":
-                    GenUtils.assertIsRootNode(parentNode);
-                    const rootNodeCopy: RootNode = { ...parentNode, childIDS: parentNode.childIDS.filter((id) => id != node.id) };
-                    updatedTree.set(rootNodeCopy.id, rootNodeCopy);
                     LocalDB.deleteNode(nodeIDSToBeDeleted);
                     break;
                 case "game":
-                    GenUtils.assertIsGame(parentNode);
-                    const gameNodeCopy: Game = { ...parentNode, childIDS: parentNode.childIDS.filter((id) => id != node.id) };
-                    updatedTree.set(gameNodeCopy.id, gameNodeCopy);
-                    LocalDB.deleteNode(nodeIDSToBeDeleted, gameNodeCopy);
+                    LocalDB.deleteNode(nodeIDSToBeDeleted, parentNodeCopy);
                     break;
                 case "profile":
-                    GenUtils.assertIsProfile(parentNode);
-                    const profileNodeCopy: Profile = { ...parentNode, childIDS: parentNode.childIDS.filter((id) => id != node.id) };
-                    updatedTree.set(profileNodeCopy.id, profileNodeCopy);
-                    LocalDB.deleteNode(nodeIDSToBeDeleted, profileNodeCopy);
+                    LocalDB.deleteNode(nodeIDSToBeDeleted, parentNodeCopy);
                     break;
             }
 
@@ -137,7 +129,6 @@ export const useDeathLogStore = create<DeathLogState>((set) => ({
                     LocalDB.updateNode(updatedNode);
                 }
                 else {
-                    GenUtils.assertIsDistinctTreeNode(parentNodeCopy);
                     LocalDB.updateNode(updatedNode, parentNodeCopy);
                 }
                 updatedAlready = true
