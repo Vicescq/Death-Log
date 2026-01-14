@@ -1,4 +1,5 @@
-import type { DistinctTreeNode, SubjectContext, Tree } from "../../model/TreeNodeModel";
+import type { DistinctTreeNode, ProfileGroup, SubjectContext, Tree } from "../../model/TreeNodeModel";
+import * as Utils from "../../utils";
 import type { BreadcrumbMember } from "./DeathLogBreadcrumb";
 
 export function calcRequiredPages(size: number, pageSize: number) {
@@ -168,4 +169,22 @@ export function cardHasBeenEdited(original: DistinctTreeNode, modalState: Distin
     }
 
     return false
+}
+export function validateProfileGroup(groupings: ProfileGroup[]) {
+    if (groupings.length == 0) return;
+
+    const groupToBeAdded = groupings[groupings.length - 1];
+    if (groupToBeAdded.title == "") {
+        throw new Error("Name cannot be empty!");
+    }
+    if (typeof groupToBeAdded.title != "string") {
+        throw new Error("Title has to be of type string!");
+    }
+
+    groupings.forEach((group, i) => {
+        if (i == groupings.length - 1) return;
+        if (groupToBeAdded.title == group.title) {
+            throw new Error("Name has to be unique!");
+        }
+    });
 }

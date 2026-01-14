@@ -7,14 +7,14 @@ import DeathLogModalEditBodySubject from "./DeathLogModalEditBodySubject";
 type Props = {
 	page: number;
 	handleOnEditChange: (newModalState: DistinctTreeNode) => void;
-	inputTextError: string;
+	inputTextNameError: string;
 	modalState: DistinctTreeNode;
 };
 
 export default function DeathLogCardModalBody({
 	page,
 	handleOnEditChange,
-	inputTextError,
+	inputTextNameError,
 	modalState,
 }: Props) {
 	if (page == 1) {
@@ -22,7 +22,7 @@ export default function DeathLogCardModalBody({
 			<DeathLogModalEditBodyNameDate
 				node={modalState}
 				handleOnEditChange={handleOnEditChange}
-				inputTextError={inputTextError}
+				inputTextError={inputTextNameError}
 			/>
 		);
 	} else if (page == 2 && modalState.type == "subject") {

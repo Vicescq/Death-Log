@@ -3,8 +3,9 @@ import type { DistinctTreeNode } from "../../../model/TreeNodeModel";
 
 export default function useCardModal(node: DistinctTreeNode){
     const [modalState, setModalState] = useState<DistinctTreeNode>({ ...node });
-	const [inputTextError, setInputTextError] = useState("");
+	const [inputTextNameError, setInputTextNameError] = useState("");
 	const editModalRef = useRef<HTMLDialogElement>(null);
+    const [inputTextProfileGroupError, setInputTextProfileGroupError] = useState("");
 
-    return {modalState, setModalState, inputTextError, setInputTextError, editModalRef}
+    return {modalState, setModalState, inputTextNameError, setInputTextNameError, editModalRef, inputTextProfileGroupError, setInputTextProfileGroupError}
 }

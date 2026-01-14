@@ -113,6 +113,7 @@ export const useDeathLogStore = create<DeathLogState>((set) => ({
             if (node.name != overrides.name) {
                 Utils.validateNodeString(overrides.name, updatedTree, node.parentID);
             }
+            
             const updatedNode: DistinctTreeNode = { ...node, ...overrides };
             updatedTree.set(updatedNode.id, updatedNode);
 

@@ -1,6 +1,6 @@
 import type { TreeNode, Subject, DistinctTreeNode, Game, Profile, RootNode, Tree } from "../model/TreeNodeModel";
 import LocalDB from "../services/LocalDB";
-import { assertIsNonNull } from "../utils";
+import * as Utils from "../utils"
 import { nanoid } from "nanoid";
 
 export function validateNodeString(inputText: string, tree: Tree, parentID: string) {
@@ -26,8 +26,8 @@ export function sortChildIDS(parentNode: TreeNode, tree: Tree) {
         const nodeA = tree.get(a);
         const nodeB = tree.get(b);
 
-        assertIsNonNull(nodeA);
-        assertIsNonNull(nodeB);
+        Utils.assertIsNonNull(nodeA);
+        Utils.assertIsNonNull(nodeB);
 
         let result = 0;
 
@@ -47,8 +47,8 @@ export function sortChildIDS(parentNode: TreeNode, tree: Tree) {
         const nodeBWeights = applyWeights(nodeB);
         if (nodeAWeights == nodeBWeights) {
             if (nodeA.completed) {
-                assertIsNonNull(nodeA.dateEnd);
-                assertIsNonNull(nodeB.dateEnd);
+                Utils.assertIsNonNull(nodeA.dateEnd);
+                Utils.assertIsNonNull(nodeB.dateEnd);
                 result = Date.parse(nodeB.dateEnd) - Date.parse(nodeA.dateEnd)
             }
             else {
@@ -77,7 +77,7 @@ export function identifyDeletedSelfAndChildrenIDS(node: DistinctTreeNode, tree: 
         // iterate every child node
         for (let i = 0; i < node.childIDS.length; i++) {
             const childNode = tree.get(node.childIDS[i]);
-            assertIsNonNull(childNode);
+            Utils.assertIsNonNull(childNode);
             deleteSelfAndChildren(childNode);
         }
 
@@ -90,10 +90,10 @@ export function identifyDeletedSelfAndChildrenIDS(node: DistinctTreeNode, tree: 
 
 export function isNodeNameUnique(tree: Tree, parentID: string, name: string) {
     const parentNode = tree.get(parentID);
-    assertIsNonNull(parentNode);
+    Utils.assertIsNonNull(parentNode);
     const siblingNames = parentNode.childIDS.map((id) => {
         const distinctNode = tree.get(id);
-        assertIsNonNull(distinctNode);
+        Utils.assertIsNonNull(distinctNode);
         return distinctNode.name;
     })
     return !siblingNames.includes(name);
@@ -204,6 +204,3 @@ export async function refreshTree(initTree: (nodes: DistinctTreeNode[]) => void)
     initTree(nodes);
 }
 
-export function validateProfileGroup(){
-    
-}

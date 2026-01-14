@@ -47,7 +47,7 @@ export default function DeathLogModalEditBodyNotesDel({
 					<input
 						type="search"
 						className="input join-item"
-						placeholder="Type `DEL` to delete"
+						placeholder="Type DEL to delete"
 						value={delConfirmStr}
 						onChange={(e) =>
 							setDelConfirmStr(e.currentTarget.value)

@@ -5,6 +5,7 @@ import { useDeathLogStore } from "../../../stores/useDeathLogStore";
 import loop from "../../../assets/loop.svg";
 import skullRed from "../../../assets/skull_red.svg";
 import * as Utils from "../utils";
+import * as GenUtils from "../../../utils";
 import DeathLogCardModalBody from "./DeathLogCardModalBody";
 import useCardCompletionToggle from "./useCardCompletionToggle";
 import useCardModal from "./useCardModal";
@@ -26,9 +27,11 @@ export default function DeathLogCard({ node, entryNum }: Props) {
 	const {
 		modalState,
 		setModalState,
-		inputTextError,
-		setInputTextError,
+		inputTextNameError,
+		setInputTextNameError,
 		editModalRef,
+		inputTextProfileGroupError,
+		setInputTextProfileGroupError,
 	} = useCardModal(node);
 
 	const {
@@ -87,7 +90,7 @@ export default function DeathLogCard({ node, entryNum }: Props) {
 								handleOnEditChange={(newModalState) =>
 									setModalState(newModalState)
 								}
-								inputTextError={inputTextError}
+								inputTextNameError={inputTextNameError}
 								modalState={modalState}
 							/>
 
@@ -130,19 +133,18 @@ export default function DeathLogCard({ node, entryNum }: Props) {
 									editModalRef.current?.close();
 								} catch (e) {
 									if (e instanceof Error) {
-										setInputTextError(e.message);
+										setInputTextNameError(e.message);
+										console.log(e.message)
 									}
 								}
 							},
 						},
 					]}
 					handleOnClose={async () => {
-						await new Promise((resolve) =>
-							setTimeout(resolve, 650),
-						); // if not used, ui flicker from page turn happens
+						await GenUtils.delay(300); // if not used, ui flicker from page turn happens
 						setPage(1);
 						setModalState(node);
-						setInputTextError("");
+						setInputTextNameError("");
 					}}
 				/>
 				<Modal
@@ -156,9 +158,7 @@ export default function DeathLogCard({ node, entryNum }: Props) {
 							css: "btn-success",
 							fn: async () => {
 								completionNotifyModalRef.current?.close();
-								await new Promise((resolve) =>
-									setTimeout(resolve, 210),
-								);
+								await GenUtils.delay(300);
 								const newChecked = !checked;
 								if (newChecked) {
 									updateNode(node, {
