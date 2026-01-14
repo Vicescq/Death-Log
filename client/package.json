@@ -58,6 +58,7 @@
       "prettier-plugin-tailwindcss"
     ],
     "tabWidth": 4,
-    "useTabs": true
+    "useTabs": true,
+    "semi": true
   }
 }

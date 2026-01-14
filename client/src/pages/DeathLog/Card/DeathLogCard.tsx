@@ -8,8 +8,8 @@ import * as Utils from "../utils";
 import * as GenUtils from "../../../utils";
 import DeathLogCardModalBody from "./DeathLogCardModalBody";
 import useCardCompletionToggle from "./useCardCompletionToggle";
-import useCardModal from "./useCardModal";
 import type { DistinctTreeNode } from "../../../model/TreeNodeModel";
+import { useState, useRef } from "react";
 
 type Props = {
 	node: DistinctTreeNode;
@@ -24,15 +24,8 @@ export default function DeathLogCard({ node, entryNum }: Props) {
 		node.type == "game" ? 2 : 3,
 	);
 
-	const {
-		modalState,
-		setModalState,
-		inputTextNameError,
-		setInputTextNameError,
-		editModalRef,
-		inputTextProfileGroupError,
-		setInputTextProfileGroupError,
-	} = useCardModal(node);
+	const [modalState, setModalState] = useState<DistinctTreeNode>({ ...node });
+	const editModalRef = useRef<HTMLDialogElement>(null);
 
 	const {
 		completionNotifyModalRef,
@@ -79,7 +72,10 @@ export default function DeathLogCard({ node, entryNum }: Props) {
 				</div>
 				<DeathLogCardOptions
 					node={node}
-					handleEdit={() => editModalRef.current?.showModal()}
+					handleEdit={() => {
+						setPage(1);
+						editModalRef.current?.showModal();
+					}}
 				/>
 				<Modal
 					closeBtnName="Cancel"
@@ -90,7 +86,6 @@ export default function DeathLogCard({ node, entryNum }: Props) {
 								handleOnEditChange={(newModalState) =>
 									setModalState(newModalState)
 								}
-								inputTextNameError={inputTextNameError}
 								modalState={modalState}
 							/>
 
@@ -133,8 +128,7 @@ export default function DeathLogCard({ node, entryNum }: Props) {
 									editModalRef.current?.close();
 								} catch (e) {
 									if (e instanceof Error) {
-										setInputTextNameError(e.message);
-										console.log(e.message)
+										console.log(e.message);
 									}
 								}
 							},
@@ -142,9 +136,8 @@ export default function DeathLogCard({ node, entryNum }: Props) {
 					]}
 					handleOnClose={async () => {
 						await GenUtils.delay(300); // if not used, ui flicker from page turn happens
-						setPage(1);
+						setPage(0);
 						setModalState(node);
-						setInputTextNameError("");
 					}}
 				/>
 				<Modal

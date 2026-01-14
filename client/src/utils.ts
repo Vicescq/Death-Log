@@ -14,6 +14,6 @@ export function assertIsProfile(value: DistinctTreeNode): asserts value is Profi
 
 export async function delay(ms: number) {
     await new Promise((resolve) =>
-        setTimeout(resolve, 300),
+        setTimeout(resolve, ms),
     );
 }

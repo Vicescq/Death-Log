@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import type { DistinctTreeNode, Game, Profile, RootNode, Subject, Tree, TreeNode } from '../model/TreeNodeModel';
 import * as Utils from './utils';
+import * as CardUtils from "../pages/deathLog/utils";
 import * as GenUtils from '../utils';
 import LocalDB from '../services/LocalDB';
 import type { EditableSubjectField } from '../pages/deathLog/DeathLogFAB';
@@ -37,17 +38,18 @@ export const useDeathLogStore = create<DeathLogState>((set) => ({
     addNode: (type, inputText, parentID, overrides) => {
 
         set((state) => {
-            const name = Utils.validateNodeString(inputText, state.tree, parentID);
+
+
             let node: DistinctTreeNode;
             switch (type) {
                 case "game":
-                    node = Utils.createGame(name, state.tree);
+                    node = Utils.createGame(inputText, state.tree);
                     break;
                 case "profile":
-                    node = Utils.createProfile(name, parentID, state.tree);
+                    node = Utils.createProfile(inputText, parentID, state.tree);
                     break;
                 case "subject":
-                    node = Utils.createSubject(name, parentID, state.tree);
+                    node = Utils.createSubject(inputText, parentID, state.tree);
                     node = { ...node, ...overrides }
                     break;
             }
@@ -111,7 +113,7 @@ export const useDeathLogStore = create<DeathLogState>((set) => ({
             let updatedAlready = false;
 
             if (node.name != overrides.name) {
-                Utils.validateNodeString(overrides.name, updatedTree, node.parentID);
+                CardUtils.validateNodeString(overrides.name, updatedTree, node.parentID);
             }
             
             const updatedNode: DistinctTreeNode = { ...node, ...overrides };

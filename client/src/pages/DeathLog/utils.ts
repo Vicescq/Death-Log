@@ -126,7 +126,7 @@ export function formatBreadcrumbMembers(breadcrumbMembers: BreadcrumbMember[], v
 }
 
 export function cardHasBeenEdited(original: DistinctTreeNode, modalState: DistinctTreeNode) {
-    if (original.name != modalState.name) {
+    if (original.name != modalState.name && modalState.name != "") {
         return true;
     }
 
@@ -170,6 +170,7 @@ export function cardHasBeenEdited(original: DistinctTreeNode, modalState: Distin
 
     return false
 }
+
 export function validateProfileGroup(groupings: ProfileGroup[]) {
     if (groupings.length == 0) return;
 
@@ -187,4 +188,31 @@ export function validateProfileGroup(groupings: ProfileGroup[]) {
             throw new Error("Name has to be unique!");
         }
     });
+}
+
+export function validateNodeString(inputText: string, tree: Tree, parentID: string) {
+    inputText = inputText.trim();
+    if (typeof inputText != "string") {
+        throw new Error("Text has to be of type string!");
+    }
+    if (inputText == "") {
+        throw new Error("Name cannot be empty!");
+    }
+
+    const parentNode = tree.get(parentID);
+    Utils.assertIsNonNull(parentNode);
+    const siblingNames = parentNode.childIDS.map((id) => {
+        const distinctNode = tree.get(id);
+        Utils.assertIsNonNull(distinctNode);
+        return distinctNode.name;
+    });
+
+    if (siblingNames.includes(inputText)) {
+        throw new Error("Name has to be unique!");
+    }
+    if (inputText == "...") {
+        throw new Error("Please use another name!");
+    }
+
+    return inputText;
 }

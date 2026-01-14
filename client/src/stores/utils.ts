@@ -3,24 +3,6 @@ import LocalDB from "../services/LocalDB";
 import * as Utils from "../utils"
 import { nanoid } from "nanoid";
 
-export function validateNodeString(inputText: string, tree: Tree, parentID: string) {
-    inputText = inputText.trim();
-    if (typeof inputText != "string") {
-        throw new Error("Text has to be of type string!");
-    }
-    if (inputText == "") {
-        throw new Error("Name cannot be empty!");
-    }
-    if (!isNodeNameUnique(tree, parentID, inputText)) {
-        throw new Error("Name has to be unique!")
-    }
-    if (inputText == "...") {
-        throw new Error("Please use another name!");
-    }
-
-    return inputText;
-}
-
 export function sortChildIDS(parentNode: TreeNode, tree: Tree) {
     const sorted = parentNode.childIDS.toSorted((a, b) => {
         const nodeA = tree.get(a);
@@ -86,17 +68,6 @@ export function identifyDeletedSelfAndChildrenIDS(node: DistinctTreeNode, tree: 
 
     deleteSelfAndChildren(node);
     return idsToBeDeleted;
-}
-
-export function isNodeNameUnique(tree: Tree, parentID: string, name: string) {
-    const parentNode = tree.get(parentID);
-    Utils.assertIsNonNull(parentNode);
-    const siblingNames = parentNode.childIDS.map((id) => {
-        const distinctNode = tree.get(id);
-        Utils.assertIsNonNull(distinctNode);
-        return distinctNode.name;
-    })
-    return !siblingNames.includes(name);
 }
 
 export function createRootNode() {
