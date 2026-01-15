@@ -4,12 +4,13 @@ import usePagination from "../../../hooks/usePagination";
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
 import loop from "../../../assets/loop.svg";
 import skullRed from "../../../assets/skull_red.svg";
-import * as Utils from "../utils";
-import * as GenUtils from "../../../utils";
 import DeathLogCardModalBody from "./DeathLogCardModalBody";
 import useCardCompletionToggle from "./useCardCompletionToggle";
 import type { DistinctTreeNode } from "../../../model/TreeNodeModel";
 import { useState, useRef } from "react";
+import useInputTextError from "./useInputTextError";
+import { delay } from "../../../utils";
+import { calcDeaths, cardHasBeenEdited } from "../utils";
 
 type Props = {
 	node: DistinctTreeNode;
@@ -33,6 +34,15 @@ export default function DeathLogCard({ node, entryNum }: Props) {
 		setChecked,
 		completedCSSStrike,
 	} = useCardCompletionToggle(node.completed);
+
+	const { inputTextError, displayError } = useInputTextError(
+		modalState.name,
+		{
+			type: "editNode",
+			parentID: node.parentID,
+			omittedID: node.id,
+		},
+	);
 
 	return (
 		<>
@@ -67,7 +77,7 @@ export default function DeathLogCard({ node, entryNum }: Props) {
 					</div>
 					<div className="flex gap-2 font-semibold uppercase opacity-60">
 						<img src={skullRed} alt="" className="w-4" />
-						{Utils.calcDeaths(node, tree)}
+						{calcDeaths(node, tree)}
 					</div>
 				</div>
 				<DeathLogCardOptions
@@ -87,6 +97,8 @@ export default function DeathLogCard({ node, entryNum }: Props) {
 									setModalState(newModalState)
 								}
 								modalState={modalState}
+								displayError={displayError}
+								inputTextError={inputTextError}
 							/>
 
 							<div className="join mt-4 flex">
@@ -118,7 +130,8 @@ export default function DeathLogCard({ node, entryNum }: Props) {
 						{
 							text: "Save edits",
 							css: `${
-								Utils.cardHasBeenEdited(node, modalState)
+								cardHasBeenEdited(node, modalState) &&
+								!displayError
 									? "btn-success"
 									: "btn-disabled"
 							} mt-10`,
@@ -135,7 +148,7 @@ export default function DeathLogCard({ node, entryNum }: Props) {
 						},
 					]}
 					handleOnClose={async () => {
-						await GenUtils.delay(300); // if not used, ui flicker from page turn happens
+						await delay(300); // if not used, ui flicker from page turn happens
 						setPage(0);
 						setModalState(node);
 					}}
@@ -151,7 +164,7 @@ export default function DeathLogCard({ node, entryNum }: Props) {
 							css: "btn-success",
 							fn: async () => {
 								completionNotifyModalRef.current?.close();
-								await GenUtils.delay(300);
+								await delay(300);
 								const newChecked = !checked;
 								if (newChecked) {
 									updateNode(node, {

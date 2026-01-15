@@ -9,7 +9,8 @@ import Modal from "../../components/Modal";
 import { useDeathLogStore } from "../../stores/useDeathLogStore";
 import type { VirtuosoHandle } from "react-virtuoso";
 import type { Subject, SubjectContext } from "../../model/TreeNodeModel";
-import * as Utils from "./utils";
+import useInputTextError from "./card/useInputTextError";
+import { mapContextKeyToProperStr, mapProperStrToContextKey } from "./utils";
 
 export type EditableSubjectField = Pick<Subject, "reoccurring" | "context">;
 
@@ -29,13 +30,16 @@ export default function DeathLogFAB({
 	virtuosoRef,
 }: Props) {
 	const addNode = useDeathLogStore((state) => state.addNode);
-
 	const modalRef = useRef<HTMLDialogElement>(null);
 	const [inputText, setInputText] = useState("");
-	const [inputTextError, setInputTextError] = useState("");
 	const [reoccurring, setReoccurring] = useState(false);
 	const [subjectContext, setSubjectContext] =
 		useState<SubjectContext>("boss");
+
+	const { inputTextError, displayError } = useInputTextError(inputText, {
+		type: "addNode",
+		parentID: parentID,
+	});
 
 	const header =
 		type != "subject"
@@ -43,6 +47,13 @@ export default function DeathLogFAB({
 			: type[0].toUpperCase() +
 				type.slice(1) +
 				" title & Characteristics";
+
+	let btnCSS = "";
+	if (inputTextError == "") {
+		btnCSS = "btn-success";
+	} else {
+		btnCSS = "btn-disabled";
+	}
 
 	return (
 		<>
@@ -156,14 +167,14 @@ export default function DeathLogFAB({
 										value={inputText}
 									/>
 									<div
-										className={`text-error mt-2 ml-2 ${inputTextError != "" ? "" : "hidden"} text-sm`}
+										className={`text-error mt-2 ml-2 ${displayError ? inputTextError : "hidden"} text-sm`}
 									>
 										{inputTextError}
 									</div>
 								</div>
 
 								<button
-									className="btn join-item btn-neutral"
+									className={`btn ${btnCSS} join-item`}
 									onClick={() => {
 										try {
 											if (type != "subject") {
@@ -188,7 +199,6 @@ export default function DeathLogFAB({
 											setInputText("");
 										} catch (e) {
 											if (e instanceof Error) {
-												setInputTextError(e.message);
 											}
 										}
 									}}
@@ -203,12 +213,12 @@ export default function DeathLogFAB({
 										<legend className="fieldset-legend"></legend>
 										<select
 											className="select"
-											value={Utils.mapContextKeyToProperStr(
+											value={mapContextKeyToProperStr(
 												subjectContext,
 											)}
 											onChange={(e) =>
 												setSubjectContext(
-													Utils.mapProperStrToContextKey(
+													mapProperStrToContextKey(
 														e.currentTarget.value,
 													),
 												)
@@ -245,7 +255,6 @@ export default function DeathLogFAB({
 				modalBtns={[]}
 				handleOnClose={() => {
 					setInputText("");
-					setInputTextError("");
 					setSubjectContext("boss");
 					setReoccurring(false);
 				}}

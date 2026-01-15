@@ -8,12 +8,16 @@ type Props = {
 	page: number;
 	handleOnEditChange: (newModalState: DistinctTreeNode) => void;
 	modalState: DistinctTreeNode;
+	inputTextError: string;
+	displayError: boolean;
 };
 
 export default function DeathLogCardModalBody({
 	page,
 	handleOnEditChange,
 	modalState,
+	inputTextError,
+	displayError,
 }: Props) {
 	if (page == 0) {
 		return <></>;
@@ -22,6 +26,8 @@ export default function DeathLogCardModalBody({
 			<DeathLogModalEditBodyNameDate
 				node={modalState}
 				handleOnEditChange={handleOnEditChange}
+				inputTextError={inputTextError}
+				displayError={displayError}
 			/>
 		);
 	} else if (page == 2 && modalState.type == "subject") {

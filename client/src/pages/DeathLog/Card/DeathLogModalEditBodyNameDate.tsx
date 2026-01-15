@@ -1,29 +1,22 @@
-import { useEffect, useState } from "react";
 import type { DistinctTreeNode } from "../../../model/TreeNodeModel";
-import * as Utils from "../utils";
-import { useDeathLogStore } from "../../../stores/useDeathLogStore";
+import {
+	convertDefaultCardModalDateFormatToISO,
+	defaultCardModalDateFormat,
+} from "../utils";
 
 type Props = {
 	node: DistinctTreeNode;
 	handleOnEditChange: (newModalState: DistinctTreeNode) => void;
+	inputTextError: string;
+	displayError: boolean;
 };
 
 export default function DeathLogModalEditBodyNameDate({
 	node,
 	handleOnEditChange,
+	inputTextError,
+	displayError,
 }: Props) {
-	const tree = useDeathLogStore((state) => state.tree);
-	const [inputTextError, setInputTextError] = useState("");
-
-	useEffect(() => {
-		if(node.name == ""){
-			setInputTextError("Name cannot be empty!")
-		}
-		else{
-			setInputTextError("")
-		}
-	}, [node.name])
-
 	return (
 		<>
 			<fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-full border p-4">
@@ -34,23 +27,10 @@ export default function DeathLogModalEditBodyNameDate({
 					className="input"
 					value={node.name}
 					onChange={(e) => {
-						try {
-							if (e.currentTarget.value != ""){
-								Utils.validateNodeString(
-									e.currentTarget.value,
-									tree,
-									node.parentID,
-								);
-							}
-							handleOnEditChange({
-								...node,
-								name: e.currentTarget.value,
-							});
-						} catch (e) {
-							if (e instanceof Error) {
-								setInputTextError(e.message);
-							}
-						}
+						handleOnEditChange({
+							...node,
+							name: e.currentTarget.value,
+						});
 					}}
 					onBlur={(e) =>
 						handleOnEditChange({
@@ -62,7 +42,7 @@ export default function DeathLogModalEditBodyNameDate({
 					}
 				/>
 				<div
-					className={`text-error mt-2 ml-2 ${inputTextError != "" ? "" : "hidden"} text-sm`}
+					className={`text-error mt-2 ml-2 ${displayError ? "" : "hidden"} text-sm`}
 				>
 					{inputTextError}
 				</div>
@@ -77,22 +57,22 @@ export default function DeathLogModalEditBodyNameDate({
 				<input
 					type="date"
 					className="input join-item"
-					value={Utils.defaultCardModalDateFormat(node.dateStart)}
+					value={defaultCardModalDateFormat(node.dateStart)}
 					onChange={(e) =>
 						handleOnEditChange({
 							...node,
 							dateStart:
 								e.currentTarget.value == ""
 									? node.dateStart
-									: Utils.convertDefaultCardModalDateFormatToISO(
+									: convertDefaultCardModalDateFormatToISO(
 											e.currentTarget.value,
 										),
 						})
 					}
 					max={
 						node.completed && node.dateEnd
-							? Utils.defaultCardModalDateFormat(node.dateEnd)
-							: Utils.defaultCardModalDateFormat(
+							? defaultCardModalDateFormat(node.dateEnd)
+							: defaultCardModalDateFormat(
 									new Date().toISOString(),
 								)
 					}
@@ -104,7 +84,7 @@ export default function DeathLogModalEditBodyNameDate({
 						className="input join-item"
 						value={
 							node.dateEnd
-								? Utils.defaultCardModalDateFormat(node.dateEnd)
+								? defaultCardModalDateFormat(node.dateEnd)
 								: undefined
 						}
 						onChange={(e) =>
@@ -113,12 +93,12 @@ export default function DeathLogModalEditBodyNameDate({
 								dateEnd:
 									e.currentTarget.value == ""
 										? node.dateEnd
-										: Utils.convertDefaultCardModalDateFormatToISO(
+										: convertDefaultCardModalDateFormatToISO(
 												e.currentTarget.value,
 											),
 							})
 						}
-						min={Utils.defaultCardModalDateFormat(node.dateStart)}
+						min={defaultCardModalDateFormat(node.dateStart)}
 					/>
 				) : null}
 				<div className="divider my-2">↓ Reliability Flags ↓</div>
