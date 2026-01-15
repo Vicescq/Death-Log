@@ -1,8 +1,8 @@
 import type { DistinctTreeNode, TreeNode } from "../../../model/TreeNodeModel";
-import DeathLogModalEditBodyNameDate from "./DeathLogModalEditBodyNameDate";
-import DeathLogModalEditBodyNotesDel from "./DeathLogModalEditBodyNotesDel";
-import DeathLogModalEditBodyProfile from "./DeathLogModalEditBodyProfile";
-import DeathLogModalEditBodySubject from "./DeathLogModalEditBodySubject";
+import DLMEBNameDate from "./DLMEBNameDate";
+import DLMEBNotesDel from "./DLMEBNotesDel";
+import DLMEBProfile from "./DLMEBProfile";
+import DLMEBSubject from "./DLMEBSubject";
 
 type Props = {
 	page: number;
@@ -23,7 +23,7 @@ export default function DeathLogCardModalBody({
 		return <></>;
 	} else if (page == 1) {
 		return (
-			<DeathLogModalEditBodyNameDate
+			<DLMEBNameDate
 				node={modalState}
 				handleOnEditChange={handleOnEditChange}
 				inputTextError={inputTextError}
@@ -32,21 +32,21 @@ export default function DeathLogCardModalBody({
 		);
 	} else if (page == 2 && modalState.type == "subject") {
 		return (
-			<DeathLogModalEditBodySubject
+			<DLMEBSubject
 				node={modalState}
 				handleOnEditChange={handleOnEditChange}
 			/>
 		);
 	} else if (page == 2 && modalState.type == "profile") {
 		return (
-			<DeathLogModalEditBodyProfile
+			<DLMEBProfile
 				node={modalState}
 				handleOnEditChange={handleOnEditChange}
 			/>
 		);
 	} else if (page == 2 || page == 3) {
 		return (
-			<DeathLogModalEditBodyNotesDel
+			<DLMEBNotesDel
 				node={modalState}
 				handleOnEditChange={handleOnEditChange}
 			/>

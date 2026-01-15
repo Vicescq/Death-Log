@@ -9,7 +9,7 @@ import Modal from "../../components/Modal";
 import { useDeathLogStore } from "../../stores/useDeathLogStore";
 import type { VirtuosoHandle } from "react-virtuoso";
 import type { Subject, SubjectContext } from "../../model/TreeNodeModel";
-import useInputTextError from "./card/useInputTextError";
+import useInputTextError from "./useInputTextError";
 import { mapContextKeyToProperStr, mapProperStrToContextKey } from "./utils";
 
 export type EditableSubjectField = Pick<Subject, "reoccurring" | "context">;

@@ -11,7 +11,7 @@ type Props = {
 	displayError: boolean;
 };
 
-export default function DeathLogModalEditBodyNameDate({
+export default function DLMEBNameDate({
 	node,
 	handleOnEditChange,
 	inputTextError,

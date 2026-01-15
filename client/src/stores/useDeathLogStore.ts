@@ -1,10 +1,10 @@
 import { create } from 'zustand'
 import type { DistinctTreeNode, Game, Profile, RootNode, Subject, Tree, TreeNode } from '../model/TreeNodeModel';
 import * as Utils from './utils';
-import * as CardUtils from "../pages/deathLog/utils";
+import * as CardUtils from "../pages/death-log/utils";
 import * as GenUtils from '../utils';
 import LocalDB from '../services/LocalDB';
-import type { EditableSubjectField } from '../pages/deathLog/DeathLogFAB';
+import type { EditableSubjectField } from '../pages/death-log/DeathLogFAB';
 
 type DeathLogState = {
     tree: Tree;

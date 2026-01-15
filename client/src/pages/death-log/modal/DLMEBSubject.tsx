@@ -10,7 +10,7 @@ type Props = {
 	handleOnEditChange: (newModalState: DistinctTreeNode) => void;
 };
 
-export default function DeathLogModalEditBodySubject({
+export default function DLMEBSubject({
 	node,
 	handleOnEditChange,
 }: Props) {

@@ -4,22 +4,26 @@ import usePagination from "../../../hooks/usePagination";
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
 import loop from "../../../assets/loop.svg";
 import skullRed from "../../../assets/skull_red.svg";
-import DeathLogCardModalBody from "./DeathLogCardModalBody";
-import useCardCompletionToggle from "./useCardCompletionToggle";
+import DeathLogCardModalBody from "../modal/DeathLogCardModalBody";
+import useCardCompletionToggle from "../useCardCompletionToggle";
 import type { DistinctTreeNode } from "../../../model/TreeNodeModel";
 import { useState, useRef } from "react";
-import useInputTextError from "./useInputTextError";
+import useInputTextError from "../useInputTextError";
 import { delay } from "../../../utils";
 import { calcDeaths, cardHasBeenEdited } from "../utils";
 
 type Props = {
-	node: DistinctTreeNode;
+	nodeID: string;
 	entryNum: number;
 };
 
-export default function DeathLogCard({ node, entryNum }: Props) {
+export default function DeathLogCard({ nodeID, entryNum }: Props) {
 	const tree = useDeathLogStore((state) => state.tree);
 	const updateNode = useDeathLogStore((state) => state.updateNode);
+	const node = tree.get(nodeID);
+	if (!node) {
+		return null;
+	}
 
 	const { page, setPage, handlePageTurn } = usePagination(
 		node.type == "game" ? 2 : 3,

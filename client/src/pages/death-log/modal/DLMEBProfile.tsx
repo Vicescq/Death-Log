@@ -8,7 +8,7 @@ type Props = {
 	handleOnEditChange: (newModalState: Profile) => void;
 };
 
-export default function DeathLogModalEditBodyProfile({
+export default function DLMEBProfile({
 	node,
 	handleOnEditChange,
 }: Props) {

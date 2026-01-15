@@ -7,10 +7,10 @@ import ErrorPage from "./pages/ErrorPage.tsx";
 import Root from "./pages/Root.tsx";
 import Start from "./pages/Start.tsx";
 import DataManagement from "./pages/DataManagement.tsx";
-import DeathLogRouter from "./pages/deathLog/DeathLogRouter.tsx";
+import DeathLogRouter from "./pages/death-log/DeathLogRouter.tsx";
 import MultipleTabs from "./pages/MultipleTabs.tsx";
 import { ClerkProvider } from "@clerk/clerk-react";
-import DeathLog from "./pages/deathLog/DeathLog.tsx";
+import DeathLog from "./pages/death-log/DeathLog.tsx";
 import FAQ from "./pages/FAQ.tsx";
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;

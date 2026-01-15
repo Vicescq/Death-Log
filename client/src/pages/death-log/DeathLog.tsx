@@ -6,7 +6,7 @@ import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
 import { Virtuoso, type Components, type VirtuosoHandle } from "react-virtuoso";
 import DeathLogBreadcrumb from "./DeathLogBreadcrumb";
 import useBreadcrumbMembers from "./useBreadcrumbMembers";
-import DeathLogCardWrapper from "./card/DeathLogCardWrapper";
+import DeathLogCard from "./card/DeathLogCard";
 
 type Props = {
 	type: "game" | "profile" | "subject";
@@ -16,31 +16,24 @@ type Props = {
 export default function DeathLog({ type, parentID }: Props) {
 	const tree = useDeathLogStore((state) => state.tree);
 	const virtuosoRef = useRef<VirtuosoHandle>(null);
-
 	const childIDS = tree.get(parentID)?.childIDS || [];
-	let cards: React.JSX.Element[] = [];
-	childIDS.forEach((id, i) => {
-		cards.push(<DeathLogCardWrapper nodeID={id} entryNum={i + 1} />);
-	});
 
 	const [pageOpacity, setPageOpacity] = useState("");
 	const [deathLogIsInert, setDeathLogIsInert] = useState(false);
 	const breadcrumbMembers = useBreadcrumbMembers();
 
-	const DeathLogWrapper: Components["List"] = forwardRef(
-		(props, ref) => {
-			return (
-				<ul
-					ref={ref as React.Ref<HTMLUListElement>} // no other workaround ?
-					{...props}
-					className={`list rounded-box m-auto max-w-[900px] ${pageOpacity}`}
-					inert={deathLogIsInert}
-				>
-					{props.children}
-				</ul>
-			);
-		},
-	);
+	const DeathLogWrapper: Components["List"] = forwardRef((props, ref) => {
+		return (
+			<ul
+				ref={ref as React.Ref<HTMLUListElement>} // no other workaround ?
+				{...props}
+				className={`list rounded-box m-auto max-w-[900px] ${pageOpacity}`}
+				inert={deathLogIsInert}
+			>
+				{props.children}
+			</ul>
+		);
+	});
 
 	return (
 		<>
@@ -57,7 +50,7 @@ export default function DeathLog({ type, parentID }: Props) {
 				ref={virtuosoRef}
 				data={childIDS}
 				itemContent={(i, id) => (
-					<DeathLogCardWrapper nodeID={id} entryNum={i + 1} />
+					<DeathLogCard nodeID={id} entryNum={i + 1} />
 				)}
 				components={{ List: DeathLogWrapper }}
 				computeItemKey={(_, id) => {

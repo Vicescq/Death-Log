@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import { useDeathLogStore } from "../../../stores/useDeathLogStore";
+import { useDeathLogStore } from "../../stores/useDeathLogStore";
 import {
 	type StringValidtionContext,
 	validateString,
 	assertIsNonNull,
-} from "../../../utils";
+} from "../../utils";
 
 export default function useInputTextError(
 	inputText: string,
