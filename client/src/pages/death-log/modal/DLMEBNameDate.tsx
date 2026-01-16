@@ -1,22 +1,26 @@
 import type { DistinctTreeNode } from "../../../model/TreeNodeModel";
+import { formatString } from "../../../stores/utils";
 import {
 	convertDefaultCardModalDateFormatToISO,
 	defaultCardModalDateFormat,
 } from "../utils";
+import { useDeathLogStore } from "../../../stores/useDeathLogStore";
+import useModalInputTextError from "../useInputTextError";
 
 type Props = {
 	node: DistinctTreeNode;
-	handleOnEditChange: (newModalState: DistinctTreeNode) => void;
-	inputTextError: string;
-	displayError: boolean;
+	onEdit: (newModalState: DistinctTreeNode) => void;
 };
 
-export default function DLMEBNameDate({
-	node,
-	handleOnEditChange,
-	inputTextError,
-	displayError,
-}: Props) {
+export default function DLMEBNameDate({ node, onEdit }: Props) {
+	const tree = useDeathLogStore((state) => state.tree);
+
+	const { inputTextError, onNameEdit } = useModalInputTextError({
+		type: "nodeEdit",
+		tree: tree,
+		parentID: node.parentID,
+	});
+
 	return (
 		<>
 			<fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-full border p-4">
@@ -27,23 +31,20 @@ export default function DLMEBNameDate({
 					className="input"
 					value={node.name}
 					onChange={(e) => {
-						handleOnEditChange({
+						onEdit({
 							...node,
 							name: e.currentTarget.value,
 						});
+						onNameEdit(e.currentTarget.value);
 					}}
 					onBlur={(e) =>
-						handleOnEditChange({
+						onEdit({
 							...node,
-							name: e.currentTarget.value
-								.replace(/\s+/g, " ")
-								.trim(),
+							name: formatString(e.currentTarget.value),
 						})
 					}
 				/>
-				<div
-					className={`text-error mt-2 ml-2 ${displayError ? "" : "hidden"} text-sm`}
-				>
+				<div className={`text-error mt-2 ml-2 text-sm`}>
 					{inputTextError}
 				</div>
 			</fieldset>
@@ -59,7 +60,7 @@ export default function DLMEBNameDate({
 					className="input join-item"
 					value={defaultCardModalDateFormat(node.dateStart)}
 					onChange={(e) =>
-						handleOnEditChange({
+						onEdit({
 							...node,
 							dateStart:
 								e.currentTarget.value == ""
@@ -88,7 +89,7 @@ export default function DLMEBNameDate({
 								: undefined
 						}
 						onChange={(e) =>
-							handleOnEditChange({
+							onEdit({
 								...node,
 								dateEnd:
 									e.currentTarget.value == ""
@@ -109,7 +110,7 @@ export default function DLMEBNameDate({
 						checked={node.dateStartRel}
 						className="toggle toggle-primary ml-auto"
 						onChange={(e) =>
-							handleOnEditChange({
+							onEdit({
 								...node,
 								dateStartRel: e.currentTarget.checked,
 							})
@@ -124,7 +125,7 @@ export default function DLMEBNameDate({
 							checked={node.dateEndRel}
 							className="toggle toggle-primary ml-auto"
 							onChange={(e) =>
-								handleOnEditChange({
+								onEdit({
 									...node,
 									dateEndRel: e.currentTarget.checked,
 								})

@@ -1,29 +1,18 @@
 import type { DistinctTreeNode } from "../../../model/TreeNodeModel";
 import trash from "../../../assets/trash.svg";
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 type Props = {
 	node: DistinctTreeNode;
-	handleOnEditChange: (newModalState: DistinctTreeNode) => void;
+	onEdit: (newModalState: DistinctTreeNode) => void;
 };
 
-export default function DLMEBNotesDel({
-	node,
-	handleOnEditChange,
-}: Props) {
+export default function DLMEBNotesDel({ node, onEdit }: Props) {
 	const deleteNode = useDeathLogStore((state) => state.deleteNode);
-
-	const [delConfirmStr, setDelConfirmStr] = useState("");
-	const [delBtnCSS, setDelBtnCSS] = useState("btn-accent");
-
-	useEffect(() => {
-		if (delConfirmStr == "DEL") {
-			setDelBtnCSS("btn-success");
-		} else {
-			setDelBtnCSS("btn-accent");
-		}
-	}, [delConfirmStr]);
+	const [delBtnCSS, setDelBtnCSS] = useState<"btn-disabled" | "btn-success">(
+		"btn-disabled",
+	);
 
 	return (
 		<>
@@ -34,7 +23,7 @@ export default function DLMEBNotesDel({
 					placeholder="Type here"
 					value={node.notes}
 					onChange={(e) =>
-						handleOnEditChange({
+						onEdit({
 							...node,
 							notes: e.currentTarget.value,
 						})
@@ -48,19 +37,17 @@ export default function DLMEBNotesDel({
 						type="search"
 						className="input join-item"
 						placeholder="Type DEL to delete"
-						value={delConfirmStr}
-						onChange={(e) =>
-							setDelConfirmStr(e.currentTarget.value)
-						}
-						onBlur={(e) => setDelConfirmStr(e.currentTarget.value.trim())}
+						onChange={(e) => {
+							if (e.currentTarget.value == "DEL") {
+								setDelBtnCSS("btn-success");
+							} else {
+								setDelBtnCSS("btn-disabled");
+							}
+						}}
 					/>
 					<button
 						className={`btn join-item ${delBtnCSS} p-3`}
-						onClick={() => {
-							if (delConfirmStr == "DEL") {
-								deleteNode(node);
-							}
-						}}
+						onClick={() => deleteNode(node)}
 					>
 						<img className="w-4" src={trash} alt="" />
 					</button>

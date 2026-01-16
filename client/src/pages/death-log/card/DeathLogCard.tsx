@@ -6,47 +6,30 @@ import loop from "../../../assets/loop.svg";
 import skullRed from "../../../assets/skull_red.svg";
 import DeathLogCardModalBody from "../modal/DeathLogCardModalBody";
 import useCardCompletionToggle from "../useCardCompletionToggle";
-import type { DistinctTreeNode } from "../../../model/TreeNodeModel";
+import type { DistinctTreeNode, Tree } from "../../../model/TreeNodeModel";
 import { useState, useRef } from "react";
-import useInputTextError from "../useInputTextError";
 import { delay } from "../../../utils";
 import { calcDeaths, cardHasBeenEdited } from "../utils";
 
 type Props = {
-	nodeID: string;
+	node: DistinctTreeNode;
 	entryNum: number;
+	tree: Tree;
 };
 
-export default function DeathLogCard({ nodeID, entryNum }: Props) {
-	const tree = useDeathLogStore((state) => state.tree);
+export default function DeathLogCard({ node, entryNum, tree }: Props) {
 	const updateNode = useDeathLogStore((state) => state.updateNode);
-	const node = tree.get(nodeID);
-	if (!node) {
-		return null;
-	}
-
 	const { page, setPage, handlePageTurn } = usePagination(
 		node.type == "game" ? 2 : 3,
 	);
-
 	const [modalState, setModalState] = useState<DistinctTreeNode>({ ...node });
 	const editModalRef = useRef<HTMLDialogElement>(null);
-
 	const {
 		completionNotifyModalRef,
 		checked,
 		setChecked,
 		completedCSSStrike,
 	} = useCardCompletionToggle(node.completed);
-
-	const { inputTextError, displayError } = useInputTextError(
-		modalState.name,
-		{
-			type: "editNode",
-			parentID: node.parentID,
-			omittedID: node.id,
-		},
-	);
 
 	return (
 		<>
@@ -97,12 +80,10 @@ export default function DeathLogCard({ nodeID, entryNum }: Props) {
 						<>
 							<DeathLogCardModalBody
 								page={page}
-								handleOnEditChange={(newModalState) =>
-									setModalState(newModalState)
-								}
+								onEdit={(newModalState) => {
+									setModalState(newModalState);
+								}}
 								modalState={modalState}
-								displayError={displayError}
-								inputTextError={inputTextError}
 							/>
 
 							<div className="join mt-4 flex">
@@ -133,12 +114,7 @@ export default function DeathLogCard({ nodeID, entryNum }: Props) {
 					modalBtns={[
 						{
 							text: "Save edits",
-							css: `${
-								cardHasBeenEdited(node, modalState) &&
-								!displayError
-									? "btn-success"
-									: "btn-disabled"
-							} mt-10`,
+							css: `${cardHasBeenEdited(node, modalState, tree) ? "btn-success" : "btn-disabled"} mt-10`,
 							fn: () => {
 								try {
 									updateNode(node, modalState);

@@ -1,34 +1,30 @@
-import { useState, useEffect } from "react";
-import { useDeathLogStore } from "../../stores/useDeathLogStore";
-import {
-	type StringValidtionContext,
-	validateString,
-	assertIsNonNull,
-} from "../../utils";
+import { useState } from "react";
+import { validateString, type ValidationContext } from "../../stores/utils";
 
-export default function useInputTextError(
-	inputText: string,
-	context: StringValidtionContext,
-) {
+export type ModalInputTextErrorCB = () => void;
+
+export default function useModalInputTextError(context: ValidationContext) {
 	const [inputTextError, setInputTextError] = useState("");
-	const [displayError, setDisplayError] = useState(false); // for default edge cases: implied error with empty string during addNode FAB, but dont show text and disable confirm btn
+	function onNameEdit(currName: string) {
+		const res = validateString(currName, context);
 
-	const tree = useDeathLogStore((state) => state.tree);
-	useEffect(() => {
-		const res = validateString(inputText, tree, context);
-
-		if (!res.valid && res.cause == "empty" && context.type == "addNode") {
-			assertIsNonNull(res.msg);
-			setInputTextError(res.msg);
-			setDisplayError(false);
-		} else if (!res.valid) {
-			assertIsNonNull(res.msg);
-			setInputTextError(res.msg);
-			setDisplayError(true);
-		} else {
-			setInputTextError("");
-			setDisplayError(false);
+		if (context.type == "nodeAdd") {
+			if (!res.valid && res.cause != "empty" && res.msg) {
+				setInputTextError(res.msg);
+			} else if (res.cause == "empty") {
+				setInputTextError("");
+			} else {
+				setInputTextError("");
+			}
+		} else if (context.type == "nodeEdit") {
+			if (!res.valid && res.cause != "nonunique" && res.msg) {
+				setInputTextError(res.msg);
+			} else if (res.cause == "nonunique") {
+				setInputTextError("");
+			} else {
+				setInputTextError("");
+			}
 		}
-	}, [inputText]);
-	return { inputTextError, displayError };
+	}
+	return { inputTextError, onNameEdit };
 }

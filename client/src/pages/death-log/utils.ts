@@ -3,7 +3,7 @@ import type {
 	SubjectContext,
 	Tree,
 } from "../../model/TreeNodeModel";
-import * as GenUtils from "../../utils";
+import { formatString, validateString } from "../../stores/utils";
 import type { BreadcrumbMember } from "./DeathLogBreadcrumb";
 
 export function calcRequiredPages(size: number, pageSize: number) {
@@ -232,10 +232,14 @@ export function formatBreadcrumbMembers(
 export function cardHasBeenEdited(
 	original: DistinctTreeNode,
 	modalState: DistinctTreeNode,
+	tree: Tree,
 ) {
 	if (
-		original.name != modalState.name.replace(/\s+/g, " ").trim() &&
-		modalState.name.replace(/\s+/g, " ").trim() != ""
+		validateString(modalState.name, {
+			type: "nodeEdit",
+			parentID: modalState.parentID,
+			tree: tree,
+		}).valid
 	) {
 		return true;
 	}

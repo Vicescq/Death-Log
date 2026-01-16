@@ -9,8 +9,9 @@ import Modal from "../../components/Modal";
 import { useDeathLogStore } from "../../stores/useDeathLogStore";
 import type { VirtuosoHandle } from "react-virtuoso";
 import type { Subject, SubjectContext } from "../../model/TreeNodeModel";
-import useInputTextError from "./useInputTextError";
 import { mapContextKeyToProperStr, mapProperStrToContextKey } from "./utils";
+import { formatString } from "../../stores/utils";
+import useModalInputTextError from "./useInputTextError";
 
 export type EditableSubjectField = Pick<Subject, "reoccurring" | "context">;
 
@@ -29,6 +30,7 @@ export default function DeathLogFAB({
 	handleFabOnBlur,
 	virtuosoRef,
 }: Props) {
+	const tree = useDeathLogStore((state) => state.tree);
 	const addNode = useDeathLogStore((state) => state.addNode);
 	const modalRef = useRef<HTMLDialogElement>(null);
 	const [inputText, setInputText] = useState("");
@@ -36,10 +38,29 @@ export default function DeathLogFAB({
 	const [subjectContext, setSubjectContext] =
 		useState<SubjectContext>("boss");
 
-	const { inputTextError, displayError } = useInputTextError(inputText, {
-		type: "addNode",
+	const { inputTextError, onNameEdit } = useModalInputTextError({
+		type: "nodeAdd",
+		tree: tree,
 		parentID: parentID,
 	});
+
+	function onConfirm() {
+		try {
+			if (type != "subject") {
+				addNode(type, inputText, parentID);
+			} else {
+				addNode(type, inputText, parentID, {
+					context: subjectContext,
+					reoccurring: reoccurring,
+				});
+			}
+			modalRef.current?.close();
+			setInputText("");
+		} catch (e) {
+			if (e instanceof Error) {
+			}
+		}
+	}
 
 	const header =
 		type != "subject"
@@ -47,13 +68,6 @@ export default function DeathLogFAB({
 			: type[0].toUpperCase() +
 				type.slice(1) +
 				" title & Characteristics";
-
-	let btnCSS = "";
-	if (inputTextError == "") {
-		btnCSS = "btn-success";
-	} else {
-		btnCSS = "btn-disabled";
-	}
 
 	return (
 		<>
@@ -154,54 +168,29 @@ export default function DeathLogFAB({
 										type="search"
 										placeholder="Type here"
 										className="input"
-										onChange={(e) =>
-											setInputText(e.currentTarget.value)
-										}
+										onChange={(e) => {
+											setInputText(e.currentTarget.value);
+											onNameEdit(e.currentTarget.value);
+										}}
 										onBlur={(e) =>
 											setInputText(
-												e.currentTarget.value
-													.replace(/\s+/g, " ")
-													.trim(),
+												formatString(
+													e.currentTarget.value,
+												),
 											)
 										}
 										value={inputText}
 									/>
 									<div
-										className={`text-error mt-2 ml-2 ${displayError ? inputTextError : "hidden"} text-sm`}
+										className={`text-error mt-2 ml-2 text-sm`}
 									>
 										{inputTextError}
 									</div>
 								</div>
 
 								<button
-									className={`btn ${btnCSS} join-item`}
-									onClick={() => {
-										try {
-											if (type != "subject") {
-												addNode(
-													type,
-													inputText,
-													parentID,
-												);
-											} else {
-												addNode(
-													type,
-													inputText,
-													parentID,
-													{
-														context: subjectContext,
-														reoccurring:
-															reoccurring,
-													},
-												);
-											}
-											modalRef.current?.close();
-											setInputText("");
-										} catch (e) {
-											if (e instanceof Error) {
-											}
-										}
-									}}
+									className={`btn ${inputTextError == "" && formatString(inputText) != "" ? "btn-success" : "btn-disabled"} join-item`}
+									onClick={onConfirm}
 								>
 									Confirm
 								</button>
@@ -209,6 +198,7 @@ export default function DeathLogFAB({
 
 							{type == "subject" ? (
 								<>
+									<div className="divider m-0"></div>
 									<fieldset className="fieldset">
 										<legend className="fieldset-legend"></legend>
 										<select

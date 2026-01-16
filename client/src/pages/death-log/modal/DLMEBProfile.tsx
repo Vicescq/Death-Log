@@ -1,21 +1,33 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Profile } from "../../../model/TreeNodeModel";
 import * as Utils from "../utils";
 import useConsoleLogOnStateChange from "../../../hooks/useConsoleLogOnStateChange";
+import { formatString } from "../../../stores/utils";
 
 type Props = {
 	node: Profile;
-	handleOnEditChange: (newModalState: Profile) => void;
+	onEdit: (newModalState: Profile) => void;
 };
 
-export default function DLMEBProfile({
-	node,
-	handleOnEditChange,
-}: Props) {
+export default function DLMEBProfile({ node, onEdit }: Props) {
 	const [profileGroupText, setProfileGroupText] = useState("");
+
 	const [inputTextError, setInputTextError] = useState("");
 
-	useConsoleLogOnStateChange(node, "MODAL STATE: ", node)
+	useEffect(() => {
+		node.groupings.forEach((group) => {
+			if (group.title == formatString(profileGroupText)) {
+				setInputTextError("NON UNIQUE!");
+			} else {
+				setInputTextError("");
+			}
+		});
+
+		if (formatString(profileGroupText) == "") {
+			setInputTextError("");
+		}
+	}, [formatString(profileGroupText)]);
+
 	return (
 		<>
 			<fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-full border p-4">
@@ -29,31 +41,28 @@ export default function DLMEBProfile({
 						onChange={(e) =>
 							setProfileGroupText(e.currentTarget.value)
 						}
+						onBlur={(e) =>
+							setProfileGroupText(
+								formatString(e.currentTarget.value),
+							)
+						}
 					/>
 					<button
 						className="btn btn-accent join-item rounded-r-full"
 						onClick={() => {
-							try {
-								const tempGroupings = [
-									...node.groupings,
-									{
-										title: profileGroupText,
-										description: "",
-										members: [],
-									},
-								];
-								Utils.validateProfileGroup(tempGroupings);
-								handleOnEditChange({
-									...node,
-									groupings: tempGroupings,
-								});
-								setProfileGroupText("");
-								setInputTextError("");
-							} catch (e) {
-								if (e instanceof Error) {
-									setInputTextError(e.message);
-								}
-							}
+							const tempGroupings = [
+								...node.groupings,
+								{
+									title: formatString(profileGroupText),
+									description: "",
+									members: [],
+								},
+							];
+							onEdit({
+								...node,
+								groupings: tempGroupings,
+							});
+							setProfileGroupText("");
 						}}
 					>
 						+
@@ -80,7 +89,7 @@ export default function DLMEBProfile({
 								<button
 									className="ml-auto cursor-pointer p-2"
 									onClick={() => {
-										handleOnEditChange({
+										onEdit({
 											...node,
 											groupings: [
 												...node.groupings,

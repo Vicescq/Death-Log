@@ -1,4 +1,4 @@
-import type { DistinctTreeNode, TreeNode } from "../../../model/TreeNodeModel";
+import type { DistinctTreeNode } from "../../../model/TreeNodeModel";
 import DLMEBNameDate from "./DLMEBNameDate";
 import DLMEBNotesDel from "./DLMEBNotesDel";
 import DLMEBProfile from "./DLMEBProfile";
@@ -6,50 +6,24 @@ import DLMEBSubject from "./DLMEBSubject";
 
 type Props = {
 	page: number;
-	handleOnEditChange: (newModalState: DistinctTreeNode) => void;
+	onEdit: (newModalState: DistinctTreeNode) => void;
 	modalState: DistinctTreeNode;
-	inputTextError: string;
-	displayError: boolean;
 };
 
 export default function DeathLogCardModalBody({
 	page,
-	handleOnEditChange,
+	onEdit,
 	modalState,
-	inputTextError,
-	displayError,
 }: Props) {
 	if (page == 0) {
 		return <></>;
 	} else if (page == 1) {
-		return (
-			<DLMEBNameDate
-				node={modalState}
-				handleOnEditChange={handleOnEditChange}
-				inputTextError={inputTextError}
-				displayError={displayError}
-			/>
-		);
+		return <DLMEBNameDate node={modalState} onEdit={onEdit} />;
 	} else if (page == 2 && modalState.type == "subject") {
-		return (
-			<DLMEBSubject
-				node={modalState}
-				handleOnEditChange={handleOnEditChange}
-			/>
-		);
+		return <DLMEBSubject node={modalState} onEdit={onEdit} />;
 	} else if (page == 2 && modalState.type == "profile") {
-		return (
-			<DLMEBProfile
-				node={modalState}
-				handleOnEditChange={handleOnEditChange}
-			/>
-		);
+		return <DLMEBProfile node={modalState} onEdit={onEdit} />;
 	} else if (page == 2 || page == 3) {
-		return (
-			<DLMEBNotesDel
-				node={modalState}
-				handleOnEditChange={handleOnEditChange}
-			/>
-		);
+		return <DLMEBNotesDel node={modalState} onEdit={onEdit} />;
 	}
 }

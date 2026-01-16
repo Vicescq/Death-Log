@@ -1,19 +1,13 @@
 import { useState } from "react";
-import type {
-	DistinctTreeNode,
-	Subject,
-} from "../../../model/TreeNodeModel";
+import type { DistinctTreeNode, Subject } from "../../../model/TreeNodeModel";
 import * as Utils from "../utils";
 
 type Props = {
 	node: Subject;
-	handleOnEditChange: (newModalState: DistinctTreeNode) => void;
+	onEdit: (newModalState: DistinctTreeNode) => void;
 };
 
-export default function DLMEBSubject({
-	node,
-	handleOnEditChange,
-}: Props) {
+export default function DLMEBSubject({ node, onEdit }: Props) {
 	const [profileGroupText, setProfileGroupText] = useState("");
 
 	return (
@@ -32,14 +26,14 @@ export default function DLMEBSubject({
 						onChange={() => {
 							const newChange = !node.reoccurring;
 							if (newChange) {
-								handleOnEditChange({
+								onEdit({
 									...node,
 									reoccurring: newChange,
 									dateEnd: null,
 									completed: false,
 								});
 							} else {
-								handleOnEditChange({
+								onEdit({
 									...node,
 									reoccurring: newChange,
 								});
@@ -63,7 +57,7 @@ export default function DLMEBSubject({
 						className="select"
 						value={Utils.mapContextKeyToProperStr(node.context)}
 						onChange={(e) =>
-							handleOnEditChange({
+							onEdit({
 								...node,
 								context: Utils.mapProperStrToContextKey(
 									e.currentTarget.value,

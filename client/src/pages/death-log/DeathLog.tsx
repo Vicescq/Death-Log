@@ -2,11 +2,11 @@ import { useDeathLogStore } from "../../stores/useDeathLogStore";
 import NavBar from "../../components/navBar/NavBar";
 import React, { forwardRef, useRef, useState } from "react";
 import DeathLogFAB from "./DeathLogFAB";
-import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
 import { Virtuoso, type Components, type VirtuosoHandle } from "react-virtuoso";
 import DeathLogBreadcrumb from "./DeathLogBreadcrumb";
 import useBreadcrumbMembers from "./useBreadcrumbMembers";
 import DeathLogCard from "./card/DeathLogCard";
+import DeathLogCardWrapper from "./card/DeathLogCardWrapper";
 
 type Props = {
 	type: "game" | "profile" | "subject";
@@ -14,9 +14,9 @@ type Props = {
 };
 
 export default function DeathLog({ type, parentID }: Props) {
-	const tree = useDeathLogStore((state) => state.tree);
+	const childIDS =
+		useDeathLogStore((state) => state.tree.get(parentID)?.childIDS) || [];
 	const virtuosoRef = useRef<VirtuosoHandle>(null);
-	const childIDS = tree.get(parentID)?.childIDS || [];
 
 	const [pageOpacity, setPageOpacity] = useState("");
 	const [deathLogIsInert, setDeathLogIsInert] = useState(false);
@@ -50,7 +50,7 @@ export default function DeathLog({ type, parentID }: Props) {
 				ref={virtuosoRef}
 				data={childIDS}
 				itemContent={(i, id) => (
-					<DeathLogCard nodeID={id} entryNum={i + 1} />
+					<DeathLogCardWrapper nodeID={id} entryNum={i + 1} />
 				)}
 				components={{ List: DeathLogWrapper }}
 				computeItemKey={(_, id) => {
