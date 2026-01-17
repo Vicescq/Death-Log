@@ -51,7 +51,7 @@ function AppRoot() {
 	useInitApp();
 
 	if (!root) {
-		// handles ErrorPage sudden flicker
+		// handles ErrorPage sudden flicker and tree not being init yet
 		return <></>;
 	}
 
@@ -68,7 +68,7 @@ function AppRoot() {
 						path="log"
 						element={<DeathLog parent={root} key="ROOT_NODE" />}
 					/>
-					<Route path="log/:gameID/" element={<DeathLogRouter />} />
+					<Route path="log/:gameID" element={<DeathLogRouter />} />
 					<Route
 						path="log/:gameID/:profileID"
 						element={<DeathLogRouter />}

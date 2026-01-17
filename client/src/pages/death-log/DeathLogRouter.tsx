@@ -4,6 +4,7 @@ import { useDeathLogStore } from "../../stores/useDeathLogStore";
 import DeathLogCounter from "./DeathLogCounter";
 import ErrorPage from "../ErrorPage";
 import DeathLogProfileGroup from "./DeathLogProfileGroup";
+import { assertIsNonNull } from "../../utils";
 
 export type CardMainPageTransitionState = {
 	type: "GameToProfiles" | "ProfileToSubjects" | "Terminal";
@@ -11,27 +12,41 @@ export type CardMainPageTransitionState = {
 };
 
 export default function DeathLogRouter() {
-	let params = useParams();
-
+	const params = useParams();
 	const tree = useDeathLogStore((state) => state.tree);
 
 	const gameID = params.gameID;
 	const profileID = params.profileID;
-	const subjectID = params.subjectID;
+	const subjectIDOrProfileGroupEdit = params.subjectID;
 
-	const game = gameID ? tree.get(gameID) : undefined;
-	const profile = profileID ? tree.get(profileID) : undefined;
-	const subject = subjectID ? tree.get(subjectID) : undefined;
-
-	if (game && !profile && !subject) {
+	if (
+		gameID &&
+		tree.has(gameID) &&
+		!profileID &&
+		!subjectIDOrProfileGroupEdit
+	) {
+		const game = tree.get(gameID);
+		assertIsNonNull(game);
 		return <DeathLog parent={game} key={gameID} />;
 	}
 
-	if (profile && !subject) {
+	if (profileID && tree.has(profileID) && !subjectIDOrProfileGroupEdit) {
+		const profile = tree.get(profileID);
+		assertIsNonNull(profile);
 		return <DeathLog parent={profile} key={profileID} />;
 	}
 
-	if (subject) {
+	if (
+		profileID &&
+		tree.has(profileID) &&
+		subjectIDOrProfileGroupEdit == "profile-group-edit"
+	) {
+		return <DeathLogProfileGroup />;
+	}
+
+	if (subjectIDOrProfileGroupEdit && tree.has(subjectIDOrProfileGroupEdit)) {
+		const subject = tree.get(subjectIDOrProfileGroupEdit);
+		assertIsNonNull(subject);
 		return <DeathLogCounter subject={subject} />;
 	}
 
