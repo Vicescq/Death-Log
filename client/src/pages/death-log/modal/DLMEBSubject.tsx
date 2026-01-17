@@ -3,11 +3,11 @@ import type { DistinctTreeNode, Subject } from "../../../model/TreeNodeModel";
 import * as Utils from "../utils";
 
 type Props = {
-	node: Subject;
+	modalState: Subject;
 	onEdit: (newModalState: DistinctTreeNode) => void;
 };
 
-export default function DLMEBSubject({ node, onEdit }: Props) {
+export default function DLMEBSubject({ modalState, onEdit }: Props) {
 	const [profileGroupText, setProfileGroupText] = useState("");
 
 	return (
@@ -21,20 +21,20 @@ export default function DLMEBSubject({ node, onEdit }: Props) {
 					<span className="text-[1rem]">Reoccurring</span>
 					<input
 						type="checkbox"
-						checked={node.reoccurring}
+						checked={modalState.reoccurring}
 						className="toggle toggle-primary ml-auto"
 						onChange={() => {
-							const newChange = !node.reoccurring;
+							const newChange = !modalState.reoccurring;
 							if (newChange) {
 								onEdit({
-									...node,
+									...modalState,
 									reoccurring: newChange,
 									dateEnd: null,
 									completed: false,
 								});
 							} else {
 								onEdit({
-									...node,
+									...modalState,
 									reoccurring: newChange,
 								});
 							}
@@ -45,7 +45,9 @@ export default function DLMEBSubject({ node, onEdit }: Props) {
 				<div className="flex">
 					<span className="text-[1rem]">Time Spent</span>
 					<button className="ml-auto">
-						{node.timeSpent == null ? "N / A" : node.timeSpent}
+						{modalState.timeSpent == null
+							? "N / A"
+							: modalState.timeSpent}
 					</button>
 					{/* 3h 18m 5s */}
 				</div>
@@ -55,10 +57,12 @@ export default function DLMEBSubject({ node, onEdit }: Props) {
 					<legend className="fieldset-legend">Context</legend>
 					<select
 						className="select"
-						value={Utils.mapContextKeyToProperStr(node.context)}
+						value={Utils.mapContextKeyToProperStr(
+							modalState.context,
+						)}
 						onChange={(e) =>
 							onEdit({
-								...node,
+								...modalState,
 								context: Utils.mapProperStrToContextKey(
 									e.currentTarget.value,
 								),

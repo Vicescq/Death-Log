@@ -1,10 +1,15 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter, Routes, Route, useNavigate } from "react-router";
+import {
+	BrowserRouter,
+	Routes,
+	Route,
+	useNavigate,
+	Outlet,
+} from "react-router";
 import "./index.css";
 import { ErrorBoundary } from "react-error-boundary";
 import ErrorPage from "./pages/ErrorPage.tsx";
-import Root from "./pages/Root.tsx";
 import Start from "./pages/Start.tsx";
 import DataManagement from "./pages/DataManagement.tsx";
 import DeathLogRouter from "./pages/death-log/DeathLogRouter.tsx";
@@ -12,6 +17,10 @@ import MultipleTabs from "./pages/MultipleTabs.tsx";
 import { ClerkProvider } from "@clerk/clerk-react";
 import DeathLog from "./pages/death-log/DeathLog.tsx";
 import FAQ from "./pages/FAQ.tsx";
+import { useDeathLogStore } from "./stores/useDeathLogStore.ts";
+import useInitApp from "./hooks/useInitApp.ts";
+import useConsoleLogOnStateChange from "./hooks/useConsoleLogOnStateChange.ts";
+import useMultipleTabsWarning from "./hooks/useMultipleTabsWarning.ts";
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 if (!PUBLISHABLE_KEY) {
@@ -22,7 +31,7 @@ createRoot(document.getElementById("root")!).render(
 	<StrictMode>
 		<ClerkProvider publishableKey={PUBLISHABLE_KEY}>
 			<BrowserRouter>
-				<AppRoutes />
+				<AppRoot />
 			</BrowserRouter>
 		</ClerkProvider>
 	</StrictMode>,
@@ -33,8 +42,18 @@ function ErrorBoundaryTest() {
 	return <></>;
 }
 
-function AppRoutes() {
+function AppRoot() {
 	let navigate = useNavigate();
+	const tree = useDeathLogStore((state) => state.tree);
+	useMultipleTabsWarning();
+	useConsoleLogOnStateChange(tree, "TREE:", tree);
+	const root = useDeathLogStore((state) => state.tree.get("ROOT_NODE"));
+	useInitApp();
+
+	if (!root) {
+		// handles ErrorPage sudden flicker
+		return <></>;
+	}
 
 	return (
 		<ErrorBoundary
@@ -42,18 +61,12 @@ function AppRoutes() {
 			onReset={() => navigate("/")}
 		>
 			<Routes>
-				<Route path="/" element={<Root />}>
+				<Route path="/" element={<Outlet />}>
 					<Route index element={<Start />} />
 
 					<Route
 						path="log"
-						element={
-							<DeathLog
-								type="game"
-								parentID="ROOT_NODE"
-								key="ROOT_NODE"
-							/>
-						}
+						element={<DeathLog parent={root} key="ROOT_NODE" />}
 					/>
 					<Route path="log/:gameID/" element={<DeathLogRouter />} />
 					<Route

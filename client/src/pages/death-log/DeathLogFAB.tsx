@@ -8,15 +8,19 @@ import down from "../../assets/down.svg";
 import Modal from "../../components/Modal";
 import { useDeathLogStore } from "../../stores/useDeathLogStore";
 import type { VirtuosoHandle } from "react-virtuoso";
-import type { Subject, SubjectContext } from "../../model/TreeNodeModel";
+import type {
+	DistinctTreeNode,
+	Subject,
+	SubjectContext,
+} from "../../model/TreeNodeModel";
 import { mapContextKeyToProperStr, mapProperStrToContextKey } from "./utils";
 import { formatString } from "../../stores/utils";
-import useModalInputTextError from "./useInputTextError";
+import computeModalInputTextError from "./utils";
 
 export type EditableSubjectField = Pick<Subject, "reoccurring" | "context">;
 
 type Props = {
-	type: "game" | "profile" | "subject";
+	type: Exclude<DistinctTreeNode["type"], "ROOT_NODE">;
 	parentID: string;
 	handleFabOnFocus: () => void;
 	handleFabOnBlur: () => void;
@@ -38,7 +42,7 @@ export default function DeathLogFAB({
 	const [subjectContext, setSubjectContext] =
 		useState<SubjectContext>("boss");
 
-	const { inputTextError, onNameEdit } = useModalInputTextError({
+	const inputTextError = computeModalInputTextError(inputText, {
 		type: "nodeAdd",
 		tree: tree,
 		parentID: parentID,
@@ -170,7 +174,6 @@ export default function DeathLogFAB({
 										className="input"
 										onChange={(e) => {
 											setInputText(e.currentTarget.value);
-											onNameEdit(e.currentTarget.value);
 										}}
 										onBlur={(e) =>
 											setInputText(
@@ -180,6 +183,7 @@ export default function DeathLogFAB({
 											)
 										}
 										value={inputText}
+										maxLength={50}
 									/>
 									<div
 										className={`text-error mt-2 ml-2 text-sm`}

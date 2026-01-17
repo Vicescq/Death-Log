@@ -1,5 +1,6 @@
 import stepInto from "../../../assets/step_into.svg";
 import edit from "../../../assets/edit.svg";
+import group from "../../../assets/group.svg";
 import type { DistinctTreeNode } from "../../../model/TreeNodeModel";
 import { Link } from "react-router";
 
@@ -15,15 +16,24 @@ export default function DeathLogCardOptions({
 			<Link to={{ pathname: node.id }}>
 				<li>
 					<button aria-label="Folder Button">
-						<img src={stepInto} alt="" className="h-5 w-5" />
+						<img src={stepInto} alt="" className="h-4 w-4" />
 					</button>
 				</li>
 			</Link>
 			<li>
 				<button onClick={handleEdit} aria-label="Edit Button">
-					<img src={edit} alt="" className="h-5 w-5" />
+					<img src={edit} alt="" className="h-4 w-4" />
 				</button>
 			</li>
+			{node.type == "profile" ? (
+				<Link to={{ pathname: `${node.id}/profile-group-edit` }}>
+					<li>
+						<button aria-label="Edit Profile Group Button">
+							<img src={group} alt="" className="h-4 w-4" />
+						</button>
+					</li>
+				</Link>
+			) : null}
 		</ul>
 	);
 }

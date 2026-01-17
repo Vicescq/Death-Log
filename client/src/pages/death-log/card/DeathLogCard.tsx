@@ -9,7 +9,7 @@ import useCardCompletionToggle from "../useCardCompletionToggle";
 import type { DistinctTreeNode, Tree } from "../../../model/TreeNodeModel";
 import { useState, useRef } from "react";
 import { delay } from "../../../utils";
-import { calcDeaths, cardHasBeenEdited } from "../utils";
+import { calcDeaths, canUserSubmitModalChanges } from "../utils";
 
 type Props = {
 	node: DistinctTreeNode;
@@ -114,7 +114,7 @@ export default function DeathLogCard({ node, entryNum, tree }: Props) {
 					modalBtns={[
 						{
 							text: "Save edits",
-							css: `${cardHasBeenEdited(node, modalState, tree) ? "btn-success" : "btn-disabled"} mt-10`,
+							css: `${canUserSubmitModalChanges(node, modalState, tree) ? "btn-success" : "btn-disabled"} mt-10`,
 							fn: () => {
 								try {
 									updateNode(node, modalState);

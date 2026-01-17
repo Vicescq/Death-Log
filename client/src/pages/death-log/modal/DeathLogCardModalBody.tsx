@@ -18,12 +18,12 @@ export default function DeathLogCardModalBody({
 	if (page == 0) {
 		return <></>;
 	} else if (page == 1) {
-		return <DLMEBNameDate node={modalState} onEdit={onEdit} />;
+		return <DLMEBNameDate modalState={modalState} onEdit={onEdit} />;
 	} else if (page == 2 && modalState.type == "subject") {
-		return <DLMEBSubject node={modalState} onEdit={onEdit} />;
+		return <DLMEBSubject modalState={modalState} onEdit={onEdit} />;
 	} else if (page == 2 && modalState.type == "profile") {
-		return <DLMEBProfile node={modalState} onEdit={onEdit} />;
+		return <DLMEBProfile modalState={modalState} onEdit={onEdit} />;
 	} else if (page == 2 || page == 3) {
-		return <DLMEBNotesDel node={modalState} onEdit={onEdit} />;
+		return <DLMEBNotesDel modalState={modalState} onEdit={onEdit} />;
 	}
 }

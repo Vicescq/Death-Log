@@ -29,8 +29,7 @@ export type ValidationContextNode = {
 
 export type ValidationContextProfileGroup = {
 	type: "profileGroupAdd" | "profileGroupEdit";
-	tree: Tree;
-	profileID: string;
+	profile: Profile;
 };
 
 export const InputTextValidationStrings = {
@@ -269,7 +268,7 @@ export function isNameUnique(inputText: string, context: ValidationContext) {
 		context.type == "profileGroupAdd" ||
 		context.type == "profileGroupEdit"
 	) {
-		const profile = context.tree.get(context.profileID);
+		const profile = context.profile;
 		if (profile) {
 			assertIsProfile(profile);
 			const groupings = profile.groupings;

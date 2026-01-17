@@ -7,15 +7,10 @@ import DeathLogBreadcrumb from "./DeathLogBreadcrumb";
 import useBreadcrumbMembers from "./useBreadcrumbMembers";
 import DeathLogCard from "./card/DeathLogCard";
 import DeathLogCardWrapper from "./card/DeathLogCardWrapper";
+import type { DistinctTreeNode } from "../../model/TreeNodeModel";
 
-type Props = {
-	type: "game" | "profile" | "subject";
-	parentID: string;
-};
-
-export default function DeathLog({ type, parentID }: Props) {
-	const childIDS =
-		useDeathLogStore((state) => state.tree.get(parentID)?.childIDS) || [];
+export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
+	const childIDS = parent.childIDS;
 	const virtuosoRef = useRef<VirtuosoHandle>(null);
 
 	const [pageOpacity, setPageOpacity] = useState("");
@@ -34,6 +29,20 @@ export default function DeathLog({ type, parentID }: Props) {
 			</ul>
 		);
 	});
+
+	function determineFABType(): Exclude<
+		DistinctTreeNode["type"],
+		"ROOT_NODE"
+	> {
+		switch (parent.type) {
+			case "ROOT_NODE":
+				return "game";
+			case "game":
+				return "profile";
+			default:
+				return "subject";
+		}
+	}
 
 	return (
 		<>
@@ -63,8 +72,8 @@ export default function DeathLog({ type, parentID }: Props) {
 
 			<DeathLogFAB
 				virtuosoRef={virtuosoRef}
-				type={type}
-				parentID={parentID}
+				type={determineFABType()}
+				parentID={parent.id}
 				handleFabOnFocus={() => {
 					setPageOpacity("opacity-25");
 					setDeathLogIsInert(true);

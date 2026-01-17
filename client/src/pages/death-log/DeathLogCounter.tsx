@@ -4,13 +4,14 @@ import down from "../../assets/down.svg";
 import useBreadcrumbMembers from "./useBreadcrumbMembers";
 import DeathLogBreadcrumb from "./DeathLogBreadcrumb";
 import NavBar from "../../components/navBar/NavBar";
+import type { DistinctTreeNode } from "../../model/TreeNodeModel";
 
 type Props = {
-	subjectID: string;
+	subject: DistinctTreeNode;
 };
 
-export default function DeathLogCounter({ subjectID }: Props) {
-	const node = useDeathLogStore((state) => state.tree.get(subjectID));
+export default function DeathLogCounter({ subject }: Props) {
+	const node = useDeathLogStore((state) => state.tree.get(subject));
 	const updateNode = useDeathLogStore((state) => state.updateNode);
 
 	const breadcrumbMembers = useBreadcrumbMembers();

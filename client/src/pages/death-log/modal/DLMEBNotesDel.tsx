@@ -4,11 +4,11 @@ import { useDeathLogStore } from "../../../stores/useDeathLogStore";
 import { useState } from "react";
 
 type Props = {
-	node: DistinctTreeNode;
+	modalState: DistinctTreeNode;
 	onEdit: (newModalState: DistinctTreeNode) => void;
 };
 
-export default function DLMEBNotesDel({ node, onEdit }: Props) {
+export default function DLMEBNotesDel({ modalState, onEdit }: Props) {
 	const deleteNode = useDeathLogStore((state) => state.deleteNode);
 	const [delBtnCSS, setDelBtnCSS] = useState<"btn-disabled" | "btn-success">(
 		"btn-disabled",
@@ -21,13 +21,14 @@ export default function DLMEBNotesDel({ node, onEdit }: Props) {
 				<textarea
 					className="textarea"
 					placeholder="Type here"
-					value={node.notes}
+					value={modalState.notes}
 					onChange={(e) =>
 						onEdit({
-							...node,
+							...modalState,
 							notes: e.currentTarget.value,
 						})
 					}
+					maxLength={1000}
 				></textarea>
 			</fieldset>
 			<fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-full border p-4">
@@ -47,7 +48,7 @@ export default function DLMEBNotesDel({ node, onEdit }: Props) {
 					/>
 					<button
 						className={`btn join-item ${delBtnCSS} p-3`}
-						onClick={() => deleteNode(node)}
+						onClick={() => deleteNode(modalState)}
 					>
 						<img className="w-4" src={trash} alt="" />
 					</button>

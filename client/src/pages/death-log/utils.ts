@@ -3,7 +3,11 @@ import type {
 	SubjectContext,
 	Tree,
 } from "../../model/TreeNodeModel";
-import { formatString, validateString } from "../../stores/utils";
+import {
+	formatString,
+	validateString,
+	type ValidationContext,
+} from "../../stores/utils";
 import type { BreadcrumbMember } from "./DeathLogBreadcrumb";
 
 export function calcRequiredPages(size: number, pageSize: number) {
@@ -229,27 +233,19 @@ export function formatBreadcrumbMembers(
 	return formattedBreadcrumbMembers;
 }
 
-export function cardHasBeenEdited(
+export function canUserSubmitModalChanges(
 	original: DistinctTreeNode,
 	modalState: DistinctTreeNode,
 	tree: Tree,
 ) {
-	if (
-		validateString(modalState.name, {
-			type: "nodeEdit",
-			parentID: modalState.parentID,
-			tree: tree,
-		}).valid
-	) {
-		return true;
-	}
+	let nonNodeNameFieldChanged = false;
 
 	if (
 		defaultCardModalDateFormat(original.dateStart) !=
 		defaultCardModalDateFormat(modalState.dateStart)
 	) {
 		// time resets if change to same date: if clicked on 1/1/2026, but og is 1/1/2026 10:00, it will turn into 1/1/2026 00:00
-		return true;
+		nonNodeNameFieldChanged = true;
 	}
 
 	if (
@@ -258,40 +254,77 @@ export function cardHasBeenEdited(
 		defaultCardModalDateFormat(original.dateEnd) !=
 			defaultCardModalDateFormat(modalState.dateEnd)
 	) {
-		return true;
+		nonNodeNameFieldChanged = true;
 	}
 
 	if (original.dateStartRel != modalState.dateStartRel) {
-		return true;
+		nonNodeNameFieldChanged = true;
 	}
 
 	if (original.dateEndRel != modalState.dateEndRel) {
-		return true;
+		nonNodeNameFieldChanged = true;
 	}
 
 	if (original.notes != modalState.notes) {
-		return true;
-	}
-
-	if (original.type == "subject" && modalState.type == "subject") {
-		if (original.reoccurring != modalState.reoccurring) {
-			return true;
-		}
-		if (original.timeSpent != modalState.timeSpent) {
-			return true;
-		}
-		if (original.context != modalState.context) {
-			return true;
-		}
+		nonNodeNameFieldChanged = true;
 	}
 
 	if (original.type == "profile" && modalState.type == "profile") {
 		if (original.groupings.length != modalState.groupings.length) {
-			return true;
+			nonNodeNameFieldChanged = true;
 		}
 
 		// more cases like name changes
 	}
 
-	return false;
+	if (original.type == "subject" && modalState.type == "subject") {
+		if (original.reoccurring != modalState.reoccurring) {
+			nonNodeNameFieldChanged = true;
+		}
+		if (original.timeSpent != modalState.timeSpent) {
+			nonNodeNameFieldChanged = true;
+		}
+		if (original.context != modalState.context) {
+			nonNodeNameFieldChanged = true;
+		}
+	}
+
+	const isNodeNameValidated = validateString(modalState.name, {
+		type: "nodeEdit",
+		parentID: modalState.parentID,
+		tree: tree,
+	}).valid;
+	const unchangedNodeName = modalState.name == original.name;
+
+	return (
+		(nonNodeNameFieldChanged && unchangedNodeName) || isNodeNameValidated
+	); // for user to save modal changes, at least one non name field must be eddited AND an unchanchaged name OR given a node's name was changed and is valid. Setup this way due to edge case of validateString on init validation of modalState.name being the same which returns invalid
+}
+
+export default function computeModalInputTextError(
+	currName: string,
+	context: ValidationContext,
+) {
+	let inputTextError = "";
+	const res = validateString(currName, context);
+
+	if (context.type == "nodeAdd" || context.type == "profileGroupAdd") {
+		if (!res.valid && res.cause != "empty" && res.msg) {
+			inputTextError = res.msg;
+		} else if (res.cause == "empty") {
+			inputTextError = "";
+		} else {
+			inputTextError = "";
+		}
+	} else if (context.type == "nodeEdit") {
+		if (!res.valid && res.cause != "nonunique" && res.msg) {
+			inputTextError = res.msg;
+		} else if (res.cause == "nonunique") {
+			inputTextError = "";
+		} else {
+			inputTextError = "";
+		}
+	}
+
+	return inputTextError;
 }

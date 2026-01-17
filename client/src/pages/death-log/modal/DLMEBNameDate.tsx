@@ -5,20 +5,20 @@ import {
 	defaultCardModalDateFormat,
 } from "../utils";
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
-import useModalInputTextError from "../useInputTextError";
+import computeModalInputTextError from "../utils";
 
 type Props = {
-	node: DistinctTreeNode;
+	modalState: DistinctTreeNode;
 	onEdit: (newModalState: DistinctTreeNode) => void;
 };
 
-export default function DLMEBNameDate({ node, onEdit }: Props) {
+export default function DLMEBNameDate({ modalState, onEdit }: Props) {
 	const tree = useDeathLogStore((state) => state.tree);
 
-	const { inputTextError, onNameEdit } = useModalInputTextError({
+	const inputTextError = computeModalInputTextError(modalState.name, {
 		type: "nodeEdit",
 		tree: tree,
-		parentID: node.parentID,
+		parentID: modalState.parentID,
 	});
 
 	return (
@@ -29,20 +29,20 @@ export default function DLMEBNameDate({ node, onEdit }: Props) {
 				<input
 					type="search"
 					className="input"
-					value={node.name}
+					value={modalState.name}
 					onChange={(e) => {
 						onEdit({
-							...node,
+							...modalState,
 							name: e.currentTarget.value,
 						});
-						onNameEdit(e.currentTarget.value);
 					}}
 					onBlur={(e) =>
 						onEdit({
-							...node,
+							...modalState,
 							name: formatString(e.currentTarget.value),
 						})
 					}
+					maxLength={50}
 				/>
 				<div className={`text-error mt-2 ml-2 text-sm`}>
 					{inputTextError}
@@ -50,7 +50,7 @@ export default function DLMEBNameDate({ node, onEdit }: Props) {
 			</fieldset>
 			<fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-full border p-4">
 				<legend className="fieldset-legend">
-					{node.completed
+					{modalState.completed
 						? "Creation (1st) & Completion (2nd) Dates"
 						: "Creation Date"}
 				</legend>
@@ -58,48 +58,48 @@ export default function DLMEBNameDate({ node, onEdit }: Props) {
 				<input
 					type="date"
 					className="input join-item"
-					value={defaultCardModalDateFormat(node.dateStart)}
+					value={defaultCardModalDateFormat(modalState.dateStart)}
 					onChange={(e) =>
 						onEdit({
-							...node,
+							...modalState,
 							dateStart:
 								e.currentTarget.value == ""
-									? node.dateStart
+									? modalState.dateStart
 									: convertDefaultCardModalDateFormatToISO(
 											e.currentTarget.value,
 										),
 						})
 					}
 					max={
-						node.completed && node.dateEnd
-							? defaultCardModalDateFormat(node.dateEnd)
+						modalState.completed && modalState.dateEnd
+							? defaultCardModalDateFormat(modalState.dateEnd)
 							: defaultCardModalDateFormat(
 									new Date().toISOString(),
 								)
 					}
 				/>
 
-				{node.completed ? (
+				{modalState.completed ? (
 					<input
 						type="date"
 						className="input join-item"
 						value={
-							node.dateEnd
-								? defaultCardModalDateFormat(node.dateEnd)
+							modalState.dateEnd
+								? defaultCardModalDateFormat(modalState.dateEnd)
 								: undefined
 						}
 						onChange={(e) =>
 							onEdit({
-								...node,
+								...modalState,
 								dateEnd:
 									e.currentTarget.value == ""
-										? node.dateEnd
+										? modalState.dateEnd
 										: convertDefaultCardModalDateFormatToISO(
 												e.currentTarget.value,
 											),
 							})
 						}
-						min={defaultCardModalDateFormat(node.dateStart)}
+						min={defaultCardModalDateFormat(modalState.dateStart)}
 					/>
 				) : null}
 				<div className="divider my-2">↓ Reliability Flags ↓</div>
@@ -107,26 +107,26 @@ export default function DLMEBNameDate({ node, onEdit }: Props) {
 					<span className="text-[1rem]">Creation Date</span>
 					<input
 						type="checkbox"
-						checked={node.dateStartRel}
+						checked={modalState.dateStartRel}
 						className="toggle toggle-primary ml-auto"
 						onChange={(e) =>
 							onEdit({
-								...node,
+								...modalState,
 								dateStartRel: e.currentTarget.checked,
 							})
 						}
 					/>
 				</div>
-				{node.completed ? (
+				{modalState.completed ? (
 					<div className="flex">
 						<span className="text-[1rem]">Completion Date</span>
 						<input
 							type="checkbox"
-							checked={node.dateEndRel}
+							checked={modalState.dateEndRel}
 							className="toggle toggle-primary ml-auto"
 							onChange={(e) =>
 								onEdit({
-									...node,
+									...modalState,
 									dateEndRel: e.currentTarget.checked,
 								})
 							}
