@@ -4,6 +4,7 @@ export type ModalBtn = {
 	text: string;
 	fn: () => void;
 	css: string;
+	disabled: boolean; // for edge case: btn-disabled class works, but keyboard still can active
 };
 
 type Props = {
@@ -40,6 +41,7 @@ export default function Modal({
 					{modalBtns.map((modalBtn, i) => {
 						return (
 							<button
+								disabled={modalBtn.disabled}
 								className={`btn mt-4 w-full ${modalBtn.css}`}
 								onClick={modalBtn.fn}
 								key={i}

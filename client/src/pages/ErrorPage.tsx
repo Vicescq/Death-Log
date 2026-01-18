@@ -18,6 +18,7 @@ export default function ErrorPage({
 				<div className="max-w-md">
 					<h1 className="text-5xl font-bold">{icon}</h1>
 					<button
+						aria-label="Go back home button"
 						className="btn btn-accent mt-12"
 						onClick={() =>
 							resetErrorBoundary

@@ -1,4 +1,4 @@
-import type { DistinctTreeNode, Profile, Tree } from "./model/TreeNodeModel";
+import type { DistinctTreeNode, Profile, Subject } from "./model/TreeNodeModel";
 
 export function assertIsNonNull<T>(value: T): asserts value is NonNullable<T> {
 	if (value === undefined || value === null) {
@@ -11,6 +11,14 @@ export function assertIsProfile(
 ): asserts value is Profile {
 	if (value.type != "profile") {
 		throw new Error("DEV ERROR! Expected profile type is non profile!");
+	}
+}
+
+export function assertIsSubject(
+	value: DistinctTreeNode,
+): asserts value is Subject {
+	if (value.type != "subject") {
+		throw new Error("DEV ERROR! Expected subject type is non subject!");
 	}
 }
 

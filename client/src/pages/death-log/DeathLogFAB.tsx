@@ -195,6 +195,12 @@ export default function DeathLogFAB({
 								<button
 									className={`btn ${inputTextError == "" && formatString(inputText) != "" ? "btn-success" : "btn-disabled"} join-item`}
 									onClick={onConfirm}
+									disabled={
+										!(
+											inputTextError == "" &&
+											formatString(inputText) != ""
+										)
+									}
 								>
 									Confirm
 								</button>

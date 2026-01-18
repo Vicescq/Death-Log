@@ -49,6 +49,8 @@ export default function DLMEBNotesDel({ modalState, onEdit }: Props) {
 					<button
 						className={`btn join-item ${delBtnCSS} p-3`}
 						onClick={() => deleteNode(modalState)}
+						aria-label="Delete Entry"
+						disabled={delBtnCSS == "btn-disabled" ? true : false}
 					>
 						<img className="w-4" src={trash} alt="" />
 					</button>

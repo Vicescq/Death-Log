@@ -27,6 +27,7 @@ export default function DLMEBNameDate({ modalState, onEdit }: Props) {
 				<legend className="fieldset-legend">Name</legend>
 
 				<input
+					aria-label="Edit Name"
 					type="search"
 					className="input"
 					value={modalState.name}

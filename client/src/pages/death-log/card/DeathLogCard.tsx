@@ -20,7 +20,7 @@ type Props = {
 export default function DeathLogCard({ node, entryNum, tree }: Props) {
 	const updateNode = useDeathLogStore((state) => state.updateNode);
 	const { page, setPage, handlePageTurn } = usePagination(
-		node.type == "game" ? 2 : 3,
+		node.type == "subject" ? 3 : 2,
 	);
 	const [modalState, setModalState] = useState<DistinctTreeNode>({ ...node });
 	const editModalRef = useRef<HTMLDialogElement>(null);
@@ -88,6 +88,7 @@ export default function DeathLogCard({ node, entryNum, tree }: Props) {
 
 							<div className="join mt-4 flex">
 								<button
+									aria-label="Modal Turn Left"
 									className="join-item btn"
 									onClick={() => {
 										handlePageTurn(false);
@@ -99,6 +100,7 @@ export default function DeathLogCard({ node, entryNum, tree }: Props) {
 									Page {page}
 								</button>
 								<button
+									aria-label="Modal Turn Right"
 									className="join-item btn"
 									onClick={() => {
 										handlePageTurn(true);
@@ -125,6 +127,11 @@ export default function DeathLogCard({ node, entryNum, tree }: Props) {
 									}
 								}
 							},
+							disabled: !canUserSubmitModalChanges(
+								node,
+								modalState,
+								tree,
+							),
 						},
 					]}
 					handleOnClose={async () => {
@@ -161,6 +168,7 @@ export default function DeathLogCard({ node, entryNum, tree }: Props) {
 								}
 								setChecked(newChecked);
 							},
+							disabled: false,
 						},
 					]}
 				/>
