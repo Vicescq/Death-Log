@@ -5,6 +5,7 @@ import DeathLogCounter from "./DeathLogCounter";
 import ErrorPage from "../ErrorPage";
 import DeathLogProfileGroup from "./DeathLogProfileGroup";
 import { assertIsNonNull, assertIsSubject } from "../../utils";
+import { CONSTANTS } from "../../../shared/constants";
 
 export type CardMainPageTransitionState = {
 	type: "GameToProfiles" | "ProfileToSubjects" | "Terminal";
@@ -51,5 +52,5 @@ export default function DeathLogRouter() {
 		return <DeathLogCounter subject={subject} />;
 	}
 
-	return <ErrorPage error={new Error("URL not found!")} />;
+	return <ErrorPage error={new Error(CONSTANTS.ERROR.URL)} />;
 }

@@ -1,20 +1,21 @@
 import { expect, Page } from "@playwright/test";
+import { CONSTANTS } from "../shared/constants";
 
 export default class Tester {
 	static async addEntry(page: Page, title: string) {
 		await page
 			.getByRole("button", {
-				name: "Open FAB",
+				name: CONSTANTS.DEATH_LOG_FAB.OPEN,
 			})
 			.click();
 		await page
 			.getByRole("button", {
-				name: "Add item",
+				name: CONSTANTS.DEATH_LOG_FAB.ADD,
 			})
 			.click();
 		await expect(page.getByText(/.* title/)).toBeVisible();
-		await page.getByPlaceholder("Type here").fill(title);
-		await page.getByText("Confirm").click();
+		await page.getByPlaceholder(CONSTANTS.DEATH_LOG_FAB.ADD_PH).fill(title);
+		await page.getByText(CONSTANTS.DEATH_LOG_FAB.ADD_SUBMIT).click();
 		await expect(page.getByText(title)).toBeVisible();
 	}
 
@@ -22,7 +23,9 @@ export default class Tester {
 		await page
 			.getByRole("listitem")
 			.filter({ hasText: title })
-			.getByRole("button", { name: "Folder Button" })
+			.getByRole("button", {
+				name: CONSTANTS.DEATH_LOG_CARD.ENTRY_CHILDREN,
+			})
 			.click();
 		await Tester.checkCardVisibility(page, title, false);
 	}
@@ -31,7 +34,7 @@ export default class Tester {
 		await page
 			.getByRole("listitem")
 			.filter({ hasText: title })
-			.getByRole("button", { name: "Edit Button" })
+			.getByRole("button", { name: CONSTANTS.DEATH_LOG_CARD.EDIT_MODAL })
 			.click();
 	}
 
@@ -39,19 +42,25 @@ export default class Tester {
 		await Tester.goToCardEditModal(page, title);
 
 		let isVisible = await page
-			.getByPlaceholder("Type DEL to delete")
+			.getByPlaceholder(CONSTANTS.DEATH_LOG_MODAL.DEL_PH)
 			.isVisible();
 		while (!isVisible) {
 			await page
-				.getByRole("button", { name: "Modal Turn Right" })
+				.getByRole("button", {
+					name: CONSTANTS.DEATH_LOG_MODAL.TURN_RIGHT,
+				})
 				.click();
 			isVisible = await page
-				.getByPlaceholder("Type DEL to delete")
+				.getByPlaceholder(CONSTANTS.DEATH_LOG_MODAL.DEL_PH)
 				.isVisible();
 		}
 
-		await page.getByPlaceholder("Type DEL to delete").fill("DEL");
-		await page.getByRole("button", { name: "Delete Entry" }).click();
+		await page
+			.getByPlaceholder(CONSTANTS.DEATH_LOG_MODAL.DEL_PH)
+			.fill("DEL");
+		await page
+			.getByRole("button", { name: CONSTANTS.DEATH_LOG_MODAL.DEL_SUBMIT })
+			.click();
 		await expect(page.getByText(title)).toBeHidden();
 	}
 

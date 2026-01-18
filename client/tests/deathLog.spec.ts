@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 import Tester from "./Tester";
-import { CONSTANTS } from "../constants";
+import { CONSTANTS } from "../shared/constants";
 
 test.describe("General Usage", () => {
 	test("Simple CRUD as Guest", async ({ page, browserName }) => {
@@ -18,12 +18,12 @@ test.describe("General Usage", () => {
 			).toBeVisible();
 			await expect(
 				page.getByRole("button", {
-					name: "Continue as guest",
+					name: CONSTANTS.START.GUEST_BTN,
 				}),
 			).toBeVisible();
 			await page
 				.getByRole("button", {
-					name: "Continue as guest",
+					name: CONSTANTS.START.GUEST_BTN,
 				})
 				.click();
 			await expect(page).toHaveURL(`${CONSTANTS.DOMAIN}/log`);
@@ -61,20 +61,16 @@ test.describe("General Usage", () => {
 		await test.step("Deleting entry -> URL not found -> Home", async () => {
 			await Tester.deleteEntry(page, addedProfile);
 			await page.goForward();
-			await expect(page.getByText("URL not found!")).toBeVisible();
-			await expect(
-				page.getByRole("button", { name: "Go back home button" }),
-			).toBeVisible();
-			await page
-				.getByRole("button", { name: "Go back home button" })
-				.click();
+			await expect(page.getByText(CONSTANTS.ERROR.URL)).toBeVisible();
+			await expect(page.getByText(CONSTANTS.ERROR.HOME)).toBeVisible();
+			await page.getByText(CONSTANTS.ERROR.HOME).click();
 			await expect(page).toHaveURL(CONSTANTS.DOMAIN);
 		});
 
 		await test.step("Going back to game DL -> profile DL -> verify if deleted", async () => {
 			await page
 				.getByRole("button", {
-					name: "Continue as guest",
+					name: CONSTANTS.START.GUEST_BTN,
 				})
 				.click();
 			await expect(page.getByText(addedGame)).toBeVisible();
@@ -86,10 +82,12 @@ test.describe("General Usage", () => {
 		await test.step("Update name", async () => {
 			await Tester.goToCardEditModal(page, addedGame);
 
-			await page.getByLabel("Edit Name").clear();
-			await page.getByLabel("Edit Name").fill("Dark Souls");
+			await page.getByLabel(CONSTANTS.DEATH_LOG_MODAL.EDIT_NAME).clear();
+			await page
+				.getByLabel(CONSTANTS.DEATH_LOG_MODAL.EDIT_NAME)
+				.fill("Dark Souls");
 
-			await page.getByText("Save edits").click();
+			await page.getByText(CONSTANTS.DEATH_LOG_MODAL.SUBMIT).click();
 			await Tester.checkCardVisibility(page, "Dark Souls", true);
 		});
 	});

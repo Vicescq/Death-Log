@@ -60,6 +60,7 @@ export default function DataManagement() {
 					}
 				},
 				css: "mt-8 btn-error",
+				disabled: false,
 			},
 		],
 	} as const;
@@ -92,6 +93,7 @@ export default function DataManagement() {
 					}
 				},
 				css: "mt-8 btn-error",
+				disabled: false,
 			},
 		],
 	} as const;
@@ -108,6 +110,7 @@ export default function DataManagement() {
 					ref.current?.close();
 				},
 				css: "mt-8 btn-info",
+				disabled: false,
 			},
 		],
 	} as const;

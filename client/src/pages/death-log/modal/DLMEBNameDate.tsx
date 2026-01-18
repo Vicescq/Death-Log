@@ -6,6 +6,7 @@ import {
 } from "../utils";
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
 import computeModalInputTextError from "../utils";
+import { CONSTANTS } from "../../../../shared/constants";
 
 type Props = {
 	modalState: DistinctTreeNode;
@@ -27,7 +28,7 @@ export default function DLMEBNameDate({ modalState, onEdit }: Props) {
 				<legend className="fieldset-legend">Name</legend>
 
 				<input
-					aria-label="Edit Name"
+					aria-label={CONSTANTS.DEATH_LOG_MODAL.EDIT_NAME}
 					type="search"
 					className="input"
 					value={modalState.name}

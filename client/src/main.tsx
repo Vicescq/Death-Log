@@ -21,6 +21,7 @@ import { useDeathLogStore } from "./stores/useDeathLogStore.ts";
 import useInitApp from "./hooks/useInitApp.ts";
 import useConsoleLogOnStateChange from "./hooks/useConsoleLogOnStateChange.ts";
 import useMultipleTabsWarning from "./hooks/useMultipleTabsWarning.ts";
+import { CONSTANTS } from "../shared/constants.ts";
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 if (!PUBLISHABLE_KEY) {
@@ -90,7 +91,7 @@ function AppRoot() {
 					<Route
 						path="*"
 						element={
-							<ErrorPage error={new Error("URL not found!")} />
+							<ErrorPage error={new Error(CONSTANTS.ERROR.URL)} />
 						}
 					/>
 				</Route>

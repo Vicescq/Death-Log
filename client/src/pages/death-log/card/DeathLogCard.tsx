@@ -10,6 +10,7 @@ import type { DistinctTreeNode, Tree } from "../../../model/TreeNodeModel";
 import { useState, useRef } from "react";
 import { delay } from "../../../utils";
 import { calcDeaths, canUserSubmitModalChanges } from "../utils";
+import { CONSTANTS } from "../../../../shared/constants";
 
 type Props = {
 	node: DistinctTreeNode;
@@ -100,7 +101,9 @@ export default function DeathLogCard({ node, entryNum, tree }: Props) {
 									Page {page}
 								</button>
 								<button
-									aria-label="Modal Turn Right"
+									aria-label={
+										CONSTANTS.DEATH_LOG_MODAL.TURN_RIGHT
+									}
 									className="join-item btn"
 									onClick={() => {
 										handlePageTurn(true);
@@ -115,7 +118,7 @@ export default function DeathLogCard({ node, entryNum, tree }: Props) {
 					ref={editModalRef}
 					modalBtns={[
 						{
-							text: "Save edits",
+							text: CONSTANTS.DEATH_LOG_MODAL.SUBMIT,
 							css: `${canUserSubmitModalChanges(node, modalState, tree) ? "btn-success" : "btn-disabled"} mt-10`,
 							fn: () => {
 								try {

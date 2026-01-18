@@ -2,6 +2,7 @@ import type { DistinctTreeNode } from "../../../model/TreeNodeModel";
 import trash from "../../../assets/trash.svg";
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
 import { useState } from "react";
+import { CONSTANTS } from "../../../../shared/constants";
 
 type Props = {
 	modalState: DistinctTreeNode;
@@ -37,7 +38,7 @@ export default function DLMEBNotesDel({ modalState, onEdit }: Props) {
 					<input
 						type="search"
 						className="input join-item"
-						placeholder="Type DEL to delete"
+						placeholder={CONSTANTS.DEATH_LOG_MODAL.DEL_PH}
 						onChange={(e) => {
 							if (e.currentTarget.value == "DEL") {
 								setDelBtnCSS("btn-success");
@@ -49,7 +50,7 @@ export default function DLMEBNotesDel({ modalState, onEdit }: Props) {
 					<button
 						className={`btn join-item ${delBtnCSS} p-3`}
 						onClick={() => deleteNode(modalState)}
-						aria-label="Delete Entry"
+						aria-label={CONSTANTS.DEATH_LOG_MODAL.DEL_SUBMIT}
 						disabled={delBtnCSS == "btn-disabled" ? true : false}
 					>
 						<img className="w-4" src={trash} alt="" />

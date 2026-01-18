@@ -16,6 +16,7 @@ import type {
 import { mapContextKeyToProperStr, mapProperStrToContextKey } from "./utils";
 import { formatString } from "../../stores/utils";
 import computeModalInputTextError from "./utils";
+import { CONSTANTS } from "../../../shared/constants";
 
 export type EditableSubjectField = Pick<Subject, "reoccurring" | "context">;
 
@@ -82,7 +83,7 @@ export default function DeathLogFAB({
 					className="btn btn-lg btn-circle bg-success"
 					onFocus={handleFabOnFocus}
 					onBlur={handleFabOnBlur}
-					aria-label="Open FAB"
+					aria-label={CONSTANTS.DEATH_LOG_FAB.OPEN}
 				>
 					<img src={fabEdit} alt="" />
 				</div>
@@ -96,7 +97,7 @@ export default function DeathLogFAB({
 					Add {type}
 					<button
 						role="button"
-						aria-label="Add item"
+						aria-label={CONSTANTS.DEATH_LOG_FAB.ADD}
 						className="btn btn-lg btn-circle btn-success"
 						onClick={() => modalRef.current?.showModal()}
 					>
@@ -170,7 +171,9 @@ export default function DeathLogFAB({
 								<div className="join-item w-full">
 									<input
 										type="search"
-										placeholder="Type here"
+										placeholder={
+											CONSTANTS.DEATH_LOG_FAB.ADD_PH
+										}
 										className="input"
 										onChange={(e) => {
 											setInputText(e.currentTarget.value);
@@ -202,7 +205,7 @@ export default function DeathLogFAB({
 										)
 									}
 								>
-									Confirm
+									{CONSTANTS.DEATH_LOG_FAB.ADD_SUBMIT}
 								</button>
 							</div>
 

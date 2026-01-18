@@ -3,6 +3,7 @@ import edit from "../../../assets/edit.svg";
 import group from "../../../assets/group.svg";
 import type { DistinctTreeNode } from "../../../model/TreeNodeModel";
 import { Link } from "react-router";
+import { CONSTANTS } from "../../../../shared/constants";
 
 export default function DeathLogCardOptions({
 	node,
@@ -15,13 +16,18 @@ export default function DeathLogCardOptions({
 		<ul className="menu menu-horizontal menu-xs rounded-box m-auto p-0">
 			<Link to={{ pathname: node.id }}>
 				<li>
-					<button aria-label="Folder Button">
+					<button
+						aria-label={CONSTANTS.DEATH_LOG_CARD.ENTRY_CHILDREN}
+					>
 						<img src={stepInto} alt="" className="h-4 w-4" />
 					</button>
 				</li>
 			</Link>
 			<li>
-				<button onClick={handleEdit} aria-label="Edit Button">
+				<button
+					onClick={handleEdit}
+					aria-label={CONSTANTS.DEATH_LOG_CARD.EDIT_MODAL}
+				>
 					<img src={edit} alt="" className="h-4 w-4" />
 				</button>
 			</li>

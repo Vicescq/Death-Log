@@ -1,5 +1,6 @@
 import { SignedOut, SignInButton, SignedIn } from "@clerk/clerk-react";
 import { useNavigate } from "react-router";
+import { CONSTANTS } from "../../shared/constants";
 
 export default function Start() {
 	const navigate = useNavigate();
@@ -53,7 +54,7 @@ export default function Start() {
 								className="btn btn-neutral"
 								onClick={() => navigate("log")}
 							>
-								Continue as guest
+								{CONSTANTS.START.GUEST_BTN}
 							</button>
 						</SignedOut>
 

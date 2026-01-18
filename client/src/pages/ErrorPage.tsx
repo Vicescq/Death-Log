@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router";
+import { CONSTANTS } from "../../shared/constants";
 
 export default function ErrorPage({
 	error,
@@ -18,7 +19,6 @@ export default function ErrorPage({
 				<div className="max-w-md">
 					<h1 className="text-5xl font-bold">{icon}</h1>
 					<button
-						aria-label="Go back home button"
 						className="btn btn-accent mt-12"
 						onClick={() =>
 							resetErrorBoundary
@@ -26,7 +26,7 @@ export default function ErrorPage({
 								: navigate("/")
 						}
 					>
-						Click me to go back home!
+						{CONSTANTS.ERROR.HOME}
 					</button>
 					<div className="divider"></div>
 					<p className="text-xl sm:text-3xl">{msg}</p>
