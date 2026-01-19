@@ -8,6 +8,7 @@ import {
 } from "../utils";
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
 import { CONSTANTS } from "../../../../shared/constants";
+import { assertIsNonNull } from "../../../utils";
 
 type Props = {
 	modalState: DistinctTreeNode;
@@ -16,11 +17,14 @@ type Props = {
 
 export default function DLMEBNameDate({ modalState, onEdit }: Props) {
 	const tree = useDeathLogStore((state) => state.tree);
+	const originalNodeName = tree.get(modalState.id)?.name;
+	assertIsNonNull(originalNodeName); // should be fine, useInitApp should be fulyl working
 
 	const inputTextError = computeModalInputTextError(modalState.name, {
 		type: "nodeEdit",
 		tree: tree,
 		parentID: modalState.parentID,
+		originalName: originalNodeName,
 	});
 	return (
 		<>

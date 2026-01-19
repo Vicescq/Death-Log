@@ -169,7 +169,9 @@ test.describe("Modal Editing", () => {
 			const modalEditInputLoc = page
 				.getByLabel(CONSTANTS.DEATH_LOG_MODAL.EDIT_NAME)
 				.filter({ visible: true });
-			const submitLoc = page.getByText(CONSTANTS.DEATH_LOG_MODAL.SUBMIT);
+			const submitLoc = page
+				.getByText(CONSTANTS.DEATH_LOG_MODAL.SUBMIT)
+				.filter({ visible: true });
 			const modalEditCloseLoc = page
 				.getByText(CONSTANTS.DEATH_LOG_MODAL.CLOSE)
 				.filter({ visible: true });
@@ -185,6 +187,7 @@ test.describe("Modal Editing", () => {
 			await expect(
 				page.getByText(CONSTANTS.INPUT_TEXT_ERROR.ELP),
 			).toBeVisible();
+			await expect(submitLoc).toBeDisabled();
 
 			modalEditCloseLoc.click();
 
@@ -195,6 +198,7 @@ test.describe("Modal Editing", () => {
 			await expect(
 				page.getByText(CONSTANTS.INPUT_TEXT_ERROR.NON_UNIQUE),
 			).toBeVisible();
+			await expect(submitLoc).toBeDisabled();
 		});
 	});
 

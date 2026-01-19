@@ -19,13 +19,21 @@ export type ValidationResponse = {
 };
 
 export type ValidationContext =
-	| ValidationContextNode
+	| ValidationContextNodeAdd
+	| ValidationContextNodeEdit
 	| ValidationContextProfileGroup;
 
-export type ValidationContextNode = {
-	type: "nodeAdd" | "nodeEdit";
+export type ValidationContextNodeAdd = {
+	type: "nodeAdd";
 	tree: Tree;
 	parentID: string;
+};
+
+export type ValidationContextNodeEdit = {
+	type: "nodeEdit";
+	tree: Tree;
+	parentID: string;
+	originalName: string;
 };
 
 export type ValidationContextProfileGroup = {

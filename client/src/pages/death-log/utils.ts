@@ -295,6 +295,7 @@ export function canUserSubmitModalChanges(
 		type: "nodeEdit",
 		parentID: modalState.parentID,
 		tree: tree,
+		originalName: "__NOT_USED__",
 	}).valid;
 	const unchangedNodeName = modalState.name == original.name;
 
@@ -319,9 +320,12 @@ export function computeModalInputTextError(
 			inputTextError = "";
 		}
 	} else if (context.type == "nodeEdit") {
-		if (!res.valid && res.cause != "nonunique" && res.msg) {
+		if (!res.valid && context.originalName != currName && res.msg) {
 			inputTextError = res.msg;
-		} else if (res.cause == "nonunique") {
+		} else if (
+			res.cause == "nonunique" &&
+			context.originalName == currName
+		) {
 			inputTextError = "";
 		} else {
 			inputTextError = "";
