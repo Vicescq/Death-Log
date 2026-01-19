@@ -6,6 +6,7 @@ import type {
 	Profile,
 	RootNode,
 	Tree,
+	Death,
 } from "../model/TreeNodeModel";
 import LocalDB from "../services/LocalDB";
 import { nanoid } from "nanoid";
@@ -181,7 +182,7 @@ export function createSubject(inputText: string, parentID: string, tree: Tree) {
 		notes: "",
 		dateStart: new Date().toISOString(),
 		dateEnd: null,
-		deaths: 0,
+		log: [],
 		reoccurring: false,
 		context: "boss",
 		timeSpent: null,
@@ -189,6 +190,15 @@ export function createSubject(inputText: string, parentID: string, tree: Tree) {
 		dateEndRel: true,
 	};
 	return defaultSubject;
+}
+
+export function createDeath(subjectID: string): Death {
+	return {
+		parentID: subjectID,
+		timestamp: new Date().toISOString(),
+		timestampRel: true,
+		remark: null,
+	};
 }
 
 export function generateAndValidateID(tree: Tree) {

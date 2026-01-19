@@ -4,7 +4,7 @@ import type {
 	Tree,
 } from "../../model/TreeNodeModel";
 import {
-	formatString,
+	createDeath,
 	validateString,
 	type ValidationContext,
 } from "../../stores/utils";
@@ -61,7 +61,7 @@ export function calcDeaths(node: DistinctTreeNode, tree: Tree) {
 					profile.childIDS.forEach((id) => {
 						const subject = tree.get(id);
 						if (subject && subject.type == "subject") {
-							sum += subject.deaths;
+							sum += subject.log.length;
 						}
 					});
 				}
@@ -71,12 +71,12 @@ export function calcDeaths(node: DistinctTreeNode, tree: Tree) {
 			node.childIDS.forEach((id) => {
 				const subject = tree.get(id);
 				if (subject && subject.type == "subject") {
-					sum += subject.deaths;
+					sum += subject.log.length;
 				}
 			});
 			return sum;
 		case "subject":
-			return node.deaths;
+			return node.log.length;
 	}
 }
 
@@ -333,4 +333,8 @@ export function computeModalInputTextError(
 	}
 
 	return inputTextError;
+}
+
+export function stressTestDeathObjects(size: number, id: string) {
+	return Array.from({ length: size }, () => createDeath(id));
 }

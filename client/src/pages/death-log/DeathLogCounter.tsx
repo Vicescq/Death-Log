@@ -5,6 +5,8 @@ import useBreadcrumbMembers from "./useBreadcrumbMembers";
 import DeathLogBreadcrumb from "./DeathLogBreadcrumb";
 import NavBar from "../../components/navBar/NavBar";
 import type { Subject } from "../../model/TreeNodeModel";
+import { createDeath } from "../../stores/utils";
+import { stressTestDeathObjects } from "./utils";
 
 type Props = {
 	subject: Subject;
@@ -14,6 +16,7 @@ export default function DeathLogCounter({ subject }: Props) {
 	const updateNode = useDeathLogStore((state) => state.updateNode);
 
 	const breadcrumbMembers = useBreadcrumbMembers();
+
 	return (
 		<>
 			<>
@@ -40,25 +43,38 @@ export default function DeathLogCounter({ subject }: Props) {
 								onClick={() => {
 									updateNode(subject, {
 										...subject,
-										deaths: subject.deaths + 1,
+										log: [
+											...subject.log,
+											createDeath(subject.id),
+										],
 									});
+									// updateNode(subject, {
+									// 	...subject,
+									// 	log: [
+									// 		...subject.log,
+									// 		...stressTestDeathObjects(
+									// 			1000,
+									// 			subject.id,
+									// 		),
+									// 	],
+									// });
 								}}
 							/>
 						</span>
 						<span className={`text-center text-6xl`}>
-							{subject.deaths}
+							{subject.log.length}
 						</span>
 						<span>
 							<img
 								src={down}
 								className="border-indianred m-auto w-8 rounded-2xl border-3 shadow-[6px_4px_0px_rgba(0,0,0,1)]"
 								onClick={() => {
-									if (subject.deaths > 0) {
-										updateNode(subject, {
-											...subject,
-											deaths: subject.deaths - 1,
-										});
-									}
+									const log = [...subject.log];
+									log.pop();
+									updateNode(subject, {
+										...subject,
+										log: log,
+									});
 								}}
 							/>
 						</span>
