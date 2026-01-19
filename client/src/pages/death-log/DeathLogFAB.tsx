@@ -13,9 +13,12 @@ import type {
 	Subject,
 	SubjectContext,
 } from "../../model/TreeNodeModel";
-import { mapContextKeyToProperStr, mapProperStrToContextKey } from "./utils";
+import {
+	computeModalInputTextError,
+	mapContextKeyToProperStr,
+	mapProperStrToContextKey,
+} from "./utils";
 import { formatString } from "../../stores/utils";
-import computeModalInputTextError from "./utils";
 import { CONSTANTS } from "../../../shared/constants";
 
 export type EditableSubjectField = Pick<Subject, "reoccurring" | "context">;

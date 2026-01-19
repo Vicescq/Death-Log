@@ -10,6 +10,7 @@ import type {
 import LocalDB from "../services/LocalDB";
 import { nanoid } from "nanoid";
 import { assertIsNonNull, assertIsProfile } from "../utils";
+import { CONSTANTS } from "../../shared/constants";
 
 export type ValidationResponse = {
 	valid: boolean;
@@ -33,10 +34,10 @@ export type ValidationContextProfileGroup = {
 };
 
 export const InputTextValidationStrings = {
-	nonunique: "Name has to be unique!",
-	empty: "Name cannot be empty!",
-	nonstr: "Name has to be of type string!",
-	elp: "Please use another name!",
+	nonunique: CONSTANTS.INPUT_TEXT_ERROR.NON_UNIQUE,
+	empty: CONSTANTS.INPUT_TEXT_ERROR.EMPTY,
+	nonstr: CONSTANTS.INPUT_TEXT_ERROR.STR,
+	elp: CONSTANTS.INPUT_TEXT_ERROR.ELP,
 } as const;
 
 export function sortChildIDS(parentNode: TreeNode, tree: Tree) {

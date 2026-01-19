@@ -28,6 +28,7 @@ app.db
 dev-dist
 backups/*
 serviceAccountKey.json
+run.bat
 
 # Playwright
 client/test-results/

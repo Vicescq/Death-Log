@@ -76,7 +76,7 @@ export default function DeathLogCard({ node, entryNum, tree }: Props) {
 					}}
 				/>
 				<Modal
-					closeBtnName="Cancel"
+					closeBtnName={CONSTANTS.DEATH_LOG_MODAL.CLOSE}
 					content={
 						<>
 							<DeathLogCardModalBody

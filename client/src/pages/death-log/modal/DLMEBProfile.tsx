@@ -1,9 +1,9 @@
 import { useState } from "react";
 import type { Profile, ProfileGroup } from "../../../model/TreeNodeModel";
 import { formatString } from "../../../stores/utils";
-import computeModalInputTextError from "../utils";
 import edit from "../../../assets/edit.svg";
 import useConsoleLogOnStateChange from "../../../hooks/useConsoleLogOnStateChange";
+import { computeModalInputTextError } from "../utils";
 
 type Props = {
 	modalState: Profile;

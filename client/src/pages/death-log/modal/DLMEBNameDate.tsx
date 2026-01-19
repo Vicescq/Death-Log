@@ -1,11 +1,12 @@
 import type { DistinctTreeNode } from "../../../model/TreeNodeModel";
 import { formatString } from "../../../stores/utils";
 import {
-	convertDefaultCardModalDateFormatToISO,
-	defaultCardModalDateFormat,
+	computeModalInputTextError,
+	parseUTCDate,
+	formatUTCDate,
+	maxDate,
 } from "../utils";
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
-import computeModalInputTextError from "../utils";
 import { CONSTANTS } from "../../../../shared/constants";
 
 type Props = {
@@ -21,7 +22,6 @@ export default function DLMEBNameDate({ modalState, onEdit }: Props) {
 		tree: tree,
 		parentID: modalState.parentID,
 	});
-
 	return (
 		<>
 			<fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-full border p-4">
@@ -60,48 +60,36 @@ export default function DLMEBNameDate({ modalState, onEdit }: Props) {
 				<input
 					type="date"
 					className="input join-item"
-					value={defaultCardModalDateFormat(modalState.dateStart)}
+					value={formatUTCDate(modalState.dateStart)}
 					onChange={(e) =>
 						onEdit({
 							...modalState,
 							dateStart:
 								e.currentTarget.value == ""
 									? modalState.dateStart
-									: convertDefaultCardModalDateFormatToISO(
-											e.currentTarget.value,
-										),
+									: parseUTCDate(e.currentTarget.value),
 						})
 					}
 					max={
 						modalState.completed && modalState.dateEnd
-							? defaultCardModalDateFormat(modalState.dateEnd)
-							: defaultCardModalDateFormat(
-									new Date().toISOString(),
-								)
+							? formatUTCDate(modalState.dateEnd)
+							: formatUTCDate(new Date().toISOString())
 					}
 				/>
 
-				{modalState.completed ? (
+				{modalState.completed && modalState.dateEnd ? (
 					<input
 						type="date"
 						className="input join-item"
-						value={
-							modalState.dateEnd
-								? defaultCardModalDateFormat(modalState.dateEnd)
-								: undefined
-						}
+						value={formatUTCDate(modalState.dateEnd)}
 						onChange={(e) =>
 							onEdit({
 								...modalState,
-								dateEnd:
-									e.currentTarget.value == ""
-										? modalState.dateEnd
-										: convertDefaultCardModalDateFormatToISO(
-												e.currentTarget.value,
-											),
+								dateEnd: parseUTCDate(e.currentTarget.value),
 							})
 						}
-						min={defaultCardModalDateFormat(modalState.dateStart)}
+						min={formatUTCDate(modalState.dateStart)}
+						max={maxDate(modalState.dateEnd)}
 					/>
 				) : null}
 				<div className="divider my-2">↓ Reliability Flags ↓</div>

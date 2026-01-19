@@ -15,7 +15,10 @@ export default class Tester {
 			.click();
 		await expect(page.getByText(/.* title/)).toBeVisible();
 		await page.getByPlaceholder(CONSTANTS.DEATH_LOG_FAB.ADD_PH).fill(title);
-		await page.getByText(CONSTANTS.DEATH_LOG_FAB.ADD_SUBMIT).click();
+		await page
+			.getByText(CONSTANTS.DEATH_LOG_FAB.ADD_SUBMIT)
+			.filter({ visible: true })
+			.click();
 		await expect(page.getByText(title)).toBeVisible();
 	}
 

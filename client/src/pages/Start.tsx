@@ -50,20 +50,21 @@ export default function Start() {
 									Login with Google
 								</button>
 							</SignInButton>
-							<button
-								className="btn btn-neutral"
-								onClick={() => navigate("log")}
-							>
-								{CONSTANTS.START.GUEST_BTN}
-							</button>
 						</SignedOut>
+
+						<button
+							className="btn btn-neutral"
+							onClick={() => navigate("log")}
+						>
+							{CONSTANTS.START.GUEST_BTN}
+						</button>
 
 						<SignedIn>
 							<button
 								className="btn btn-neutral"
 								onClick={() => navigate("log")}
 							>
-								Continue
+								Continue with Account
 							</button>
 						</SignedIn>
 						<button

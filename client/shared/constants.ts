@@ -6,6 +6,7 @@ export const CONSTANTS = {
 		TURN_RIGHT: "Modal Turn Right",
 		EDIT_NAME: "Edit Name",
 		SUBMIT: "Save edits",
+		CLOSE: "Cancel"
 	},
 	DEATH_LOG_FAB: {
 		OPEN: "Open FAB",
@@ -23,5 +24,11 @@ export const CONSTANTS = {
 	ERROR: {
 		URL: "URL not found!",
 		HOME: "Click me to go back home!",
+	},
+	INPUT_TEXT_ERROR: {
+		EMPTY: "Name cannot be empty!",
+		NON_UNIQUE: "Name has to be unique!",
+		STR: "Name has to be of type string!",
+		ELP: "Please use another name!",
 	},
 } as const;

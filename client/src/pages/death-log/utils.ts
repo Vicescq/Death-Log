@@ -80,7 +80,7 @@ export function calcDeaths(node: DistinctTreeNode, tree: Tree) {
 	}
 }
 
-export function defaultCardModalDateFormat(isoSTR: string) {
+export function formatUTCDate(isoSTR: string) {
 	const dateObj = new Date(isoSTR);
 	const year = String(dateObj.getFullYear());
 	let month = String(dateObj.getMonth() + 1);
@@ -94,16 +94,20 @@ export function defaultCardModalDateFormat(isoSTR: string) {
 	return `${year}-${month}-${day}`;
 }
 
-export function convertDefaultCardModalDateFormatToISO(
-	cardModalDateFormat: string,
-) {
-	const parsedDate = cardModalDateFormat.split("-");
+export function parseUTCDate(formattedDateStr: string) {
+	const parsedDate = formattedDateStr.split("-");
 	const dateObj = new Date(
 		Number(parsedDate[0]),
 		Number(parsedDate[1]) - 1,
 		Number(parsedDate[2]),
 	);
 	return dateObj.toISOString();
+}
+
+export function maxDate(isoSTR: string) {
+	const dateObj = new Date(isoSTR);
+	dateObj.setFullYear(dateObj.getFullYear() + 1);
+	return formatUTCDate(dateObj.toISOString());
 }
 
 export function formatBreadcrumbMembers(
@@ -241,8 +245,7 @@ export function canUserSubmitModalChanges(
 	let nonNodeNameFieldChanged = false;
 
 	if (
-		defaultCardModalDateFormat(original.dateStart) !=
-		defaultCardModalDateFormat(modalState.dateStart)
+		formatUTCDate(original.dateStart) != formatUTCDate(modalState.dateStart)
 	) {
 		// time resets if change to same date: if clicked on 1/1/2026, but og is 1/1/2026 10:00, it will turn into 1/1/2026 00:00
 		nonNodeNameFieldChanged = true;
@@ -251,8 +254,7 @@ export function canUserSubmitModalChanges(
 	if (
 		original.dateEnd &&
 		modalState.dateEnd &&
-		defaultCardModalDateFormat(original.dateEnd) !=
-			defaultCardModalDateFormat(modalState.dateEnd)
+		formatUTCDate(original.dateEnd) != formatUTCDate(modalState.dateEnd)
 	) {
 		nonNodeNameFieldChanged = true;
 	}
@@ -301,7 +303,7 @@ export function canUserSubmitModalChanges(
 	); // for user to save modal changes, at least one non name field must be eddited AND an unchanchaged name OR given a node's name was changed and is valid. Setup this way due to edge case of validateString on init validation of modalState.name being the same which returns invalid
 }
 
-export default function computeModalInputTextError(
+export function computeModalInputTextError(
 	currName: string,
 	context: ValidationContext,
 ) {
