@@ -319,7 +319,10 @@ export function computeModalInputTextError(
 		} else {
 			inputTextError = "";
 		}
-	} else if (context.type == "nodeEdit") {
+	} else if (
+		context.type == "nodeEdit" ||
+		context.type == "profileGroupEdit"
+	) {
 		if (!res.valid && context.originalName != currName && res.msg) {
 			inputTextError = res.msg;
 		} else if (

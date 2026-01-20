@@ -4,7 +4,7 @@ import { useDeathLogStore } from "../../stores/useDeathLogStore";
 import DeathLogCounter from "./DeathLogCounter";
 import ErrorPage from "../ErrorPage";
 import DeathLogProfileGroup from "./DeathLogProfileGroup";
-import { assertIsNonNull, assertIsSubject } from "../../utils";
+import { assertIsNonNull, assertIsProfile, assertIsSubject } from "../../utils";
 import { CONSTANTS } from "../../../shared/constants";
 
 export type CardMainPageTransitionState = {
@@ -42,7 +42,10 @@ export default function DeathLogRouter() {
 		tree.has(profileID) &&
 		subjectIDOrProfileGroupEdit == "profile-group-edit"
 	) {
-		return <DeathLogProfileGroup />;
+		const profile = tree.get(profileID);
+		assertIsNonNull(profile);
+		assertIsProfile(profile);
+		return <DeathLogProfileGroup profile={profile} />;
 	}
 
 	if (subjectIDOrProfileGroupEdit && tree.has(subjectIDOrProfileGroupEdit)) {

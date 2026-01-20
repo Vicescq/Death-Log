@@ -29,7 +29,7 @@ export default function DLMEBNotesDel({ modalState, onEdit }: Props) {
 							notes: e.currentTarget.value,
 						})
 					}
-					maxLength={1000}
+					maxLength={CONSTANTS.TEXTAREA_MAX}
 				></textarea>
 			</fieldset>
 			<fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-full border p-4">

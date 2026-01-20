@@ -48,7 +48,7 @@ export default function DLMEBNameDate({ modalState, onEdit }: Props) {
 							name: formatString(e.currentTarget.value),
 						})
 					}
-					maxLength={50}
+					maxLength={CONSTANTS.INPUT_MAX}
 				/>
 				<div className={`text-error mt-2 ml-2 text-sm`}>
 					{inputTextError}

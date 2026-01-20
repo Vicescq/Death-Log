@@ -235,7 +235,7 @@ export default function DataManagement() {
 
 	return (
 		<>
-			<NavBar midNavContent={<></>} />
+			<NavBar/>
 			<FeedbackToast
 				msg={feedbackToastMsg}
 				bgCSS={feedbackToastCSS}

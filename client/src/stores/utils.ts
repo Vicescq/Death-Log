@@ -22,7 +22,8 @@ export type ValidationResponse = {
 export type ValidationContext =
 	| ValidationContextNodeAdd
 	| ValidationContextNodeEdit
-	| ValidationContextProfileGroup;
+	| ValidationContextProfileGroupAdd
+	| ValidationContextProfileGroupEdit;
 
 export type ValidationContextNodeAdd = {
 	type: "nodeAdd";
@@ -37,9 +38,15 @@ export type ValidationContextNodeEdit = {
 	originalName: string;
 };
 
-export type ValidationContextProfileGroup = {
-	type: "profileGroupAdd" | "profileGroupEdit";
+export type ValidationContextProfileGroupAdd = {
+	type: "profileGroupAdd";
 	profile: Profile;
+};
+
+export type ValidationContextProfileGroupEdit = {
+	type: "profileGroupEdit";
+	profile: Profile;
+	originalName: string;
 };
 
 export const InputTextValidationStrings = {

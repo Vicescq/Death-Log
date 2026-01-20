@@ -177,7 +177,7 @@ export default function DeathLogFAB({
 										placeholder={
 											CONSTANTS.DEATH_LOG_FAB.ADD_PH
 										}
-										className="input"
+										className="input join-item"
 										onChange={(e) => {
 											setInputText(e.currentTarget.value);
 										}}
@@ -189,7 +189,7 @@ export default function DeathLogFAB({
 											)
 										}
 										value={inputText}
-										maxLength={50}
+										maxLength={CONSTANTS.INPUT_MAX}
 									/>
 									<div
 										className={`text-error mt-2 ml-2 text-sm`}

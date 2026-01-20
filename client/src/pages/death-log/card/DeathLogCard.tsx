@@ -70,7 +70,7 @@ export default function DeathLogCard({ node, entryNum, tree }: Props) {
 				</div>
 				<DeathLogCardOptions
 					node={node}
-					handleEdit={() => {
+					openModal={() => {
 						setPage(1);
 						editModalRef.current?.showModal();
 					}}

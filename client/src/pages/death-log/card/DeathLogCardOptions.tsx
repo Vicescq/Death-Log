@@ -7,10 +7,10 @@ import { CONSTANTS } from "../../../../shared/constants";
 
 export default function DeathLogCardOptions({
 	node,
-	handleEdit,
+	openModal,
 }: {
 	node: DistinctTreeNode;
-	handleEdit: () => void;
+	openModal: () => void;
 }) {
 	return (
 		<ul className="menu menu-horizontal menu-xs rounded-box m-auto p-0">
@@ -25,7 +25,7 @@ export default function DeathLogCardOptions({
 			</Link>
 			<li>
 				<button
-					onClick={handleEdit}
+					onClick={openModal}
 					aria-label={CONSTANTS.DEATH_LOG_CARD.EDIT_MODAL}
 				>
 					<img src={edit} alt="" className="h-4 w-4" />

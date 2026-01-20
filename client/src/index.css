@@ -1,8 +1,6 @@
 @import "tailwindcss";
 @plugin "daisyui" {
-	themes:
-		abyss,
-		cyberpunk;
+	themes: black, abyss, cyberpunk, luxury, forest;
 }
 
 :root {

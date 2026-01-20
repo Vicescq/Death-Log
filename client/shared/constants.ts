@@ -31,4 +31,6 @@ export const CONSTANTS = {
 		STR: "Name has to be of type string!",
 		ELP: "Please use another name!",
 	},
+	INPUT_MAX: 60,
+	TEXTAREA_MAX: 1000
 } as const;
