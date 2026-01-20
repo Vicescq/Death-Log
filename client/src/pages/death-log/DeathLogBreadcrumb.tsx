@@ -61,6 +61,9 @@ export default function DeathLogBreadcrumb({ breadcrumbMembers }: Props) {
 						}
 						return (
 							<li key={i}>
+								{i == formattedBreadcrumbMembers.length - 1 ? (
+									<div className="status status-primary mr-2 animate-bounce"></div>
+								) : null}
 								<Link to={{ pathname: member.link }}>
 									{member.name}
 								</Link>

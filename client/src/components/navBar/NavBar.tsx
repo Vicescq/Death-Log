@@ -2,6 +2,7 @@ import { Link } from "react-router";
 import home from "../../assets/home.svg";
 import save from "../../assets/save.svg";
 import dl from "../../assets/death-log.svg";
+import faq from "../../assets/faq.svg";
 import { SignedIn, UserButton } from "@clerk/clerk-react";
 import NavBarDrawer from "./NavBarDrawer";
 import { useActiveNavBarCSS } from "./useActiveNavBarCSS";
@@ -21,11 +22,11 @@ export default function NavBar({
 }: Props) {
 	const { activeDLCSS, activeDMCSS, activeFAQCSS } = useActiveNavBarCSS("bg");
 	return (
-		<div className="navbar sticky top-0 z-10 bg-base-100">
+		<div className="navbar bg-base-100 sticky top-0 z-10">
 			<div className={`navbar-start ${startNavContentCSS}`}>
 				<NavBarDrawer />
 
-				<ul className="menu menu-horizontal bg-base-200 rounded-box hidden items-center justify-center md:flex">
+				<ul className="menu menu-horizontal rounded-box hidden items-center justify-center gap-0.5 md:flex">
 					<li>
 						<Link to={{ pathname: "/" }}>
 							<img src={home} alt="" className="h-5 w-5" />
@@ -52,7 +53,7 @@ export default function NavBar({
 							className={activeFAQCSS}
 							to={{ pathname: "/FAQ" }}
 						>
-							FAQ
+							<img src={faq} alt="" className="h-5 w-5" />
 						</Link>
 					</li>
 					<SignedIn>

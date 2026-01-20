@@ -309,33 +309,33 @@ export function computeModalInputTextError(
 	context: ValidationContext,
 ) {
 	let inputTextError = "";
+	let submitBtnCSS = "btn-success";
 	const res = validateString(currName, context);
 
 	if (context.type == "nodeAdd" || context.type == "profileGroupAdd") {
 		if (!res.valid && res.cause != "empty" && res.msg) {
 			inputTextError = res.msg;
+			submitBtnCSS = "btn-disabled";
 		} else if (res.cause == "empty") {
-			inputTextError = "";
-		} else {
-			inputTextError = "";
+			submitBtnCSS = "btn-disabled";
 		}
 	} else if (
+		// acts as an else due to mutually exclusive events but did an else if for clarity
 		context.type == "nodeEdit" ||
 		context.type == "profileGroupEdit"
 	) {
 		if (!res.valid && context.originalName != currName && res.msg) {
 			inputTextError = res.msg;
+			submitBtnCSS = "btn-disabled";
 		} else if (
 			res.cause == "nonunique" &&
 			context.originalName == currName
 		) {
-			inputTextError = "";
-		} else {
-			inputTextError = "";
+			submitBtnCSS = "btn-disabled";
 		}
 	}
 
-	return inputTextError;
+	return {inputTextError, submitBtnCSS};
 }
 
 export function stressTestDeathObjects(size: number, id: string) {

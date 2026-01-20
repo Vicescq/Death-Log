@@ -36,10 +36,13 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 	const [currentlyEditingProfileGroup, setCurrentlyEditingProfileGroup] =
 		useState<CurrentlyEditingProfileGroup | null>(null);
 
-	const inputTextError = computeModalInputTextError(newProfileGroup.title, {
-		type: "profileGroupAdd",
-		profile: profile,
-	});
+	const { inputTextError } = computeModalInputTextError(
+		newProfileGroup.title,
+		{
+			type: "profileGroupAdd",
+			profile: profile,
+		},
+	);
 
 	let inputTextErrorCurrentGroup = "";
 	if (currentlyEditingProfileGroup) {
@@ -51,7 +54,7 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 				originalName:
 					profile.groupings[currentlyEditingProfileGroup.index].title,
 			},
-		);
+		).inputTextError;
 	}
 
 	function onAdd() {
@@ -139,7 +142,7 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 						Add a new Profile Group
 					</legend>
 
-					<label className="label">Profile Group Name</label>
+					<label className="label">Title</label>
 					<div className="join">
 						<input
 							type="search"
@@ -169,9 +172,7 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 						</button>
 					</div>
 					<span className="text-error">{inputTextError}</span>
-					<label className="label mt-4">
-						Profile Group Description
-					</label>
+					<label className="label mt-4">Description</label>
 					<textarea
 						className="textarea w-full"
 						value={newProfileGroup.description}
@@ -181,7 +182,8 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 								description: e.currentTarget.value,
 							});
 						}}
-						maxLength={CONSTANTS.TEXTAREA_MAX}
+						maxLength={CONSTANTS.TEXTAREA.TEXTAREA_MAX}
+						rows={CONSTANTS.TEXTAREA.TEXTAREA_ROWS}
 					/>
 				</fieldset>
 				<fieldset className="fieldset bg-base-200 border-base-300 rounded-box border p-4">
@@ -196,11 +198,11 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 								return (
 									<li
 										key={i}
-										className={`flex rounded-2xl px-4`}
+										className={`hover:bg-neutral ${currentlyEditingProfileGroup?.index == i ? "bg-neutral" : ""} flex rounded-2xl px-4`}
 									>
 										<label className="label">
 											<button
-												className="btn btn-xs btn-ghost p-0"
+												className={`btn btn-xs btn-ghost hover:bg-neutral hover:border-neutral ${currentlyEditingProfileGroup?.index == i ? "bg-neutral border-neutral" : ""} p-0`}
 												onClick={() => onEditFocus(i)}
 											>
 												<img
@@ -209,7 +211,7 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 													className="w-4"
 												/>
 											</button>
-											<span className="ml-2">
+											<span className="text-primary ml-2">
 												{prfoileGroup.title}
 											</span>
 										</label>
@@ -228,7 +230,7 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 				{currentlyEditingProfileGroup ? (
 					<fieldset className="fieldset bg-base-200 border-base-300 rounded-box border p-4">
 						<legend className="fieldset-legend">
-							Editing{" "}
+							Currently Editing:{" "}
 							{
 								profile.groupings[
 									currentlyEditingProfileGroup.index
@@ -236,7 +238,7 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 							}
 						</legend>
 
-						<label className="label">Profile Group Name</label>
+						<label className="label">Title</label>
 						<input
 							type="search"
 							className="input w-full"
@@ -268,9 +270,7 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 							{inputTextErrorCurrentGroup}
 						</span>
 
-						<label className="label mt-4">
-							Profile Group Description
-						</label>
+						<label className="label mt-4">Description</label>
 						<textarea
 							className="textarea w-full"
 							value={
@@ -286,7 +286,8 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 									},
 								});
 							}}
-							maxLength={CONSTANTS.TEXTAREA_MAX}
+							maxLength={CONSTANTS.TEXTAREA.TEXTAREA_MAX}
+							rows={CONSTANTS.TEXTAREA.TEXTAREA_ROWS}
 						/>
 						<button
 							className={`btn ${enabledEditBtn ? "btn-success" : "btn-disabled"} mt-2`}

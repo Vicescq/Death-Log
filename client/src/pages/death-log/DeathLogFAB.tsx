@@ -46,7 +46,7 @@ export default function DeathLogFAB({
 	const [subjectContext, setSubjectContext] =
 		useState<SubjectContext>("boss");
 
-	const inputTextError = computeModalInputTextError(inputText, {
+	const {inputTextError, submitBtnCSS} = computeModalInputTextError(inputText, {
 		type: "nodeAdd",
 		tree: tree,
 		parentID: parentID,
@@ -76,7 +76,7 @@ export default function DeathLogFAB({
 			: type[0].toUpperCase() +
 				type.slice(1) +
 				" title & Characteristics";
-
+	
 	return (
 		<>
 			<div className="fab">
@@ -119,7 +119,7 @@ export default function DeathLogFAB({
 				<div>
 					Filter {type}s
 					<button
-						className="btn btn-lg btn-circle"
+						className="btn btn-lg btn-circle btn-neutral"
 						onClick={() => modalRef.current?.showModal()}
 					>
 						<img src={filter} alt="" />
@@ -128,7 +128,7 @@ export default function DeathLogFAB({
 				<div>
 					Bottom
 					<button
-						className="btn btn-lg btn-circle btn-accent"
+						className="btn btn-lg btn-circle btn-neutral"
 						onClick={() => {
 							virtuosoRef.current?.scrollToIndex({
 								index: "LAST",
@@ -146,7 +146,7 @@ export default function DeathLogFAB({
 				<div>
 					Top
 					<button
-						className="btn btn-lg btn-circle btn-accent"
+						className="btn btn-lg btn-circle btn-neutral"
 						onClick={() => {
 							window.scrollTo({
 								top: 0,

@@ -20,7 +20,7 @@ export default function DLMEBNameDate({ modalState, onEdit }: Props) {
 	const originalNodeName = tree.get(modalState.id)?.name;
 	assertIsNonNull(originalNodeName); // should be fine, useInitApp should be fulyl working
 
-	const inputTextError = computeModalInputTextError(modalState.name, {
+	const {inputTextError, submitBtnCSS} = computeModalInputTextError(modalState.name, {
 		type: "nodeEdit",
 		tree: tree,
 		parentID: modalState.parentID,

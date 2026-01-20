@@ -6,7 +6,7 @@ export const CONSTANTS = {
 		TURN_RIGHT: "Modal Turn Right",
 		EDIT_NAME: "Edit Name",
 		SUBMIT: "Save edits",
-		CLOSE: "Cancel"
+		CLOSE: "Cancel",
 	},
 	DEATH_LOG_FAB: {
 		OPEN: "Open FAB",
@@ -32,5 +32,8 @@ export const CONSTANTS = {
 		ELP: "Please use another name!",
 	},
 	INPUT_MAX: 60,
-	TEXTAREA_MAX: 1000
+	TEXTAREA: {
+		TEXTAREA_MAX: 1000,
+		TEXTAREA_ROWS: 6,
+	},
 } as const;

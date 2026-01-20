@@ -2,6 +2,7 @@ import home from "../../assets/home.svg";
 import save from "../../assets/save.svg";
 import dl from "../../assets/death-log.svg";
 import navPanel from "../../assets/nav_panel.svg";
+import faq from "../../assets/faq.svg";
 import { Link } from "react-router";
 import { useActiveNavBarCSS } from "./useActiveNavBarCSS";
 import { SignedIn, UserButton } from "@clerk/clerk-react";
@@ -53,7 +54,7 @@ export default function NavBarDrawer() {
 							className={`btn ${activeFAQCSS}`}
 							to={{ pathname: "/FAQ" }}
 						>
-							FAQ
+							<img src={faq} alt="" className="h-5 w-5" />
 						</Link>
 					</li>
 					<SignedIn>
