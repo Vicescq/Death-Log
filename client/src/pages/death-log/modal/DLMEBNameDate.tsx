@@ -1,7 +1,7 @@
 import type { DistinctTreeNode } from "../../../model/TreeNodeModel";
 import { formatString } from "../../../stores/utils";
 import {
-	computeModalInputTextError,
+	getFormStatus,
 	parseUTCDate,
 	formatUTCDate,
 	maxDate,
@@ -20,7 +20,7 @@ export default function DLMEBNameDate({ modalState, onEdit }: Props) {
 	const originalNodeName = tree.get(modalState.id)?.name;
 	assertIsNonNull(originalNodeName); // should be fine, useInitApp should be fulyl working
 
-	const {inputTextError, submitBtnCSS} = computeModalInputTextError(modalState.name, {
+	const {inputTextError, submitBtnCSS} = getFormStatus(modalState.name, {
 		type: "nodeEdit",
 		tree: tree,
 		parentID: modalState.parentID,

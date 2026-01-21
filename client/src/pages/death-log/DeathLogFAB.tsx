@@ -14,7 +14,7 @@ import type {
 	SubjectContext,
 } from "../../model/TreeNodeModel";
 import {
-	computeModalInputTextError,
+	getFormStatus,
 	mapContextKeyToProperStr,
 	mapProperStrToContextKey,
 } from "./utils";
@@ -46,7 +46,7 @@ export default function DeathLogFAB({
 	const [subjectContext, setSubjectContext] =
 		useState<SubjectContext>("boss");
 
-	const {inputTextError, submitBtnCSS} = computeModalInputTextError(inputText, {
+	const {inputTextError, submitBtnCSS} = getFormStatus(inputText, {
 		type: "nodeAdd",
 		tree: tree,
 		parentID: parentID,

@@ -4,7 +4,7 @@ import edit from "../../assets/edit.svg";
 import { useState } from "react";
 import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
 import { formatString } from "../../stores/utils";
-import { computeModalInputTextError } from "./utils";
+import { getFormStatus } from "./utils";
 import { useDeathLogStore } from "../../stores/useDeathLogStore";
 import { Link, useLocation, useNavigate } from "react-router";
 import { CONSTANTS } from "../../../shared/constants";
@@ -36,7 +36,7 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 	const [currentlyEditingProfileGroup, setCurrentlyEditingProfileGroup] =
 		useState<CurrentlyEditingProfileGroup | null>(null);
 
-	const { inputTextError } = computeModalInputTextError(
+	const { inputTextError } = getFormStatus(
 		newProfileGroup.title,
 		{
 			type: "profileGroupAdd",
@@ -46,7 +46,7 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 
 	let inputTextErrorCurrentGroup = "";
 	if (currentlyEditingProfileGroup) {
-		inputTextErrorCurrentGroup = computeModalInputTextError(
+		inputTextErrorCurrentGroup = getFormStatus(
 			currentlyEditingProfileGroup.profileGroup.title,
 			{
 				type: "profileGroupEdit",

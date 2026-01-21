@@ -1,5 +1,7 @@
 import type {
 	DistinctTreeNode,
+	Profile,
+	ProfileGroup,
 	SubjectContext,
 	Tree,
 } from "../../model/TreeNodeModel";
@@ -237,77 +239,25 @@ export function formatBreadcrumbMembers(
 	return formattedBreadcrumbMembers;
 }
 
-export function canUserSubmitModalChanges(
-	original: DistinctTreeNode,
-	modalState: DistinctTreeNode,
-	tree: Tree,
-) {
-	let nonNodeNameFieldChanged = false;
+export type FormEditParams = ModalFormEditParams | ProfileGroupFormEditParams;
 
-	if (
-		formatUTCDate(original.dateStart) != formatUTCDate(modalState.dateStart)
-	) {
-		// time resets if change to same date: if clicked on 1/1/2026, but og is 1/1/2026 10:00, it will turn into 1/1/2026 00:00
-		nonNodeNameFieldChanged = true;
-	}
+type ModalFormEditParams = {
+	type: "modal";
+	originalModal: DistinctTreeNode;
+	modal: DistinctTreeNode;
+};
 
-	if (
-		original.dateEnd &&
-		modalState.dateEnd &&
-		formatUTCDate(original.dateEnd) != formatUTCDate(modalState.dateEnd)
-	) {
-		nonNodeNameFieldChanged = true;
-	}
+type ProfileGroupFormEditParams = {
+	type: "profile";
+	originalProfileGroup: ProfileGroup;
+	profile: ProfileGroup;
+};
 
-	if (original.dateStartRel != modalState.dateStartRel) {
-		nonNodeNameFieldChanged = true;
-	}
-
-	if (original.dateEndRel != modalState.dateEndRel) {
-		nonNodeNameFieldChanged = true;
-	}
-
-	if (original.notes != modalState.notes) {
-		nonNodeNameFieldChanged = true;
-	}
-
-	if (original.type == "profile" && modalState.type == "profile") {
-		if (original.groupings.length != modalState.groupings.length) {
-			nonNodeNameFieldChanged = true;
-		}
-
-		// more cases like name changes
-	}
-
-	if (original.type == "subject" && modalState.type == "subject") {
-		if (original.reoccurring != modalState.reoccurring) {
-			nonNodeNameFieldChanged = true;
-		}
-		if (original.timeSpent != modalState.timeSpent) {
-			nonNodeNameFieldChanged = true;
-		}
-		if (original.context != modalState.context) {
-			nonNodeNameFieldChanged = true;
-		}
-	}
-
-	const isNodeNameValidated = validateString(modalState.name, {
-		type: "nodeEdit",
-		parentID: modalState.parentID,
-		tree: tree,
-		originalName: "__NOT_USED__",
-	}).valid;
-	const unchangedNodeName = modalState.name == original.name;
-
-	return (
-		(nonNodeNameFieldChanged && unchangedNodeName) || isNodeNameValidated
-	); // for user to save modal changes, at least one non name field must be eddited AND an unchanchaged name OR given a node's name was changed and is valid. Setup this way due to edge case of validateString on init validation of modalState.name being the same which returns invalid
+export function hasFormBeenEdited(formEditParams: FormEditParams) {
+	return false;
 }
 
-export function computeModalInputTextError(
-	currName: string,
-	context: ValidationContext,
-) {
+export function getFormStatus(currName: string, context: ValidationContext) {
 	let inputTextError = "";
 	let submitBtnCSS = "btn-success";
 	const res = validateString(currName, context);
@@ -335,7 +285,7 @@ export function computeModalInputTextError(
 		}
 	}
 
-	return {inputTextError, submitBtnCSS};
+	return { inputTextError, submitBtnCSS };
 }
 
 export function stressTestDeathObjects(size: number, id: string) {
