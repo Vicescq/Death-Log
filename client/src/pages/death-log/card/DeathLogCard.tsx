@@ -9,8 +9,9 @@ import useCardCompletionToggle from "../useCardCompletionToggle";
 import type { DistinctTreeNode, Tree } from "../../../model/TreeNodeModel";
 import { useState, useRef } from "react";
 import { delay } from "../../../utils";
-import { calcDeaths, hasFormBeenEdited } from "../utils";
+import { calcDeaths, getFormStatus, hasFormBeenEdited } from "../utils";
 import { CONSTANTS } from "../../../../shared/constants";
+import { formatString } from "../../../stores/utils";
 
 type Props = {
 	node: DistinctTreeNode;
@@ -31,6 +32,17 @@ export default function DeathLogCard({ node, entryNum, tree }: Props) {
 		setChecked,
 		completedCSSStrike,
 	} = useCardCompletionToggle(node.completed);
+
+	const { inputTextError, submitBtnCSS } = getFormStatus(modalState.name, {
+		type: "nodeEdit",
+		parentID: modalState.parentID,
+		tree: tree,
+		editableForm: {
+			type: "node",
+			node: { ...modalState, name: formatString(modalState.name) },
+			originalNode: node,
+		},
+	});
 
 	return (
 		<>
@@ -85,6 +97,7 @@ export default function DeathLogCard({ node, entryNum, tree }: Props) {
 									setModalState(newModalState);
 								}}
 								modalState={modalState}
+								inputTextError={inputTextError}
 							/>
 
 							<div className="join mt-4 flex">
@@ -119,7 +132,7 @@ export default function DeathLogCard({ node, entryNum, tree }: Props) {
 					modalBtns={[
 						{
 							text: CONSTANTS.DEATH_LOG_MODAL.SUBMIT,
-							css: `${hasFormBeenEdited(node, modalState, tree) ? "btn-success" : "btn-disabled"} mt-10`,
+							css: `${submitBtnCSS} mt-10`,
 							fn: () => {
 								try {
 									updateNode(node, modalState);
@@ -130,11 +143,7 @@ export default function DeathLogCard({ node, entryNum, tree }: Props) {
 									}
 								}
 							},
-							disabled: !hasFormBeenEdited(
-								node,
-								modalState,
-								tree,
-							),
+							disabled: submitBtnCSS == "btn-disabled",
 						},
 					]}
 					handleOnClose={async () => {

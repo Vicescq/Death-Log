@@ -7,17 +7,25 @@ type Props = {
 	page: number;
 	onEdit: (newModalState: DistinctTreeNode) => void;
 	modalState: DistinctTreeNode;
+	inputTextError: string;
 };
 
 export default function DeathLogCardModalBody({
 	page,
 	onEdit,
 	modalState,
+	inputTextError,
 }: Props) {
 	if (page == 0) {
 		return <></>;
 	} else if (page == 1) {
-		return <DLMEBNameDate modalState={modalState} onEdit={onEdit} />;
+		return (
+			<DLMEBNameDate
+				modalState={modalState}
+				onEdit={onEdit}
+				inputTextError={inputTextError}
+			/>
+		);
 	} else if (page == 2 && modalState.type == "subject") {
 		return <DLMEBSubject modalState={modalState} onEdit={onEdit} />;
 	} else if (page == 2 || page == 3) {

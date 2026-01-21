@@ -1,4 +1,4 @@
-import type { DistinctTreeNode, Profile, Subject } from "./model/TreeNodeModel";
+import type { DistinctTreeNode, Profile, ProfileGroup, Subject } from "./model/TreeNodeModel";
 
 export function assertIsNonNull<T>(value: T): asserts value is NonNullable<T> {
 	if (value === undefined || value === null) {

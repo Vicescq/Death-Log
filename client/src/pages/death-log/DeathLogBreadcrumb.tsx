@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
 import useMediaQuery from "../../hooks/useMediaQuery";
 import * as Utils from "./utils";
+import * as useBreadcrumbMembers from "./useBreadcrumbMembers";
 import Modal from "../../components/Modal";
 import navIcon from "../../assets/arrow_forward.svg";
 import { Link } from "react-router";
@@ -28,7 +29,134 @@ export default function DeathLogBreadcrumb({ breadcrumbMembers }: Props) {
 	const { vpMatched: vpMatchedHigh } = useMediaQuery(breakpointHigh);
 	const { vpMatched: vpMatchedMid } = useMediaQuery(breakpointMid);
 
-	const formattedBreadcrumbMembers = Utils.formatBreadcrumbMembers(
+	function formatBreadcrumbMembers(
+		breadcrumbMembers: BreadcrumbMember[],
+		vpMatchedHighest: boolean,
+		vpMatchedHigh: boolean,
+		vpMatchedMid: boolean,
+	): BreadcrumbMember[] {
+		let formattedBreadcrumbMembers: BreadcrumbMember[] = [
+			{ name: "Death Log", link: "/log" },
+			...breadcrumbMembers,
+		];
+
+		if (formattedBreadcrumbMembers.length == 4) {
+			if (!vpMatchedMid) {
+				// condense first 3
+				formattedBreadcrumbMembers = [
+					{
+						link: "",
+						name: "...",
+						condensedMembers: [
+							{
+								name: formattedBreadcrumbMembers[0].name,
+								link: formattedBreadcrumbMembers[0].link,
+							},
+							{
+								name: formattedBreadcrumbMembers[1].name,
+								link: formattedBreadcrumbMembers[1].link,
+							},
+							{
+								name: formattedBreadcrumbMembers[2].name,
+								link: formattedBreadcrumbMembers[2].link,
+							},
+						],
+					},
+					...formattedBreadcrumbMembers.slice(3),
+				];
+			} else if (!vpMatchedHigh) {
+				// condense first 2
+				formattedBreadcrumbMembers = [
+					{
+						link: "",
+						name: "...",
+						condensedMembers: [
+							{
+								name: formattedBreadcrumbMembers[0].name,
+								link: formattedBreadcrumbMembers[0].link,
+							},
+							{
+								name: formattedBreadcrumbMembers[1].name,
+								link: formattedBreadcrumbMembers[1].link,
+							},
+						],
+					},
+					...formattedBreadcrumbMembers.slice(2),
+				];
+			} else if (!vpMatchedHighest) {
+				// condense first
+				formattedBreadcrumbMembers = [
+					{
+						link: "",
+						name: "...",
+						condensedMembers: [
+							{
+								name: formattedBreadcrumbMembers[0].name,
+								link: formattedBreadcrumbMembers[0].link,
+							},
+						],
+					},
+					...formattedBreadcrumbMembers.slice(1),
+				];
+			}
+		} else if (formattedBreadcrumbMembers.length == 3) {
+			if (!vpMatchedMid) {
+				// condense first 2
+				formattedBreadcrumbMembers = [
+					{
+						link: "",
+						name: "...",
+						condensedMembers: [
+							{
+								name: formattedBreadcrumbMembers[0].name,
+								link: formattedBreadcrumbMembers[0].link,
+							},
+							{
+								name: formattedBreadcrumbMembers[1].name,
+								link: formattedBreadcrumbMembers[1].link,
+							},
+						],
+					},
+					...formattedBreadcrumbMembers.slice(2),
+				];
+			} else if (!vpMatchedHigh) {
+				// condense first
+				formattedBreadcrumbMembers = [
+					{
+						link: "",
+						name: "...",
+						condensedMembers: [
+							{
+								name: formattedBreadcrumbMembers[0].name,
+								link: formattedBreadcrumbMembers[0].link,
+							},
+						],
+					},
+					...formattedBreadcrumbMembers.slice(1),
+				];
+			}
+		} else if (formattedBreadcrumbMembers.length == 2) {
+			if (!vpMatchedMid) {
+				// condense first
+				formattedBreadcrumbMembers = [
+					{
+						link: "",
+						name: "...",
+						condensedMembers: [
+							{
+								name: formattedBreadcrumbMembers[0].name,
+								link: formattedBreadcrumbMembers[0].link,
+							},
+						],
+					},
+					...formattedBreadcrumbMembers.slice(1),
+				];
+			}
+		}
+		return formattedBreadcrumbMembers;
+	}
+
+	const formattedBreadcrumbMembers = formatBreadcrumbMembers(
 		breadcrumbMembers,
 		vpMatchedHighest,
 		vpMatchedHigh,

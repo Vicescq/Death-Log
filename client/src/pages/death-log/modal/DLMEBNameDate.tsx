@@ -1,11 +1,6 @@
 import type { DistinctTreeNode } from "../../../model/TreeNodeModel";
 import { formatString } from "../../../stores/utils";
-import {
-	getFormStatus,
-	parseUTCDate,
-	formatUTCDate,
-	maxDate,
-} from "../utils";
+import { parseUTCDate, formatUTCDate, maxDate } from "../utils";
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
 import { CONSTANTS } from "../../../../shared/constants";
 import { assertIsNonNull } from "../../../utils";
@@ -13,19 +8,18 @@ import { assertIsNonNull } from "../../../utils";
 type Props = {
 	modalState: DistinctTreeNode;
 	onEdit: (newModalState: DistinctTreeNode) => void;
+	inputTextError: string;
 };
 
-export default function DLMEBNameDate({ modalState, onEdit }: Props) {
+export default function DLMEBNameDate({
+	modalState,
+	onEdit,
+	inputTextError,
+}: Props) {
 	const tree = useDeathLogStore((state) => state.tree);
 	const originalNodeName = tree.get(modalState.id)?.name;
 	assertIsNonNull(originalNodeName); // should be fine, useInitApp should be fulyl working
 
-	const {inputTextError, submitBtnCSS} = getFormStatus(modalState.name, {
-		type: "nodeEdit",
-		tree: tree,
-		parentID: modalState.parentID,
-		originalName: originalNodeName,
-	});
 	return (
 		<>
 			<fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-full border p-4">

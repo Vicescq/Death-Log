@@ -46,7 +46,7 @@ export default function DeathLogFAB({
 	const [subjectContext, setSubjectContext] =
 		useState<SubjectContext>("boss");
 
-	const {inputTextError, submitBtnCSS} = getFormStatus(inputText, {
+	const { inputTextError, submitBtnCSS } = getFormStatus(inputText, {
 		type: "nodeAdd",
 		tree: tree,
 		parentID: parentID,
@@ -76,7 +76,7 @@ export default function DeathLogFAB({
 			: type[0].toUpperCase() +
 				type.slice(1) +
 				" title & Characteristics";
-	
+
 	return (
 		<>
 			<div className="fab">
@@ -201,12 +201,7 @@ export default function DeathLogFAB({
 								<button
 									className={`btn ${inputTextError == "" && formatString(inputText) != "" ? "btn-success" : "btn-disabled"} join-item`}
 									onClick={onConfirm}
-									disabled={
-										!(
-											inputTextError == "" &&
-											formatString(inputText) != ""
-										)
-									}
+									disabled={submitBtnCSS == "btn-disabled"}
 								>
 									{CONSTANTS.DEATH_LOG_FAB.ADD_SUBMIT}
 								</button>

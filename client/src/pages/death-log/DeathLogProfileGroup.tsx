@@ -4,7 +4,7 @@ import edit from "../../assets/edit.svg";
 import { useState } from "react";
 import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
 import { formatString } from "../../stores/utils";
-import { getFormStatus } from "./utils";
+import { getFormStatus, type GetFormStatusReturn } from "./utils";
 import { useDeathLogStore } from "../../stores/useDeathLogStore";
 import { Link, useLocation, useNavigate } from "react-router";
 import { CONSTANTS } from "../../../shared/constants";
@@ -36,7 +36,7 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 	const [currentlyEditingProfileGroup, setCurrentlyEditingProfileGroup] =
 		useState<CurrentlyEditingProfileGroup | null>(null);
 
-	const { inputTextError } = getFormStatus(
+	const { inputTextError, submitBtnCSS } = getFormStatus(
 		newProfileGroup.title,
 		{
 			type: "profileGroupAdd",
@@ -45,16 +45,24 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 	);
 
 	let inputTextErrorCurrentGroup = "";
+	let submitBtnCSSCurrentGroup: GetFormStatusReturn["submitBtnCSS"] =
+		"btn-disabled";
 	if (currentlyEditingProfileGroup) {
-		inputTextErrorCurrentGroup = getFormStatus(
+		const currentlyEditingFormStatus = getFormStatus(
 			currentlyEditingProfileGroup.profileGroup.title,
 			{
 				type: "profileGroupEdit",
 				profile: profile,
-				originalName:
-					profile.groupings[currentlyEditingProfileGroup.index].title,
+				editableForm: {
+					type: "profileGroup",
+					profileGroup: currentlyEditingProfileGroup.profileGroup,
+					originalProfileGroup:
+						profile.groupings[currentlyEditingProfileGroup.index],
+				},
 			},
-		).inputTextError;
+		);
+		inputTextErrorCurrentGroup = currentlyEditingFormStatus.inputTextError;
+		submitBtnCSSCurrentGroup = currentlyEditingFormStatus.submitBtnCSS;
 	}
 
 	function onAdd() {
@@ -116,17 +124,6 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 		});
 	}
 
-	const enabledAddBtn =
-		inputTextError == "" && formatString(newProfileGroup.title) != "";
-
-	let enabledEditBtn = false;
-	if (currentlyEditingProfileGroup) {
-		enabledEditBtn =
-			inputTextErrorCurrentGroup == "" &&
-			currentlyEditingProfileGroup.profileGroup.title !=
-				profile.groupings[currentlyEditingProfileGroup.index].title;
-	}
-
 	// useConsoleLogOnStateChange(currProfileGroup, currProfileGroup);
 	return (
 		<>
@@ -164,9 +161,9 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 							}}
 						/>
 						<button
-							className={`btn ${enabledAddBtn ? "btn-success" : "btn-disabled"} join-item rounded-r-full`}
+							className={`btn ${submitBtnCSS} join-item rounded-r-full`}
 							onClick={() => onAdd()}
-							disabled={enabledAddBtn ? false : true}
+							disabled={submitBtnCSS == "btn-disabled"}
 						>
 							+
 						</button>
@@ -290,9 +287,11 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 							rows={CONSTANTS.TEXTAREA.TEXTAREA_ROWS}
 						/>
 						<button
-							className={`btn ${enabledEditBtn ? "btn-success" : "btn-disabled"} mt-2`}
-							disabled={enabledEditBtn ? false : true}
-							onClick={(e) => onEditSubmit()}
+							className={`btn ${submitBtnCSSCurrentGroup} mt-2`}
+							disabled={
+								submitBtnCSSCurrentGroup == "btn-disabled"
+							}
+							onClick={onEditSubmit}
 						>
 							Confirm Edits
 						</button>

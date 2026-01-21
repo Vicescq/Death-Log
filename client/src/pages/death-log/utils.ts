@@ -1,34 +1,21 @@
 import type {
 	DistinctTreeNode,
+	Game,
 	Profile,
 	ProfileGroup,
+	Subject,
 	SubjectContext,
 	Tree,
 } from "../../model/TreeNodeModel";
+import { createDeath, formatString } from "../../stores/utils";
+import { validateString } from "../../stores/stringValidation";
 import {
-	createDeath,
-	validateString,
-	type ValidationContext,
-} from "../../stores/utils";
-import type { BreadcrumbMember } from "./DeathLogBreadcrumb";
+	type ValidationContextForm,
+	type ValidationContextUniqueness,
+} from "../../stores/stringValidation";
 
 export function calcRequiredPages(size: number, pageSize: number) {
 	return Math.max(1, Math.ceil(size / pageSize));
-}
-
-export function paginateCardArray(
-	paginatedCards: React.JSX.Element[][],
-	cards: React.JSX.Element[],
-	maxPage: number,
-	maxItemPerPage: number,
-) {
-	let sliceIndexStart = 0;
-	let sliceIndexEnd = maxItemPerPage;
-	for (let i = 0; i < maxPage; i++) {
-		paginatedCards.push(cards.slice(sliceIndexStart, sliceIndexEnd));
-		sliceIndexStart += maxItemPerPage;
-		sliceIndexEnd += maxItemPerPage;
-	}
 }
 
 export function mapContextKeyToProperStr(contextKey: SubjectContext) {
@@ -112,176 +99,148 @@ export function maxDate(isoSTR: string) {
 	return formatUTCDate(dateObj.toISOString());
 }
 
-export function formatBreadcrumbMembers(
-	breadcrumbMembers: BreadcrumbMember[],
-	vpMatchedHighest: boolean,
-	vpMatchedHigh: boolean,
-	vpMatchedMid: boolean,
-): BreadcrumbMember[] {
-	let formattedBreadcrumbMembers: BreadcrumbMember[] = [
-		{ name: "Death Log", link: "/log" },
-		...breadcrumbMembers,
-	];
+export type EditableForm = EditableNodeForm | EditableProfileGroupForm;
 
-	if (formattedBreadcrumbMembers.length == 4) {
-		if (!vpMatchedMid) {
-			// condense first 3
-			formattedBreadcrumbMembers = [
-				{
-					link: "",
-					name: "...",
-					condensedMembers: [
-						{
-							name: formattedBreadcrumbMembers[0].name,
-							link: formattedBreadcrumbMembers[0].link,
-						},
-						{
-							name: formattedBreadcrumbMembers[1].name,
-							link: formattedBreadcrumbMembers[1].link,
-						},
-						{
-							name: formattedBreadcrumbMembers[2].name,
-							link: formattedBreadcrumbMembers[2].link,
-						},
-					],
-				},
-				...formattedBreadcrumbMembers.slice(3),
-			];
-		} else if (!vpMatchedHigh) {
-			// condense first 2
-			formattedBreadcrumbMembers = [
-				{
-					link: "",
-					name: "...",
-					condensedMembers: [
-						{
-							name: formattedBreadcrumbMembers[0].name,
-							link: formattedBreadcrumbMembers[0].link,
-						},
-						{
-							name: formattedBreadcrumbMembers[1].name,
-							link: formattedBreadcrumbMembers[1].link,
-						},
-					],
-				},
-				...formattedBreadcrumbMembers.slice(2),
-			];
-		} else if (!vpMatchedHighest) {
-			// condense first
-			formattedBreadcrumbMembers = [
-				{
-					link: "",
-					name: "...",
-					condensedMembers: [
-						{
-							name: formattedBreadcrumbMembers[0].name,
-							link: formattedBreadcrumbMembers[0].link,
-						},
-					],
-				},
-				...formattedBreadcrumbMembers.slice(1),
-			];
-		}
-	} else if (formattedBreadcrumbMembers.length == 3) {
-		if (!vpMatchedMid) {
-			// condense first 2
-			formattedBreadcrumbMembers = [
-				{
-					link: "",
-					name: "...",
-					condensedMembers: [
-						{
-							name: formattedBreadcrumbMembers[0].name,
-							link: formattedBreadcrumbMembers[0].link,
-						},
-						{
-							name: formattedBreadcrumbMembers[1].name,
-							link: formattedBreadcrumbMembers[1].link,
-						},
-					],
-				},
-				...formattedBreadcrumbMembers.slice(2),
-			];
-		} else if (!vpMatchedHigh) {
-			// condense first
-			formattedBreadcrumbMembers = [
-				{
-					link: "",
-					name: "...",
-					condensedMembers: [
-						{
-							name: formattedBreadcrumbMembers[0].name,
-							link: formattedBreadcrumbMembers[0].link,
-						},
-					],
-				},
-				...formattedBreadcrumbMembers.slice(1),
-			];
-		}
-	} else if (formattedBreadcrumbMembers.length == 2) {
-		if (!vpMatchedMid) {
-			// condense first
-			formattedBreadcrumbMembers = [
-				{
-					link: "",
-					name: "...",
-					condensedMembers: [
-						{
-							name: formattedBreadcrumbMembers[0].name,
-							link: formattedBreadcrumbMembers[0].link,
-						},
-					],
-				},
-				...formattedBreadcrumbMembers.slice(1),
-			];
-		}
-	}
-	return formattedBreadcrumbMembers;
-}
-
-export type FormEditParams = ModalFormEditParams | ProfileGroupFormEditParams;
-
-type ModalFormEditParams = {
-	type: "modal";
-	originalModal: DistinctTreeNode;
-	modal: DistinctTreeNode;
+type EditableNodeForm = {
+	type: "node";
+	originalNode: DistinctTreeNode;
+	node: DistinctTreeNode;
 };
 
-type ProfileGroupFormEditParams = {
-	type: "profile";
+type EditableProfileGroupForm = {
+	type: "profileGroup";
 	originalProfileGroup: ProfileGroup;
-	profile: ProfileGroup;
+	profileGroup: ProfileGroup;
 };
 
-export function hasFormBeenEdited(formEditParams: FormEditParams) {
-	return false;
+export function hasFormBeenEdited(editableForm: EditableForm) {
+	function checkIsEdited<
+		T extends (keyof K)[],
+		K extends Game | Profile | Subject | ProfileGroup,
+	>(keys: T, form: K, orignalForm: K) {
+		for (let i = 0; i < keys.length; i++) {
+			const key = keys[i];
+			if (key == "childIDS") continue;
+			if (form[key] != orignalForm[key]) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	let isEdited = false;
+
+	if (editableForm.type == "node") {
+		if (
+			editableForm.node.type == "game" &&
+			editableForm.originalNode.type == "game"
+		) {
+			const keys = Object.keys(editableForm.node) as (keyof Game)[];
+			isEdited = checkIsEdited(
+				keys,
+				editableForm.node,
+				editableForm.originalNode,
+			);
+		} else if (
+			editableForm.node.type == "profile" &&
+			editableForm.originalNode.type == "profile"
+		) {
+			const keys = Object.keys(editableForm.node) as (keyof Profile)[];
+			isEdited = checkIsEdited(
+				keys,
+				editableForm.node,
+				editableForm.originalNode,
+			);
+		} else if (
+			editableForm.node.type == "subject" &&
+			editableForm.originalNode.type == "subject"
+		) {
+			const keys = Object.keys(editableForm.node) as (keyof Subject)[];
+			isEdited = checkIsEdited(
+				keys,
+				editableForm.node,
+				editableForm.originalNode,
+			);
+		}
+	} else {
+		const keys = Object.keys(
+			editableForm.profileGroup,
+		) as (keyof ProfileGroup)[];
+		isEdited = checkIsEdited(
+			keys,
+			editableForm.profileGroup,
+			editableForm.profileGroup,
+		);
+	}
+	return isEdited;
 }
 
-export function getFormStatus(currName: string, context: ValidationContext) {
+export type GetFormStatusReturn = {
+	inputTextError: string;
+	submitBtnCSS: "btn-success" | "btn-disabled";
+};
+
+export function getFormStatus(
+	currName: string,
+	context: ValidationContextForm,
+): GetFormStatusReturn {
 	let inputTextError = "";
-	let submitBtnCSS = "btn-success";
-	const res = validateString(currName, context);
+	let submitBtnCSS: "btn-success" | "btn-disabled" = "btn-success";
+
+	let uniquenessContext: ValidationContextUniqueness;
+	if (context.type == "nodeAdd" || context.type == "nodeEdit") {
+		uniquenessContext = {
+			type: "uniquenessNode",
+			parentID: context.parentID,
+			tree: context.tree,
+		};
+	} else {
+		uniquenessContext = {
+			type: "uniquenessProfileGroup",
+			profile: context.profile,
+		};
+	}
+
+	const res = validateString(currName, uniquenessContext);
 
 	if (context.type == "nodeAdd" || context.type == "profileGroupAdd") {
-		if (!res.valid && res.cause != "empty" && res.msg) {
+		const invalidAndNotCausedByEmptyStr =
+			!res.valid && res.cause != "empty";
+
+		if (invalidAndNotCausedByEmptyStr && res.msg) {
 			inputTextError = res.msg;
 			submitBtnCSS = "btn-disabled";
 		} else if (res.cause == "empty") {
 			submitBtnCSS = "btn-disabled";
 		}
-	} else if (
-		// acts as an else due to mutually exclusive events but did an else if for clarity
-		context.type == "nodeEdit" ||
-		context.type == "profileGroupEdit"
-	) {
-		if (!res.valid && context.originalName != currName && res.msg) {
-			inputTextError = res.msg;
-			submitBtnCSS = "btn-disabled";
-		} else if (
-			res.cause == "nonunique" &&
-			context.originalName == currName
-		) {
-			submitBtnCSS = "btn-disabled";
+	} else {
+		if (context.editableForm.type == "node") {
+			const invalidAndNotCausedByUniqueness =
+				!res.valid && res.cause != "nonunique";
+
+			const isDefaultFormState =
+				!res.valid &&
+				res.cause == "nonunique" &&
+				!hasFormBeenEdited(context.editableForm) &&
+				context.editableForm.node.name ==
+					context.editableForm.originalNode.name;
+
+			const actualInvalidNameUniquenessFormState =
+				!res.valid &&
+				res.cause == "nonunique" &&
+				context.editableForm.node.name !=
+					context.editableForm.originalNode.name;
+
+			if (invalidAndNotCausedByUniqueness && res.msg) {
+				inputTextError = res.msg;
+				submitBtnCSS = "btn-disabled";
+			} else if (isDefaultFormState) {
+				submitBtnCSS = "btn-disabled";
+			} else if (actualInvalidNameUniquenessFormState && res.msg) {
+				inputTextError = res.msg;
+				submitBtnCSS = "btn-disabled";
+			}
+		} else {
 		}
 	}
 
