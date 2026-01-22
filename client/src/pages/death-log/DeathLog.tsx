@@ -1,11 +1,8 @@
-import { useDeathLogStore } from "../../stores/useDeathLogStore";
 import NavBar from "../../components/navBar/NavBar";
 import React, { forwardRef, useRef, useState } from "react";
 import DeathLogFAB from "./DeathLogFAB";
 import { Virtuoso, type Components, type VirtuosoHandle } from "react-virtuoso";
 import DeathLogBreadcrumb from "./DeathLogBreadcrumb";
-import useBreadcrumbMembers from "./useBreadcrumbMembers";
-import DeathLogCard from "./card/DeathLogCard";
 import DeathLogCardWrapper from "./card/DeathLogCardWrapper";
 import type { DistinctTreeNode } from "../../model/TreeNodeModel";
 
@@ -15,7 +12,6 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 
 	const [pageOpacity, setPageOpacity] = useState("");
 	const [deathLogIsInert, setDeathLogIsInert] = useState(false);
-	const breadcrumbMembers = useBreadcrumbMembers();
 
 	const DeathLogWrapper: Components["List"] = forwardRef((props, ref) => {
 		return (
@@ -48,9 +44,7 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 		<>
 			<NavBar
 				midNavContent={<></>}
-				endNavContent={
-					<DeathLogBreadcrumb breadcrumbMembers={breadcrumbMembers} />
-				}
+				endNavContent={<DeathLogBreadcrumb />}
 				endNavContentCSS="mr-0.5 w-[60%]"
 				startNavContentCSS="w-[40%]"
 			/>

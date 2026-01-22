@@ -15,18 +15,12 @@ type Props = {
 export default function DeathLogCounter({ subject }: Props) {
 	const updateNode = useDeathLogStore((state) => state.updateNode);
 
-	const breadcrumbMembers = useBreadcrumbMembers();
-
 	return (
 		<>
 			<>
 				<NavBar
 					midNavContent={<></>}
-					endNavContent={
-						<DeathLogBreadcrumb
-							breadcrumbMembers={breadcrumbMembers}
-						/>
-					}
+					endNavContent={<DeathLogBreadcrumb />}
 					endNavContentCSS="mr-0.5 w-[60%]"
 					startNavContentCSS="w-[40%]"
 				/>
