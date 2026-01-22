@@ -205,7 +205,7 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 													className="w-4"
 												/>
 											</button>
-											<span className="text-primary ml-2">
+											<span className=" ml-2">
 												{prfoileGroup.title}
 											</span>
 										</label>

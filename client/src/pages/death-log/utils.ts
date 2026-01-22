@@ -162,7 +162,7 @@ export function hasFormBeenEdited(context: ValidationContext) {
 		isEdited = checkIsEdited(
 			keys,
 			context.profileGroup,
-			context.profileGroup,
+			context.originalProfileGroup,
 		);
 	} else {
 		throw new Error(
