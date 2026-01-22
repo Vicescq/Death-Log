@@ -7,12 +7,12 @@ import type {
 	SubjectContext,
 	Tree,
 } from "../../model/TreeNodeModel";
-import { createDeath, formatString } from "../../stores/utils";
-import { validateString } from "../../stores/stringValidation";
+import { createDeath } from "../../stores/utils";
 import {
-	type ValidationContextForm,
-	type ValidationContextUniqueness,
+	InputTextValidationStrings,
+	validateString,
 } from "../../stores/stringValidation";
+import { type ValidationContext } from "../../stores/stringValidation";
 
 export function calcRequiredPages(size: number, pageSize: number) {
 	return Math.max(1, Math.ceil(size / pageSize));
@@ -99,21 +99,9 @@ export function maxDate(isoSTR: string) {
 	return formatUTCDate(dateObj.toISOString());
 }
 
-export type EditableForm = EditableNodeForm | EditableProfileGroupForm;
+export function hasFormBeenEdited(context: ValidationContext) {
+	// couldnt find a way to not use type assertions in this function
 
-type EditableNodeForm = {
-	type: "node";
-	originalNode: DistinctTreeNode;
-	node: DistinctTreeNode;
-};
-
-type EditableProfileGroupForm = {
-	type: "profileGroup";
-	originalProfileGroup: ProfileGroup;
-	profileGroup: ProfileGroup;
-};
-
-export function hasFormBeenEdited(editableForm: EditableForm) {
 	function checkIsEdited<
 		T extends (keyof K)[],
 		K extends Game | Profile | Subject | ProfileGroup,
@@ -121,7 +109,24 @@ export function hasFormBeenEdited(editableForm: EditableForm) {
 		for (let i = 0; i < keys.length; i++) {
 			const key = keys[i];
 			if (key == "childIDS") continue;
-			if (form[key] != orignalForm[key]) {
+			if (
+				key == "dateStart" &&
+				formatUTCDate(form[key] as string) !=
+					formatUTCDate(orignalForm[key] as string)
+			) {
+				return true;
+			} else if (
+				key == "dateEnd" &&
+				(form[key] as string) != null &&
+				formatUTCDate(form[key] as string) !=
+					formatUTCDate(orignalForm[key] as string)
+			) {
+				return true;
+			} else if (
+				form[key] != orignalForm[key] &&
+				key != "dateStart" &&
+				key != "dateEnd"
+			) {
 				return true;
 			}
 		}
@@ -130,48 +135,41 @@ export function hasFormBeenEdited(editableForm: EditableForm) {
 
 	let isEdited = false;
 
-	if (editableForm.type == "node") {
+	if (context.type == "nodeEdit") {
 		if (
-			editableForm.node.type == "game" &&
-			editableForm.originalNode.type == "game"
+			context.node.type == "game" &&
+			context.originalNode.type == "game"
 		) {
-			const keys = Object.keys(editableForm.node) as (keyof Game)[];
-			isEdited = checkIsEdited(
-				keys,
-				editableForm.node,
-				editableForm.originalNode,
-			);
+			const keys = Object.keys(context.node) as (keyof Game)[];
+			isEdited = checkIsEdited(keys, context.node, context.originalNode);
 		} else if (
-			editableForm.node.type == "profile" &&
-			editableForm.originalNode.type == "profile"
+			context.node.type == "profile" &&
+			context.originalNode.type == "profile"
 		) {
-			const keys = Object.keys(editableForm.node) as (keyof Profile)[];
-			isEdited = checkIsEdited(
-				keys,
-				editableForm.node,
-				editableForm.originalNode,
-			);
+			const keys = Object.keys(context.node) as (keyof Profile)[];
+			isEdited = checkIsEdited(keys, context.node, context.originalNode);
 		} else if (
-			editableForm.node.type == "subject" &&
-			editableForm.originalNode.type == "subject"
+			context.node.type == "subject" &&
+			context.originalNode.type == "subject"
 		) {
-			const keys = Object.keys(editableForm.node) as (keyof Subject)[];
-			isEdited = checkIsEdited(
-				keys,
-				editableForm.node,
-				editableForm.originalNode,
-			);
+			const keys = Object.keys(context.node) as (keyof Subject)[];
+			isEdited = checkIsEdited(keys, context.node, context.originalNode);
 		}
-	} else {
+	} else if (context.type == "profileGroupEdit") {
 		const keys = Object.keys(
-			editableForm.profileGroup,
+			context.profileGroup,
 		) as (keyof ProfileGroup)[];
 		isEdited = checkIsEdited(
 			keys,
-			editableForm.profileGroup,
-			editableForm.profileGroup,
+			context.profileGroup,
+			context.profileGroup,
+		);
+	} else {
+		throw new Error(
+			"DEV Error! Passed in incompatible validation context!",
 		);
 	}
+
 	return isEdited;
 }
 
@@ -182,65 +180,28 @@ export type GetFormStatusReturn = {
 
 export function getFormStatus(
 	currName: string,
-	context: ValidationContextForm,
+	context: ValidationContext,
 ): GetFormStatusReturn {
 	let inputTextError = "";
 	let submitBtnCSS: "btn-success" | "btn-disabled" = "btn-success";
 
-	let uniquenessContext: ValidationContextUniqueness;
-	if (context.type == "nodeAdd" || context.type == "nodeEdit") {
-		uniquenessContext = {
-			type: "uniquenessNode",
-			parentID: context.parentID,
-			tree: context.tree,
-		};
-	} else {
-		uniquenessContext = {
-			type: "uniquenessProfileGroup",
-			profile: context.profile,
-		};
-	}
-
-	const res = validateString(currName, uniquenessContext);
-
+	const res = validateString(currName, context);
 	if (context.type == "nodeAdd" || context.type == "profileGroupAdd") {
-		const invalidAndNotCausedByEmptyStr =
-			!res.valid && res.cause != "empty";
-
-		if (invalidAndNotCausedByEmptyStr && res.msg) {
+		if (!(res.cause == "ok" || res.cause == "emptyAddDefault")) {
 			inputTextError = res.msg;
 			submitBtnCSS = "btn-disabled";
-		} else if (res.cause == "empty") {
+		} else if (res.cause == "emptyAddDefault") {
 			submitBtnCSS = "btn-disabled";
 		}
 	} else {
-		if (context.editableForm.type == "node") {
-			const invalidAndNotCausedByUniqueness =
-				!res.valid && res.cause != "nonunique";
-
-			const isDefaultFormState =
-				!res.valid &&
-				res.cause == "nonunique" &&
-				!hasFormBeenEdited(context.editableForm) &&
-				context.editableForm.node.name ==
-					context.editableForm.originalNode.name;
-
-			const actualInvalidNameUniquenessFormState =
-				!res.valid &&
-				res.cause == "nonunique" &&
-				context.editableForm.node.name !=
-					context.editableForm.originalNode.name;
-
-			if (invalidAndNotCausedByUniqueness && res.msg) {
-				inputTextError = res.msg;
-				submitBtnCSS = "btn-disabled";
-			} else if (isDefaultFormState) {
-				submitBtnCSS = "btn-disabled";
-			} else if (actualInvalidNameUniquenessFormState && res.msg) {
-				inputTextError = res.msg;
-				submitBtnCSS = "btn-disabled";
-			}
-		} else {
+		if (!(res.cause == "ok" || res.cause == "nonuniqueEditDefault")) {
+			inputTextError = res.msg;
+			submitBtnCSS = "btn-disabled";
+		} else if (
+			res.cause == "nonuniqueEditDefault" &&
+			!hasFormBeenEdited(context)
+		) {
+			submitBtnCSS = "btn-disabled";
 		}
 	}
 

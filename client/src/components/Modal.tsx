@@ -4,7 +4,7 @@ export type ModalBtn = {
 	text: string;
 	fn: () => void;
 	css: string;
-	disabled: boolean; // for edge case: btn-disabled class works, but keyboard still can active
+	disabled: boolean; // for edge case: btn-disabled class works, but keyboard still can be active
 };
 
 type Props = {

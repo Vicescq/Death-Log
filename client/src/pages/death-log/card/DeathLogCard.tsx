@@ -9,9 +9,8 @@ import useCardCompletionToggle from "../useCardCompletionToggle";
 import type { DistinctTreeNode, Tree } from "../../../model/TreeNodeModel";
 import { useState, useRef } from "react";
 import { delay } from "../../../utils";
-import { calcDeaths, getFormStatus, hasFormBeenEdited } from "../utils";
+import { calcDeaths, getFormStatus } from "../utils";
 import { CONSTANTS } from "../../../../shared/constants";
-import { formatString } from "../../../stores/utils";
 
 type Props = {
 	node: DistinctTreeNode;
@@ -37,11 +36,8 @@ export default function DeathLogCard({ node, entryNum, tree }: Props) {
 		type: "nodeEdit",
 		parentID: modalState.parentID,
 		tree: tree,
-		editableForm: {
-			type: "node",
-			node: { ...modalState, name: formatString(modalState.name) },
-			originalNode: node,
-		},
+		node: modalState,
+		originalNode: node,
 	});
 
 	return (

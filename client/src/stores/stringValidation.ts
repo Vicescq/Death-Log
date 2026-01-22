@@ -1,24 +1,23 @@
 import { CONSTANTS } from "../../shared/constants";
-import type { Tree, Profile, DistinctTreeNode } from "../model/TreeNodeModel";
-import type { EditableForm } from "../pages/death-log/utils";
+import type {
+	Tree,
+	Profile,
+	DistinctTreeNode,
+	ProfileGroup,
+} from "../model/TreeNodeModel";
 import { assertIsNonNull, assertIsProfile } from "../utils";
 import { formatString } from "./utils";
 
 export type ValidationResponse = {
-	valid: boolean;
-	msg?: string;
-	cause?: keyof typeof InputTextValidationStrings;
+	msg: string;
+	cause: keyof typeof InputTextValidationStrings;
 };
 
-export type ValidationContextForm =
+export type ValidationContext =
 	| ValidationContextNodeAdd
 	| ValidationContextNodeEdit
 	| ValidationContextProfileGroupAdd
 	| ValidationContextProfileGroupEdit;
-
-export type ValidationContextUniqueness =
-	| ValidationContextUniquenessNode
-	| ValidationContextUniquenessProfileGroup;
 
 type ValidationContextNodeAdd = {
 	type: "nodeAdd";
@@ -30,7 +29,8 @@ type ValidationContextNodeEdit = {
 	type: "nodeEdit";
 	tree: Tree;
 	parentID: string;
-	editableForm: EditableForm;
+	originalNode: DistinctTreeNode;
+	node: DistinctTreeNode;
 };
 
 type ValidationContextProfileGroupAdd = {
@@ -41,22 +41,15 @@ type ValidationContextProfileGroupAdd = {
 type ValidationContextProfileGroupEdit = {
 	type: "profileGroupEdit";
 	profile: Profile;
-	editableForm: EditableForm;
-};
-
-export type ValidationContextUniquenessNode = {
-	type: "uniquenessNode";
-	tree: Tree;
-	parentID: string;
-};
-
-export type ValidationContextUniquenessProfileGroup = {
-	type: "uniquenessProfileGroup";
-	profile: Profile;
+	originalProfileGroup: ProfileGroup;
+	profileGroup: ProfileGroup;
 };
 
 export const InputTextValidationStrings = {
+	ok: "",
+	nonuniqueEditDefault: "",
 	nonunique: CONSTANTS.INPUT_TEXT_ERROR.NON_UNIQUE,
+	emptyAddDefault: "",
 	empty: CONSTANTS.INPUT_TEXT_ERROR.EMPTY,
 	nonstr: CONSTANTS.INPUT_TEXT_ERROR.STR,
 	elp: CONSTANTS.INPUT_TEXT_ERROR.ELP,
@@ -64,22 +57,28 @@ export const InputTextValidationStrings = {
 
 export function validateString(
 	inputText: string,
-	context:
-		| ValidationContextUniquenessNode
-		| ValidationContextUniquenessProfileGroup,
+	context: ValidationContext,
 ): ValidationResponse {
 	inputText = formatString(inputText);
 	if (typeof inputText != "string") {
 		return {
-			valid: false,
 			msg: InputTextValidationStrings.nonstr,
 			cause: "nonstr",
 		};
 	}
 
+	if (
+		inputText == "" &&
+		(context.type == "nodeAdd" || context.type == "profileGroupAdd")
+	) {
+		return {
+			msg: InputTextValidationStrings.emptyAddDefault,
+			cause: "emptyAddDefault",
+		};
+	}
+
 	if (inputText == "") {
 		return {
-			valid: false,
 			msg: InputTextValidationStrings.empty,
 			cause: "empty",
 		};
@@ -87,47 +86,65 @@ export function validateString(
 
 	if (inputText.match(/^\.{1,}$/)) {
 		return {
-			valid: false,
 			msg: InputTextValidationStrings.elp,
 			cause: "elp",
 		};
 	}
 
-	if (!isNameUnique(inputText, context)) {
+	const uniqueRes = isNameUnique(inputText, context);
+
+	if (!uniqueRes) {
 		return {
-			valid: false,
 			msg: InputTextValidationStrings.nonunique,
 			cause: "nonunique",
+		};
+	} else if (uniqueRes == "defaultEditedName") {
+		return {
+			msg: InputTextValidationStrings.nonuniqueEditDefault,
+			cause: "nonuniqueEditDefault",
 		};
 	}
 
 	return {
-		valid: true,
+		msg: InputTextValidationStrings.ok,
+		cause: "ok",
 	};
 }
 
+type NameUniquenessResponse = true | false | "defaultEditedName";
+
 export function isNameUnique(
 	inputText: string,
-	context: ValidationContextUniqueness,
-) {
-	if (context.type == "uniquenessNode") {
+	context: ValidationContext,
+): NameUniquenessResponse {
+	if (context.type == "nodeAdd" || context.type == "nodeEdit") {
 		const parent = context.tree.get(context.parentID);
-		if (parent) {
-			for (let i = 0; i < parent.childIDS.length; i++) {
-				const child: DistinctTreeNode | undefined = context.tree.get(
-					parent.childIDS[i],
-				); // dont know why TS doesnt auto complete the type and labels it as any?
-				assertIsNonNull(child);
-				if (child.name == inputText) {
-					return false;
-				}
+		assertIsNonNull(parent);
+		if (
+			context.type == "nodeEdit" &&
+			context.originalNode.name == inputText
+		)
+			return "defaultEditedName";
+		for (let i = 0; i < parent.childIDS.length; i++) {
+			const child: DistinctTreeNode | undefined = context.tree.get(
+				parent.childIDS[i],
+			); // dont know why TS doesnt auto complete the type and labels it as any?
+			assertIsNonNull(child);
+
+			if (child.name == inputText) {
+				return false;
 			}
 		}
-	} else if (context.type == "uniquenessProfileGroup") {
+	} else {
 		const profile = context.profile;
 		if (profile) {
 			assertIsProfile(profile);
 			const groupings = profile.groupings;
+			if (
+				context.type == "profileGroupEdit" &&
+				context.originalProfileGroup.title == inputText
+			)
+				return "defaultEditedName";
 			for (let i = 0; i < groupings.length; i++) {
 				if (groupings[i].title == inputText) return false;
 			}

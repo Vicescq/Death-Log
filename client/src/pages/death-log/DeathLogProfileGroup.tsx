@@ -53,12 +53,9 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 			{
 				type: "profileGroupEdit",
 				profile: profile,
-				editableForm: {
-					type: "profileGroup",
-					profileGroup: currentlyEditingProfileGroup.profileGroup,
-					originalProfileGroup:
-						profile.groupings[currentlyEditingProfileGroup.index],
-				},
+				profileGroup: currentlyEditingProfileGroup.profileGroup,
+				originalProfileGroup:
+					profile.groupings[currentlyEditingProfileGroup.index],
 			},
 		);
 		inputTextErrorCurrentGroup = currentlyEditingFormStatus.inputTextError;

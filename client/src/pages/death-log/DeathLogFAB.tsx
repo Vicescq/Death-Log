@@ -211,7 +211,7 @@ export default function DeathLogFAB({
 								<>
 									<div className="divider m-0"></div>
 									<fieldset className="fieldset">
-										<legend className="fieldset-legend"></legend>
+										<legend className="fieldset-legend">Context</legend>
 										<select
 											className="select"
 											value={mapContextKeyToProperStr(
