@@ -16,7 +16,7 @@ export default function NavBarDrawer() {
 		<div className="drawer z-[1000] md:hidden">
 			<input id="my-drawer-1" type="checkbox" className="drawer-toggle" />
 			<div className="drawer-content">
-				<label htmlFor="my-drawer-1" className="btn drawer-button">
+				<label htmlFor="my-drawer-1" className="btn btn-ghost drawer-button">
 					<img src={navPanel} alt="" className="h-5 w-5" />
 				</label>
 			</div>
