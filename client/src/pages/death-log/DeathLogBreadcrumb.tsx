@@ -21,9 +21,22 @@ export default function DeathLogBreadcrumb() {
 	const breakpointHighest = "(width >= 920px)";
 	const breakpointHigh = "(width >= 700px)";
 	const breakpointMid = "(width >= 500px)";
-	const { vpMatched: vpMatchedHighest } = useMediaQuery(breakpointHighest);
-	const { vpMatched: vpMatchedHigh } = useMediaQuery(breakpointHigh);
-	const { vpMatched: vpMatchedMid } = useMediaQuery(breakpointMid);
+	const onBreakpontChange = () => {
+		condensedMembersModalRef.current?.close();
+		setModalCSS("transition-none");
+	};
+	const { vpMatched: vpMatchedHighest } = useMediaQuery(
+		breakpointHighest,
+		onBreakpontChange,
+	);
+	const { vpMatched: vpMatchedHigh } = useMediaQuery(
+		breakpointHigh,
+		onBreakpontChange,
+	);
+	const { vpMatched: vpMatchedMid } = useMediaQuery(
+		breakpointMid,
+		onBreakpontChange,
+	);
 
 	function condenseBreadcrumb(
 		formattedBreadcrumbMembers: BreadcrumbMember[],
@@ -84,11 +97,6 @@ export default function DeathLogBreadcrumb() {
 			);
 		}
 	}
-
-	useEffect(() => {
-		condensedMembersModalRef.current?.close();
-		setModalCSS("transition-none");
-	}, [vpMatchedHighest, vpMatchedHigh, vpMatchedMid]);
 
 	return (
 		<>
