@@ -9,6 +9,7 @@ import { useDeathLogStore } from "../../stores/useDeathLogStore";
 import { Link, useLocation, useNavigate } from "react-router";
 import { CONSTANTS } from "../../../shared/constants";
 import { assertIsNonNull, assertIsSubject } from "../../utils";
+import DeathLogBreadcrumb from "./DeathLogBreadcrumb";
 
 type Props = {
 	profile: Profile;
@@ -124,7 +125,7 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 	// useConsoleLogOnStateChange(currProfileGroup, currProfileGroup);
 	return (
 		<>
-			<NavBar />
+			<NavBar endNavContent={<DeathLogBreadcrumb />} />
 
 			<div className="m-auto mb-8 w-[90%] lg:max-w-[45rem]">
 				<h1 className="text-center text-4xl font-bold underline">
@@ -205,7 +206,7 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 													className="w-4"
 												/>
 											</button>
-											<span className=" ml-2">
+											<span className="ml-2">
 												{prfoileGroup.title}
 											</span>
 										</label>
