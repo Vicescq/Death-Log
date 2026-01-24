@@ -26,7 +26,7 @@ export default function NavBar({
 			<div className={`navbar-start ${startNavContentCSS}`}>
 				<NavBarDrawer />
 
-				<ul className="menu menu-horizontal rounded-box hidden items-center justify-center gap-0.5 md:flex">
+				<ul className="menu menu-horizontal rounded-box hidden items-center justify-center gap-0.5 lg:flex">
 					<li>
 						<Link to={{ pathname: "/" }}>
 							<img src={home} alt="" className="h-5 w-5" />

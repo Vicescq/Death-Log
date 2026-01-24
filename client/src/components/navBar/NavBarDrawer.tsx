@@ -13,7 +13,7 @@ export default function NavBarDrawer() {
 
 	// z index of 1000 due to death log FAB has a z index of 999
 	return (
-		<div className="drawer z-[1000] md:hidden">
+		<div className="drawer z-[1000] lg:hidden">
 			<input id="my-drawer-1" type="checkbox" className="drawer-toggle" />
 			<div className="drawer-content">
 				<label htmlFor="my-drawer-1" className="btn btn-ghost drawer-button">
