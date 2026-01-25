@@ -45,6 +45,8 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 			<NavBar
 				midNavContent={<></>}
 				endNavContent={<DeathLogBreadcrumb />}
+				endNavContentCSS="w-[70%]"
+				startNavContentCSS="w-[30%]"
 			/>
 
 			<Virtuoso

@@ -22,11 +22,11 @@ type CurrentlyEditingProfileGroup = {
 
 export default function DeathLogProfileGroup({ profile }: Props) {
 	const tree = useDeathLogStore((state) => state.tree);
-	const subjects = profile.childIDS.map((id) => {
+	const subjectsNames = profile.childIDS.map((id) => {
 		const subject = tree.get(id);
 		assertIsNonNull(subject);
 		assertIsSubject(subject);
-		return subject;
+		return subject.name;
 	});
 	const updateNode = useDeathLogStore((state) => state.updateNode);
 	const [newProfileGroup, setNewProfileGroup] = useState<ProfileGroup>({
@@ -44,6 +44,8 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 			profile: profile,
 		},
 	);
+
+	const [searchedNames, setSearchedNames] = useState<string[]>([]);
 
 	let inputTextErrorCurrentGroup = "";
 	let submitBtnCSSCurrentGroup: GetFormStatusReturn["submitBtnCSS"] =
@@ -125,11 +127,15 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 	// useConsoleLogOnStateChange(currProfileGroup, currProfileGroup);
 	return (
 		<>
-			<NavBar endNavContent={<DeathLogBreadcrumb />} />
+			<NavBar
+				endNavContent={<DeathLogBreadcrumb />}
+				endNavContentCSS="w-[70%]"
+				startNavContentCSS="w-[30%]"
+			/>
 
 			<div className="m-auto mb-8 w-[90%] lg:max-w-[45rem]">
-				<h1 className="text-center text-4xl font-bold underline">
-					Profile Group Management
+				<h1 className="text-center text-4xl font-bold">
+					{profile.name}: Profile Groups
 				</h1>
 
 				<fieldset className="fieldset bg-base-200 border-base-300 rounded-box mt-4 border p-4">
@@ -180,7 +186,40 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 						maxLength={CONSTANTS.TEXTAREA.TEXTAREA_MAX}
 						rows={CONSTANTS.TEXTAREA.TEXTAREA_ROWS}
 					/>
+
+					<label className="label mt-4">
+						Adding the following subjects to this group:
+					</label>
+					<ul className="list">
+						<li className="list-row">abc</li>
+						<li className="list-row">abc</li>
+						<li className="list-row">abc</li>
+					</ul>
+
+					<label className="label mt-4">Add subjects</label>
+					<input
+						type="search"
+						placeholder="Search for subjects to add"
+						className="input w-full"
+						onChange={(e) => {
+							if (e.currentTarget.value == "") {
+								setSearchedNames([]);
+							} else {
+								setSearchedNames(
+									subjectsNames.filter((name) =>
+										name.includes(e.currentTarget.value),
+									),
+								);
+							}
+						}}
+					/>
+					<ul className="list">
+						{searchedNames.map((name) => {
+							return <li className="list-row">{name}</li>;
+						})}
+					</ul>
 				</fieldset>
+
 				<fieldset className="fieldset bg-base-200 border-base-300 rounded-box border p-4">
 					<legend className="fieldset-legend">Profile Groups</legend>
 					{profile.groupings.length == 0 ? (

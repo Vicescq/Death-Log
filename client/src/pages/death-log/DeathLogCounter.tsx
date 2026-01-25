@@ -21,8 +21,8 @@ export default function DeathLogCounter({ subject }: Props) {
 				<NavBar
 					midNavContent={<></>}
 					endNavContent={<DeathLogBreadcrumb />}
-					endNavContentCSS="mr-0.5 w-[60%]"
-					startNavContentCSS="w-[40%]"
+					endNavContentCSS="w-[70%]"
+					startNavContentCSS="w-[30%]"
 				/>
 				<div className="flex flex-col">
 					<h1 className="mx-6 mt-4 text-center text-4xl break-all md:text-6xl">

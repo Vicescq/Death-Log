@@ -15,7 +15,6 @@ export type BreadcrumbMember = {
 export default function DeathLogBreadcrumb() {
 	const breadcrumbMembers = useBreadcrumbMembers();
 	const condensedMembersModalRef = useRef<HTMLDialogElement>(null);
-	const x = useRef<HTMLDivElement>(null);
 	const [modalCSS, setModalCSS] = useState("");
 
 	const breakpointHighest = "(width >= 920px)";
@@ -97,10 +96,9 @@ export default function DeathLogBreadcrumb() {
 			);
 		}
 	}
-	console.log(x.current?.clientWidth, x.current?.scrollWidth)
 	return (
 		<>
-			<div ref={x} className="breadcrumbs border-b-1 text-sm">
+			<div className="breadcrumbs border-b-1 text-sm">
 				<ul>
 					{formattedBreadcrumbMembers.map((member, i) => {
 						if (member.name == "...") {
