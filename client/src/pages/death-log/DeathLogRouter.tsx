@@ -3,7 +3,7 @@ import DeathLog from "./DeathLog";
 import { useDeathLogStore } from "../../stores/useDeathLogStore";
 import DeathLogCounter from "./DeathLogCounter";
 import ErrorPage from "../ErrorPage";
-import DeathLogProfileGroup from "./DeathLogProfileGroup";
+import DeathLogProfileGroup from "./profile-group-edit/DeathLogProfileGroup";
 import { assertIsNonNull, assertIsProfile, assertIsSubject } from "../../utils";
 import { CONSTANTS } from "../../../shared/constants";
 
