@@ -46,7 +46,7 @@ export default function DLPGList({
 									</span>
 								</label>
 								<button
-									className="ml-auto cursor-pointer p-2"
+									className="ml-auto cursor-pointer"
 									onClick={() => onDelete(i)}
 								>
 									✕

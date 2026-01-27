@@ -11,6 +11,7 @@ import { useState, useRef } from "react";
 import { delay } from "../../../utils";
 import { calcDeaths, getFormStatus } from "../utils";
 import { CONSTANTS } from "../../../../shared/constants";
+import PaginationNav from "../../../components/PaginationNav";
 
 type Props = {
 	node: DistinctTreeNode;
@@ -96,31 +97,11 @@ export default function DeathLogCard({ node, entryNum, tree }: Props) {
 								inputTextError={inputTextError}
 							/>
 
-							<div className="join mt-4 flex">
-								<button
-									aria-label="Modal Turn Left"
-									className="join-item btn"
-									onClick={() => {
-										handlePageTurn(false);
-									}}
-								>
-									«
-								</button>
-								<button className="join-item btn flex-1">
-									Page {page}
-								</button>
-								<button
-									aria-label={
-										CONSTANTS.DEATH_LOG_MODAL.TURN_RIGHT
-									}
-									className="join-item btn"
-									onClick={() => {
-										handlePageTurn(true);
-									}}
-								>
-									»
-								</button>
-							</div>
+							<PaginationNav
+								page={page}
+								handlePageTurn={handlePageTurn}
+								css="mt-4"
+							/>
 						</>
 					}
 					header="View & Edit Entry"
@@ -128,7 +109,7 @@ export default function DeathLogCard({ node, entryNum, tree }: Props) {
 					modalBtns={[
 						{
 							text: CONSTANTS.DEATH_LOG_MODAL.SUBMIT,
-							css: `${submitBtnCSS} mt-10`,
+							css: `${submitBtnCSS}`,
 							fn: () => {
 								try {
 									updateNode(node, modalState);

@@ -2,13 +2,11 @@ import NavBar from "../../../components/navBar/NavBar";
 import type { Profile, ProfileGroup } from "../../../model/TreeNodeModel";
 import { useState } from "react";
 import useConsoleLogOnStateChange from "../../../hooks/useConsoleLogOnStateChange";
-import { getFormStatus, type GetFormStatusReturn } from "../utils";
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
 import { assertIsNonNull, assertIsSubject } from "../../../utils";
 import DeathLogBreadcrumb from "../DeathLogBreadcrumb";
 import DLPGAdd from "./DLPGAdd";
 import DLPGList from "./DLPGList";
-import DLPGCurrentEdit from "./DLPGCurrentEdit";
 
 type Props = {
 	profile: Profile;
@@ -21,60 +19,33 @@ export type CurrentlyEditingProfileGroup = {
 
 export default function DeathLogProfileGroup({ profile }: Props) {
 	const tree = useDeathLogStore((state) => state.tree);
-	const subjectsNames = profile.childIDS.map((id) => {
+	const subjects = profile.childIDS.map((id) => {
 		const subject = tree.get(id);
 		assertIsNonNull(subject);
 		assertIsSubject(subject);
-		return subject.name;
+		return subject;
 	});
-	const updateNode = useDeathLogStore((state) => state.updateNode);
-	const [newProfileGroup, setNewProfileGroup] = useState<ProfileGroup>({
-		title: "",
-		description: "",
-		members: [],
-	});
+
 	const [currentlyEditingProfileGroup, setCurrentlyEditingProfileGroup] =
 		useState<CurrentlyEditingProfileGroup | null>(null);
 
-	const { inputTextError, submitBtnCSS } = getFormStatus(
-		newProfileGroup.title,
-		{
-			type: "profileGroupAdd",
-			profile: profile,
-		},
-	);
-
-	const [searchedNames, setSearchedNames] = useState<string[]>([]);
-
-	let inputTextErrorCurrentGroup = "";
-	let submitBtnCSSCurrentGroup: GetFormStatusReturn["submitBtnCSS"] =
-		"btn-disabled";
-	if (currentlyEditingProfileGroup) {
-		const currentlyEditingFormStatus = getFormStatus(
-			currentlyEditingProfileGroup.profileGroup.title,
-			{
-				type: "profileGroupEdit",
-				profile: profile,
-				profileGroup: currentlyEditingProfileGroup.profileGroup,
-				originalProfileGroup:
-					profile.groupings[currentlyEditingProfileGroup.index],
-			},
-		);
-		inputTextErrorCurrentGroup = currentlyEditingFormStatus.inputTextError;
-		submitBtnCSSCurrentGroup = currentlyEditingFormStatus.submitBtnCSS;
-	}
-
-	function onAdd() {
-		updateNode(profile, {
-			...profile,
-			groupings: [...profile.groupings, newProfileGroup],
-		});
-		setNewProfileGroup({
-			title: "",
-			description: "",
-			members: [],
-		});
-	}
+	// let inputTextErrorCurrentGroup = "";
+	// let submitBtnCSSCurrentGroup: GetFormStatusReturn["submitBtnCSS"] =
+	// 	"btn-disabled";
+	// if (currentlyEditingProfileGroup) {
+	// 	const currentlyEditingFormStatus = getFormStatus(
+	// 		currentlyEditingProfileGroup.profileGroup.title,
+	// 		{
+	// 			type: "profileGroupEdit",
+	// 			profile: profile,
+	// 			profileGroup: currentlyEditingProfileGroup.profileGroup,
+	// 			originalProfileGroup:
+	// 				profile.groupings[currentlyEditingProfileGroup.index],
+	// 		},
+	// 	);
+	// 	inputTextErrorCurrentGroup = currentlyEditingFormStatus.inputTextError;
+	// 	submitBtnCSSCurrentGroup = currentlyEditingFormStatus.submitBtnCSS;
+	// }
 
 	function onEditFocus(i: number) {
 		if (
@@ -91,36 +62,36 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 	}
 
 	function onEditSubmit() {
-		updateNode(profile, {
-			...profile,
-			groupings: profile.groupings.map((group, i) => {
-				if (
-					currentlyEditingProfileGroup &&
-					currentlyEditingProfileGroup.index == i
-				) {
-					return currentlyEditingProfileGroup.profileGroup;
-				}
-				return group;
-			}),
-		});
+		// updateNode(profile, {
+		// 	...profile,
+		// 	groupings: profile.groupings.map((group, i) => {
+		// 		if (
+		// 			currentlyEditingProfileGroup &&
+		// 			currentlyEditingProfileGroup.index == i
+		// 		) {
+		// 			return currentlyEditingProfileGroup.profileGroup;
+		// 		}
+		// 		return group;
+		// 	}),
+		// });
 	}
 
 	function onDelete(i: number) {
-		if (currentlyEditingProfileGroup?.index == i) {
-			setCurrentlyEditingProfileGroup(null);
-		} else if (
-			currentlyEditingProfileGroup &&
-			currentlyEditingProfileGroup.index > i
-		) {
-			setCurrentlyEditingProfileGroup({
-				...currentlyEditingProfileGroup,
-				index: currentlyEditingProfileGroup.index - 1,
-			});
-		}
-		updateNode(profile, {
-			...profile,
-			groupings: profile.groupings.filter((_, index) => i != index),
-		});
+		// if (currentlyEditingProfileGroup?.index == i) {
+		// 	setCurrentlyEditingProfileGroup(null);
+		// } else if (
+		// 	currentlyEditingProfileGroup &&
+		// 	currentlyEditingProfileGroup.index > i
+		// ) {
+		// 	setCurrentlyEditingProfileGroup({
+		// 		...currentlyEditingProfileGroup,
+		// 		index: currentlyEditingProfileGroup.index - 1,
+		// 	});
+		// }
+		// updateNode(profile, {
+		// 	...profile,
+		// 	groupings: profile.groupings.filter((_, index) => i != index),
+		// });
 	}
 
 	return (
@@ -133,23 +104,8 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 
 			<div className="m-auto mb-8 w-[90%] lg:max-w-[45rem]">
 				<h1 className="text-center text-4xl font-bold">
-					{profile.name}: Profile Groups
+					{profile.name} Profile Groups
 				</h1>
-
-				<DLPGAdd
-					onAdd={onAdd}
-					inputTextError={inputTextError}
-					submitBtnCSS={submitBtnCSS}
-					searchedNames={searchedNames}
-					newProfileGroup={newProfileGroup}
-					onUpdateSearchedNames={(searchedNames) =>
-						setSearchedNames(searchedNames)
-					}
-					onUpdateNewProfileGroup={(profileGroup) =>
-						setNewProfileGroup(profileGroup)
-					}
-					subjectsNames={subjectsNames}
-				/>
 
 				<DLPGList
 					currentlyEditingProfileGroup={currentlyEditingProfileGroup}
@@ -158,7 +114,11 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 					profile={profile}
 				/>
 
-				{currentlyEditingProfileGroup ? (
+				<DLPGAdd profile={profile} subjects={subjects} />
+
+				
+
+				{/* {currentlyEditingProfileGroup ? (
 					<DLPGCurrentEdit
 						currentlyEditingProfileGroup={
 							currentlyEditingProfileGroup
@@ -171,7 +131,7 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 						profile={profile}
 						submitBtnCSSCurrentGroup={submitBtnCSSCurrentGroup}
 					/>
-				) : null}
+				) : null} */}
 			</div>
 		</>
 	);

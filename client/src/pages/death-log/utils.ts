@@ -14,10 +14,6 @@ import {
 } from "../../stores/stringValidation";
 import { type ValidationContext } from "../../stores/stringValidation";
 
-export function calcRequiredPages(size: number, pageSize: number) {
-	return Math.max(1, Math.ceil(size / pageSize));
-}
-
 export function mapContextKeyToProperStr(contextKey: SubjectContext) {
 	const subjectContextMap = {
 		boss: "Boss",

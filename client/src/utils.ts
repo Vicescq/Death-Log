@@ -1,4 +1,9 @@
-import type { DistinctTreeNode, Profile, ProfileGroup, Subject } from "./model/TreeNodeModel";
+import type {
+	DistinctTreeNode,
+	Profile,
+	ProfileGroup,
+	Subject,
+} from "./model/TreeNodeModel";
 
 export function assertIsNonNull<T>(value: T): asserts value is NonNullable<T> {
 	if (value === undefined || value === null) {
@@ -24,4 +29,8 @@ export function assertIsSubject(
 
 export async function delay(ms: number) {
 	await new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+export function calcRequiredPages(totalSize: number, pageSize: number) {
+	return Math.max(1, Math.ceil(totalSize / pageSize));
 }

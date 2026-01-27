@@ -3,12 +3,12 @@ import { CONSTANTS } from "../../shared/constants";
 type Props = {
 	handlePageTurn: (isRight: boolean) => void;
 	page: number;
-    css: string
+	css: string;
 };
 
 export default function PaginationNav({ handlePageTurn, page, css }: Props) {
 	return (
-		<div className="join mt-4 flex">
+		<div className={`join ${css} flex`}>
 			<button
 				aria-label="Modal Turn Left"
 				className="join-item btn"
