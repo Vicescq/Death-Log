@@ -112,10 +112,6 @@ export const useDeathLogStore = create<DeathLogState>((set) => ({
             const updatedTree = new Map(state.tree);
             let updatedAlready = false;
 
-            // if (node.name != overrides.name) {
-            //     CardUtils.validateNodeString(overrides.name, updatedTree, node.parentID);
-            // }
-            
             const updatedNode: DistinctTreeNode = { ...node, ...overrides };
             updatedTree.set(updatedNode.id, updatedNode);
 

@@ -1,20 +1,44 @@
-import type { Profile } from "../../../model/TreeNodeModel";
-import type { CurrentlyEditingProfileGroup } from "./DeathLogProfileGroup";
+import type { Profile, ProfileGroup } from "../../../model/TreeNodeModel";
 import edit from "../../../assets/edit.svg";
+import { useDeathLogStore } from "../../../stores/useDeathLogStore";
+import { useState } from "react";
 
 type Props = {
 	profile: Profile;
-	currentlyEditingProfileGroup: CurrentlyEditingProfileGroup | null;
-	onEditFocus: (i: number) => void;
-	onDelete: (i: number) => void;
 };
 
-export default function DLPGList({
-	profile,
-	currentlyEditingProfileGroup,
-	onEditFocus,
-	onDelete,
-}: Props) {
+export type CurrentlyEditingProfileGroup = {
+	profileGroup: ProfileGroup;
+	index: number;
+};
+
+export default function DLPGList({ profile }: Props) {
+	const updateNode = useDeathLogStore((state) => state.updateNode);
+
+	const [currentlyEditingProfileGroup, setCurrentlyEditingProfileGroup] =
+		useState<CurrentlyEditingProfileGroup | null>(null);
+
+	function onDelete(i: number) {
+		updateNode(profile, {
+			...profile,
+			groupings: profile.groupings.filter((_, index) => i != index),
+		});
+	}
+
+	function onEditFocus(i: number) {
+		if (
+			currentlyEditingProfileGroup?.profileGroup.title ==
+			profile.groupings[i].title
+		) {
+			setCurrentlyEditingProfileGroup(null);
+		} else {
+			setCurrentlyEditingProfileGroup({
+				index: i,
+				profileGroup: profile.groupings[i],
+			});
+		}
+	}
+
 	return (
 		<fieldset className="fieldset bg-base-200 border-base-300 rounded-box border p-4">
 			<legend className="fieldset-legend">Profile Groups</legend>
@@ -23,12 +47,12 @@ export default function DLPGList({
 					This current profile has no groups!
 				</span>
 			) : (
-				<ul className="flex max-h-72 flex-col gap-2 overflow-auto">
+				<ul className="list max-h-72 overflow-auto">
 					{profile.groupings.map((prfoileGroup, i) => {
 						return (
 							<li
 								key={i}
-								className={`hover:bg-neutral ${currentlyEditingProfileGroup?.index == i ? "bg-neutral" : ""} flex rounded-2xl px-4`}
+								className={`hover:bg-neutral list-row ${currentlyEditingProfileGroup?.index == i ? "bg-neutral" : ""} rounded-2xl`}
 							>
 								<label className="label">
 									<button
@@ -45,6 +69,7 @@ export default function DLPGList({
 										{prfoileGroup.title}
 									</span>
 								</label>
+
 								<button
 									className="ml-auto cursor-pointer"
 									onClick={() => onDelete(i)}

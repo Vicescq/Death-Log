@@ -1,17 +1,12 @@
 import { useState } from "react";
 import { CONSTANTS } from "../../../../shared/constants";
-import PaginationNav from "../../../components/PaginationNav";
-import usePagination from "../../../hooks/usePagination";
 import type {
 	Profile,
 	ProfileGroup,
 	Subject,
 } from "../../../model/TreeNodeModel";
 import { formatString } from "../../../stores/utils";
-import {
-	assertIsNonNull,
-	calcRequiredPages,
-} from "../../../utils";
+import { assertIsNonNull } from "../../../utils";
 import { getFormStatus } from "../utils";
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
 import useConsoleLogOnStateChange from "../../../hooks/useConsoleLogOnStateChange";
@@ -21,7 +16,7 @@ type Props = {
 	subjects: Subject[];
 };
 
-export default function DLPGAdd({ profile, subjects }: Props) {
+export default function DLPGModify({ profile, subjects }: Props) {
 	const tree = useDeathLogStore((state) => state.tree);
 	const updateNode = useDeathLogStore((state) => state.updateNode);
 	const [newProfileGroup, setNewProfileGroup] = useState<ProfileGroup>({
@@ -41,19 +36,6 @@ export default function DLPGAdd({ profile, subjects }: Props) {
 							.includes(subjectSearchQuery.toLowerCase()) &&
 						!newProfileGroup.members.includes(subject.id),
 				);
-
-	const paginationFactor = 5;
-	const maxPage = calcRequiredPages(
-		filteredSubjectSearches.length,
-		paginationFactor,
-	);
-	const { page, setPage, handlePageTurn } = usePagination(maxPage);
-	const startSlicedIndex = (page - 1) * paginationFactor;
-	const endSlicedIndex = page * paginationFactor;
-	const paginatedSearchedSubjects = filteredSubjectSearches.slice(
-		startSlicedIndex,
-		endSlicedIndex,
-	);
 
 	const { inputTextError, submitBtnCSS } = getFormStatus(
 		newProfileGroup.title,
@@ -80,12 +62,9 @@ export default function DLPGAdd({ profile, subjects }: Props) {
 			...newProfileGroup,
 			members: [
 				...newProfileGroup.members,
-				paginatedSearchedSubjects[i].id,
+				filteredSubjectSearches[i].id,
 			],
 		});
-		if (paginatedSearchedSubjects.length == 1 && page > 1) {
-			setPage((prev) => prev - 1);
-		}
 	}
 	useConsoleLogOnStateChange(newProfileGroup, newProfileGroup);
 
@@ -174,20 +153,17 @@ export default function DLPGAdd({ profile, subjects }: Props) {
 				placeholder="Search for subjects to add"
 				className="input w-full"
 				value={subjectSearchQuery}
-				onChange={(e) => {
-					setSubjectSearchQuery(e.currentTarget.value);
-					setPage(1);
-				}}
+				onChange={(e) => setSubjectSearchQuery(e.currentTarget.value)}
 			/>
-			<ul className="list">
+			<ul className="list max-h-[30rem] overflow-auto">
 				{subjectSearchQuery != "" &&
-				paginatedSearchedSubjects.length != 0 ? (
-					paginatedSearchedSubjects.map((subject, i) => {
+				filteredSubjectSearches.length != 0 ? (
+					filteredSubjectSearches.map((subject, i) => {
 						return (
 							<li className="list-row" key={i}>
 								{subject.name}{" "}
 								<span
-									className="text-end hover:cursor-pointer"
+									className="ml-auto hover:cursor-pointer"
 									onClick={() => onProfileGroupMemberAdd(i)}
 								>
 									+
@@ -201,13 +177,6 @@ export default function DLPGAdd({ profile, subjects }: Props) {
 					</span>
 				) : null}
 			</ul>
-			{maxPage > 1 ? (
-				<PaginationNav
-					page={page}
-					handlePageTurn={handlePageTurn}
-					css=""
-				/>
-			) : null}
 		</fieldset>
 	);
 }
