@@ -108,13 +108,9 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 					profile={profile}
 					subjects={subjects}
 					type="add"
-					currEditingProfileGroupIndex={null}
 					modifiedProfileGroup={newProfileGroup}
 					onModifiedProfileGroup={(profileGroup) =>
 						setNewProfileGroup(profileGroup)
-					}
-					onCancelModify={() =>
-						"function doesnt matter in this context"
 					}
 				/>
 			</div>
