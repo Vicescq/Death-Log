@@ -14,28 +14,23 @@ type Props = {
 	profile: Profile;
 	subjects: Subject[];
 	type: "add" | "edit";
-	currentlyEditingProfileGroupIndex: number | null;
+	modifiedProfileGroup: ProfileGroup;
+	currEditingProfileGroupIndex: number | null;
+	onModifiedProfileGroup: (profileGroup: ProfileGroup) => void;
+	onCancelModify: () => void;
 };
 
 export default function DLPGModify({
 	profile,
 	subjects,
 	type,
-	currentlyEditingProfileGroupIndex,
+	modifiedProfileGroup,
+	currEditingProfileGroupIndex,
+	onModifiedProfileGroup,
+	onCancelModify,
 }: Props) {
 	const tree = useDeathLogStore((state) => state.tree);
 	const updateNode = useDeathLogStore((state) => state.updateNode);
-
-	const [modifiedProfileGroup, setModifiedProfileGroup] =
-		useState<ProfileGroup>(
-			type == "edit" && currentlyEditingProfileGroupIndex != null
-				? { ...profile.groupings[currentlyEditingProfileGroupIndex] }
-				: {
-						title: "",
-						description: "",
-						members: [],
-					},
-		);
 	const [subjectSearchQuery, setSubjectSearchQuery] = useState("");
 
 	const filteredSubjectSearches =
@@ -51,13 +46,13 @@ export default function DLPGModify({
 
 	const { inputTextError, submitBtnCSS } = getFormStatus(
 		modifiedProfileGroup.title,
-		type == "edit" && currentlyEditingProfileGroupIndex != null
+		type == "edit" && currEditingProfileGroupIndex != null
 			? {
 					type: "profileGroupEdit",
 					profile: profile,
 					profileGroup: modifiedProfileGroup,
 					originalProfileGroup:
-						profile.groupings[currentlyEditingProfileGroupIndex],
+						profile.groupings[currEditingProfileGroupIndex],
 				}
 			: {
 					type: "profileGroupAdd",
@@ -70,15 +65,29 @@ export default function DLPGModify({
 			...profile,
 			groupings: [...profile.groupings, modifiedProfileGroup],
 		});
-		setModifiedProfileGroup({
+		onModifiedProfileGroup({
 			title: "",
 			description: "",
 			members: [],
 		});
+		setSubjectSearchQuery("");
+	}
+
+	function handleProfileGroupEdit() {
+		updateNode(profile, {
+			...profile,
+			groupings: profile.groupings.map((group, i) => {
+				if (i != currEditingProfileGroupIndex) {
+					return group;
+				} else {
+					return modifiedProfileGroup;
+				}
+			}),
+		});
 	}
 
 	function handleProfileGroupMemberAdd(i: number) {
-		setModifiedProfileGroup({
+		onModifiedProfileGroup({
 			...modifiedProfileGroup,
 			members: [
 				...modifiedProfileGroup.members,
@@ -94,7 +103,9 @@ export default function DLPGModify({
 			<legend className="fieldset-legend">
 				{type == "add"
 					? "Add a new Profile Group"
-					: `Editing Profile Group: ${modifiedProfileGroup.title}`}
+					: currEditingProfileGroupIndex != null
+						? `Editing Profile Group: ${profile.groupings[currEditingProfileGroupIndex].title}`
+						: null}
 			</legend>
 
 			<label className="label">Title</label>
@@ -108,13 +119,13 @@ export default function DLPGModify({
 					maxLength={CONSTANTS.INPUT_MAX}
 					value={modifiedProfileGroup.title}
 					onChange={(e) => {
-						setModifiedProfileGroup({
+						onModifiedProfileGroup({
 							...modifiedProfileGroup,
 							title: e.currentTarget.value,
 						});
 					}}
 					onBlur={(e) => {
-						setModifiedProfileGroup({
+						onModifiedProfileGroup({
 							...modifiedProfileGroup,
 							title: formatString(e.currentTarget.value),
 						});
@@ -122,7 +133,11 @@ export default function DLPGModify({
 				/>
 				<button
 					className={`btn ${submitBtnCSS} join-item rounded-r-full`}
-					onClick={() => handleProfileGroupAdd()}
+					onClick={() =>
+						type == "add"
+							? handleProfileGroupAdd()
+							: handleProfileGroupEdit()
+					}
 					disabled={submitBtnCSS == "btn-disabled"}
 				>
 					{type == "add" ? "+" : "Edit"}
@@ -134,7 +149,7 @@ export default function DLPGModify({
 				className="textarea w-full"
 				value={modifiedProfileGroup.description}
 				onChange={(e) => {
-					setModifiedProfileGroup({
+					onModifiedProfileGroup({
 						...modifiedProfileGroup,
 						description: e.currentTarget.value,
 					});
@@ -145,7 +160,9 @@ export default function DLPGModify({
 
 			{modifiedProfileGroup.members.length > 0 ? (
 				<label className="label mt-4">
-					Adding the following subjects to this group:
+					{type == "add"
+						? "Adding the following subjects to this group:"
+						: "Members that belong to this group:"}
 				</label>
 			) : null}
 
@@ -154,12 +171,12 @@ export default function DLPGModify({
 					const subject = tree.get(id);
 					assertIsNonNull(subject);
 					return (
-						<li className="list-row">
+						<li className="list-row" key={id}>
 							{subject.name}
 							<span
 								className="ml-auto cursor-pointer"
 								onClick={() =>
-									setModifiedProfileGroup({
+									onModifiedProfileGroup({
 										...modifiedProfileGroup,
 										members:
 											modifiedProfileGroup.members.filter(
@@ -207,6 +224,11 @@ export default function DLPGModify({
 					</span>
 				) : null}
 			</ul>
+			{type == "edit" ? (
+				<button className="btn btn-error" onClick={onCancelModify}>
+					Cancel Changes
+				</button>
+			) : null}
 		</fieldset>
 	);
 }

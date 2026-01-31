@@ -1,5 +1,5 @@
 import NavBar from "../../../components/navBar/NavBar";
-import type { Profile } from "../../../model/TreeNodeModel";
+import type { Profile, ProfileGroup } from "../../../model/TreeNodeModel";
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
 import { assertIsNonNull, assertIsSubject } from "../../../utils";
 import DeathLogBreadcrumb from "../DeathLogBreadcrumb";
@@ -15,33 +15,53 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 	const tree = useDeathLogStore((state) => state.tree);
 	const updateNode = useDeathLogStore((state) => state.updateNode);
 
-	const subjects = profile.childIDS.map((id) => {
-		const subject = tree.get(id);
-		assertIsNonNull(subject);
-		assertIsSubject(subject);
-		return subject;
+	const [newProfileGroup, setNewProfileGroup] = useState<ProfileGroup>({
+		title: "",
+		description: "",
+		members: [],
 	});
 
-	const [
-		currentlyEditingProfileGroupIndex,
-		setCurrentlyEditingProfileGroupIndex,
-	] = useState<number | null>(null);
+	const [currEditingProfileGroup, setCurrEditingProfileGroup] =
+		useState<ProfileGroup | null>({
+			title: "",
+			description: "",
+			members: [],
+		});
+	const [currEditingProfileGroupIndex, setCurrEditingProfileGroupIndex] =
+		useState<number | null>(null);
 
 	function handleDelete(i: number) {
 		updateNode(profile, {
 			...profile,
 			groupings: profile.groupings.filter((_, index) => i != index),
 		});
-		setCurrentlyEditingProfileGroupIndex(null);
+		if (i == currEditingProfileGroupIndex) {
+			setCurrEditingProfileGroupIndex(null);
+			setCurrEditingProfileGroup(null);
+		} else if (
+			currEditingProfileGroupIndex &&
+			i < currEditingProfileGroupIndex
+		) {
+			const prevIndex = currEditingProfileGroupIndex;
+			setCurrEditingProfileGroupIndex(prevIndex - 1);
+		}
 	}
 
 	function handleEditFocus(i: number) {
-		if (i == currentlyEditingProfileGroupIndex) {
-			setCurrentlyEditingProfileGroupIndex(null);
+		if (i == currEditingProfileGroupIndex) {
+			setCurrEditingProfileGroupIndex(null);
 		} else {
-			setCurrentlyEditingProfileGroupIndex(i);
+			setCurrEditingProfileGroupIndex(i);
+			setCurrEditingProfileGroup(profile.groupings[i]);
 		}
 	}
+
+	const subjects = profile.childIDS.map((id) => {
+		const subject = tree.get(id);
+		assertIsNonNull(subject);
+		assertIsSubject(subject);
+		return subject;
+	});
 
 	return (
 		<>
@@ -59,28 +79,44 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 				<DLPGList
 					profile={profile}
 					currentlyEditingProfileGroupIndex={
-						currentlyEditingProfileGroupIndex
+						currEditingProfileGroupIndex
 					}
 					onDelete={handleDelete}
 					onEditFocus={handleEditFocus}
 				/>
 
-				<DLPGModify
-					profile={profile}
-					subjects={subjects}
-					type="add"
-					currentlyEditingProfileGroupIndex={null}
-				/>
-				{currentlyEditingProfileGroupIndex != null ? (
+				{currEditingProfileGroupIndex != null &&
+				currEditingProfileGroup != null ? (
 					<DLPGModify
 						profile={profile}
 						subjects={subjects}
 						type="edit"
-						currentlyEditingProfileGroupIndex={
-							currentlyEditingProfileGroupIndex
+						currEditingProfileGroupIndex={
+							currEditingProfileGroupIndex
+						}
+						modifiedProfileGroup={currEditingProfileGroup}
+						onModifiedProfileGroup={(profileGroup) =>
+							setCurrEditingProfileGroup(profileGroup)
+						}
+						onCancelModify={() =>
+							handleEditFocus(currEditingProfileGroupIndex)
 						}
 					/>
 				) : null}
+
+				<DLPGModify
+					profile={profile}
+					subjects={subjects}
+					type="add"
+					currEditingProfileGroupIndex={null}
+					modifiedProfileGroup={newProfileGroup}
+					onModifiedProfileGroup={(profileGroup) =>
+						setNewProfileGroup(profileGroup)
+					}
+					onCancelModify={() =>
+						"function doesnt matter in this context"
+					}
+				/>
 			</div>
 		</>
 	);
