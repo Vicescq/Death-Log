@@ -169,7 +169,9 @@ export default function DeathLogFAB({
 					<>
 						<fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-full border p-4">
 							<legend className="fieldset-legend"></legend>
-
+							<label className="label text-base-content">
+								Name
+							</label>
 							<div className="join w-full">
 								<div className="join-item w-full">
 									<input
@@ -209,9 +211,11 @@ export default function DeathLogFAB({
 
 							{type == "subject" ? (
 								<>
-									<div className="divider m-0"></div>
+									{/* <div className="divider m-0"></div> */}
 									<fieldset className="fieldset">
-										<legend className="fieldset-legend">Context</legend>
+										<legend className="fieldset-legend">
+											Context
+										</legend>
 										<select
 											className="select"
 											value={mapContextKeyToProperStr(

@@ -9,21 +9,33 @@ import { formatString } from "../../../stores/utils";
 import { assertIsNonNull } from "../../../utils";
 import { getFormStatus } from "../utils";
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
-import useConsoleLogOnStateChange from "../../../hooks/useConsoleLogOnStateChange";
 
 type Props = {
 	profile: Profile;
 	subjects: Subject[];
+	type: "add" | "edit";
+	currentlyEditingProfileGroupIndex: number | null;
 };
 
-export default function DLPGModify({ profile, subjects }: Props) {
+export default function DLPGModify({
+	profile,
+	subjects,
+	type,
+	currentlyEditingProfileGroupIndex,
+}: Props) {
 	const tree = useDeathLogStore((state) => state.tree);
 	const updateNode = useDeathLogStore((state) => state.updateNode);
-	const [newProfileGroup, setNewProfileGroup] = useState<ProfileGroup>({
-		title: "",
-		description: "",
-		members: [],
-	});
+
+	const [modifiedProfileGroup, setModifiedProfileGroup] =
+		useState<ProfileGroup>(
+			type == "edit" && currentlyEditingProfileGroupIndex != null
+				? { ...profile.groupings[currentlyEditingProfileGroupIndex] }
+				: {
+						title: "",
+						description: "",
+						members: [],
+					},
+		);
 	const [subjectSearchQuery, setSubjectSearchQuery] = useState("");
 
 	const filteredSubjectSearches =
@@ -34,81 +46,96 @@ export default function DLPGModify({ profile, subjects }: Props) {
 						subject.name
 							.toLowerCase()
 							.includes(subjectSearchQuery.toLowerCase()) &&
-						!newProfileGroup.members.includes(subject.id),
+						!modifiedProfileGroup.members.includes(subject.id),
 				);
 
 	const { inputTextError, submitBtnCSS } = getFormStatus(
-		newProfileGroup.title,
-		{
-			type: "profileGroupAdd",
-			profile: profile,
-		},
+		modifiedProfileGroup.title,
+		type == "edit" && currentlyEditingProfileGroupIndex != null
+			? {
+					type: "profileGroupEdit",
+					profile: profile,
+					profileGroup: modifiedProfileGroup,
+					originalProfileGroup:
+						profile.groupings[currentlyEditingProfileGroupIndex],
+				}
+			: {
+					type: "profileGroupAdd",
+					profile: profile,
+				},
 	);
 
-	function onProfileGroupAdd() {
+	function handleProfileGroupAdd() {
 		updateNode(profile, {
 			...profile,
-			groupings: [...profile.groupings, newProfileGroup],
+			groupings: [...profile.groupings, modifiedProfileGroup],
 		});
-		setNewProfileGroup({
+		setModifiedProfileGroup({
 			title: "",
 			description: "",
 			members: [],
 		});
 	}
 
-	function onProfileGroupMemberAdd(i: number) {
-		setNewProfileGroup({
-			...newProfileGroup,
+	function handleProfileGroupMemberAdd(i: number) {
+		setModifiedProfileGroup({
+			...modifiedProfileGroup,
 			members: [
-				...newProfileGroup.members,
+				...modifiedProfileGroup.members,
 				filteredSubjectSearches[i].id,
 			],
 		});
 	}
-	useConsoleLogOnStateChange(newProfileGroup, newProfileGroup);
 
 	return (
-		<fieldset className="fieldset bg-base-200 border-base-300 rounded-box mt-4 border p-4">
-			<legend className="fieldset-legend">Add a new Profile Group</legend>
+		<fieldset
+			className={`fieldset ${type == "add" ? "bg-base-200" : "bg-base-300"} border-base-300 rounded-box mt-4 border p-4`}
+		>
+			<legend className="fieldset-legend">
+				{type == "add"
+					? "Add a new Profile Group"
+					: `Editing Profile Group: ${modifiedProfileGroup.title}`}
+			</legend>
 
 			<label className="label">Title</label>
 			<div className="join">
 				<input
 					type="search"
 					className="input join-item w-full"
-					placeholder="New Profile Group"
+					placeholder={
+						type == "add" ? "New Profile Group" : undefined
+					}
 					maxLength={CONSTANTS.INPUT_MAX}
-					value={newProfileGroup.title}
+					value={modifiedProfileGroup.title}
 					onChange={(e) => {
-						setNewProfileGroup({
-							...newProfileGroup,
+						setModifiedProfileGroup({
+							...modifiedProfileGroup,
 							title: e.currentTarget.value,
 						});
 					}}
 					onBlur={(e) => {
-						setNewProfileGroup({
-							...newProfileGroup,
+						setModifiedProfileGroup({
+							...modifiedProfileGroup,
 							title: formatString(e.currentTarget.value),
 						});
 					}}
 				/>
 				<button
 					className={`btn ${submitBtnCSS} join-item rounded-r-full`}
-					onClick={() => onProfileGroupAdd()}
+					onClick={() => handleProfileGroupAdd()}
 					disabled={submitBtnCSS == "btn-disabled"}
 				>
-					+
+					{type == "add" ? "+" : "Edit"}
 				</button>
 			</div>
 			<span className="text-error">{inputTextError}</span>
 			<label className="label mt-4">Description</label>
 			<textarea
 				className="textarea w-full"
-				value={newProfileGroup.description}
+				value={modifiedProfileGroup.description}
 				onChange={(e) => {
-					setNewProfileGroup({
-						...newProfileGroup,
+					setModifiedProfileGroup({
+						...modifiedProfileGroup,
 						description: e.currentTarget.value,
 					});
 				}}
@@ -116,14 +143,14 @@ export default function DLPGModify({ profile, subjects }: Props) {
 				rows={CONSTANTS.TEXTAREA.TEXTAREA_ROWS}
 			/>
 
-			{newProfileGroup.members.length > 0 ? (
+			{modifiedProfileGroup.members.length > 0 ? (
 				<label className="label mt-4">
 					Adding the following subjects to this group:
 				</label>
 			) : null}
 
 			<ul className="list">
-				{newProfileGroup.members.map((id) => {
+				{modifiedProfileGroup.members.map((id) => {
 					const subject = tree.get(id);
 					assertIsNonNull(subject);
 					return (
@@ -132,11 +159,12 @@ export default function DLPGModify({ profile, subjects }: Props) {
 							<span
 								className="ml-auto cursor-pointer"
 								onClick={() =>
-									setNewProfileGroup({
-										...newProfileGroup,
-										members: newProfileGroup.members.filter(
-											(memberID) => memberID != id,
-										),
+									setModifiedProfileGroup({
+										...modifiedProfileGroup,
+										members:
+											modifiedProfileGroup.members.filter(
+												(memberID) => memberID != id,
+											),
 									})
 								}
 							>
@@ -164,7 +192,9 @@ export default function DLPGModify({ profile, subjects }: Props) {
 								{subject.name}{" "}
 								<span
 									className="ml-auto hover:cursor-pointer"
-									onClick={() => onProfileGroupMemberAdd(i)}
+									onClick={() =>
+										handleProfileGroupMemberAdd(i)
+									}
 								>
 									+
 								</span>

@@ -1,44 +1,19 @@
-import type { Profile, ProfileGroup } from "../../../model/TreeNodeModel";
+import type { Profile } from "../../../model/TreeNodeModel";
 import edit from "../../../assets/edit.svg";
-import { useDeathLogStore } from "../../../stores/useDeathLogStore";
-import { useState } from "react";
 
 type Props = {
 	profile: Profile;
+	currentlyEditingProfileGroupIndex: number | null;
+	onEditFocus: (i: number) => void;
+	onDelete: (i: number) => void;
 };
 
-export type CurrentlyEditingProfileGroup = {
-	profileGroup: ProfileGroup;
-	index: number;
-};
-
-export default function DLPGList({ profile }: Props) {
-	const updateNode = useDeathLogStore((state) => state.updateNode);
-
-	const [currentlyEditingProfileGroup, setCurrentlyEditingProfileGroup] =
-		useState<CurrentlyEditingProfileGroup | null>(null);
-
-	function onDelete(i: number) {
-		updateNode(profile, {
-			...profile,
-			groupings: profile.groupings.filter((_, index) => i != index),
-		});
-	}
-
-	function onEditFocus(i: number) {
-		if (
-			currentlyEditingProfileGroup?.profileGroup.title ==
-			profile.groupings[i].title
-		) {
-			setCurrentlyEditingProfileGroup(null);
-		} else {
-			setCurrentlyEditingProfileGroup({
-				index: i,
-				profileGroup: profile.groupings[i],
-			});
-		}
-	}
-
+export default function DLPGList({
+	profile,
+	currentlyEditingProfileGroupIndex,
+	onEditFocus,
+	onDelete,
+}: Props) {
 	return (
 		<fieldset className="fieldset bg-base-200 border-base-300 rounded-box border p-4">
 			<legend className="fieldset-legend">Profile Groups</legend>
@@ -52,11 +27,11 @@ export default function DLPGList({ profile }: Props) {
 						return (
 							<li
 								key={i}
-								className={`hover:bg-neutral list-row ${currentlyEditingProfileGroup?.index == i ? "bg-neutral" : ""} rounded-2xl`}
+								className={`list-row ${currentlyEditingProfileGroupIndex == i ? "bg-neutral" : ""} rounded-2xl`}
 							>
 								<label className="label">
 									<button
-										className={`btn btn-xs btn-ghost hover:bg-neutral hover:border-neutral ${currentlyEditingProfileGroup?.index == i ? "bg-neutral border-neutral" : ""} p-0`}
+										className={`btn btn-xs btn-ghost hover:bg-neutral hover:border-neutral ${currentlyEditingProfileGroupIndex == i ? "bg-neutral border-neutral" : ""} p-0`}
 										onClick={() => onEditFocus(i)}
 									>
 										<img

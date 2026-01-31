@@ -5,6 +5,7 @@ import { assertIsNonNull, assertIsSubject } from "../../../utils";
 import DeathLogBreadcrumb from "../DeathLogBreadcrumb";
 import DLPGModify from "./DLPGModify";
 import DLPGList from "./DLPGList";
+import { useState } from "react";
 
 type Props = {
 	profile: Profile;
@@ -12,6 +13,7 @@ type Props = {
 
 export default function DeathLogProfileGroup({ profile }: Props) {
 	const tree = useDeathLogStore((state) => state.tree);
+	const updateNode = useDeathLogStore((state) => state.updateNode);
 
 	const subjects = profile.childIDS.map((id) => {
 		const subject = tree.get(id);
@@ -19,6 +21,27 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 		assertIsSubject(subject);
 		return subject;
 	});
+
+	const [
+		currentlyEditingProfileGroupIndex,
+		setCurrentlyEditingProfileGroupIndex,
+	] = useState<number | null>(null);
+
+	function handleDelete(i: number) {
+		updateNode(profile, {
+			...profile,
+			groupings: profile.groupings.filter((_, index) => i != index),
+		});
+		setCurrentlyEditingProfileGroupIndex(null);
+	}
+
+	function handleEditFocus(i: number) {
+		if (i == currentlyEditingProfileGroupIndex) {
+			setCurrentlyEditingProfileGroupIndex(null);
+		} else {
+			setCurrentlyEditingProfileGroupIndex(i);
+		}
+	}
 
 	return (
 		<>
@@ -33,9 +56,31 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 					{profile.name} Profile Groups
 				</h1>
 
-				<DLPGList profile={profile} />
+				<DLPGList
+					profile={profile}
+					currentlyEditingProfileGroupIndex={
+						currentlyEditingProfileGroupIndex
+					}
+					onDelete={handleDelete}
+					onEditFocus={handleEditFocus}
+				/>
 
-				<DLPGModify profile={profile} subjects={subjects} />
+				<DLPGModify
+					profile={profile}
+					subjects={subjects}
+					type="add"
+					currentlyEditingProfileGroupIndex={null}
+				/>
+				{currentlyEditingProfileGroupIndex != null ? (
+					<DLPGModify
+						profile={profile}
+						subjects={subjects}
+						type="edit"
+						currentlyEditingProfileGroupIndex={
+							currentlyEditingProfileGroupIndex
+						}
+					/>
+				) : null}
 			</div>
 		</>
 	);
