@@ -155,12 +155,12 @@ export function createSubject(inputText: string, parentID: string, tree: Tree) {
 	return defaultSubject;
 }
 
-export function createDeath(subjectID: string): Death {
+export function createDeath(subjectID: string, remark: string | null): Death {
 	return {
 		parentID: subjectID,
 		timestamp: new Date().toISOString(),
 		timestampRel: true,
-		remark: null,
+		remark: remark,
 	};
 }
 
