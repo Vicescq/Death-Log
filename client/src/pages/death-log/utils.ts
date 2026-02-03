@@ -95,6 +95,19 @@ export function maxDate(isoSTR: string) {
 	return formatUTCDate(dateObj.toISOString());
 }
 
+export function formatUTCTime(isoSTR: string) {
+	const dateObj = new Date(isoSTR);
+	const hour = dateObj.getHours();
+	const mins = dateObj.getMinutes();
+	const secs = dateObj.getSeconds();
+
+	function addLeadingZeroes(time: number): string {
+		return time >= 10 ? String(time) : `0${time}`;
+	}
+
+	return `${addLeadingZeroes(hour)}:${addLeadingZeroes(mins)}:${addLeadingZeroes(secs)}`;
+}
+
 export function hasFormBeenEdited(context: ValidationContext) {
 	// couldnt find a way to not use type assertions in this function
 
