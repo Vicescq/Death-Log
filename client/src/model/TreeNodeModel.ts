@@ -1,12 +1,5 @@
 export type Tree = Map<string, DistinctTreeNode>;
 
-export type SubjectContext =
-	| "boss"
-	| "location"
-	| "other"
-	| "genericEnemy"
-	| "miniBoss";
-
 export type TreeNode = {
 	type: "game" | "profile" | "subject" | "ROOT_NODE";
 	id: string;
@@ -51,8 +44,16 @@ export type Subject = TreeNode & {
 };
 
 export type Death = {
+	id: string;
 	parentID: string;
 	timestamp: string;
 	timestampRel: boolean;
 	remark: string | null;
 };
+
+export type SubjectContext =
+	| "boss"
+	| "location"
+	| "other"
+	| "genericEnemy"
+	| "miniBoss";

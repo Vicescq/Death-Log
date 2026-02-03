@@ -1,6 +1,5 @@
 import { db } from "../model/LocalDBSchema";
 import type { DistinctTreeNode } from "../model/TreeNodeModel";
-import { assertIsNonNull } from "../utils";
 
 export default class LocalDB {
     constructor() { }
@@ -25,9 +24,6 @@ export default class LocalDB {
 
     static async updateNode(node: DistinctTreeNode, parentNode?: DistinctTreeNode) {
         await db.nodes.update(node.id, { node_id: node.id, node: node, edited_at: new Date().toISOString(), email: LocalDB.getUserEmail() });
-        if (parentNode) {
-            await db.nodes.update(parentNode.id, { node_id: parentNode.id, node: parentNode, edited_at: new Date().toISOString(), email: LocalDB.getUserEmail() });
-        }
     }
 
     static async getNodes() {

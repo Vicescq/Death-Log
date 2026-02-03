@@ -13,7 +13,7 @@ type Props = {
 	content: React.JSX.Element;
 	closeBtnName: string;
 	modalBtns: ModalBtn[];
-	handleOnClose?: () => void;
+	onClose?: () => void;
 	css?: string;
 };
 
@@ -23,41 +23,33 @@ export default function Modal({
 	content,
 	closeBtnName,
 	modalBtns,
-	handleOnClose,
+	onClose,
 	css,
 }: Props) {
 	return (
-		<>
-			<dialog
-				ref={ref}
-				className={`modal ${css ?? ""}`}
-				onClose={handleOnClose}
-			>
-				<div className="modal-box max-w-96">
-					<h3 className="text-lg font-bold">{header}</h3>
+		<dialog ref={ref} className={`modal ${css ?? ""}`} onClose={onClose}>
+			<div className="modal-box max-w-96">
+				<h3 className="text-lg font-bold">{header}</h3>
 
-					{content}
+				{content}
 
-					{modalBtns.map((modalBtn, i) => {
-						return (
-							<button
-								disabled={modalBtn.disabled}
-								className={`btn mt-4 w-full ${modalBtn.css}`}
-								onClick={modalBtn.fn}
-								key={i}
-							>
-								{modalBtn.text}
-							</button>
-						);
-					})}
-
-					<form method="dialog">
-						<button className="btn mt-2 w-full">
-							{closeBtnName}
+				{modalBtns.map((modalBtn, i) => {
+					return (
+						<button
+							disabled={modalBtn.disabled}
+							className={`btn mt-4 w-full ${modalBtn.css}`}
+							onClick={modalBtn.fn}
+							key={i}
+						>
+							{modalBtn.text}
 						</button>
-					</form>
-				</div>
-			</dialog>
-		</>
+					);
+				})}
+
+				<form method="dialog">
+					<button className="btn mt-2 w-full">{closeBtnName}</button>
+				</form>
+			</div>
+		</dialog>
 	);
 }

@@ -1,39 +1,48 @@
 export const CONSTANTS = {
 	DOMAIN: "http://localhost:5173",
-	DEATH_LOG_MODAL: {
+	ERROR: {
+		URL: "URL not found!",
+		HOME: "Click me to go back home!",
+		MAX_LENGTH: "Too long!",
+		MAX_DATE: "Maximum date reached!",
+		MAX_TIME: "Maxiumum time reached!",
+		REQ_TIME: "Time is required",
+		REQ_DATE: "Date is required",
+		MIN_DATE: "Minimum date reached!",
+		MIN_TIME: "Minimum time reached!",
+	},
+	NUMS: {
+		INPUT_MAX: 60,
+		TEXTAREA_MAX: 1000,
+		TEXTAREA_ROW_MAX: 6,
+		DEATH_REMARK_MAX: 20,
+	},
+	INFO: {
+		RELIABILITY:
+			"A reliable date will be displayed when graphed. An unreliable date will be omitted by default but still can be shown.",
+	},
+	DEATH_LOG_EDITOR: {
 		DEL_PH: "Type DEL to delete",
-		DEL_SUBMIT: "Delete Entry",
-		TURN_RIGHT: "Modal Turn Right",
-		EDIT_NAME: "Edit Name",
-		SUBMIT: "Save edits",
-		CLOSE: "Cancel",
+		DEL_SUBMIT_ARIA: "Delete Entry",
+		SUBMIT: "Save",
+		RESET: "Reset",
+		RETURN: "Return",
 	},
 	DEATH_LOG_FAB: {
-		OPEN: "Open FAB",
-		ADD: "Add item",
+		OPEN_ARIA: "Open FAB",
+		ADD_ARIA: "Add item",
 		ADD_PH: "Type here",
-		ADD_SUBMIT: "Confirm",
+		ADD_SUBMIT: "+",
 	},
 	DEATH_LOG_CARD: {
-		ENTRY_CHILDREN: "Folder Button",
-		EDIT_MODAL: "Edit Button",
+		ENTRY_CHILDREN_ARIA: "Folder Button",
+		EDIT_MODE_ARIA: "Edit Button",
 	},
 	START: {
 		GUEST_BTN: "Continue as guest",
 	},
-	ERROR: {
-		URL: "URL not found!",
-		HOME: "Click me to go back home!",
-	},
-	INPUT_TEXT_ERROR: {
-		EMPTY: "Name cannot be empty!",
-		NON_UNIQUE: "Name has to be unique!",
-		STR: "Name has to be of type string!",
-		ELP: "Please use another name!",
-	},
-	INPUT_MAX: 60,
-	TEXTAREA: {
-		TEXTAREA_MAX: 1000,
-		TEXTAREA_ROWS: 6,
+	PAGINATION_NAV: {
+		TURN_RIGHT_ARIA: "Turn Right Page",
+		TURN_LEFT_ARIA: "Turn Left Page",
 	},
 } as const;

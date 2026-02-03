@@ -1,8 +1,7 @@
-import { useEffect, useRef, useState } from "react";
-import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
-import useMediaQuery from "../../hooks/useMediaQuery";
-import Modal from "../../components/Modal";
-import navIcon from "../../assets/arrow_forward.svg";
+import { useRef, useState } from "react";
+import useMediaQuery from "../../../hooks/useMediaQuery";
+import Modal from "../../../components/Modal";
+import navIcon from "../../../assets/arrow_forward.svg";
 import { Link } from "react-router";
 import useBreadcrumbMembers from "./useBreadcrumbMembers";
 
@@ -120,7 +119,11 @@ export default function DeathLogBreadcrumb() {
 								{i == formattedBreadcrumbMembers.length - 1 ? (
 									<div className="status status-primary mr-2 animate-bounce"></div>
 								) : null}
-								<Link to={{ pathname: member.link }}>
+								<Link
+									to={{
+										pathname: member.link,
+									}}
+								>
 									{member.name}
 								</Link>
 							</li>

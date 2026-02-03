@@ -1,5 +1,4 @@
 import type {
-	TreeNode,
 	Subject,
 	DistinctTreeNode,
 	Game,
@@ -11,46 +10,6 @@ import type {
 import LocalDB from "../services/LocalDB";
 import { nanoid } from "nanoid";
 import { assertIsNonNull } from "../utils";
-
-export function sortChildIDS(parentNode: TreeNode, tree: Tree) {
-	const sorted = parentNode.childIDS.toSorted((a, b) => {
-		const nodeA = tree.get(a);
-		const nodeB = tree.get(b);
-
-		assertIsNonNull(nodeA);
-		assertIsNonNull(nodeB);
-
-		let result = 0;
-
-		function applyWeights(node: DistinctTreeNode) {
-			// non complete-> completed
-			let weight = 0;
-			if (node.completed) {
-				weight = -100;
-			} else {
-				weight = 100;
-			}
-			return weight;
-		}
-
-		const nodeAWeights = applyWeights(nodeA);
-		const nodeBWeights = applyWeights(nodeB);
-		if (nodeAWeights == nodeBWeights) {
-			if (nodeA.completed) {
-				assertIsNonNull(nodeA.dateEnd);
-				assertIsNonNull(nodeB.dateEnd);
-				result = Date.parse(nodeB.dateEnd) - Date.parse(nodeA.dateEnd);
-			} else {
-				result =
-					Date.parse(nodeB.dateStart) - Date.parse(nodeA.dateStart);
-			}
-		} else {
-			result = nodeBWeights > nodeAWeights ? 1 : -1;
-		}
-		return result;
-	});
-	return sorted;
-}
 
 export function identifyDeletedSelfAndChildrenIDS(
 	node: DistinctTreeNode,
@@ -97,7 +56,7 @@ export function createRootNode() {
 }
 
 export function createGame(inputText: string, tree: Tree) {
-	const id = generateAndValidateID(tree);
+	const id = generateAndValidateID({ type: "node", tree: tree });
 	const defaultGame: Game = {
 		type: "game",
 		id: id,
@@ -115,7 +74,7 @@ export function createGame(inputText: string, tree: Tree) {
 }
 
 export function createProfile(inputText: string, parentID: string, tree: Tree) {
-	const id = generateAndValidateID(tree);
+	const id = generateAndValidateID({ type: "node", tree: tree });
 	const defaultProfile: Profile = {
 		type: "profile",
 		id: id,
@@ -134,7 +93,7 @@ export function createProfile(inputText: string, parentID: string, tree: Tree) {
 }
 
 export function createSubject(inputText: string, parentID: string, tree: Tree) {
-	const id = generateAndValidateID(tree);
+	const id = generateAndValidateID({ type: "node", tree: tree });
 	const defaultSubject: Subject = {
 		type: "subject",
 		id: id,
@@ -155,22 +114,51 @@ export function createSubject(inputText: string, parentID: string, tree: Tree) {
 	return defaultSubject;
 }
 
-export function createDeath(subjectID: string, remark: string | null): Death {
+export function createDeath(
+	subject: Subject,
+	remark: string | null,
+	timestampRel: boolean,
+	timestampOvr?: string,
+	subjectIDOvr?: string,
+): Death {
 	return {
-		parentID: subjectID,
-		timestamp: new Date().toISOString(),
-		timestampRel: true,
+		id: subjectIDOvr
+			? subjectIDOvr
+			: generateAndValidateID({
+					type: "death",
+					ids: subject.log.map((death) => death.id),
+				}),
+		parentID: subject.id,
+		timestamp: timestampOvr ? timestampOvr : new Date().toISOString(),
+		timestampRel: timestampRel,
 		remark: remark,
 	};
 }
 
-export function generateAndValidateID(tree: Tree) {
+export type GenerateIDContext = GenerateDeathID | GenerateNodeID;
+
+type GenerateNodeID = {
+	type: "node";
+	tree: Tree;
+};
+
+type GenerateDeathID = {
+	type: "death";
+	ids: string[];
+};
+
+export function generateAndValidateID(context: GenerateIDContext) {
 	let id: string;
 	let counter = 0;
 	do {
 		id = nanoid(8);
 		counter += 1;
-	} while (tree.has(id) && counter <= 100);
+	} while (
+		(context.type == "node"
+			? context.tree.has(id)
+			: context.ids.includes(id)) &&
+		counter <= 100
+	);
 	if (counter > 100) {
 		throw new Error(
 			"ERROR! You somehow generated 100 duplicated IDs of length 8 in a row. Either you messed something in the local db or youre an insanely lucky person! :)",
@@ -188,4 +176,31 @@ export async function refreshTree(
 
 export function formatString(str: string) {
 	return str.replace(/\s+/g, " ").trim();
+}
+
+export function validateString(
+	inputText: string,
+	siblingNames: string[],
+	currentlyEditingName: string | null,
+) {
+	inputText = formatString(inputText);
+	if (typeof inputText != "string") {
+		return "Not a string!";
+	}
+
+	if (inputText.match(/^\.{1,}$/)) {
+		return "No ellipses allowed!";
+	}
+
+	if (inputText == "") {
+		return "Cannot be an empty name!";
+	}
+
+	for (const name of siblingNames) {
+		if (name != currentlyEditingName && name == inputText) {
+			return "That name already exists!";
+		}
+	}
+
+	return true;
 }
