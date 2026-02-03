@@ -36,4 +36,7 @@ export const CONSTANTS = {
 		TEXTAREA_MAX: 1000,
 		TEXTAREA_ROWS: 6,
 	},
+	RELIABILITY:
+		"A reliable date will be displayed when graphed. An unreliable date will be omitted by default but still can be shown.",
+	DEATH_REMARK_MAX: 20
 } as const;

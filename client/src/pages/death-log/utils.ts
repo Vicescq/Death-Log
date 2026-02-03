@@ -218,5 +218,5 @@ export function getFormStatus(
 }
 
 export function stressTestDeathObjects(size: number, id: string) {
-	return Array.from({ length: size }, () => createDeath(id, null));
+	return Array.from({ length: size }, () => createDeath(id, null, true));
 }

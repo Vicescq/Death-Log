@@ -4,6 +4,7 @@ import { parseUTCDate, formatUTCDate, maxDate } from "../utils";
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
 import { CONSTANTS } from "../../../../shared/constants";
 import { assertIsNonNull } from "../../../utils";
+import TooltipButton from "../../../components/TooltipButton";
 
 type Props = {
 	modalState: DistinctTreeNode;
@@ -90,7 +91,14 @@ export default function DLMEBNameDate({
 						max={maxDate(modalState.dateEnd)}
 					/>
 				) : null}
-				<div className="divider my-2">↓ Reliability Flags ↓</div>
+				<div className="divider my-2">
+					<div
+						className="tooltip tooltip-info"
+						data-tip={CONSTANTS.RELIABILITY}
+					>
+						↓ Reliability Flags ↓
+					</div>
+				</div>
 				<div className="flex">
 					<span className="text-[1rem]">Creation Date</span>
 					<input
