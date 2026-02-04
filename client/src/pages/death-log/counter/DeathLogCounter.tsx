@@ -1,17 +1,19 @@
-import { useDeathLogStore } from "../../stores/useDeathLogStore";
-import up from "../../assets/up.svg";
-import down from "../../assets/down.svg";
-import DeathLogBreadcrumb from "./DeathLogBreadcrumb";
-import NavBar from "../../components/navBar/NavBar";
-import type { Death, Subject } from "../../model/TreeNodeModel";
-import { createDeath, formatString } from "../../stores/utils";
+import { useDeathLogStore } from "../../../stores/useDeathLogStore";
+import up from "../../../assets/up.svg";
+import down from "../../../assets/down.svg";
+import DeathLogBreadcrumb from "../DeathLogBreadcrumb";
+import NavBar from "../../../components/navBar/NavBar";
+import type { Death, Subject } from "../../../model/TreeNodeModel";
+import { createDeath, formatString } from "../../../stores/utils";
 import { useRef, useState } from "react";
-import { formatUTCDate, formatUTCTime, toUTCDate } from "./utils";
-import Modal, { type ModalBtn } from "../../components/Modal";
-import TooltipButton from "../../components/TooltipButton";
-import { CONSTANTS } from "../../../shared/constants";
-import edit from "../../assets/edit_single.svg";
-import { assertIsNonNull } from "../../utils";
+import { formatUTCDate, formatUTCTime } from "../utils";
+import Modal from "../../../components/Modal";
+import TooltipButton from "../../../components/TooltipButton";
+import { CONSTANTS } from "../../../../shared/constants";
+import edit from "../../../assets/edit_single.svg";
+import { useForm } from "react-hook-form";
+import { type SubmitHandler } from "react-hook-form";
+import DeathCounterModalBody from "./EditDeathModal";
 
 type Props = {
 	subject: Subject;
@@ -25,159 +27,19 @@ export default function DeathLogCounter({ subject }: Props) {
 	const [modalBodyType, setModalBodyType] = useState<"edit" | "delete">(
 		"edit",
 	);
-	const [focusedDeathIndex, setFocusedDeathIndex] = useState<number | null>(
-		null,
-	);
-	const [editedDeathEntry, setEditedDeathEntry] = useState<Death | null>(
-		null,
-	);
 
-	const modalBody =
-		modalBodyType == "edit" && editedDeathEntry ? (
-			<fieldset className="fieldset bg-base-200 border-base-300 rounded-box my-1 w-full gap-2 border p-4">
-				<legend className="fieldset-legend">Remark & Timestamps</legend>
+	const counterForm = useForm<Death>({
+		mode: "onChange",
+	});
 
-				<label className="label">Remark</label>
-				<input
-					type="search"
-					className="input bg-base-200 join-item"
-					value={
-						editedDeathEntry.remark != null
-							? editedDeathEntry.remark
-							: ""
-					}
-					onChange={(e) => {
-						setEditedDeathEntry({
-							...editedDeathEntry,
-							remark:
-								e.currentTarget.value == ""
-									? null
-									: e.currentTarget.value,
-						});
-					}}
-					onBlur={(e) => {
-						const formattedStr = formatString(
-							e.currentTarget.value,
-						);
-						setEditedDeathEntry({
-							...editedDeathEntry,
-							remark: formattedStr == "" ? null : formattedStr,
-						});
-					}}
-					maxLength={CONSTANTS.DEATH_REMARK_MAX}
-				/>
+	const modalForm = useForm<Death>({
+		mode: "onChange",
+	});
 
-				<div className="divider">↓ Timestamp Settings ↓</div>
-
-				<label className="label">Date</label>
-				<input
-					type="date"
-					className="input bg-base-200 join-item"
-					value={formatUTCDate(editedDeathEntry.timestamp)}
-					onChange={(e) =>
-						setEditedDeathEntry({
-							...editedDeathEntry,
-							timestamp: toUTCDate(
-								e.currentTarget.value,
-								formatUTCTime(editedDeathEntry.timestamp),
-							),
-						})
-					}
-				/>
-
-				<label className="label">Time</label>
-				<input
-					type="time"
-					className="input bg-base-200 join-item"
-					value={formatUTCTime(editedDeathEntry.timestamp)}
-					step={1}
-					onChange={(e) =>
-						setEditedDeathEntry({
-							...editedDeathEntry,
-							timestamp: toUTCDate(
-								formatUTCDate(editedDeathEntry.timestamp),
-								e.currentTarget.value,
-							),
-						})
-					}
-				/>
-
-				<span className="mt-4">Is Timestamp Reliable?</span>
-				<div className="flex gap-2">
-					<div className="flex items-center justify-center gap-1">
-						Yes
-						<input
-							type="radio"
-							name="radio-2"
-							className="radio"
-							checked={editedDeathEntry.timestampRel}
-							onChange={(e) =>
-								setEditedDeathEntry({
-									...editedDeathEntry,
-									timestampRel: e.currentTarget.checked,
-								})
-							}
-						/>
-					</div>
-
-					<div className="flex items-center justify-center gap-1">
-						No
-						<input
-							type="radio"
-							name="radio-2"
-							className="radio radio-error"
-							checked={!editedDeathEntry.timestampRel}
-							onChange={(e) =>
-								setEditedDeathEntry({
-									...editedDeathEntry,
-									timestampRel: !e.currentTarget.checked,
-								})
-							}
-						/>
-					</div>
-				</div>
-			</fieldset>
-		) : (
-			<></>
-		);
-
-	const modalBtn: ModalBtn | null =
-		modalBodyType == "delete"
-			? {
-					text: "Delete",
-					css: "btn-error",
-					disabled: false,
-					fn: () => {
-						assertIsNonNull(focusedDeathIndex);
-						updateNode(subject, {
-							...subject,
-							log: subject.log.filter(
-								(_, index) => index != focusedDeathIndex,
-							),
-						});
-						modalRef.current?.close();
-					},
-				}
-			: {
-					text: "Save edits",
-					css: "btn-success",
-					disabled: false,
-					fn: () => {
-						updateNode(subject, {
-							...subject,
-							log: subject.log.map((death, i) => {
-								if (i == focusedDeathIndex) {
-									assertIsNonNull(editedDeathEntry);
-									return editedDeathEntry;
-								} else return death;
-							}),
-						});
-						modalRef.current?.close();
-					},
-				};
-
-	const modalHeader =
-		modalBodyType == "edit" ? "Edit Death Entry" : "Delete this death?";
+	const onSubmit: SubmitHandler<Death> = (data) => {
+		data.remark = data.remark == "" ? null : formatString(data.remark!);
+		console.log(data);
+	};
 
 	return (
 		<>
@@ -331,11 +193,9 @@ export default function DeathLogCounter({ subject }: Props) {
 										<button
 											className="cursor-pointer"
 											onClick={() => {
-												setFocusedDeathIndex(i);
 												setModalBodyType("edit");
-												setEditedDeathEntry({
-													...subject.log[i],
-												});
+												modalForm.reset(subject.log[i]);
+
 												modalRef.current?.showModal();
 											}}
 										>
@@ -349,7 +209,6 @@ export default function DeathLogCounter({ subject }: Props) {
 											className="cursor-pointer"
 											onClick={() => {
 												setModalBodyType("delete");
-												setFocusedDeathIndex(i);
 												modalRef.current?.showModal();
 											}}
 										>
@@ -364,11 +223,24 @@ export default function DeathLogCounter({ subject }: Props) {
 			</div>
 			<Modal
 				ref={modalRef}
-				content={modalBody}
+				content={
+					<DeathCounterModalBody
+						type={modalBodyType}
+						register={modalForm.register}
+						errors={modalForm.formState.errors}
+						onSubmit={onSubmit}
+						handleSubmit={modalForm.handleSubmit}
+						isValid={modalForm.formState.isValid}
+					/>
+				}
 				closeBtnName="Cancel"
-				header={modalHeader}
-				modalBtns={modalBtn ? [modalBtn] : []}
-				handleOnClose={() => setFocusedDeathIndex(null)}
+				header={
+					modalBodyType == "edit"
+						? "Edit Death Entry"
+						: "Delete this death?"
+				}
+				modalBtns={[]}
+				handleOnClose={() => modalForm.reset()}
 			/>
 		</>
 	);

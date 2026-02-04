@@ -24,6 +24,7 @@ export const CONSTANTS = {
 	ERROR: {
 		URL: "URL not found!",
 		HOME: "Click me to go back home!",
+		MAX_LENGTH: "Max Length Reached!",
 	},
 	INPUT_TEXT_ERROR: {
 		EMPTY: "Name cannot be empty!",
@@ -38,5 +39,6 @@ export const CONSTANTS = {
 	},
 	RELIABILITY:
 		"A reliable date will be displayed when graphed. An unreliable date will be omitted by default but still can be shown.",
-	DEATH_REMARK_MAX: 20
+	DEATH_REMARK_MAX: 20,
+	DELAY: 150
 } as const;

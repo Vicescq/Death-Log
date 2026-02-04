@@ -1,7 +1,7 @@
 import { useParams } from "react-router";
 import DeathLog from "./DeathLog";
 import { useDeathLogStore } from "../../stores/useDeathLogStore";
-import DeathLogCounter from "./DeathLogCounter";
+import DeathLogCounter from "./counter/DeathLogCounter";
 import ErrorPage from "../ErrorPage";
 import DeathLogProfileGroup from "./profile-group-edit/DeathLogProfileGroup";
 import { assertIsNonNull, assertIsProfile, assertIsSubject } from "../../utils";
