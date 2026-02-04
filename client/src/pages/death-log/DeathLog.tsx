@@ -5,9 +5,12 @@ import { Virtuoso, type Components, type VirtuosoHandle } from "react-virtuoso";
 import DeathLogBreadcrumb from "./DeathLogBreadcrumb";
 import DeathLogCardWrapper from "./card/DeathLogCardWrapper";
 import type { DistinctTreeNode } from "../../model/TreeNodeModel";
+import { sortChildIDS } from "../../stores/utils";
+import { useDeathLogStore } from "../../stores/useDeathLogStore";
 
 export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
-	const childIDS = parent.childIDS;
+	const tree = useDeathLogStore((state) => state.tree);
+	const childIDS = sortChildIDS(parent, tree);
 	const virtuosoRef = useRef<VirtuosoHandle>(null);
 
 	const [pageOpacity, setPageOpacity] = useState("");
