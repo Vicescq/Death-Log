@@ -6,13 +6,12 @@ import type {
 	Subject,
 	SubjectContext,
 	Tree,
+	TreeNode,
 } from "../../model/TreeNodeModel";
 import { createDeath } from "../../stores/utils";
-import {
-	InputTextValidationStrings,
-	validateString,
-} from "../../stores/stringValidation";
+import { validateString } from "../../stores/stringValidation";
 import { type ValidationContext } from "../../stores/stringValidation";
+import { assertIsNonNull } from "../../utils";
 
 export function mapContextKeyToProperStr(contextKey: SubjectContext) {
 	const subjectContextMap = {
@@ -223,4 +222,44 @@ export function getFormStatus(
 
 export function stressTestDeathObjects(size: number, id: string) {
 	return Array.from({ length: size }, () => createDeath(id, null, true));
+}
+
+export function sortChildIDS(parentNode: TreeNode, tree: Tree) {
+	const sorted = parentNode.childIDS.toSorted((a, b) => {
+		const nodeA = tree.get(a);
+		const nodeB = tree.get(b);
+
+		assertIsNonNull(nodeA);
+		assertIsNonNull(nodeB);
+
+		let result = 0;
+
+		function applyWeights(node: DistinctTreeNode) {
+			// non complete-> completed
+			let weight = 0;
+			if (node.completed) {
+				weight = -100;
+			} else {
+				weight = 100;
+			}
+			return weight;
+		}
+
+		const nodeAWeights = applyWeights(nodeA);
+		const nodeBWeights = applyWeights(nodeB);
+		if (nodeAWeights == nodeBWeights) {
+			if (nodeA.completed) {
+				assertIsNonNull(nodeA.dateEnd);
+				assertIsNonNull(nodeB.dateEnd);
+				result = Date.parse(nodeB.dateEnd) - Date.parse(nodeA.dateEnd);
+			} else {
+				result =
+					Date.parse(nodeB.dateStart) - Date.parse(nodeA.dateStart);
+			}
+		} else {
+			result = nodeBWeights > nodeAWeights ? 1 : -1;
+		}
+		return result;
+	});
+	return sorted;
 }

@@ -5,7 +5,7 @@ import DeathLogBreadcrumb from "../DeathLogBreadcrumb";
 import NavBar from "../../../components/navBar/NavBar";
 import type { Death, Subject } from "../../../model/TreeNodeModel";
 import { useRef, useState } from "react";
-import { formatUTCDate, formatUTCTime } from "../utils";
+import { formatUTCDate, formatUTCTime, toUTCDate } from "../utils";
 import Modal from "../../../components/Modal";
 import TooltipButton from "../../../components/TooltipButton";
 import { CONSTANTS } from "../../../../shared/constants";
@@ -13,6 +13,8 @@ import edit from "../../../assets/edit_single.svg";
 import { Controller, useForm } from "react-hook-form";
 import { type SubmitHandler } from "react-hook-form";
 import DeathCounterModalBody from "./EditDeathModal";
+import { createDeath } from "../../../stores/utils";
+import useConsoleLogOnStateChange from "../../../hooks/useConsoleLogOnStateChange";
 
 type Props = {
 	subject: Subject;
@@ -30,13 +32,28 @@ export default function DeathLogCounter({ subject }: Props) {
 	const [modalBodyType, setModalBodyType] = useState<"edit" | "delete">(
 		"edit",
 	);
+	const [focusedDeathIndex, setfocusedDeathIndex] = useState<null | number>(
+		null,
+	);
 
 	const counterForm = useForm<FormDeath>({
 		mode: "onChange",
+		defaultValues: {
+			remark: "",
+			timestampRel: true,
+		},
 	});
 
-	const onSubmitCounter: SubmitHandler<FormDeath> = (data) => {
-		console.log(data);
+	const onSubmitIncrementDeath: SubmitHandler<FormDeath> = (formData) => {
+		const remark = formData.remark == "" ? null : formData.remark;
+		updateNode(subject, {
+			...subject,
+			log: [
+				...subject.log,
+				createDeath(subject.id, remark, formData.timestampRel),
+			],
+		});
+		counterForm.reset();
 	};
 
 	function handleDecrementDeath() {
@@ -48,18 +65,38 @@ export default function DeathLogCounter({ subject }: Props) {
 				log: log,
 			});
 		}
+		counterForm.reset();
 	}
 
 	const modalForm = useForm<FormDeath>({
 		mode: "onChange",
 	});
 
-	const onEditSubmitModal: SubmitHandler<FormDeath> = (data) => {
-		console.log(data);
+	const onEditSubmitModal: SubmitHandler<FormDeath> = (formData) => {
+		const remark = formData.remark == "" ? null : formData.remark;
+		console.log(formData.time);
+		const isoStr = toUTCDate(formData.date, formData.time);
+
+		updateNode(subject, {
+			...subject,
+			log: subject.log.map((death, i) =>
+				i === focusedDeathIndex
+					? createDeath(
+							subject.id,
+							remark,
+							formData.timestampRel,
+							isoStr,
+						)
+					: death,
+			),
+		});
+		modalRef.current?.close();
+		console.log(formData);
 	};
 
 	function handleFocusedDeath(i: number) {
 		setModalBodyType("edit");
+		setfocusedDeathIndex(i);
 		const death = subject.log[i];
 		modalForm.reset({
 			remark: death.remark == null ? "" : death.remark,
@@ -69,6 +106,18 @@ export default function DeathLogCounter({ subject }: Props) {
 		});
 		modalRef.current?.showModal();
 	}
+
+	function handleDeleteDeath() {
+		updateNode(subject, {
+			...subject,
+			log: subject.log.filter((_, i) => i != focusedDeathIndex),
+		});
+		modalRef.current?.close();
+	}
+
+	const sortedDeaths = subject.log.toSorted(
+		(a, b) => Date.parse(a.timestamp) - Date.parse(b.timestamp),
+	);
 
 	return (
 		<>
@@ -84,7 +133,11 @@ export default function DeathLogCounter({ subject }: Props) {
 					{subject.name}
 				</h1>
 				<div className="my-4 flex flex-col gap-4">
-					<button onClick={counterForm.handleSubmit(onSubmitCounter)}>
+					<button
+						onClick={counterForm.handleSubmit(
+							onSubmitIncrementDeath,
+						)}
+					>
 						<img src={up} className="m-auto w-8" />
 					</button>
 
@@ -217,6 +270,7 @@ export default function DeathLogCounter({ subject }: Props) {
 											className="cursor-pointer"
 											onClick={() => {
 												setModalBodyType("delete");
+												setfocusedDeathIndex(i);
 												modalRef.current?.showModal();
 											}}
 										>
@@ -240,6 +294,7 @@ export default function DeathLogCounter({ subject }: Props) {
 						handleSubmit={modalForm.handleSubmit}
 						isValid={modalForm.formState.isValid}
 						control={modalForm.control}
+						onDelete={handleDeleteDeath}
 					/>
 				}
 				closeBtnName="Cancel"

@@ -7,8 +7,6 @@ import {
 	type UseFormHandleSubmit,
 	type UseFormRegister,
 } from "react-hook-form";
-import type { Death } from "../../../model/TreeNodeModel";
-import { toUTCDate } from "../utils";
 import type { FormDeath } from "./DeathLogCounter";
 
 type Props = {
@@ -19,6 +17,7 @@ type Props = {
 	errors: FieldErrors<FormDeath>;
 	isValid: boolean;
 	control: Control<FormDeath, any, FormDeath>;
+	onDelete: () => void;
 };
 
 export default function DeathCounterModalBody({
@@ -29,6 +28,7 @@ export default function DeathCounterModalBody({
 	errors,
 	isValid,
 	control,
+	onDelete,
 }: Props) {
 	if (type == "edit") {
 		return (
@@ -122,6 +122,10 @@ export default function DeathCounterModalBody({
 			</form>
 		);
 	} else {
-		return <></>;
+		return (
+			<button className="btn btn-error mt-4 w-full" onClick={onDelete}>
+				Delete
+			</button>
+		);
 	}
 }

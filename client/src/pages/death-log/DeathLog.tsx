@@ -5,7 +5,7 @@ import { Virtuoso, type Components, type VirtuosoHandle } from "react-virtuoso";
 import DeathLogBreadcrumb from "./DeathLogBreadcrumb";
 import DeathLogCardWrapper from "./card/DeathLogCardWrapper";
 import type { DistinctTreeNode } from "../../model/TreeNodeModel";
-import { sortChildIDS } from "../../stores/utils";
+import { sortChildIDS } from "./utils";
 import { useDeathLogStore } from "../../stores/useDeathLogStore";
 
 export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {

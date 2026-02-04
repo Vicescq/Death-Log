@@ -1,5 +1,4 @@
 import type {
-	TreeNode,
 	Subject,
 	DistinctTreeNode,
 	Game,
@@ -11,46 +10,6 @@ import type {
 import LocalDB from "../services/LocalDB";
 import { nanoid } from "nanoid";
 import { assertIsNonNull } from "../utils";
-
-export function sortChildIDS(parentNode: TreeNode, tree: Tree) {
-	const sorted = parentNode.childIDS.toSorted((a, b) => {
-		const nodeA = tree.get(a);
-		const nodeB = tree.get(b);
-
-		assertIsNonNull(nodeA);
-		assertIsNonNull(nodeB);
-
-		let result = 0;
-
-		function applyWeights(node: DistinctTreeNode) {
-			// non complete-> completed
-			let weight = 0;
-			if (node.completed) {
-				weight = -100;
-			} else {
-				weight = 100;
-			}
-			return weight;
-		}
-
-		const nodeAWeights = applyWeights(nodeA);
-		const nodeBWeights = applyWeights(nodeB);
-		if (nodeAWeights == nodeBWeights) {
-			if (nodeA.completed) {
-				assertIsNonNull(nodeA.dateEnd);
-				assertIsNonNull(nodeB.dateEnd);
-				result = Date.parse(nodeB.dateEnd) - Date.parse(nodeA.dateEnd);
-			} else {
-				result =
-					Date.parse(nodeB.dateStart) - Date.parse(nodeA.dateStart);
-			}
-		} else {
-			result = nodeBWeights > nodeAWeights ? 1 : -1;
-		}
-		return result;
-	});
-	return sorted;
-}
 
 export function identifyDeletedSelfAndChildrenIDS(
 	node: DistinctTreeNode,
@@ -159,10 +118,11 @@ export function createDeath(
 	subjectID: string,
 	remark: string | null,
 	timestampRel: boolean,
+	timestampOvr?: string,
 ): Death {
 	return {
 		parentID: subjectID,
-		timestamp: new Date().toISOString(),
+		timestamp: timestampOvr ? timestampOvr : new Date().toISOString(),
 		timestampRel: timestampRel,
 		remark: remark,
 	};
