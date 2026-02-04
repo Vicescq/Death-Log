@@ -1,19 +1,24 @@
 import { CONSTANTS } from "../../../../shared/constants";
 import {
+	Controller,
+	type Control,
 	type FieldErrors,
 	type SubmitHandler,
 	type UseFormHandleSubmit,
 	type UseFormRegister,
 } from "react-hook-form";
 import type { Death } from "../../../model/TreeNodeModel";
+import { toUTCDate } from "../utils";
+import type { FormDeath } from "./DeathLogCounter";
 
 type Props = {
 	type: "edit" | "delete";
-	register: UseFormRegister<Death>;
-	handleSubmit: UseFormHandleSubmit<Death, Death>;
-	onSubmit: SubmitHandler<Death>;
-	errors: FieldErrors<Death>;
+	register: UseFormRegister<FormDeath>;
+	handleSubmit: UseFormHandleSubmit<FormDeath, FormDeath>;
+	onSubmit: SubmitHandler<FormDeath>;
+	errors: FieldErrors<FormDeath>;
 	isValid: boolean;
+	control: Control<FormDeath, any, FormDeath>;
 };
 
 export default function DeathCounterModalBody({
@@ -23,6 +28,7 @@ export default function DeathCounterModalBody({
 	onSubmit,
 	errors,
 	isValid,
+	control,
 }: Props) {
 	if (type == "edit") {
 		return (
@@ -55,17 +61,7 @@ export default function DeathCounterModalBody({
 					<input
 						type="date"
 						className="input bg-base-200 join-item"
-						// {...register("timestamp")}
-						// value={formatUTCDate(editedDeathEntry.timestamp)}
-						// onChange={(e) =>
-						// 	setEditedDeathEntry({
-						// 		...editedDeathEntry,
-						// 		timestamp: toUTCDate(
-						// 			e.currentTarget.value,
-						// 			formatUTCTime(editedDeathEntry.timestamp),
-						// 		),
-						// 	})
-						// }
+						{...register("date")}
 					/>
 
 					<label className="label">Time</label>
@@ -73,57 +69,46 @@ export default function DeathCounterModalBody({
 						type="time"
 						className="input bg-base-200 join-item"
 						step={1}
-						// value={formatUTCTime(editedDeathEntry.timestamp)}
-						// onChange={(e) =>
-						// 	setEditedDeathEntry({
-						// 		...editedDeathEntry,
-						// 		timestamp: toUTCDate(
-						// 			formatUTCDate(editedDeathEntry.timestamp),
-						// 			e.currentTarget.value,
-						// 		),
-						// 	})
-						// }
+						{...register("time")}
 					/>
+					<div className="mt-4 flex items-center">
+						<span className="">Is Timestamp Reliable?</span>
+						<div className="ml-auto flex gap-2">
+							<div className="flex items-center justify-center gap-1">
+								Yes
+								<Controller
+									control={control}
+									name="timestampRel"
+									render={({
+										field: { onChange, value },
+									}) => (
+										<input
+											type="radio"
+											className="radio"
+											onChange={() => onChange(true)}
+											checked={value === true}
+										/>
+									)}
+								/>
+							</div>
 
-					<span className="mt-4">Is Timestamp Reliable?</span>
-					<div className="flex gap-2">
-						<div className="flex items-center justify-center gap-1">
-							Yes
-							<input
-								type="radio"
-								className="radio"
-								value={"true"}
-								{...register("timestampRel", {
-									setValueAs: (v) => v === "true",
-								})}
-								// {...register("timestampRel")}
-								// checked={editedDeathEntry.timestampRel}
-								// onChange={(e) =>
-								// 	setEditedDeathEntry({
-								// 		...editedDeathEntry,
-								// 		timestampRel: e.currentTarget.checked,
-								// 	})
-								// }
-							/>
-						</div>
-
-						<div className="flex items-center justify-center gap-1">
-							No
-							<input
-								type="radio"
-								className="radio radio-error"
-								value={"false"}
-								{...register("timestampRel", {
-									setValueAs: (v) => v === "true",
-								})}
-								// checked={!editedDeathEntry.timestampRel}
-								// onChange={(e) =>
-								// 	setEditedDeathEntry({
-								// 		...editedDeathEntry,
-								// 		timestampRel: !e.currentTarget.checked,
-								// 	})
-								// }
-							/>
+							<div className="flex items-center justify-center gap-1">
+								No
+								<Controller
+									control={control}
+									name="timestampRel"
+									render={({
+										field: { onChange, value },
+									}) => (
+										<input
+											type="radio"
+											className="radio radio-error"
+											onChange={() => onChange(false)}
+											checked={value === false}
+										/>
+									)}
+								/>
+							</div>
 						</div>
 					</div>
 				</fieldset>

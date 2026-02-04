@@ -4,14 +4,13 @@ import down from "../../../assets/down.svg";
 import DeathLogBreadcrumb from "../DeathLogBreadcrumb";
 import NavBar from "../../../components/navBar/NavBar";
 import type { Death, Subject } from "../../../model/TreeNodeModel";
-import { createDeath, formatString } from "../../../stores/utils";
 import { useRef, useState } from "react";
 import { formatUTCDate, formatUTCTime } from "../utils";
 import Modal from "../../../components/Modal";
 import TooltipButton from "../../../components/TooltipButton";
 import { CONSTANTS } from "../../../../shared/constants";
 import edit from "../../../assets/edit_single.svg";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { type SubmitHandler } from "react-hook-form";
 import DeathCounterModalBody from "./EditDeathModal";
 
@@ -19,27 +18,57 @@ type Props = {
 	subject: Subject;
 };
 
+export type FormDeath = Omit<Death, "parentID" | "remark" | "timestamp"> & {
+	remark: string;
+	date: string;
+	time: string;
+};
+
 export default function DeathLogCounter({ subject }: Props) {
 	const updateNode = useDeathLogStore((state) => state.updateNode);
-	const [remark, setRemark] = useState<string | null>(null);
-	const [timestampRel, setTimestampRel] = useState(true);
 	const modalRef = useRef<HTMLDialogElement>(null);
 	const [modalBodyType, setModalBodyType] = useState<"edit" | "delete">(
 		"edit",
 	);
 
-	const counterForm = useForm<Death>({
+	const counterForm = useForm<FormDeath>({
 		mode: "onChange",
 	});
 
-	const modalForm = useForm<Death>({
-		mode: "onChange",
-	});
-
-	const onSubmit: SubmitHandler<Death> = (data) => {
-		data.remark = data.remark == "" ? null : formatString(data.remark!);
+	const onSubmitCounter: SubmitHandler<FormDeath> = (data) => {
 		console.log(data);
 	};
+
+	function handleDecrementDeath() {
+		if (subject.log.length > 0) {
+			const log = [...subject.log];
+			log.pop();
+			updateNode(subject, {
+				...subject,
+				log: log,
+			});
+		}
+	}
+
+	const modalForm = useForm<FormDeath>({
+		mode: "onChange",
+	});
+
+	const onEditSubmitModal: SubmitHandler<FormDeath> = (data) => {
+		console.log(data);
+	};
+
+	function handleFocusedDeath(i: number) {
+		setModalBodyType("edit");
+		const death = subject.log[i];
+		modalForm.reset({
+			remark: death.remark == null ? "" : death.remark,
+			timestampRel: death.timestampRel,
+			time: formatUTCTime(death.timestamp),
+			date: formatUTCDate(death.timestamp),
+		});
+		modalRef.current?.showModal();
+	}
 
 	return (
 		<>
@@ -55,65 +84,41 @@ export default function DeathLogCounter({ subject }: Props) {
 					{subject.name}
 				</h1>
 				<div className="my-4 flex flex-col gap-4">
-					<img
-						src={up}
-						className="m-auto w-8"
-						onClick={() => {
-							updateNode(subject, {
-								...subject,
-								log: [
-									...subject.log,
-									createDeath(
-										subject.id,
-										remark,
-										timestampRel,
-									),
-								],
-							});
-							setRemark(null);
-							setTimestampRel(true);
-						}}
-					/>
+					<button onClick={counterForm.handleSubmit(onSubmitCounter)}>
+						<img src={up} className="m-auto w-8" />
+					</button>
 
 					<span className={`text-center text-6xl`}>
 						{subject.log.length}
 					</span>
 
-					<img
-						src={down}
-						className="m-auto w-8"
-						onClick={() => {
-							if (subject.log.length > 0) {
-								const log = [...subject.log];
-								log.pop();
-								updateNode(subject, {
-									...subject,
-									log: log,
-								});
-							}
-						}}
-					/>
+					<button onClick={handleDecrementDeath}>
+						<img src={down} className="m-auto w-8" />
+					</button>
 				</div>
 
 				<fieldset className="fieldset bg-base-200 border-base-300 rounded-box mb-0 w-full rounded-b-none border p-4 sm:mb-8 sm:rounded-2xl">
 					<legend className="fieldset-legend">
 						Remarks & Death History
 					</legend>
+
 					<label className="label">Death Remark</label>
 					<input
 						type="search"
 						placeholder="Wasnt my fault, died to a bug!"
 						className="input w-full"
-						value={remark == null ? "" : remark}
-						onChange={(e) => {
-							if (e.currentTarget.value == "") {
-								setRemark(null);
-							} else {
-								setRemark(e.currentTarget.value);
-							}
-						}}
-						maxLength={CONSTANTS.DEATH_REMARK_MAX}
+						{...counterForm.register("remark", {
+							maxLength: {
+								value: CONSTANTS.DEATH_REMARK_MAX,
+								message: CONSTANTS.ERROR.MAX_LENGTH,
+							},
+						})}
 					/>
+					{counterForm.formState.errors.remark && (
+						<div className="text-error">
+							{counterForm.formState.errors.remark.message}
+						</div>
+					)}
 
 					<div className="mt-4 flex">
 						<span className="my-auto">Is Timestamp Reliable?</span>
@@ -125,31 +130,37 @@ export default function DeathLogCounter({ subject }: Props) {
 							<div className="flex gap-2">
 								<div className="flex items-center justify-center gap-1">
 									Yes
-									<input
-										type="radio"
-										name="radio-1"
-										className="radio"
-										checked={timestampRel}
-										onChange={(e) =>
-											setTimestampRel(
-												e.currentTarget.checked,
-											)
-										}
+									<Controller
+										control={counterForm.control}
+										name="timestampRel"
+										render={({
+											field: { onChange, value },
+										}) => (
+											<input
+												type="radio"
+												className="radio"
+												checked={value === true}
+												onChange={() => onChange(true)}
+											/>
+										)}
 									/>
 								</div>
 
 								<div className="flex items-center justify-center gap-1">
 									No
-									<input
-										type="radio"
-										name="radio-1"
-										className="radio radio-error"
-										checked={!timestampRel}
-										onChange={(e) =>
-											setTimestampRel(
-												!e.currentTarget.checked,
-											)
-										}
+									<Controller
+										control={counterForm.control}
+										name="timestampRel"
+										render={({
+											field: { onChange, value },
+										}) => (
+											<input
+												type="radio"
+												className="radio radio-error"
+												checked={value === false}
+												onChange={() => onChange(false)}
+											/>
+										)}
 									/>
 								</div>
 							</div>
@@ -192,12 +203,9 @@ export default function DeathLogCounter({ subject }: Props) {
 									<div className="my-auto ml-auto flex gap-2">
 										<button
 											className="cursor-pointer"
-											onClick={() => {
-												setModalBodyType("edit");
-												modalForm.reset(subject.log[i]);
-
-												modalRef.current?.showModal();
-											}}
+											onClick={() =>
+												handleFocusedDeath(i)
+											}
 										>
 											<img
 												src={edit}
@@ -228,9 +236,10 @@ export default function DeathLogCounter({ subject }: Props) {
 						type={modalBodyType}
 						register={modalForm.register}
 						errors={modalForm.formState.errors}
-						onSubmit={onSubmit}
+						onSubmit={onEditSubmitModal}
 						handleSubmit={modalForm.handleSubmit}
 						isValid={modalForm.formState.isValid}
+						control={modalForm.control}
 					/>
 				}
 				closeBtnName="Cancel"
