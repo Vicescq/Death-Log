@@ -1,6 +1,6 @@
 import type { DistinctTreeNode } from "../../../model/TreeNodeModel";
 import { formatString } from "../../../stores/utils";
-import { parseUTCDate, formatUTCDate, maxDate } from "../utils";
+import { toUTCDate, formatUTCDate, maxDate } from "../utils";
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
 import { CONSTANTS } from "../../../../shared/constants";
 import { assertIsNonNull } from "../../../utils";
@@ -66,7 +66,10 @@ export default function DLMEBNameDate({
 							dateStart:
 								e.currentTarget.value == ""
 									? modalState.dateStart
-									: parseUTCDate(e.currentTarget.value),
+									: toUTCDate(
+											e.currentTarget.value,
+											"00:00:00",
+										),
 						})
 					}
 					max={
@@ -84,7 +87,10 @@ export default function DLMEBNameDate({
 						onChange={(e) =>
 							onEdit({
 								...modalState,
-								dateEnd: parseUTCDate(e.currentTarget.value),
+								dateEnd: toUTCDate(
+									e.currentTarget.value,
+									"00:00:00",
+								),
 							})
 						}
 						min={formatUTCDate(modalState.dateStart)}

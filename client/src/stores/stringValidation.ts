@@ -45,6 +45,11 @@ type ValidationContextProfileGroupEdit = {
 	profileGroup: ProfileGroup;
 };
 
+// type ValidationContextDeathEntryEdit = {
+// 	type: "deathEntryEdit";
+
+// }
+
 export const InputTextValidationStrings = {
 	ok: "",
 	nonuniqueEditDefault: "",

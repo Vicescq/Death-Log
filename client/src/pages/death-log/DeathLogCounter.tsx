@@ -6,7 +6,7 @@ import NavBar from "../../components/navBar/NavBar";
 import type { Death, Subject } from "../../model/TreeNodeModel";
 import { createDeath, formatString } from "../../stores/utils";
 import { useRef, useState } from "react";
-import { formatUTCDate, formatUTCTime, parseUTCDate } from "./utils";
+import { formatUTCDate, formatUTCTime, toUTCDate } from "./utils";
 import Modal, { type ModalBtn } from "../../components/Modal";
 import TooltipButton from "../../components/TooltipButton";
 import { CONSTANTS } from "../../../shared/constants";
@@ -77,7 +77,10 @@ export default function DeathLogCounter({ subject }: Props) {
 					onChange={(e) =>
 						setEditedDeathEntry({
 							...editedDeathEntry,
-							timestamp: parseUTCDate(e.currentTarget.value),
+							timestamp: toUTCDate(
+								e.currentTarget.value,
+								formatUTCTime(editedDeathEntry.timestamp),
+							),
 						})
 					}
 				/>
@@ -88,6 +91,15 @@ export default function DeathLogCounter({ subject }: Props) {
 					className="input bg-base-200 join-item"
 					value={formatUTCTime(editedDeathEntry.timestamp)}
 					step={1}
+					onChange={(e) =>
+						setEditedDeathEntry({
+							...editedDeathEntry,
+							timestamp: toUTCDate(
+								formatUTCDate(editedDeathEntry.timestamp),
+								e.currentTarget.value,
+							),
+						})
+					}
 				/>
 
 				<span className="mt-4">Is Timestamp Reliable?</span>

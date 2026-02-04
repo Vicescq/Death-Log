@@ -79,12 +79,16 @@ export function formatUTCDate(isoSTR: string) {
 	return `${year}-${month}-${day}`;
 }
 
-export function parseUTCDate(formattedDateStr: string) {
+export function toUTCDate(formattedDateStr: string, formattedTimeStr: string) {
 	const parsedDate = formattedDateStr.split("-");
+	const parsedTime = formattedTimeStr.split(":");
 	const dateObj = new Date(
 		Number(parsedDate[0]),
 		Number(parsedDate[1]) - 1,
 		Number(parsedDate[2]),
+		Number(parsedTime[0]),
+		Number(parsedTime[1]),
+		Number(parsedTime[2]),
 	);
 	return dateObj.toISOString();
 }
