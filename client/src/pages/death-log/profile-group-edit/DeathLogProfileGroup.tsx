@@ -31,7 +31,7 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 		useState<number | null>(null);
 
 	function handleDelete(i: number) {
-		updateNode(profile, {
+		updateNode({
 			...profile,
 			groupings: profile.groupings.filter((_, index) => i != index),
 		});

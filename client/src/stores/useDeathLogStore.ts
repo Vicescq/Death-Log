@@ -10,7 +10,6 @@ import {
 	createSubject,
 	identifyDeletedSelfAndChildrenIDS,
 } from "./utils";
-import type { FormDeath } from "../pages/death-log/counter/DeathLogCounter";
 
 type DeathLogState = {
 	tree: Tree;
@@ -23,7 +22,7 @@ type DeathLogState = {
 		overrides?: EditableSubjectField,
 	) => void;
 	deleteNode: (node: DistinctTreeNode) => void;
-	updateNode: (node: DistinctTreeNode, overrides: DistinctTreeNode | FormDeath) => void;
+	updateNode: (node: DistinctTreeNode) => void;
 };
 
 export const useDeathLogStore = create<DeathLogState>((set) => ({
@@ -117,13 +116,13 @@ export const useDeathLogStore = create<DeathLogState>((set) => ({
 		});
 	},
 
-	updateNode: (node, overrides) => {
+	updateNode: (node) => {
 		/**
 		 * Updates a node field
 		 */
 		set((state) => {
 			const updatedTree = new Map(state.tree);
-			const updatedNode: DistinctTreeNode = { ...node, ...overrides };
+			const updatedNode: DistinctTreeNode = { ...node };
 			updatedTree.set(updatedNode.id, updatedNode);
 
 			LocalDB.updateNode(updatedNode);

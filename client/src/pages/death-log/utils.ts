@@ -12,6 +12,8 @@ import { createDeath } from "../../stores/utils";
 import { validateString } from "../../stores/stringValidation";
 import { type ValidationContext } from "../../stores/stringValidation";
 import { assertIsNonNull } from "../../utils";
+import type { UseFormReturn } from "react-hook-form";
+import type { FormDeath } from "./counter/DeathLogCounter";
 
 export function mapContextKeyToProperStr(contextKey: SubjectContext) {
 	const subjectContextMap = {
@@ -262,4 +264,34 @@ export function sortChildIDS(parentNode: TreeNode, tree: Tree) {
 		return result;
 	});
 	return sorted;
+}
+
+export function resolveTimestampUpdate(
+	modalForm: UseFormReturn<FormDeath, any, FormDeath>,
+	formData: FormDeath,
+	focusedDeathID: string,
+	subject: Subject,
+) {
+	let isoStr: string;
+	const death = subject.log.find((death) => death.id == focusedDeathID);
+	assertIsNonNull(death);
+	if (
+		modalForm.formState.dirtyFields.date &&
+		modalForm.formState.dirtyFields.time
+	) {
+		isoStr = toUTCDate(formData.date, formData.time);
+	} else if (
+		modalForm.formState.dirtyFields.date &&
+		!modalForm.formState.dirtyFields.time
+	) {
+		isoStr = toUTCDate(formData.date, formatUTCTime(death.timestamp));
+	} else if (
+		!modalForm.formState.dirtyFields.date &&
+		modalForm.formState.dirtyFields.time
+	) {
+		isoStr = toUTCDate(formatUTCDate(death.timestamp), formData.time);
+	} else {
+		isoStr = death.timestamp;
+	}
+	return isoStr;
 }

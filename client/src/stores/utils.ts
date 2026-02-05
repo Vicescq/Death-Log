@@ -119,12 +119,15 @@ export function createDeath(
 	remark: string | null,
 	timestampRel: boolean,
 	timestampOvr?: string,
+	subjectIDOvr?: string,
 ): Death {
 	return {
-		id: generateAndValidateID({
-			type: "death",
-			ids: subject.log.map((death) => death.id),
-		}),
+		id: subjectIDOvr
+			? subjectIDOvr
+			: generateAndValidateID({
+					type: "death",
+					ids: subject.log.map((death) => death.id),
+				}),
 		parentID: subject.id,
 		timestamp: timestampOvr ? timestampOvr : new Date().toISOString(),
 		timestampRel: timestampRel,

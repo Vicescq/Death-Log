@@ -112,7 +112,7 @@ export default function DeathLogCard({ node, entryNum, tree }: Props) {
 							css: `${submitBtnCSS}`,
 							fn: () => {
 								try {
-									updateNode(node, modalState);
+									updateNode(modalState);
 									editModalRef.current?.close();
 								} catch (e) {
 									if (e instanceof Error) {
@@ -143,13 +143,13 @@ export default function DeathLogCard({ node, entryNum, tree }: Props) {
 								await delay(300);
 								const newChecked = !checked;
 								if (newChecked) {
-									updateNode(node, {
+									updateNode({
 										...node,
 										completed: newChecked,
 										dateEnd: new Date().toISOString(),
 									});
 								} else {
-									updateNode(node, {
+									updateNode({
 										...node,
 										completed: newChecked,
 										dateEnd: null,

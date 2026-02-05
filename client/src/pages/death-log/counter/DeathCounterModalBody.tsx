@@ -124,7 +124,9 @@ export default function DeathCounterModalBody({
 				</fieldset>
 				<button
 					type="submit"
-					disabled={!form.formState.isValid}
+					disabled={
+						!form.formState.isValid || !form.formState.isDirty
+					}
 					className="btn btn-success my-2 w-full"
 				>
 					Confirm

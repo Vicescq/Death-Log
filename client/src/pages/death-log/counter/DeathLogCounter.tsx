@@ -5,7 +5,12 @@ import DeathLogBreadcrumb from "../DeathLogBreadcrumb";
 import NavBar from "../../../components/navBar/NavBar";
 import type { Death, Subject } from "../../../model/TreeNodeModel";
 import { useEffect, useRef, useState } from "react";
-import { formatUTCDate, formatUTCTime, toUTCDate } from "../utils";
+import {
+	formatUTCDate,
+	formatUTCTime,
+	resolveTimestampUpdate,
+	toUTCDate,
+} from "../utils";
 import Modal from "../../../components/Modal";
 import { useForm } from "react-hook-form";
 import { type SubmitHandler } from "react-hook-form";
@@ -48,7 +53,7 @@ export default function DeathLogCounter({ subject }: Props) {
 	const onIncrementDeath: SubmitHandler<FormDeath> = (formData) => {
 		const formattedRemark = formatString(formData.remark);
 		const remark = formattedRemark == "" ? null : formattedRemark;
-		updateNode(subject, {
+		updateNode({
 			...subject,
 			log: [
 				...subject.log,
@@ -67,7 +72,7 @@ export default function DeathLogCounter({ subject }: Props) {
 		if (subject.log.length > 0) {
 			const log = [...subject.log];
 			log.pop();
-			updateNode(subject, {
+			updateNode({
 				...subject,
 				log: log,
 			});
@@ -87,9 +92,16 @@ export default function DeathLogCounter({ subject }: Props) {
 	const onEditDeath: SubmitHandler<FormDeath> = (formData) => {
 		const formattedRemark = formatString(formData.remark);
 		const remark = formattedRemark == "" ? null : formattedRemark;
-		const isoStr = toUTCDate(formData.date, formData.time);
 
-		updateNode(subject, {
+		assertIsNonNull(focusedDeathID);
+		const isoStr = resolveTimestampUpdate(
+			modalForm,
+			formData,
+			focusedDeathID,
+			subject,
+		);
+
+		updateNode({
 			...subject,
 			log: subject.log.map((death) =>
 				death.id === focusedDeathID
@@ -98,6 +110,7 @@ export default function DeathLogCounter({ subject }: Props) {
 							remark,
 							formData.timestampRel,
 							isoStr,
+							death.id,
 						)
 					: death,
 			),
@@ -120,7 +133,7 @@ export default function DeathLogCounter({ subject }: Props) {
 	}
 
 	function handleDeleteDeath() {
-		updateNode(subject, {
+		updateNode({
 			...subject,
 			log: subject.log.filter((death) => death.id != focusedDeathID),
 		});
@@ -133,6 +146,10 @@ export default function DeathLogCounter({ subject }: Props) {
 		modalRef.current?.showModal();
 	}
 
+	// const x = modalForm.watch();
+	// useEffect(() => {
+	// 	console.log("Form changed:", modalForm.formState.dirtyFields, x);
+	// }, [modalForm.formState, x]);
 	return (
 		<>
 			<NavBar

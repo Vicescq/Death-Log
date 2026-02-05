@@ -113,7 +113,6 @@ export default function DeathSettingsAndHistory({
 										{formatUTCTime(death.timestamp)}
 									</span>
 								</div>
-
 								{death.remark != null ? (
 									<div className="badge badge-sm badge-success">
 										{death.remark}

@@ -67,7 +67,7 @@ export default function DLPGModify(props: Props) {
 	);
 
 	function handleProfileGroupAdd() {
-		updateNode(props.profile, {
+		updateNode({
 			...props.profile,
 			groupings: [...props.profile.groupings, props.modifiedProfileGroup],
 		});
@@ -81,7 +81,7 @@ export default function DLPGModify(props: Props) {
 
 	function handleProfileGroupEdit() {
 		if (props.type == "edit") {
-			updateNode(props.profile, {
+			updateNode({
 				...props.profile,
 				groupings: props.profile.groupings.map((group, i) => {
 					if (i != props.currEditingProfileGroupIndex) {
