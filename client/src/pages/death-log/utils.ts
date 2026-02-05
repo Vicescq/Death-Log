@@ -220,9 +220,9 @@ export function getFormStatus(
 	return { inputTextError, submitBtnCSS };
 }
 
-export function stressTestDeathObjects(size: number, id: string) {
-	return Array.from({ length: size }, () => createDeath(id, null, true));
-}
+// export function stressTestDeathObjects(size: number, id: string) {
+// 	return Array.from({ length: size }, () => createDeath(id, null, true));
+// }
 
 export function sortChildIDS(parentNode: TreeNode, tree: Tree) {
 	const sorted = parentNode.childIDS.toSorted((a, b) => {

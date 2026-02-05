@@ -51,6 +51,7 @@ export type Subject = TreeNode & {
 };
 
 export type Death = {
+	id: string;
 	parentID: string;
 	timestamp: string;
 	timestampRel: boolean;

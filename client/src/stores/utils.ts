@@ -56,7 +56,7 @@ export function createRootNode() {
 }
 
 export function createGame(inputText: string, tree: Tree) {
-	const id = generateAndValidateID(tree);
+	const id = generateAndValidateID({ type: "node", tree: tree });
 	const defaultGame: Game = {
 		type: "game",
 		id: id,
@@ -74,7 +74,7 @@ export function createGame(inputText: string, tree: Tree) {
 }
 
 export function createProfile(inputText: string, parentID: string, tree: Tree) {
-	const id = generateAndValidateID(tree);
+	const id = generateAndValidateID({ type: "node", tree: tree });
 	const defaultProfile: Profile = {
 		type: "profile",
 		id: id,
@@ -93,7 +93,7 @@ export function createProfile(inputText: string, parentID: string, tree: Tree) {
 }
 
 export function createSubject(inputText: string, parentID: string, tree: Tree) {
-	const id = generateAndValidateID(tree);
+	const id = generateAndValidateID({ type: "node", tree: tree });
 	const defaultSubject: Subject = {
 		type: "subject",
 		id: id,
@@ -115,26 +115,47 @@ export function createSubject(inputText: string, parentID: string, tree: Tree) {
 }
 
 export function createDeath(
-	subjectID: string,
+	subject: Subject,
 	remark: string | null,
 	timestampRel: boolean,
 	timestampOvr?: string,
 ): Death {
 	return {
-		parentID: subjectID,
+		id: generateAndValidateID({
+			type: "death",
+			ids: subject.log.map((death) => death.id),
+		}),
+		parentID: subject.id,
 		timestamp: timestampOvr ? timestampOvr : new Date().toISOString(),
 		timestampRel: timestampRel,
 		remark: remark,
 	};
 }
 
-export function generateAndValidateID(tree: Tree) {
+export type GenerateIDContext = GenerateDeathID | GenerateNodeID;
+
+type GenerateNodeID = {
+	type: "node";
+	tree: Tree;
+};
+
+type GenerateDeathID = {
+	type: "death";
+	ids: string[];
+};
+
+export function generateAndValidateID(context: GenerateIDContext) {
 	let id: string;
 	let counter = 0;
 	do {
 		id = nanoid(8);
 		counter += 1;
-	} while (tree.has(id) && counter <= 100);
+	} while (
+		(context.type == "node"
+			? context.tree.has(id)
+			: context.ids.includes(id)) &&
+		counter <= 100
+	);
 	if (counter > 100) {
 		throw new Error(
 			"ERROR! You somehow generated 100 duplicated IDs of length 8 in a row. Either you messed something in the local db or youre an insanely lucky person! :)",

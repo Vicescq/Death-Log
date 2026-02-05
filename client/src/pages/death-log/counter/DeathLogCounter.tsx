@@ -18,7 +18,10 @@ type Props = {
 	subject: Subject;
 };
 
-export type FormDeath = Omit<Death, "parentID" | "remark" | "timestamp"> & {
+export type FormDeath = Omit<
+	Death,
+	"parentID" | "remark" | "timestamp" | "id"
+> & {
 	remark: string;
 	date: string;
 	time: string;
@@ -50,7 +53,7 @@ export default function DeathLogCounter({ subject }: Props) {
 			...subject,
 			log: [
 				...subject.log,
-				createDeath(subject.id, remark, formData.timestampRel),
+				createDeath(subject, remark, formData.timestampRel),
 			],
 		});
 		counterForm.reset();
@@ -92,7 +95,7 @@ export default function DeathLogCounter({ subject }: Props) {
 			log: subject.log.map((death, i) =>
 				i === focusedDeathIndex
 					? createDeath(
-							subject.id,
+							subject,
 							remark,
 							formData.timestampRel,
 							isoStr,
