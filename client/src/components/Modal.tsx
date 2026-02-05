@@ -13,7 +13,7 @@ type Props = {
 	content: React.JSX.Element;
 	closeBtnName: string;
 	modalBtns: ModalBtn[];
-	handleOnClose?: () => void;
+	onClose?: () => void;
 	css?: string;
 };
 
@@ -23,7 +23,7 @@ export default function Modal({
 	content,
 	closeBtnName,
 	modalBtns,
-	handleOnClose,
+	onClose,
 	css,
 }: Props) {
 	return (
@@ -31,7 +31,7 @@ export default function Modal({
 			<dialog
 				ref={ref}
 				className={`modal ${css ?? ""}`}
-				onClose={handleOnClose}
+				onClose={onClose}
 			>
 				<div className="modal-box max-w-96">
 					<h3 className="text-lg font-bold">{header}</h3>

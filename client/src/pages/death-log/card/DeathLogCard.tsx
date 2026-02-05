@@ -123,7 +123,7 @@ export default function DeathLogCard({ node, entryNum, tree }: Props) {
 							disabled: submitBtnCSS == "btn-disabled",
 						},
 					]}
-					handleOnClose={async () => {
+					onClose={async () => {
 						await delay(300); // if not used, ui flicker from page turn happens
 						setPage(0);
 						setModalState(node);

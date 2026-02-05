@@ -257,7 +257,7 @@ export default function DeathLogFAB({
 				}
 				closeBtnName="Close"
 				modalBtns={[]}
-				handleOnClose={() => {
+				onClose={() => {
 					setInputText("");
 					setSubjectContext("boss");
 					setReoccurring(false);

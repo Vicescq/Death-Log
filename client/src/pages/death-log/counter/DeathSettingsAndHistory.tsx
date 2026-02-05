@@ -9,9 +9,9 @@ import edit from "../../../assets/edit_single.svg";
 type Props = {
 	form: UseFormReturn<FormDeath, any, FormDeath>;
 	subject: Subject;
-	onFocusDeath: (i: number) => void;
+	onFocusDeath: (id: string) => void;
 	deathHistoryRef: React.RefObject<HTMLUListElement | null>;
-	onDeleteDeathConfirm: (i: number) => void;
+	onDeleteDeathConfirm: (id: string) => void;
 };
 
 export default function DeathSettingsAndHistory({
@@ -21,6 +21,9 @@ export default function DeathSettingsAndHistory({
 	onFocusDeath,
 	onDeleteDeathConfirm,
 }: Props) {
+	const sortedDeaths = subject.log.toSorted(
+		(a, b) => Date.parse(a.timestamp) - Date.parse(b.timestamp),
+	);
 	return (
 		<fieldset className="fieldset bg-base-200 border-base-300 rounded-box mb-0 w-full rounded-b-none border p-4 sm:mb-8 sm:rounded-2xl">
 			<legend className="fieldset-legend">
@@ -100,9 +103,9 @@ export default function DeathSettingsAndHistory({
 					</span>
 				) : null}
 
-				{subject.log
-					.map((death, i) => (
-						<li className="list-row flex" key={i}>
+				{sortedDeaths
+					.map((death) => (
+						<li className="list-row flex" key={death.id}>
 							<div className="flex flex-col gap-1">
 								<div className="badge badge-neutral badge-sm flex gap-2">
 									{formatUTCDate(death.timestamp)}{" "}
@@ -127,13 +130,15 @@ export default function DeathSettingsAndHistory({
 							<div className="my-auto ml-auto flex gap-2">
 								<button
 									className="cursor-pointer"
-									onClick={() => onFocusDeath(i)}
+									onClick={() => onFocusDeath(death.id)}
 								>
 									<img src={edit} className="w-4" alt="" />
 								</button>
 								<button
 									className="cursor-pointer"
-									onClick={() => onDeleteDeathConfirm(i)}
+									onClick={() =>
+										onDeleteDeathConfirm(death.id)
+									}
 								>
 									✕
 								</button>

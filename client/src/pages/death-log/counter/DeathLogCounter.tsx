@@ -13,6 +13,7 @@ import DeathCounterModalBody from "./DeathCounterModalBody";
 import { createDeath, formatString } from "../../../stores/utils";
 import useConsoleLogOnStateChange from "../../../hooks/useConsoleLogOnStateChange";
 import DeathSettingsAndHistory from "./DeathSettingsAndHistory";
+import { assertIsNonNull } from "../../../utils";
 
 type Props = {
 	subject: Subject;
@@ -33,9 +34,7 @@ export default function DeathLogCounter({ subject }: Props) {
 	const [modalBodyType, setModalBodyType] = useState<"edit" | "delete">(
 		"edit",
 	);
-	const [focusedDeathIndex, setfocusedDeathIndex] = useState<null | number>(
-		null,
-	);
+	const [focusedDeathID, setfocusedDeathID] = useState<null | string>(null);
 	const deathHistoryRef = useRef<HTMLUListElement | null>(null);
 
 	const counterForm = useForm<FormDeath>({
@@ -92,8 +91,8 @@ export default function DeathLogCounter({ subject }: Props) {
 
 		updateNode(subject, {
 			...subject,
-			log: subject.log.map((death, i) =>
-				i === focusedDeathIndex
+			log: subject.log.map((death) =>
+				death.id === focusedDeathID
 					? createDeath(
 							subject,
 							remark,
@@ -106,10 +105,11 @@ export default function DeathLogCounter({ subject }: Props) {
 		modalRef.current?.close();
 	};
 
-	function handleFocusDeath(i: number) {
+	function handleFocusDeath(id: string) {
 		setModalBodyType("edit");
-		setfocusedDeathIndex(i);
-		const death = subject.log[i];
+		setfocusedDeathID(id);
+		const death = subject.log.find((death) => death.id == id);
+		assertIsNonNull(death);
 		modalForm.reset({
 			remark: death.remark == null ? "" : death.remark,
 			timestampRel: death.timestampRel,
@@ -122,20 +122,16 @@ export default function DeathLogCounter({ subject }: Props) {
 	function handleDeleteDeath() {
 		updateNode(subject, {
 			...subject,
-			log: subject.log.filter((_, i) => i != focusedDeathIndex),
+			log: subject.log.filter((death) => death.id != focusedDeathID),
 		});
 		modalRef.current?.close();
 	}
 
-	function handleDeleteDeathConfirm(i: number) {
+	function handleDeleteDeathConfirm(id: string) {
 		setModalBodyType("delete");
-		setfocusedDeathIndex(i);
+		setfocusedDeathID(id);
 		modalRef.current?.showModal();
 	}
-
-	const sortedDeaths = subject.log.toSorted(
-		(a, b) => Date.parse(a.timestamp) - Date.parse(b.timestamp),
-	);
 
 	return (
 		<>
@@ -169,8 +165,8 @@ export default function DeathLogCounter({ subject }: Props) {
 					deathHistoryRef={deathHistoryRef}
 					form={counterForm}
 					subject={subject}
-					onFocusDeath={(i) => handleFocusDeath(i)}
-					onDeleteDeathConfirm={(i) => handleDeleteDeathConfirm(i)}
+					onFocusDeath={(id) => handleFocusDeath(id)}
+					onDeleteDeathConfirm={(id) => handleDeleteDeathConfirm(id)}
 				/>
 			</div>
 			<Modal
@@ -190,7 +186,10 @@ export default function DeathLogCounter({ subject }: Props) {
 						: "Delete this death?"
 				}
 				modalBtns={[]}
-				handleOnClose={() => modalForm.reset()}
+				onClose={() => {
+					modalForm.reset();
+					setfocusedDeathID(null);
+				}}
 			/>
 		</>
 	);
