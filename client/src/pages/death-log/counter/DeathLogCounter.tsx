@@ -4,17 +4,15 @@ import down from "../../../assets/down.svg";
 import DeathLogBreadcrumb from "../DeathLogBreadcrumb";
 import NavBar from "../../../components/navBar/NavBar";
 import type { Death, Subject } from "../../../model/TreeNodeModel";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { formatUTCDate, formatUTCTime, toUTCDate } from "../utils";
 import Modal from "../../../components/Modal";
-import TooltipButton from "../../../components/TooltipButton";
-import { CONSTANTS } from "../../../../shared/constants";
-import edit from "../../../assets/edit_single.svg";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { type SubmitHandler } from "react-hook-form";
-import DeathCounterModalBody from "./EditDeathModal";
-import { createDeath } from "../../../stores/utils";
+import DeathCounterModalBody from "./DeathCounterModalBody";
+import { createDeath, formatString } from "../../../stores/utils";
 import useConsoleLogOnStateChange from "../../../hooks/useConsoleLogOnStateChange";
+import DeathSettingsAndHistory from "./DeathSettingsAndHistory";
 
 type Props = {
 	subject: Subject;
@@ -35,6 +33,7 @@ export default function DeathLogCounter({ subject }: Props) {
 	const [focusedDeathIndex, setfocusedDeathIndex] = useState<null | number>(
 		null,
 	);
+	const deathHistoryRef = useRef<HTMLUListElement | null>(null);
 
 	const counterForm = useForm<FormDeath>({
 		mode: "onChange",
@@ -44,8 +43,9 @@ export default function DeathLogCounter({ subject }: Props) {
 		},
 	});
 
-	const onSubmitIncrementDeath: SubmitHandler<FormDeath> = (formData) => {
-		const remark = formData.remark == "" ? null : formData.remark;
+	const onIncrementDeath: SubmitHandler<FormDeath> = (formData) => {
+		const formattedRemark = formatString(formData.remark);
+		const remark = formattedRemark == "" ? null : formattedRemark;
 		updateNode(subject, {
 			...subject,
 			log: [
@@ -54,6 +54,11 @@ export default function DeathLogCounter({ subject }: Props) {
 			],
 		});
 		counterForm.reset();
+		deathHistoryRef.current?.scrollTo({
+			top: 0,
+			left: 0,
+			behavior: "smooth",
+		});
 	};
 
 	function handleDecrementDeath() {
@@ -66,15 +71,20 @@ export default function DeathLogCounter({ subject }: Props) {
 			});
 		}
 		counterForm.reset();
+		deathHistoryRef.current?.scrollTo({
+			top: 0,
+			left: 0,
+			behavior: "smooth",
+		});
 	}
 
 	const modalForm = useForm<FormDeath>({
 		mode: "onChange",
 	});
 
-	const onEditSubmitModal: SubmitHandler<FormDeath> = (formData) => {
-		const remark = formData.remark == "" ? null : formData.remark;
-		console.log(formData.time);
+	const onEditDeath: SubmitHandler<FormDeath> = (formData) => {
+		const formattedRemark = formatString(formData.remark);
+		const remark = formattedRemark == "" ? null : formattedRemark;
 		const isoStr = toUTCDate(formData.date, formData.time);
 
 		updateNode(subject, {
@@ -91,10 +101,9 @@ export default function DeathLogCounter({ subject }: Props) {
 			),
 		});
 		modalRef.current?.close();
-		console.log(formData);
 	};
 
-	function handleFocusedDeath(i: number) {
+	function handleFocusDeath(i: number) {
 		setModalBodyType("edit");
 		setfocusedDeathIndex(i);
 		const death = subject.log[i];
@@ -113,6 +122,12 @@ export default function DeathLogCounter({ subject }: Props) {
 			log: subject.log.filter((_, i) => i != focusedDeathIndex),
 		});
 		modalRef.current?.close();
+	}
+
+	function handleDeleteDeathConfirm(i: number) {
+		setModalBodyType("delete");
+		setfocusedDeathIndex(i);
+		modalRef.current?.showModal();
 	}
 
 	const sortedDeaths = subject.log.toSorted(
@@ -134,9 +149,7 @@ export default function DeathLogCounter({ subject }: Props) {
 				</h1>
 				<div className="my-4 flex flex-col gap-4">
 					<button
-						onClick={counterForm.handleSubmit(
-							onSubmitIncrementDeath,
-						)}
+						onClick={counterForm.handleSubmit(onIncrementDeath)}
 					>
 						<img src={up} className="m-auto w-8" />
 					</button>
@@ -149,152 +162,22 @@ export default function DeathLogCounter({ subject }: Props) {
 						<img src={down} className="m-auto w-8" />
 					</button>
 				</div>
-
-				<fieldset className="fieldset bg-base-200 border-base-300 rounded-box mb-0 w-full rounded-b-none border p-4 sm:mb-8 sm:rounded-2xl">
-					<legend className="fieldset-legend">
-						Remarks & Death History
-					</legend>
-
-					<label className="label">Death Remark</label>
-					<input
-						type="search"
-						placeholder="Wasnt my fault, died to a bug!"
-						className="input w-full"
-						{...counterForm.register("remark", {
-							maxLength: {
-								value: CONSTANTS.DEATH_REMARK_MAX,
-								message: CONSTANTS.ERROR.MAX_LENGTH,
-							},
-						})}
-					/>
-					{counterForm.formState.errors.remark && (
-						<div className="text-error">
-							{counterForm.formState.errors.remark.message}
-						</div>
-					)}
-
-					<div className="mt-4 flex">
-						<span className="my-auto">Is Timestamp Reliable?</span>
-						<TooltipButton
-							tooltip={CONSTANTS.RELIABILITY}
-							css="tooltip-primary"
-						/>
-						<div className="ml-auto">
-							<div className="flex gap-2">
-								<div className="flex items-center justify-center gap-1">
-									Yes
-									<Controller
-										control={counterForm.control}
-										name="timestampRel"
-										render={({
-											field: { onChange, value },
-										}) => (
-											<input
-												type="radio"
-												className="radio"
-												checked={value === true}
-												onChange={() => onChange(true)}
-											/>
-										)}
-									/>
-								</div>
-
-								<div className="flex items-center justify-center gap-1">
-									No
-									<Controller
-										control={counterForm.control}
-										name="timestampRel"
-										render={({
-											field: { onChange, value },
-										}) => (
-											<input
-												type="radio"
-												className="radio radio-error"
-												checked={value === false}
-												onChange={() => onChange(false)}
-											/>
-										)}
-									/>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<label className="label mt-8">Death History</label>
-					<ul className="list max-h-[40rem] overflow-auto">
-						{subject.log.length == 0 ? (
-							<span className="text-error">
-								This subject has no death log history! Start by
-								adding a death!
-							</span>
-						) : null}
-
-						{subject.log
-							.map((death, i) => (
-								<li className="list-row flex" key={i}>
-									<div className="flex flex-col gap-1">
-										<div className="badge badge-neutral badge-sm flex gap-2">
-											{formatUTCDate(death.timestamp)}{" "}
-											<span className="text-secondary">
-												{formatUTCTime(death.timestamp)}
-											</span>
-										</div>
-
-										{death.remark != null ? (
-											<div className="badge badge-sm badge-success">
-												{death.remark}
-											</div>
-										) : null}
-
-										{!death.timestampRel ? (
-											<div className="badge badge-sm badge-error">
-												Unreliable Time
-											</div>
-										) : null}
-									</div>
-
-									<div className="my-auto ml-auto flex gap-2">
-										<button
-											className="cursor-pointer"
-											onClick={() =>
-												handleFocusedDeath(i)
-											}
-										>
-											<img
-												src={edit}
-												className="w-4"
-												alt=""
-											/>
-										</button>
-										<button
-											className="cursor-pointer"
-											onClick={() => {
-												setModalBodyType("delete");
-												setfocusedDeathIndex(i);
-												modalRef.current?.showModal();
-											}}
-										>
-											✕
-										</button>
-									</div>
-								</li>
-							))
-							.reverse()}
-					</ul>
-				</fieldset>
+				<DeathSettingsAndHistory
+					deathHistoryRef={deathHistoryRef}
+					form={counterForm}
+					subject={subject}
+					onFocusDeath={(i) => handleFocusDeath(i)}
+					onDeleteDeathConfirm={(i) => handleDeleteDeathConfirm(i)}
+				/>
 			</div>
 			<Modal
 				ref={modalRef}
 				content={
 					<DeathCounterModalBody
 						type={modalBodyType}
-						register={modalForm.register}
-						errors={modalForm.formState.errors}
-						onSubmit={onEditSubmitModal}
-						handleSubmit={modalForm.handleSubmit}
-						isValid={modalForm.formState.isValid}
-						control={modalForm.control}
-						onDelete={handleDeleteDeath}
+						form={modalForm}
+						onEditDeath={onEditDeath}
+						onDeleteDeath={handleDeleteDeath}
 					/>
 				}
 				closeBtnName="Cancel"
