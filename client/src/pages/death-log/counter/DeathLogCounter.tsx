@@ -5,12 +5,7 @@ import DeathLogBreadcrumb from "../DeathLogBreadcrumb";
 import NavBar from "../../../components/navBar/NavBar";
 import type { Death, Subject } from "../../../model/TreeNodeModel";
 import { useEffect, useRef, useState } from "react";
-import {
-	formatUTCDate,
-	formatUTCTime,
-	resolveTimestampUpdate,
-	toUTCDate,
-} from "../utils";
+import { formatUTCDate, formatUTCTime, resolveTimestampUpdate } from "../utils";
 import Modal from "../../../components/Modal";
 import { useForm } from "react-hook-form";
 import { type SubmitHandler } from "react-hook-form";
@@ -42,6 +37,10 @@ export default function DeathLogCounter({ subject }: Props) {
 	const [focusedDeathID, setfocusedDeathID] = useState<null | string>(null);
 	const deathHistoryRef = useRef<HTMLUListElement | null>(null);
 
+	const sortedDeaths = subject.log.toSorted(
+		(a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp),
+	);
+
 	const counterForm = useForm<FormDeath>({
 		mode: "onChange",
 		defaultValues: {
@@ -70,11 +69,10 @@ export default function DeathLogCounter({ subject }: Props) {
 
 	function handleDecrementDeath() {
 		if (subject.log.length > 0) {
-			const log = [...subject.log];
-			log.pop();
+			const delID = sortedDeaths[0].id;
 			updateNode({
 				...subject,
-				log: log,
+				log: subject.log.filter((death) => death.id != delID),
 			});
 		}
 		counterForm.reset();
@@ -146,10 +144,6 @@ export default function DeathLogCounter({ subject }: Props) {
 		modalRef.current?.showModal();
 	}
 
-	// const x = modalForm.watch();
-	// useEffect(() => {
-	// 	console.log("Form changed:", modalForm.formState.dirtyFields, x);
-	// }, [modalForm.formState, x]);
 	return (
 		<>
 			<NavBar
@@ -160,23 +154,31 @@ export default function DeathLogCounter({ subject }: Props) {
 			/>
 
 			<div className="m-auto mt-4 flex w-full flex-col items-center justify-center rounded-4xl sm:w-[85%] md:w-2xl">
-				<h1 className="mx-6 w-fit rounded-2xl p-6 text-center text-4xl md:text-6xl">
+				<h1
+					className={`mx-6 w-fit rounded-2xl p-6 text-center text-4xl md:text-6xl ${subject.completed ? "text-neutral line-through" : ""}`}
+				>
 					{subject.name}
 				</h1>
 				<div className="my-4 flex flex-col gap-4">
-					<button
-						onClick={counterForm.handleSubmit(onIncrementDeath)}
-					>
-						<img src={up} className="m-auto w-8" />
-					</button>
+					{!subject.completed ? (
+						<button
+							onClick={counterForm.handleSubmit(onIncrementDeath)}
+						>
+							<img src={up} className="m-auto w-8" />
+						</button>
+					) : null}
 
-					<span className={`text-center text-6xl`}>
+					<span
+						className={`text-center text-6xl ${subject.completed ? "text-success" : ""}`}
+					>
 						{subject.log.length}
 					</span>
 
-					<button onClick={handleDecrementDeath}>
-						<img src={down} className="m-auto w-8" />
-					</button>
+					{!subject.completed ? (
+						<button onClick={handleDecrementDeath}>
+							<img src={down} className="m-auto w-8" />
+						</button>
+					) : null}
 				</div>
 				<DeathSettingsAndHistory
 					deathHistoryRef={deathHistoryRef}
@@ -184,6 +186,7 @@ export default function DeathLogCounter({ subject }: Props) {
 					subject={subject}
 					onFocusDeath={(id) => handleFocusDeath(id)}
 					onDeleteDeathConfirm={(id) => handleDeleteDeathConfirm(id)}
+					sortedDeaths={sortedDeaths}
 				/>
 			</div>
 			<Modal
