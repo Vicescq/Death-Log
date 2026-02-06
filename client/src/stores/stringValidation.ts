@@ -5,8 +5,7 @@ import type {
 	DistinctTreeNode,
 	ProfileGroup,
 } from "../model/TreeNodeModel";
-import { assertIsNonNull, assertIsProfile } from "../utils";
-import { formatString } from "./utils";
+import { formatString, isNameUniqueTEMP } from "./utils";
 
 export type ValidationResponse = {
 	msg: string;
@@ -60,7 +59,7 @@ export const InputTextValidationStrings = {
 	elp: CONSTANTS.INPUT_TEXT_ERROR.ELP,
 } as const;
 
-export function validateString(
+export function validateStringTEMP(
 	inputText: string,
 	context: ValidationContext,
 ): ValidationResponse {
@@ -96,7 +95,7 @@ export function validateString(
 		};
 	}
 
-	const uniqueRes = isNameUnique(inputText, context);
+	const uniqueRes = isNameUniqueTEMP(inputText, context);
 
 	if (!uniqueRes) {
 		return {
@@ -116,45 +115,6 @@ export function validateString(
 	};
 }
 
-type NameUniquenessResponse = true | false | "defaultEditedName";
+export type NameUniquenessResponse = true | false | "defaultEditedName";
 
-export function isNameUnique(
-	inputText: string,
-	context: ValidationContext,
-): NameUniquenessResponse {
-	if (context.type == "nodeAdd" || context.type == "nodeEdit") {
-		const parent = context.tree.get(context.parentID);
-		assertIsNonNull(parent);
-		if (
-			context.type == "nodeEdit" &&
-			context.originalNode.name == inputText
-		)
-			return "defaultEditedName";
-		for (let i = 0; i < parent.childIDS.length; i++) {
-			const child: DistinctTreeNode | undefined = context.tree.get(
-				parent.childIDS[i],
-			); // dont know why TS doesnt auto complete the type and labels it as any?
-			assertIsNonNull(child);
 
-			if (child.name == inputText) {
-				return false;
-			}
-		}
-	} else {
-		const profile = context.profile;
-		if (profile) {
-			assertIsProfile(profile);
-			const groupings = profile.groupings;
-			if (
-				context.type == "profileGroupEdit" &&
-				context.originalProfileGroup.title == inputText
-			)
-				return "defaultEditedName";
-			for (let i = 0; i < groupings.length; i++) {
-				if (groupings[i].title == inputText) return false;
-			}
-		}
-	}
-
-	return true;
-}

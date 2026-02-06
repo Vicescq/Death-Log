@@ -152,7 +152,6 @@ export default function DeathLogCounter({ subject }: Props) {
 				endNavContentCSS="w-[70%]"
 				startNavContentCSS="w-[30%]"
 			/>
-
 			<div className="m-auto mt-4 flex w-full flex-col items-center justify-center rounded-4xl sm:w-[85%] md:w-2xl">
 				<h1
 					className={`mx-6 w-fit rounded-2xl p-6 text-center text-4xl md:text-6xl ${subject.completed ? "text-neutral line-through" : ""}`}
@@ -189,6 +188,7 @@ export default function DeathLogCounter({ subject }: Props) {
 					sortedDeaths={sortedDeaths}
 				/>
 			</div>
+
 			<Modal
 				ref={modalRef}
 				content={

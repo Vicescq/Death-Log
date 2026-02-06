@@ -1,16 +1,16 @@
 import NavBar from "../../components/navBar/NavBar";
 import React, { forwardRef, useRef, useState } from "react";
-import DeathLogFAB from "./DeathLogFAB";
+import DeathLogFAB from "./fab/DeathLogFAB";
 import { Virtuoso, type Components, type VirtuosoHandle } from "react-virtuoso";
 import DeathLogBreadcrumb from "./DeathLogBreadcrumb";
 import DeathLogCardWrapper from "./card/DeathLogCardWrapper";
 import type { DistinctTreeNode } from "../../model/TreeNodeModel";
 import { sortChildIDS } from "./utils";
 import { useDeathLogStore } from "../../stores/useDeathLogStore";
+import { assertIsNonNull } from "../../utils";
 
 export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 	const tree = useDeathLogStore((state) => state.tree);
-	const childIDS = sortChildIDS(parent, tree);
 	const virtuosoRef = useRef<VirtuosoHandle>(null);
 
 	const [pageOpacity, setPageOpacity] = useState("");
@@ -43,6 +43,13 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 		}
 	}
 
+	const sortedChildIDs = sortChildIDS(parent, tree);
+	const nodeNames = parent.childIDS.map((id) => {
+		const node = tree.get(id);
+		assertIsNonNull(node);
+		return node.name;
+	});
+
 	return (
 		<>
 			<NavBar
@@ -54,7 +61,7 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 
 			<Virtuoso
 				ref={virtuosoRef}
-				data={childIDS}
+				data={sortedChildIDs}
 				itemContent={(i, id) => (
 					<DeathLogCardWrapper nodeID={id} entryNum={i + 1} />
 				)}
@@ -79,6 +86,7 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 					setPageOpacity("");
 					setDeathLogIsInert(false);
 				}}
+				siblingNames={nodeNames}
 			/>
 		</>
 	);

@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import type { DistinctTreeNode, RootNode, Tree } from "../model/TreeNodeModel";
 import LocalDB from "../services/LocalDB";
-import type { EditableSubjectField } from "../pages/death-log/DeathLogFAB";
+import type { SubjectCharacteristics } from "../pages/death-log/fab/DeathLogFAB";
 import { assertIsNonNull } from "../utils";
 import {
 	createRootNode,
@@ -19,7 +19,7 @@ type DeathLogState = {
 		type: "game" | "profile" | "subject",
 		inputText: string,
 		parentID: string,
-		overrides?: EditableSubjectField,
+		subjectCharacteristics?: SubjectCharacteristics,
 	) => void;
 	deleteNode: (node: DistinctTreeNode) => void;
 	updateNode: (node: DistinctTreeNode) => void;

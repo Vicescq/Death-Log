@@ -9,7 +9,11 @@ import type {
 } from "../model/TreeNodeModel";
 import LocalDB from "../services/LocalDB";
 import { nanoid } from "nanoid";
-import { assertIsNonNull } from "../utils";
+import { assertIsNonNull, assertIsProfile } from "../utils";
+import type {
+	ValidationContext,
+	NameUniquenessResponse,
+} from "./stringValidation";
 
 export function identifyDeletedSelfAndChildrenIDS(
 	node: DistinctTreeNode,
@@ -176,4 +180,73 @@ export async function refreshTree(
 
 export function formatString(str: string) {
 	return str.replace(/\s+/g, " ").trim();
+}
+
+export function validateString(
+	inputText: string,
+	type: "edit" | "add",
+	names: string[],
+	currentlyEditingName: string | null,
+) {
+	inputText = formatString(inputText);
+	if (typeof inputText != "string") {
+		return "Not a string!";
+	}
+
+	if (inputText.match(/^\.{1,}$/)) {
+		return "No ellipses allowed!";
+	}
+
+	if (inputText == "" && type == "add") {
+		return "Cannot be an empty name!";
+	}
+
+	for (const name of names) {
+		if (name != currentlyEditingName && name == inputText) {
+			return "That name already exists!";
+		}
+	}
+
+	return true;
+}
+
+export function isNameUniqueTEMP(
+	inputText: string,
+	context: ValidationContext,
+): NameUniquenessResponse {
+	if (context.type == "nodeAdd" || context.type == "nodeEdit") {
+		const parent = context.tree.get(context.parentID);
+		assertIsNonNull(parent);
+		if (
+			context.type == "nodeEdit" &&
+			context.originalNode.name == inputText
+		)
+			return "defaultEditedName";
+		for (let i = 0; i < parent.childIDS.length; i++) {
+			const child: DistinctTreeNode | undefined = context.tree.get(
+				parent.childIDS[i],
+			); // dont know why TS doesnt auto complete the type and labels it as any?
+			assertIsNonNull(child);
+
+			if (child.name == inputText) {
+				return false;
+			}
+		}
+	} else {
+		const profile = context.profile;
+		if (profile) {
+			assertIsProfile(profile);
+			const groupings = profile.groupings;
+			if (
+				context.type == "profileGroupEdit" &&
+				context.originalProfileGroup.title == inputText
+			)
+				return "defaultEditedName";
+			for (let i = 0; i < groupings.length; i++) {
+				if (groupings[i].title == inputText) return false;
+			}
+		}
+	}
+
+	return true;
 }

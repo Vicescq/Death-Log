@@ -9,7 +9,7 @@ import type {
 	TreeNode,
 } from "../../model/TreeNodeModel";
 import { createDeath } from "../../stores/utils";
-import { validateString } from "../../stores/stringValidation";
+import { validateStringTEMP } from "../../stores/stringValidation";
 import { type ValidationContext } from "../../stores/stringValidation";
 import { assertIsNonNull } from "../../utils";
 import type { UseFormReturn } from "react-hook-form";
@@ -199,7 +199,7 @@ export function getFormStatus(
 	let inputTextError = "";
 	let submitBtnCSS: "btn-success" | "btn-disabled" = "btn-success";
 
-	const res = validateString(currName, context);
+	const res = validateStringTEMP(currName, context);
 	if (context.type == "nodeAdd" || context.type == "profileGroupAdd") {
 		if (!(res.cause == "ok" || res.cause == "emptyAddDefault")) {
 			inputTextError = res.msg;
