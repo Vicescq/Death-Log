@@ -27,17 +27,20 @@ export default function DeathCounterModalBody({
 						Remark & Timestamps
 					</legend>
 
-					<label className="label">Remark</label>
-					<input
-						type="search"
-						className="input bg-base-200 join-item"
-						{...form.register("remark", {
-							maxLength: {
-								value: CONSTANTS.DEATH_REMARK_MAX,
-								message: CONSTANTS.ERROR.MAX_LENGTH,
-							},
-						})}
-					/>
+					<label className="floating-label">
+						<span>Remark</span>
+						<input
+							type="search"
+							className="input bg-base-200"
+							{...form.register("remark", {
+								maxLength: {
+									value: CONSTANTS.DEATH_REMARK_MAX,
+									message: CONSTANTS.ERROR.MAX_LENGTH,
+								},
+							})}
+						/>
+					</label>
+
 					{form.formState.errors.remark && (
 						<div className="text-error">
 							{form.formState.errors.remark.message}
@@ -46,35 +49,39 @@ export default function DeathCounterModalBody({
 
 					<div className="divider">↓ Timestamp Settings ↓</div>
 
-					<label className="label">Date</label>
-					<input
-						type="date"
-						className="input bg-base-200 join-item"
-						{...form.register("date", {
-							required: {
-								value: true,
-								message: "Date is required",
-							},
-						})}
-					/>
+					<label className="floating-label">
+						<span>Date</span>
+						<input
+							type="date"
+							className="input bg-base-200"
+							{...form.register("date", {
+								required: {
+									value: true,
+									message: "Date is required",
+								},
+							})}
+						/>
+					</label>
 					{form.formState.errors.date && (
 						<div className="text-error">
 							{form.formState.errors.date.message}
 						</div>
 					)}
 
-					<label className="label">Time</label>
-					<input
-						type="time"
-						className="input bg-base-200 join-item"
-						step={1}
-						{...form.register("time", {
-							required: {
-								value: true,
-								message: "Date is required",
-							},
-						})}
-					/>
+					<label className="floating-label mt-4">
+						<span>Time</span>
+						<input
+							type="time"
+							className="input bg-base-200"
+							step={1}
+							{...form.register("time", {
+								required: {
+									value: true,
+									message: "Date is required",
+								},
+							})}
+						/>
+					</label>
 					{form.formState.errors.time && (
 						<div className="text-error">
 							{form.formState.errors.time.message}

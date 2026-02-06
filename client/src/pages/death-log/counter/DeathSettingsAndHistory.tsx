@@ -34,18 +34,21 @@ export default function DeathSettingsAndHistory({
 
 				{!subject.completed ? (
 					<>
-						<label className="label">Death Remark (Optional)</label>
-						<input
-							type="search"
-							placeholder="Wasnt my fault, died to a bug!"
-							className="input w-full"
-							{...form.register("remark", {
-								maxLength: {
-									value: CONSTANTS.DEATH_REMARK_MAX,
-									message: CONSTANTS.ERROR.MAX_LENGTH,
-								},
-							})}
-						/>
+						<label className="floating-label">
+							<span>Death Remark (Optional)</span>
+							<input
+								type="search"
+								placeholder="Wasnt my fault, died to a bug!"
+								className="input w-full"
+								{...form.register("remark", {
+									maxLength: {
+										value: CONSTANTS.DEATH_REMARK_MAX,
+										message: CONSTANTS.ERROR.MAX_LENGTH,
+									},
+								})}
+							/>
+						</label>
+
 						{form.formState.errors.remark && (
 							<div className="text-error">
 								{form.formState.errors.remark.message}
@@ -88,7 +91,7 @@ export default function DeathSettingsAndHistory({
 				) : null}
 
 				{!subject.completed && subject.log.length > 0 ? (
-					<label className="label mt-4">Death History</label>
+					<div className="label mt-4">Death History</div>
 				) : null}
 				<ul
 					className="list max-h-[40rem] overflow-auto"
