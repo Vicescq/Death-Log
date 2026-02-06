@@ -17,6 +17,7 @@ import { formatString } from "../../../stores/utils";
 import { CONSTANTS } from "../../../../shared/constants";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import DLFABModalBodyAdd from "./DLFABModalBodyAdd";
+import { formattedStrTosubjectContext } from "../utils";
 
 export type SubjectCharacteristics = Pick<Subject, "reoccurring" | "context">;
 
@@ -32,7 +33,7 @@ type Props = {
 export type AddForm = {
 	name: string;
 	reoccurring: boolean; // only subjects
-	context: SubjectContext; // only subjects
+	context: string; // only subjects
 };
 
 export default function DeathLogFAB({
@@ -49,7 +50,7 @@ export default function DeathLogFAB({
 	const addForm = useForm<AddForm>({
 		defaultValues: {
 			name: "",
-			context: "boss",
+			context: "Boss",
 			reoccurring: false,
 		},
 		mode: "onTouched",
@@ -59,21 +60,17 @@ export default function DeathLogFAB({
 		if (type != "subject") {
 			addNode(type, formatString(formData.name), parentID);
 		} else {
+			const context = formattedStrTosubjectContext(formData.context);
 			addNode(type, formatString(formData.name), parentID, {
-				context: formData.context,
+				context: context,
 				reoccurring: formData.reoccurring,
 			});
 		}
 		modalRef.current?.close();
-		console.log(formData);
 	};
 
-	const header =
-		type != "subject"
-			? type[0].toUpperCase() + type.slice(1) + " title"
-			: type[0].toUpperCase() +
-				type.slice(1) +
-				" title & Characteristics";
+	const header = "Add " + type[0].toUpperCase() + type.slice(1);
+
 	return (
 		<>
 			<div className="fab">

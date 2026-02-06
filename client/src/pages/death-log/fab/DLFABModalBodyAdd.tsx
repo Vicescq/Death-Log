@@ -1,8 +1,7 @@
 import type { SubmitHandler, UseFormReturn } from "react-hook-form";
 import type { AddForm } from "./DeathLogFAB";
 import type { DistinctTreeNode } from "../../../model/TreeNodeModel";
-import { validateString } from "../../../stores/utils";
-import { CONSTANTS } from "../../../../shared/constants";
+import DLFABModalBodyAddName from "./DLFABModalBodyAddName";
 
 type Props = {
 	type: Exclude<DistinctTreeNode["type"], "ROOT_NODE">;
@@ -19,36 +18,45 @@ export default function DLFABModalBodyAdd({
 }: Props) {
 	return (
 		<form onSubmit={form.handleSubmit(onAdd)}>
-			<div className="join my-2 w-full">
-				<input
-					type="search"
-					className="input bg-base-200 join-item"
-					{...form.register("name", {
-						validate: (inputText) =>
-							validateString(
-								inputText,
-								"add",
-								siblingNames,
-								null,
-							),
-						maxLength: {
-							value: CONSTANTS.INPUT_MAX,
-							message: "Too long!",
-						},
-					})}
-				/>
-				<button
-					type="submit"
-					className="btn join-item btn-success"
-					disabled={!form.formState.isValid}
-				>
-					+
-				</button>
-			</div>
-			{form.formState.errors.name && (
-				<span className="text-error">
-					{form.formState.errors.name.message}
-				</span>
+			{type == "subject" ? (
+				<fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-full border p-4">
+					<legend className="fieldset-legend">
+						Subject title & Characteristics
+					</legend>
+
+					<DLFABModalBodyAddName
+						form={form}
+						siblingNames={siblingNames}
+					/>
+
+					<label className="label mt-4">Context</label>
+					<select
+						className="select w-full"
+						{...form.register("context")}
+					>
+						<option>Boss</option>
+						<option>Location</option>
+						<option>Generic Enemy</option>
+						<option>Mini Boss</option>
+						<option>Other</option>
+					</select>
+
+					<div className="my-2 flex">
+						<span className="text-[1rem]">Reoccurring</span>
+						<input
+							type="checkbox"
+							className="toggle toggle-primary ml-auto"
+							{...form.register("reoccurring")}
+						/>
+					</div>
+				</fieldset>
+			) : (
+				<div className="my-4">
+					<DLFABModalBodyAddName
+						form={form}
+						siblingNames={siblingNames}
+					/>
+				</div>
 			)}
 		</form>
 	);

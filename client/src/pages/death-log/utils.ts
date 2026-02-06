@@ -8,12 +8,35 @@ import type {
 	Tree,
 	TreeNode,
 } from "../../model/TreeNodeModel";
-import { createDeath } from "../../stores/utils";
 import { validateStringTEMP } from "../../stores/stringValidation";
 import { type ValidationContext } from "../../stores/stringValidation";
 import { assertIsNonNull } from "../../utils";
 import type { UseFormReturn } from "react-hook-form";
 import type { FormDeath } from "./counter/DeathLogCounter";
+
+export function subjectContextToFormattedStr(context: SubjectContext) {
+	const subjectContextMap = {
+		boss: "Boss",
+		location: "Location",
+		other: "Other",
+		genericEnemy: "Generic Enemy",
+		miniBoss: "Mini Boss",
+	};
+	return subjectContextMap[context];
+}
+
+export function formattedStrTosubjectContext(
+	formattedStr: string,
+): SubjectContext {
+	const properStrMap: Record<string, SubjectContext> = {
+		Boss: "boss",
+		Location: "location",
+		Other: "other",
+		"Generic Enemy": "genericEnemy",
+		"Mini Boss": "miniBoss",
+	};
+	return properStrMap[formattedStr];
+}
 
 export function mapContextKeyToProperStr(contextKey: SubjectContext) {
 	const subjectContextMap = {
