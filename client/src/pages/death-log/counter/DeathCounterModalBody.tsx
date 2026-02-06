@@ -86,37 +86,21 @@ export default function DeathCounterModalBody({
 						<div className="ml-auto flex gap-2">
 							<div className="flex items-center justify-center gap-1">
 								Yes
-								<Controller
-									control={form.control}
-									name="timestampRel"
-									render={({
-										field: { onChange, value },
-									}) => (
-										<input
-											type="radio"
-											className="radio"
-											onChange={() => onChange(true)}
-											checked={value === true}
-										/>
-									)}
+								<input
+									type="radio"
+									className="radio"
+									{...form.register("timestampRel")}
+									value={"T"}
 								/>
 							</div>
 
 							<div className="flex items-center justify-center gap-1">
 								No
-								<Controller
-									control={form.control}
-									name="timestampRel"
-									render={({
-										field: { onChange, value },
-									}) => (
-										<input
-											type="radio"
-											className="radio radio-error"
-											onChange={() => onChange(false)}
-											checked={value === false}
-										/>
-									)}
+								<input
+									type="radio"
+									className="radio"
+									{...form.register("timestampRel")}
+									value={"F"}
 								/>
 							</div>
 						</div>

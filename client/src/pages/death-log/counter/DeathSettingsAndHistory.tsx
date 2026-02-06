@@ -64,41 +64,21 @@ export default function DeathSettingsAndHistory({
 								<div className="flex gap-2">
 									<div className="flex items-center justify-center gap-1">
 										Yes
-										<Controller
-											control={form.control}
-											name="timestampRel"
-											render={({
-												field: { onChange, value },
-											}) => (
-												<input
-													type="radio"
-													className="radio"
-													checked={value === true}
-													onChange={() =>
-														onChange(true)
-													}
-												/>
-											)}
+										<input
+											type="radio"
+											className="radio"
+											{...form.register("timestampRel")}
+											value={"T"}
 										/>
 									</div>
 
 									<div className="flex items-center justify-center gap-1">
 										No
-										<Controller
-											control={form.control}
-											name="timestampRel"
-											render={({
-												field: { onChange, value },
-											}) => (
-												<input
-													type="radio"
-													className="radio radio-error"
-													checked={value === false}
-													onChange={() =>
-														onChange(false)
-													}
-												/>
-											)}
+										<input
+											type="radio"
+											className="radio"
+											{...form.register("timestampRel")}
+											value={"F"}
 										/>
 									</div>
 								</div>

@@ -19,13 +19,11 @@ type Props = {
 	subject: Subject;
 };
 
-export type FormDeath = Omit<
-	Death,
-	"parentID" | "remark" | "timestamp" | "id"
-> & {
+export type FormDeath = {
 	remark: string;
 	date: string;
 	time: string;
+	timestampRel: "T" | "F";
 };
 
 export default function DeathLogCounter({ subject }: Props) {
@@ -45,19 +43,17 @@ export default function DeathLogCounter({ subject }: Props) {
 		mode: "onChange",
 		defaultValues: {
 			remark: "",
-			timestampRel: true,
+			timestampRel: "T",
 		},
 	});
 
 	const onIncrementDeath: SubmitHandler<FormDeath> = (formData) => {
 		const formattedRemark = formatString(formData.remark);
 		const remark = formattedRemark == "" ? null : formattedRemark;
+		const timestampRel = formData.timestampRel == "T" ? true : false;
 		updateNode({
 			...subject,
-			log: [
-				...subject.log,
-				createDeath(subject, remark, formData.timestampRel),
-			],
+			log: [...subject.log, createDeath(subject, remark, timestampRel)],
 		});
 		counterForm.reset();
 		deathHistoryRef.current?.scrollTo({
@@ -90,6 +86,7 @@ export default function DeathLogCounter({ subject }: Props) {
 	const onEditDeath: SubmitHandler<FormDeath> = (formData) => {
 		const formattedRemark = formatString(formData.remark);
 		const remark = formattedRemark == "" ? null : formattedRemark;
+		const timestampRel = formData.timestampRel == "T" ? true : false;
 
 		assertIsNonNull(focusedDeathID);
 		const isoStr = resolveTimestampUpdate(
@@ -106,7 +103,7 @@ export default function DeathLogCounter({ subject }: Props) {
 					? createDeath(
 							subject,
 							remark,
-							formData.timestampRel,
+							timestampRel,
 							isoStr,
 							death.id,
 						)
@@ -123,7 +120,7 @@ export default function DeathLogCounter({ subject }: Props) {
 		assertIsNonNull(death);
 		modalForm.reset({
 			remark: death.remark == null ? "" : death.remark,
-			timestampRel: death.timestampRel,
+			timestampRel: death.timestampRel ? "T" : "F",
 			time: formatUTCTime(death.timestamp),
 			date: formatUTCDate(death.timestamp),
 		});
