@@ -17,11 +17,11 @@ export default function DLMEBNotesDel({ modalState, onEdit }: Props) {
 
 	return (
 		<>
-			<fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-full border p-4">
-				<legend className="fieldset-legend">Notes</legend>
+			<legend className="fieldset-legend">Notes & Delete</legend>
+			<label className="floating-label">
+				<span>Notes</span>
 				<textarea
 					className="textarea"
-					placeholder="Type here"
 					value={modalState.notes}
 					onChange={(e) =>
 						onEdit({
@@ -31,11 +31,12 @@ export default function DLMEBNotesDel({ modalState, onEdit }: Props) {
 					}
 					maxLength={CONSTANTS.TEXTAREA.TEXTAREA_MAX}
 					rows={CONSTANTS.TEXTAREA.TEXTAREA_ROWS}
-				></textarea>
-			</fieldset>
-			<fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-full border p-4">
-				<legend className="fieldset-legend">Delete</legend>
-				<div className="join">
+				/>
+			</label>
+
+			<label className="floating-label">
+				<span>Delete</span>
+				<div className="join w-full">
 					<input
 						type="search"
 						className="input join-item"
@@ -57,7 +58,7 @@ export default function DLMEBNotesDel({ modalState, onEdit }: Props) {
 						<img className="w-4" src={trash} alt="" />
 					</button>
 				</div>
-			</fieldset>
+			</label>
 		</>
 	);
 }

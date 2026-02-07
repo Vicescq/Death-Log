@@ -4,7 +4,6 @@ export const CONSTANTS = {
 		DEL_PH: "Type DEL to delete",
 		DEL_SUBMIT: "Delete Entry",
 		TURN_RIGHT: "Modal Turn Right",
-		EDIT_NAME: "Edit Name",
 		SUBMIT: "Save edits",
 		CLOSE: "Cancel",
 	},

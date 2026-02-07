@@ -29,17 +29,19 @@ export default function DLFABModalBodyAdd({
 						siblingNames={siblingNames}
 					/>
 
-					<label className="label mt-4">Context</label>
-					<select
-						className="select w-full"
-						{...form.register("context")}
-					>
-						<option>Boss</option>
-						<option>Location</option>
-						<option>Generic Enemy</option>
-						<option>Mini Boss</option>
-						<option>Other</option>
-					</select>
+					<label className="floating-label mt-4">
+						<span>Context</span>
+						<select
+							className="select w-full"
+							{...form.register("context")}
+						>
+							<option>Boss</option>
+							<option>Location</option>
+							<option>Generic Enemy</option>
+							<option>Mini Boss</option>
+							<option>Other</option>
+						</select>
+					</label>
 
 					<div className="my-2 flex">
 						<span className="text-[1rem]">Reoccurring</span>

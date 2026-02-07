@@ -4,7 +4,6 @@ import { toUTCDate, formatUTCDate, maxDate } from "../utils";
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
 import { CONSTANTS } from "../../../../shared/constants";
 import { assertIsNonNull } from "../../../utils";
-import TooltipButton from "../../../components/TooltipButton";
 
 type Props = {
 	modalState: DistinctTreeNode;
@@ -23,11 +22,11 @@ export default function DLMEBNameDate({
 
 	return (
 		<>
-			<fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-full border p-4">
-				<legend className="fieldset-legend">Name</legend>
+			<legend className="fieldset-legend">Title & Timestamps</legend>
 
+			<label className="floating-label">
+				<span>Name</span>
 				<input
-					aria-label={CONSTANTS.DEATH_LOG_MODAL.EDIT_NAME}
 					type="search"
 					className="input"
 					value={modalState.name}
@@ -45,17 +44,13 @@ export default function DLMEBNameDate({
 					}
 					maxLength={CONSTANTS.INPUT_MAX}
 				/>
-				<div className={`text-error mt-2 ml-2 text-sm`}>
-					{inputTextError}
-				</div>
-			</fieldset>
-			<fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-full border p-4">
-				<legend className="fieldset-legend">
-					{modalState.completed
-						? "Creation (1st) & Completion (2nd) Dates"
-						: "Creation Date"}
-				</legend>
+			</label>
+			<div className={`text-error mt-2 ml-2 text-sm`}>
+				{inputTextError}
+			</div>
 
+			<label className="floating-label">
+				<span>Date Created</span>
 				<input
 					type="date"
 					className="input join-item"
@@ -78,8 +73,11 @@ export default function DLMEBNameDate({
 							: formatUTCDate(new Date().toISOString())
 					}
 				/>
+			</label>
 
-				{modalState.completed && modalState.dateEnd ? (
+			{modalState.completed && modalState.dateEnd ? (
+				<label className="floating-label mt-2">
+					<span>Date Completed</span>
 					<input
 						type="date"
 						className="input join-item"
@@ -96,46 +94,59 @@ export default function DLMEBNameDate({
 						min={formatUTCDate(modalState.dateStart)}
 						max={maxDate(modalState.dateEnd)}
 					/>
-				) : null}
-				<div className="divider my-2">
-					<div
-						className="tooltip tooltip-info"
-						data-tip={CONSTANTS.RELIABILITY}
-					>
-						↓ Reliability Flags ↓
-					</div>
+				</label>
+			) : null}
+
+			<div className="divider my-2">
+				<div
+					className="tooltip tooltip-info"
+					data-tip={CONSTANTS.RELIABILITY}
+				>
+					↓ Reliability Flags ↓
 				</div>
+			</div>
+			<div className="flex">
+				<label
+					htmlFor="creation-date-reliable-toggle"
+					className="text-[1rem]"
+				>
+					Creation Date
+				</label>
+				<input
+					id="creation-date-reliable-toggle"
+					type="checkbox"
+					checked={modalState.dateStartRel}
+					className="toggle toggle-primary ml-auto"
+					onChange={(e) =>
+						onEdit({
+							...modalState,
+							dateStartRel: e.currentTarget.checked,
+						})
+					}
+				/>
+			</div>
+			{modalState.completed ? (
 				<div className="flex">
-					<span className="text-[1rem]">Creation Date</span>
+					<label
+						htmlFor="completion-date-reliable-toggle"
+						className="text-[1rem]"
+					>
+						Completion Date
+					</label>
 					<input
+						id="completion-date-reliable-toggle"
 						type="checkbox"
-						checked={modalState.dateStartRel}
+						checked={modalState.dateEndRel}
 						className="toggle toggle-primary ml-auto"
 						onChange={(e) =>
 							onEdit({
 								...modalState,
-								dateStartRel: e.currentTarget.checked,
+								dateEndRel: e.currentTarget.checked,
 							})
 						}
 					/>
 				</div>
-				{modalState.completed ? (
-					<div className="flex">
-						<span className="text-[1rem]">Completion Date</span>
-						<input
-							type="checkbox"
-							checked={modalState.dateEndRel}
-							className="toggle toggle-primary ml-auto"
-							onChange={(e) =>
-								onEdit({
-									...modalState,
-									dateEndRel: e.currentTarget.checked,
-								})
-							}
-						/>
-					</div>
-				) : null}
-			</fieldset>
+			) : null}
 		</>
 	);
 }

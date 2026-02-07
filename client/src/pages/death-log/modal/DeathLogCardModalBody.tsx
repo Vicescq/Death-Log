@@ -16,19 +16,21 @@ export default function DeathLogCardModalBody({
 	modalState,
 	inputTextError,
 }: Props) {
-	if (page == 0) {
-		return <></>;
-	} else if (page == 1) {
-		return (
-			<DLMEBNameDate
-				modalState={modalState}
-				onEdit={onEdit}
-				inputTextError={inputTextError}
-			/>
-		);
-	} else if (page == 2 && modalState.type == "subject") {
-		return <DLMEBSubject modalState={modalState} onEdit={onEdit} />;
-	} else if (page == 2 || page == 3) {
-		return <DLMEBNotesDel modalState={modalState} onEdit={onEdit} />;
-	}
+	return (
+		<form>
+			<fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-full border p-4">
+				{page == 1 ? (
+					<DLMEBNameDate
+						modalState={modalState}
+						onEdit={onEdit}
+						inputTextError={inputTextError}
+					/>
+				) : page == 2 && modalState.type == "subject" ? (
+					<DLMEBSubject modalState={modalState} onEdit={onEdit} />
+				) : page == 2 || page == 3 ? (
+					<DLMEBNotesDel modalState={modalState} onEdit={onEdit} />
+				) : null}
+			</fieldset>
+		</form>
+	);
 }
