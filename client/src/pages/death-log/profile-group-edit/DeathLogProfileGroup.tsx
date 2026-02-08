@@ -2,7 +2,7 @@ import NavBar from "../../../components/navBar/NavBar";
 import type { Profile, ProfileGroup } from "../../../model/TreeNodeModel";
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
 import { assertIsNonNull, assertIsSubject } from "../../../utils";
-import DeathLogBreadcrumb from "../DeathLogBreadcrumb";
+import DeathLogBreadcrumb from "../breadcrumb/DeathLogBreadcrumb";
 import DLPGModify from "./DLPGModify";
 import DLPGList from "./DLPGList";
 import { useState } from "react";

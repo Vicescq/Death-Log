@@ -5,7 +5,6 @@ import DeathLogCard from "./DeathLogCard";
 type Props = {
 	nodeID: string;
 	entryNum: number;
-	onOpenEditModal: () => void;
 	onOpenCompletionModal: () => void;
 	onFocus: (node: DistinctTreeNode) => void;
 };
@@ -14,7 +13,6 @@ export default function DeathLogCardWrapper({
 	nodeID,
 	entryNum,
 	onOpenCompletionModal,
-	onOpenEditModal,
 	onFocus,
 }: Props) {
 	const tree = useDeathLogStore((state) => state.tree);
@@ -29,10 +27,6 @@ export default function DeathLogCardWrapper({
 				tree={tree}
 				onOpenCompletionModal={() => {
 					onOpenCompletionModal();
-					onFocus(node);
-				}}
-				onOpenEditModal={() => {
-					onOpenEditModal();
 					onFocus(node);
 				}}
 			/>

@@ -8,7 +8,6 @@ type Props = {
 	node: DistinctTreeNode;
 	entryNum: number;
 	tree: Tree;
-	onOpenEditModal: () => void;
 	onOpenCompletionModal: () => void;
 };
 
@@ -16,7 +15,6 @@ export default function DeathLogCard({
 	node,
 	entryNum,
 	tree,
-	onOpenEditModal,
 	onOpenCompletionModal,
 }: Props) {
 	return (
@@ -49,10 +47,7 @@ export default function DeathLogCard({
 					{calcDeaths(node, tree)}
 				</div>
 			</div>
-			<DeathLogCardOptions
-				node={node}
-				onOpenEditModal={onOpenEditModal}
-			/>
+			<DeathLogCardOptions node={node} />
 		</li>
 	);
 }

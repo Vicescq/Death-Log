@@ -1,7 +1,7 @@
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
 import up from "../../../assets/up.svg";
 import down from "../../../assets/down.svg";
-import DeathLogBreadcrumb from "../DeathLogBreadcrumb";
+import DeathLogBreadcrumb from "../breadcrumb/DeathLogBreadcrumb";
 import NavBar from "../../../components/navBar/NavBar";
 import type { Death, Subject } from "../../../model/TreeNodeModel";
 import { useEffect, useRef, useState } from "react";

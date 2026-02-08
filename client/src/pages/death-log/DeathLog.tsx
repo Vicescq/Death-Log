@@ -2,16 +2,13 @@ import NavBar from "../../components/navBar/NavBar";
 import React, { forwardRef, useRef, useState } from "react";
 import DeathLogFAB from "./fab/DeathLogFAB";
 import { Virtuoso, type Components, type VirtuosoHandle } from "react-virtuoso";
-import DeathLogBreadcrumb from "./DeathLogBreadcrumb";
+import DeathLogBreadcrumb from "./breadcrumb/DeathLogBreadcrumb";
 import DeathLogCardWrapper from "./card/DeathLogCardWrapper";
 import type { DistinctTreeNode } from "../../model/TreeNodeModel";
 import { determineFABType, sortChildIDS } from "./utils";
 import { useDeathLogStore } from "../../stores/useDeathLogStore";
 import { assertIsNonNull } from "../../utils";
 import Modal from "../../components/Modal";
-import DeathLogCardModalBody from "./modal/DeathLogCardModalBody";
-import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
-import usePagination from "../../hooks/usePagination";
 
 export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 	const tree = useDeathLogStore((state) => state.tree);
@@ -22,14 +19,8 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 	const [pageOpacity, setPageOpacity] = useState("");
 	const [deathLogIsInert, setDeathLogIsInert] = useState(false);
 
-	const [modalBodyType, setModalBodyType] = useState<"edit" | "completion">(
-		"edit",
-	);
 	const [focusedNode, setFocusedNode] = useState<DistinctTreeNode | null>(
 		null,
-	);
-	const { page, setPage, handlePageTurn } = usePagination(
-		focusedNode?.type == "subject" ? 3 : 2,
 	);
 
 	const DeathLogWrapper: Components["List"] = forwardRef((props, ref) => {
@@ -72,7 +63,6 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 		return node.name;
 	});
 
-	useConsoleLogOnStateChange(focusedNode, focusedNode);
 	return (
 		<>
 			<NavBar
@@ -90,11 +80,6 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 						nodeID={id}
 						entryNum={i + 1}
 						onOpenCompletionModal={() => {
-							setModalBodyType("completion");
-							modalRef.current?.showModal();
-						}}
-						onOpenEditModal={() => {
-							setModalBodyType("edit");
 							modalRef.current?.showModal();
 						}}
 						onFocus={(node) => setFocusedNode(node)}
@@ -124,27 +109,24 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 
 			<Modal
 				ref={modalRef}
-				header={
-					modalBodyType == "edit"
-						? "View & Edit Entry"
-						: "Completion Status"
-				}
+				header={"Completion Status"}
 				content={
-					<DeathLogCardModalBody
-						type={modalBodyType}
-						node={focusedNode}
-						page={page}
-						onPageTurn={handlePageTurn}
-						onNodeCompletion={handleNodeCompletion}
-					/>
+					<div className="mt-4 mb-2">
+						Do you want to mark this as{" "}
+						{focusedNode?.completed ? "incomplete?" : "complete?"}
+						<button
+							className="btn btn-secondary mt-2 w-full"
+							onClick={() => {
+								assertIsNonNull(focusedNode);
+								handleNodeCompletion(focusedNode);
+							}}
+						>
+							Confirm
+						</button>
+					</div>
 				}
 				closeBtnName="Cancel"
 				modalBtns={[]}
-				onClose={() => {
-					if (modalBodyType == "edit") {
-						setPage(1);
-					}
-				}}
 			/>
 
 			<footer className="mb-14"></footer>
