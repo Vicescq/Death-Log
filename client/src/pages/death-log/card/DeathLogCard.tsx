@@ -17,30 +17,17 @@ type Props = {
 	node: DistinctTreeNode;
 	entryNum: number;
 	tree: Tree;
+	onOpenEditModal: () => void;
+	onOpenCompletionModal: () => void;
 };
 
-export default function DeathLogCard({ node, entryNum, tree }: Props) {
-	const updateNode = useDeathLogStore((state) => state.updateNode);
-	const { page, setPage, handlePageTurn } = usePagination(
-		node.type == "subject" ? 3 : 2,
-	);
-	const [modalState, setModalState] = useState<DistinctTreeNode>({ ...node });
-	const editModalRef = useRef<HTMLDialogElement>(null);
-	const {
-		completionNotifyModalRef,
-		checked,
-		setChecked,
-		completedCSSStrike,
-	} = useCardCompletionToggle(node.completed);
-
-	const { inputTextError, submitBtnCSS } = getFormStatus(modalState.name, {
-		type: "nodeEdit",
-		parentID: modalState.parentID,
-		tree: tree,
-		node: modalState,
-		originalNode: node,
-	});
-
+export default function DeathLogCard({
+	node,
+	entryNum,
+	tree,
+	onOpenEditModal,
+	onOpenCompletionModal,
+}: Props) {
 	return (
 		<>
 			<li
@@ -57,18 +44,14 @@ export default function DeathLogCard({ node, entryNum, tree }: Props) {
 						) : (
 							<input
 								type="checkbox"
-								checked={checked}
+								// checked={checked}
 								className="checkbox checkbox-sm checkbox-success"
-								onChange={() =>
-									completionNotifyModalRef.current?.showModal()
-								}
+								onChange={onOpenCompletionModal}
 							/>
 						)}
 					</div>
 				</div>
-				<div
-					className={`flex flex-col justify-center ${completedCSSStrike}`}
-				>
+				<div className={`flex flex-col justify-center`}>
 					<div className="line-clamp-4 sm:line-clamp-2">
 						{node.name}
 					</div>
@@ -79,12 +62,9 @@ export default function DeathLogCard({ node, entryNum, tree }: Props) {
 				</div>
 				<DeathLogCardOptions
 					node={node}
-					openModal={() => {
-						setPage(1);
-						editModalRef.current?.showModal();
-					}}
+					onOpenEditModal={onOpenEditModal}
 				/>
-				<Modal
+				{/* <Modal
 					closeBtnName={CONSTANTS.DEATH_LOG_MODAL.CLOSE}
 					content={
 						<>
@@ -160,7 +140,7 @@ export default function DeathLogCard({ node, entryNum, tree }: Props) {
 							disabled: false,
 						},
 					]}
-				/>
+				/> */}
 			</li>
 		</>
 	);

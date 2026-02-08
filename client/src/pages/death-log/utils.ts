@@ -318,3 +318,16 @@ export function resolveTimestampUpdate(
 	}
 	return isoStr;
 }
+
+export function determineFABType(
+	parent: DistinctTreeNode,
+): Exclude<DistinctTreeNode["type"], "ROOT_NODE"> {
+	switch (parent.type) {
+		case "ROOT_NODE":
+			return "game";
+		case "game":
+			return "profile";
+		default:
+			return "subject";
+	}
+}

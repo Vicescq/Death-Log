@@ -24,8 +24,8 @@ export type SubjectCharacteristics = Pick<Subject, "reoccurring" | "context">;
 type Props = {
 	type: Exclude<DistinctTreeNode["type"], "ROOT_NODE">;
 	parentID: string;
-	handleFabOnFocus: () => void;
-	handleFabOnBlur: () => void;
+	onFocus: () => void;
+	onBlur: () => void;
 	virtuosoRef: React.RefObject<VirtuosoHandle | null>;
 	siblingNames: string[];
 };
@@ -39,8 +39,8 @@ export type AddForm = {
 export default function DeathLogFAB({
 	type,
 	parentID,
-	handleFabOnFocus,
-	handleFabOnBlur,
+	onFocus,
+	onBlur,
 	virtuosoRef,
 	siblingNames,
 }: Props) {
@@ -78,8 +78,8 @@ export default function DeathLogFAB({
 					tabIndex={0}
 					role="button"
 					className="btn btn-lg btn-circle bg-success"
-					onFocus={handleFabOnFocus}
-					onBlur={handleFabOnBlur}
+					onFocus={onFocus}
+					onBlur={onBlur}
 					aria-label={CONSTANTS.DEATH_LOG_FAB.OPEN}
 				>
 					<img src={fabEdit} alt="" />

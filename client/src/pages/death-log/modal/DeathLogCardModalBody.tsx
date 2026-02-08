@@ -4,33 +4,29 @@ import DLMEBNotesDel from "./DLMEBNotesDel";
 import DLMEBSubject from "./DLMEBSubject";
 
 type Props = {
+	type: "edit" | "completion";
 	page: number;
-	onEdit: (newModalState: DistinctTreeNode) => void;
-	modalState: DistinctTreeNode;
-	inputTextError: string;
+	node: DistinctTreeNode | null;
 };
 
-export default function DeathLogCardModalBody({
-	page,
-	onEdit,
-	modalState,
-	inputTextError,
-}: Props) {
-	return (
-		<form>
+export default function DeathLogCardModalBody({ type, page, node }: Props) {
+	if (!node) return null;
+
+	if (type == "edit"){
+		return <form>
 			<fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-full border p-4">
 				{page == 1 ? (
-					<DLMEBNameDate
-						modalState={modalState}
-						onEdit={onEdit}
-						inputTextError={inputTextError}
-					/>
-				) : page == 2 && modalState.type == "subject" ? (
-					<DLMEBSubject modalState={modalState} onEdit={onEdit} />
+					<DLMEBNameDate node={node} />
+				) : page == 2 && node.type == "subject" ? (
+					<DLMEBSubject node={node} />
 				) : page == 2 || page == 3 ? (
-					<DLMEBNotesDel modalState={modalState} onEdit={onEdit} />
+					<DLMEBNotesDel node={node} />
 				) : null}
 			</fieldset>
 		</form>
-	);
+	}
+
+	else{
+		return <div>asdsad</div>
+	}
 }

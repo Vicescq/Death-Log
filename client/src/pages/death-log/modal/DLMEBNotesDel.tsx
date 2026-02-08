@@ -5,11 +5,10 @@ import { useState } from "react";
 import { CONSTANTS } from "../../../../shared/constants";
 
 type Props = {
-	modalState: DistinctTreeNode;
-	onEdit: (newModalState: DistinctTreeNode) => void;
+	node: DistinctTreeNode;
 };
 
-export default function DLMEBNotesDel({ modalState, onEdit }: Props) {
+export default function DLMEBNotesDel({ node }: Props) {
 	const deleteNode = useDeathLogStore((state) => state.deleteNode);
 	const [delBtnCSS, setDelBtnCSS] = useState<"btn-disabled" | "btn-success">(
 		"btn-disabled",
@@ -20,18 +19,7 @@ export default function DLMEBNotesDel({ modalState, onEdit }: Props) {
 			<legend className="fieldset-legend">Notes & Delete</legend>
 			<label className="floating-label">
 				<span>Notes</span>
-				<textarea
-					className="textarea"
-					value={modalState.notes}
-					onChange={(e) =>
-						onEdit({
-							...modalState,
-							notes: e.currentTarget.value,
-						})
-					}
-					maxLength={CONSTANTS.TEXTAREA.TEXTAREA_MAX}
-					rows={CONSTANTS.TEXTAREA.TEXTAREA_ROWS}
-				/>
+				<textarea className="textarea" />
 			</label>
 
 			<label className="floating-label">
@@ -41,19 +29,12 @@ export default function DLMEBNotesDel({ modalState, onEdit }: Props) {
 						type="search"
 						className="input join-item"
 						placeholder={CONSTANTS.DEATH_LOG_MODAL.DEL_PH}
-						onChange={(e) => {
-							if (e.currentTarget.value == "DEL") {
-								setDelBtnCSS("btn-success");
-							} else {
-								setDelBtnCSS("btn-disabled");
-							}
-						}}
 					/>
 					<button
 						className={`btn join-item ${delBtnCSS} p-3`}
-						onClick={() => deleteNode(modalState)}
+						onClick={() => deleteNode(node)}
 						aria-label={CONSTANTS.DEATH_LOG_MODAL.DEL_SUBMIT}
-						disabled={delBtnCSS == "btn-disabled" ? true : false}
+						// disabled={delBtnCSS == "btn-disabled" ? true : false}
 					>
 						<img className="w-4" src={trash} alt="" />
 					</button>

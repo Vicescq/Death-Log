@@ -1,12 +1,10 @@
-import type { DistinctTreeNode, Subject } from "../../../model/TreeNodeModel";
-import * as Utils from "../utils";
+import type { Subject } from "../../../model/TreeNodeModel";
 
 type Props = {
-	modalState: Subject;
-	onEdit: (newModalState: DistinctTreeNode) => void;
+	node: Subject;
 };
 
-export default function DLMEBSubject({ modalState, onEdit }: Props) {
+export default function DLMEBSubject({ node }: Props) {
 	return (
 		<>
 			<legend className="fieldset-legend">Subject Characteristics</legend>
@@ -18,51 +16,21 @@ export default function DLMEBSubject({ modalState, onEdit }: Props) {
 				<input
 					id="reoccurring-toggle"
 					type="checkbox"
-					checked={modalState.reoccurring}
 					className="toggle toggle-primary ml-auto"
-					onChange={() => {
-						const newChange = !modalState.reoccurring;
-						if (newChange) {
-							onEdit({
-								...modalState,
-								reoccurring: newChange,
-								dateEnd: null,
-								completed: false,
-							});
-						} else {
-							onEdit({
-								...modalState,
-								reoccurring: newChange,
-							});
-						}
-					}}
 				/>
 			</div>
 
 			<div className="flex">
 				<span className="text-[1rem]">Time Spent</span>
 				<button className="ml-auto">
-					{modalState.timeSpent == null
-						? "N / A"
-						: modalState.timeSpent}
+					{node.timeSpent == null ? "N / A" : node.timeSpent}
 				</button>
 				{/* 3h 18m 5s */}
 			</div>
 
-			<label className="floating-label mt-4" >
+			<label className="floating-label mt-4">
 				<span>Context</span>
-				<select
-					className="select"
-					value={Utils.mapContextKeyToProperStr(modalState.context)}
-					onChange={(e) =>
-						onEdit({
-							...modalState,
-							context: Utils.mapProperStrToContextKey(
-								e.currentTarget.value,
-							),
-						})
-					}
-				>
+				<select className="select">
 					<option>Boss</option>
 					<option>Location</option>
 					<option>Generic Enemy</option>

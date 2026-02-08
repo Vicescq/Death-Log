@@ -5,13 +5,12 @@ import type { DistinctTreeNode } from "../../../model/TreeNodeModel";
 import { Link } from "react-router";
 import { CONSTANTS } from "../../../../shared/constants";
 
-export default function DeathLogCardOptions({
-	node,
-	openModal,
-}: {
+type Props = {
 	node: DistinctTreeNode;
-	openModal: () => void;
-}) {
+	onOpenEditModal: () => void;
+};
+
+export default function DeathLogCardOptions({ node, onOpenEditModal }: Props) {
 	return (
 		<ul className="menu menu-horizontal menu-xs rounded-box m-auto p-0">
 			<Link to={{ pathname: node.id }}>
@@ -25,7 +24,7 @@ export default function DeathLogCardOptions({
 			</Link>
 			<li>
 				<button
-					onClick={openModal}
+					onClick={onOpenEditModal}
 					aria-label={CONSTANTS.DEATH_LOG_CARD.EDIT_MODAL}
 				>
 					<img src={edit} alt="" className="h-4 w-4" />
