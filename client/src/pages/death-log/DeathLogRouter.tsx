@@ -18,41 +18,39 @@ export default function DeathLogRouter() {
 
 	const gameID = params.gameID;
 	const profileID = params.profileID;
-	const subjectIDOrProfileGroupEdit = params.subjectID;
+	const subjectID = params.subjectID;
 
 	if (
+		subjectID &&
+		tree.has(subjectID) &&
+		profileID &&
+		tree.has(profileID) &&
+		gameID &&
+		tree.has(gameID)
+	) {
+		const subject = tree.get(subjectID);
+		assertIsNonNull(subject);
+		assertIsSubject(subject);
+		return <DeathLogCounter subject={subject} />;
+	} else if (
+		profileID &&
+		tree.has(profileID) &&
 		gameID &&
 		tree.has(gameID) &&
-		!profileID &&
-		!subjectIDOrProfileGroupEdit
+		subjectID == undefined
+	) {
+		const profile = tree.get(profileID);
+		assertIsNonNull(profile);
+		return <DeathLog parent={profile} key={profileID} />;
+	} else if (
+		gameID &&
+		tree.has(gameID) &&
+		profileID == undefined &&
+		subjectID == undefined
 	) {
 		const game = tree.get(gameID);
 		assertIsNonNull(game);
 		return <DeathLog parent={game} key={gameID} />;
-	}
-
-	if (profileID && tree.has(profileID) && !subjectIDOrProfileGroupEdit) {
-		const profile = tree.get(profileID);
-		assertIsNonNull(profile);
-		return <DeathLog parent={profile} key={profileID} />;
-	}
-
-	if (
-		profileID &&
-		tree.has(profileID) &&
-		subjectIDOrProfileGroupEdit == "profile-group-edit"
-	) {
-		const profile = tree.get(profileID);
-		assertIsNonNull(profile);
-		assertIsProfile(profile);
-		return <DeathLogProfileGroup profile={profile} />;
-	}
-
-	if (subjectIDOrProfileGroupEdit && tree.has(subjectIDOrProfileGroupEdit)) {
-		const subject = tree.get(subjectIDOrProfileGroupEdit);
-		assertIsNonNull(subject);
-		assertIsSubject(subject);
-		return <DeathLogCounter subject={subject} />;
 	}
 
 	return <ErrorPage error={new Error(CONSTANTS.ERROR.URL)} />;

@@ -13,7 +13,7 @@ export default function useBreadcrumbMembers(): BreadcrumbMember[] {
 	for (let i = 0; i < ids.length; i++) {
 		const id = ids[i];
 		if (id == "profile-group-edit") {
-			names.push(`${names[i - 1]}: Profile Group Edit`);
+			names.push(`${names[i - 1]}: Edit`);
 			markedIndex = i;
 		} else {
 			assertIsNonNull(id);
