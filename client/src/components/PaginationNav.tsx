@@ -1,29 +1,36 @@
 import { CONSTANTS } from "../../shared/constants";
 
 type Props = {
-	handlePageTurn: (isRight: boolean) => void;
+	onPageTurn: (isRight: boolean) => void;
 	page: number;
 	css: string;
 };
 
-export default function PaginationNav({ handlePageTurn, page, css }: Props) {
+export default function PaginationNav({ onPageTurn, page, css }: Props) {
 	return (
 		<div className={`join ${css} flex`}>
 			<button
-				aria-label="Modal Turn Left"
+				aria-label={CONSTANTS.DEATH_LOG_MODAL.TURN_LEFT}
 				className="join-item btn"
-				onClick={() => {
-					handlePageTurn(false);
+				onClick={(e) => {
+					e.preventDefault();
+					onPageTurn(false);
 				}}
 			>
 				«
 			</button>
-			<button className="join-item btn flex-1">Page {page}</button>
+			<button
+				onClick={(e) => e.preventDefault()}
+				className="join-item btn flex-1"
+			>
+				Page {page}
+			</button>
 			<button
 				aria-label={CONSTANTS.DEATH_LOG_MODAL.TURN_RIGHT}
 				className="join-item btn"
-				onClick={() => {
-					handlePageTurn(true);
+				onClick={(e) => {
+					e.preventDefault();
+					onPageTurn(true);
 				}}
 			>
 				»

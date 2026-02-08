@@ -1,17 +1,8 @@
-import Modal from "../../../components/Modal";
 import DeathLogCardOptions from "./DeathLogCardOptions";
-import usePagination from "../../../hooks/usePagination";
-import { useDeathLogStore } from "../../../stores/useDeathLogStore";
 import loop from "../../../assets/loop.svg";
 import skullRed from "../../../assets/skull_red.svg";
-import DeathLogCardModalBody from "../modal/DeathLogCardModalBody";
-import useCardCompletionToggle from "../useCardCompletionToggle";
 import type { DistinctTreeNode, Tree } from "../../../model/TreeNodeModel";
-import { useState, useRef } from "react";
-import { delay } from "../../../utils";
-import { calcDeaths, getFormStatus } from "../utils";
-import { CONSTANTS } from "../../../../shared/constants";
-import PaginationNav from "../../../components/PaginationNav";
+import { calcDeaths } from "../utils";
 
 type Props = {
 	node: DistinctTreeNode;
@@ -29,119 +20,39 @@ export default function DeathLogCard({
 	onOpenCompletionModal,
 }: Props) {
 	return (
-		<>
-			<li
-				className={`list-row hover:bg-neutral rounded-none`}
-				inert={false}
-			>
-				<div className="flex items-center justify-center">
-					<span className="text-accent line-clamp-1 w-8 text-xs">
-						{entryNum}
-					</span>
-					<div>
-						{node.type == "subject" && node.reoccurring ? (
-							<img src={loop} alt="" className="w-6" />
-						) : (
-							<input
-								type="checkbox"
-								// checked={checked}
-								className="checkbox checkbox-sm checkbox-success"
-								onChange={onOpenCompletionModal}
-							/>
-						)}
-					</div>
+		<li className={`list-row hover:bg-neutral rounded-none`} inert={false}>
+			<div className="flex items-center justify-center">
+				<span className="text-accent line-clamp-1 w-8 text-xs">
+					{entryNum}
+				</span>
+				<div>
+					{node.type == "subject" && node.reoccurring ? (
+						<img src={loop} alt="" className="w-6" />
+					) : (
+						<input
+							type="checkbox"
+							checked={node.completed}
+							className="checkbox checkbox-sm checkbox-success"
+							onChange={onOpenCompletionModal}
+						/>
+					)}
 				</div>
-				<div className={`flex flex-col justify-center`}>
-					<div className="line-clamp-4 sm:line-clamp-2">
-						{node.name}
-					</div>
-					<div className="flex gap-2 font-semibold uppercase opacity-60">
-						<img src={skullRed} alt="" className="w-4" />
-						{calcDeaths(node, tree)}
-					</div>
+			</div>
+			<div className={`flex flex-col justify-center`}>
+				<div
+					className={`${node.completed ? "text-secondary line-through" : ""} line-clamp-4 sm:line-clamp-2`}
+				>
+					{node.name}
 				</div>
-				<DeathLogCardOptions
-					node={node}
-					onOpenEditModal={onOpenEditModal}
-				/>
-				{/* <Modal
-					closeBtnName={CONSTANTS.DEATH_LOG_MODAL.CLOSE}
-					content={
-						<>
-							<DeathLogCardModalBody
-								page={page}
-								onEdit={(newModalState) => {
-									setModalState(newModalState);
-								}}
-								modalState={modalState}
-								inputTextError={inputTextError}
-							/>
-
-							<PaginationNav
-								page={page}
-								handlePageTurn={handlePageTurn}
-								css="mt-4"
-							/>
-						</>
-					}
-					header="View & Edit Entry"
-					ref={editModalRef}
-					modalBtns={[
-						{
-							text: CONSTANTS.DEATH_LOG_MODAL.SUBMIT,
-							css: `${submitBtnCSS}`,
-							fn: () => {
-								try {
-									updateNode(modalState);
-									editModalRef.current?.close();
-								} catch (e) {
-									if (e instanceof Error) {
-										console.log(e.message);
-									}
-								}
-							},
-							disabled: submitBtnCSS == "btn-disabled",
-						},
-					]}
-					onClose={async () => {
-						await delay(300); // if not used, ui flicker from page turn happens
-						setPage(0);
-						setModalState(node);
-					}}
-				/>
-				<Modal
-					closeBtnName="Cancel"
-					content={<></>}
-					ref={completionNotifyModalRef}
-					header={`Do you want to mark this as ${!checked ? "complete?" : "incomplete?"}`}
-					modalBtns={[
-						{
-							text: "Confirm",
-							css: "btn-success",
-							fn: async () => {
-								completionNotifyModalRef.current?.close();
-								await delay(300);
-								const newChecked = !checked;
-								if (newChecked) {
-									updateNode({
-										...node,
-										completed: newChecked,
-										dateEnd: new Date().toISOString(),
-									});
-								} else {
-									updateNode({
-										...node,
-										completed: newChecked,
-										dateEnd: null,
-									});
-								}
-								setChecked(newChecked);
-							},
-							disabled: false,
-						},
-					]}
-				/> */}
-			</li>
-		</>
+				<div className="flex gap-2 font-semibold uppercase opacity-60">
+					<img src={skullRed} alt="" className="w-4" />
+					{calcDeaths(node, tree)}
+				</div>
+			</div>
+			<DeathLogCardOptions
+				node={node}
+				onOpenEditModal={onOpenEditModal}
+			/>
+		</li>
 	);
 }

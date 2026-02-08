@@ -3,7 +3,8 @@ export const CONSTANTS = {
 	DEATH_LOG_MODAL: {
 		DEL_PH: "Type DEL to delete",
 		DEL_SUBMIT: "Delete Entry",
-		TURN_RIGHT: "Modal Turn Right",
+		TURN_RIGHT: "Modal Right Page",
+		TURN_LEFT: "Modal Left Page",
 		SUBMIT: "Save edits",
 		CLOSE: "Cancel",
 	},

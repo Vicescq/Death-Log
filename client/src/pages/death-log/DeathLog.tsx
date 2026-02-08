@@ -11,9 +11,11 @@ import { assertIsNonNull } from "../../utils";
 import Modal from "../../components/Modal";
 import DeathLogCardModalBody from "./modal/DeathLogCardModalBody";
 import useConsoleLogOnStateChange from "../../hooks/useConsoleLogOnStateChange";
+import usePagination from "../../hooks/usePagination";
 
 export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 	const tree = useDeathLogStore((state) => state.tree);
+	const updateNode = useDeathLogStore((state) => state.updateNode);
 	const virtuosoRef = useRef<VirtuosoHandle>(null);
 	const modalRef = useRef<HTMLDialogElement>(null);
 
@@ -25,6 +27,9 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 	);
 	const [focusedNode, setFocusedNode] = useState<DistinctTreeNode | null>(
 		null,
+	);
+	const { page, setPage, handlePageTurn } = usePagination(
+		focusedNode?.type == "subject" ? 3 : 2,
 	);
 
 	const DeathLogWrapper: Components["List"] = forwardRef((props, ref) => {
@@ -39,6 +44,26 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 			</ul>
 		);
 	});
+
+	function handleNodeCompletion(nodeToBeUpdated: DistinctTreeNode) {
+		let updatedNode: DistinctTreeNode;
+		if (nodeToBeUpdated.completed) {
+			updatedNode = {
+				...nodeToBeUpdated,
+				completed: !nodeToBeUpdated.completed,
+				dateEnd: null,
+			};
+		} else {
+			updatedNode = {
+				...nodeToBeUpdated,
+				completed: !nodeToBeUpdated.completed,
+				dateEnd: new Date().toISOString(),
+			};
+		}
+
+		updateNode(updatedNode);
+		modalRef.current?.close();
+	}
 
 	const sortedChildIDs = sortChildIDS(parent, tree);
 	const nodeNames = parent.childIDS.map((id) => {
@@ -82,8 +107,6 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 				useWindowScroll
 			/>
 
-			<footer className="mb-14"></footer>
-
 			<DeathLogFAB
 				virtuosoRef={virtuosoRef}
 				type={determineFABType(parent)}
@@ -104,18 +127,27 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 				header={
 					modalBodyType == "edit"
 						? "View & Edit Entry"
-						: "Completion Toggle"
+						: "Completion Status"
 				}
 				content={
 					<DeathLogCardModalBody
 						type={modalBodyType}
-						page={1}
 						node={focusedNode}
+						page={page}
+						onPageTurn={handlePageTurn}
+						onNodeCompletion={handleNodeCompletion}
 					/>
 				}
-				closeBtnName="Close"
+				closeBtnName="Cancel"
 				modalBtns={[]}
+				onClose={() => {
+					if (modalBodyType == "edit") {
+						setPage(1);
+					}
+				}}
 			/>
+
+			<footer className="mb-14"></footer>
 		</>
 	);
 }
