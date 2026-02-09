@@ -1,7 +1,7 @@
 import { Controller, type UseFormReturn } from "react-hook-form";
 import { CONSTANTS } from "../../../../shared/constants";
 import TooltipButton from "../../../components/TooltipButton";
-import { formatUTCDate, formatUTCTime } from "../utils";
+import { isoToDateSTD, isoToTimeSTD } from "../utils";
 import type { FormDeath } from "./DeathLogCounter";
 import type { Death, Subject } from "../../../model/TreeNodeModel";
 import edit from "../../../assets/edit_single.svg";
@@ -101,9 +101,9 @@ export default function DeathSettingsAndHistory({
 						<li className="list-row flex" key={death.id}>
 							<div className="flex flex-col gap-1">
 								<div className="badge badge-neutral badge-sm flex gap-2">
-									{formatUTCDate(death.timestamp)}{" "}
+									{isoToDateSTD(death.timestamp)}{" "}
 									<span className="text-secondary">
-										{formatUTCTime(death.timestamp)}
+										{isoToTimeSTD(death.timestamp)}
 									</span>
 								</div>
 								{death.remark != null ? (

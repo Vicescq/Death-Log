@@ -38,28 +38,6 @@ export function formattedStrTosubjectContext(
 	return properStrMap[formattedStr];
 }
 
-export function mapContextKeyToProperStr(contextKey: SubjectContext) {
-	const subjectContextMap = {
-		boss: "Boss",
-		location: "Location",
-		other: "Other",
-		genericEnemy: "Generic Enemy",
-		miniBoss: "Mini Boss",
-	};
-	return subjectContextMap[contextKey];
-}
-
-export function mapProperStrToContextKey(properStr: string): SubjectContext {
-	const properStrMap: Record<string, SubjectContext> = {
-		Boss: "boss",
-		Location: "location",
-		Other: "other",
-		"Generic Enemy": "genericEnemy",
-		"Mini Boss": "miniBoss",
-	};
-	return properStrMap[properStr];
-}
-
 export function calcDeaths(node: DistinctTreeNode, tree: Tree) {
 	let sum = 0;
 	switch (node.type) {
@@ -89,7 +67,7 @@ export function calcDeaths(node: DistinctTreeNode, tree: Tree) {
 	}
 }
 
-export function formatUTCDate(isoSTR: string) {
+export function isoToDateSTD(isoSTR: string) {
 	const dateObj = new Date(isoSTR);
 	const year = String(dateObj.getFullYear());
 	let month = String(dateObj.getMonth() + 1);
@@ -103,7 +81,23 @@ export function formatUTCDate(isoSTR: string) {
 	return `${year}-${month}-${day}`;
 }
 
-export function toUTCDate(formattedDateStr: string, formattedTimeStr: string) {
+export function isoToTimeSTD(isoSTR: string) {
+	const dateObj = new Date(isoSTR);
+	const hour = dateObj.getHours();
+	const mins = dateObj.getMinutes();
+	const secs = dateObj.getSeconds();
+
+	function addLeadingZeroes(time: number): string {
+		return time >= 10 ? String(time) : `0${time}`;
+	}
+
+	return `${addLeadingZeroes(hour)}:${addLeadingZeroes(mins)}:${addLeadingZeroes(secs)}`;
+}
+
+export function dateTimeSTDToISO(
+	formattedDateStr: string,
+	formattedTimeStr: string,
+) {
 	const parsedDate = formattedDateStr.split("-");
 	const parsedTime = formattedTimeStr.split(":");
 	const dateObj = new Date(
@@ -120,20 +114,7 @@ export function toUTCDate(formattedDateStr: string, formattedTimeStr: string) {
 export function maxDate(isoSTR: string) {
 	const dateObj = new Date(isoSTR);
 	dateObj.setFullYear(dateObj.getFullYear() + 1);
-	return formatUTCDate(dateObj.toISOString());
-}
-
-export function formatUTCTime(isoSTR: string) {
-	const dateObj = new Date(isoSTR);
-	const hour = dateObj.getHours();
-	const mins = dateObj.getMinutes();
-	const secs = dateObj.getSeconds();
-
-	function addLeadingZeroes(time: number): string {
-		return time >= 10 ? String(time) : `0${time}`;
-	}
-
-	return `${addLeadingZeroes(hour)}:${addLeadingZeroes(mins)}:${addLeadingZeroes(secs)}`;
+	return isoToDateSTD(dateObj.toISOString());
 }
 
 export function hasFormBeenEdited(context: ValidationContext) {
@@ -148,15 +129,15 @@ export function hasFormBeenEdited(context: ValidationContext) {
 			if (key == "childIDS") continue;
 			if (
 				key == "dateStart" &&
-				formatUTCDate(form[key] as string) !=
-					formatUTCDate(orignalForm[key] as string)
+				isoToDateSTD(form[key] as string) !=
+					isoToDateSTD(orignalForm[key] as string)
 			) {
 				return true;
 			} else if (
 				key == "dateEnd" &&
 				(form[key] as string) != null &&
-				formatUTCDate(form[key] as string) !=
-					formatUTCDate(orignalForm[key] as string)
+				isoToDateSTD(form[key] as string) !=
+					isoToDateSTD(orignalForm[key] as string)
 			) {
 				return true;
 			} else if (
@@ -289,6 +270,9 @@ export function sortChildIDS(parentNode: TreeNode, tree: Tree) {
 	return sorted;
 }
 
+/**
+ * Resolves a given timestamp, determines the correct ISO string to return, ensuring only dirty timestamp inputs are updated.
+ */
 export function resolveTimestampUpdate(
 	modalForm: UseFormReturn<FormDeath, any, FormDeath>,
 	formData: FormDeath,
@@ -302,17 +286,17 @@ export function resolveTimestampUpdate(
 		modalForm.formState.dirtyFields.date &&
 		modalForm.formState.dirtyFields.time
 	) {
-		isoStr = toUTCDate(formData.date, formData.time);
+		isoStr = dateTimeSTDToISO(formData.date, formData.time);
 	} else if (
 		modalForm.formState.dirtyFields.date &&
 		!modalForm.formState.dirtyFields.time
 	) {
-		isoStr = toUTCDate(formData.date, formatUTCTime(death.timestamp));
+		isoStr = dateTimeSTDToISO(formData.date, isoToTimeSTD(death.timestamp));
 	} else if (
 		!modalForm.formState.dirtyFields.date &&
 		modalForm.formState.dirtyFields.time
 	) {
-		isoStr = toUTCDate(formatUTCDate(death.timestamp), formData.time);
+		isoStr = dateTimeSTDToISO(isoToDateSTD(death.timestamp), formData.time);
 	} else {
 		isoStr = death.timestamp;
 	}

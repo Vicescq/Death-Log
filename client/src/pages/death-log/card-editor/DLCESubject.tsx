@@ -1,14 +1,15 @@
+import type { UseFormReturn } from "react-hook-form";
 import type { Subject } from "../../../model/TreeNodeModel";
+import type { NodeForm } from "./DeathLogCardEditor";
 
 type Props = {
 	node: Subject;
+	form: UseFormReturn<NodeForm, any, NodeForm>;
 };
 
-export default function DLMEBSubject({ node }: Props) {
+export default function DLCESubject({ node, form }: Props) {
 	return (
 		<>
-			<legend className="fieldset-legend">Subject Characteristics</legend>
-
 			<div className="flex">
 				<label htmlFor="reoccurring-toggle" className="text-[1rem]">
 					Reoccurring
@@ -16,10 +17,10 @@ export default function DLMEBSubject({ node }: Props) {
 				<input
 					id="reoccurring-toggle"
 					type="checkbox"
-					className="toggle toggle-primary ml-auto"
+					className="toggle toggle-primary my-auto ml-auto"
+					{...form.register("reoccurring")}
 				/>
 			</div>
-
 			<div className="flex">
 				<span className="text-[1rem]">Time Spent</span>
 				<button className="ml-auto">
@@ -27,10 +28,9 @@ export default function DLMEBSubject({ node }: Props) {
 				</button>
 				{/* 3h 18m 5s */}
 			</div>
-
-			<label className="floating-label mt-4">
+			<label className="floating-label">
 				<span>Context</span>
-				<select className="select">
+				<select className="select w-full" {...form.register("context")}>
 					<option>Boss</option>
 					<option>Location</option>
 					<option>Generic Enemy</option>

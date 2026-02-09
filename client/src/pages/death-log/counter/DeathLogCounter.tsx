@@ -5,7 +5,7 @@ import DeathLogBreadcrumb from "../breadcrumb/DeathLogBreadcrumb";
 import NavBar from "../../../components/navBar/NavBar";
 import type { Death, Subject } from "../../../model/TreeNodeModel";
 import { useEffect, useRef, useState } from "react";
-import { formatUTCDate, formatUTCTime, resolveTimestampUpdate } from "../utils";
+import { isoToDateSTD, isoToTimeSTD, resolveTimestampUpdate } from "../utils";
 import Modal from "../../../components/Modal";
 import { useForm } from "react-hook-form";
 import { type SubmitHandler } from "react-hook-form";
@@ -121,8 +121,8 @@ export default function DeathLogCounter({ subject }: Props) {
 		modalForm.reset({
 			remark: death.remark == null ? "" : death.remark,
 			timestampRel: death.timestampRel ? "T" : "F",
-			time: formatUTCTime(death.timestamp),
-			date: formatUTCDate(death.timestamp),
+			time: isoToTimeSTD(death.timestamp),
+			date: isoToDateSTD(death.timestamp),
 		});
 		modalRef.current?.showModal();
 	}
