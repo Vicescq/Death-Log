@@ -4,12 +4,12 @@ import {
 	type SubmitHandler,
 	type UseFormReturn,
 } from "react-hook-form";
-import type { FormDeath } from "./DeathLogCounter";
+import type { DeathForm } from "./DeathLogCounter";
 
 type Props = {
 	type: "edit" | "delete";
-	form: UseFormReturn<FormDeath, any, FormDeath>;
-	onEditDeath: SubmitHandler<FormDeath>;
+	form: UseFormReturn<DeathForm, any, DeathForm>;
+	onEditDeath: SubmitHandler<DeathForm>;
 	onDeleteDeath: () => void;
 };
 

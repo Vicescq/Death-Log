@@ -184,7 +184,6 @@ export function formatString(str: string) {
 
 export function validateString(
 	inputText: string,
-	type: "edit" | "add",
 	names: string[],
 	currentlyEditingName: string | null,
 ) {
@@ -197,7 +196,7 @@ export function validateString(
 		return "No ellipses allowed!";
 	}
 
-	if (inputText == "" && type == "add") {
+	if (inputText == "") {
 		return "Cannot be an empty name!";
 	}
 

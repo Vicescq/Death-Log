@@ -9,13 +9,12 @@ import DLCEDate from "./DLCEDate";
 import DLCEDel from "./DLCEDel";
 import DLCESubject from "./DLCESubject";
 import { useForm, type SubmitHandler } from "react-hook-form";
-import { formatString } from "../../../stores/utils";
+import { formatString, validateString } from "../../../stores/utils";
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
-import {
-	isoToDateSTD,
-	isoToTimeSTD,
-	subjectContextToFormattedStr,
-} from "../utils";
+import { subjectContextToFormattedStr } from "../utils/utils";
+import { isoToDateSTD, isoToTimeSTD } from "../utils/dateUtils";
+import { CONSTANTS } from "../../../../shared/constants";
+import { assertIsNonNull } from "../../../utils";
 
 type Props = {
 	node: DistinctTreeNode;
@@ -37,6 +36,15 @@ export type NodeForm = {
 };
 
 export default function DeathLogCardEditor({ node }: Props) {
+	const tree = useDeathLogStore((state) => state.tree);
+	const parent = tree.get(node.parentID);
+	assertIsNonNull(parent);
+	const siblingNames = parent.childIDS.map((id) => {
+		const sibling = tree.get(id);
+		assertIsNonNull(sibling);
+		return sibling.name;
+	});
+
 	const navigate = useNavigate();
 	const form = useForm<NodeForm>({
 		defaultValues: {
@@ -60,9 +68,8 @@ export default function DeathLogCardEditor({ node }: Props) {
 					? subjectContextToFormattedStr(node.context)
 					: null,
 		},
+		mode: "onTouched",
 	});
-
-	const updateNode = useDeathLogStore((state) => state.updateNode);
 
 	const onSubmit: SubmitHandler<NodeForm> = (formData) => {
 		const name = formatString(formData.name);
@@ -77,6 +84,7 @@ export default function DeathLogCardEditor({ node }: Props) {
 		}
 
 		// updateNode({ ...node, name: name });
+		console.log(form.formState.dirtyFields);
 		console.log(formData);
 	};
 
@@ -102,11 +110,28 @@ export default function DeathLogCardEditor({ node }: Props) {
 							<label className="floating-label">
 								<span>Name</span>
 								<input
-									{...form.register("name")}
 									type="search"
 									className="input w-full"
+									{...form.register("name", {
+										validate: (inputText) =>
+											validateString(
+												inputText,
+												siblingNames,
+												node.name,
+											),
+										maxLength: {
+											value: CONSTANTS.INPUT_MAX,
+											message: "Too long!",
+										},
+									})}
 								/>
+								{form.formState.errors.name && (
+									<div className="text-error">
+										{form.formState.errors.name.message}
+									</div>
+								)}
 							</label>
+
 							<DLCEDate node={node} form={form} />
 
 							{node.type == "subject" ? (
@@ -127,7 +152,7 @@ export default function DeathLogCardEditor({ node }: Props) {
 						<button
 							type="submit"
 							className="btn btn-success mt-4 w-full"
-							// disabled
+							disabled={!form.formState.isValid}
 						>
 							Save Changes
 						</button>

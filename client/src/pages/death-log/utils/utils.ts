@@ -7,12 +7,14 @@ import type {
 	SubjectContext,
 	Tree,
 	TreeNode,
-} from "../../model/TreeNodeModel";
-import { validateStringTEMP } from "../../stores/stringValidation";
-import { type ValidationContext } from "../../stores/stringValidation";
-import { assertIsNonNull } from "../../utils";
+} from "../../../model/TreeNodeModel";
+import { validateStringTEMP } from "../../../stores/stringValidation";
+import { type ValidationContext } from "../../../stores/stringValidation";
+import { assertIsNonNull } from "../../../utils";
 import type { UseFormReturn } from "react-hook-form";
-import type { FormDeath } from "./counter/DeathLogCounter";
+import type { DeathForm } from "../counter/DeathLogCounter";
+import type { NodeForm } from "../card-editor/DeathLogCardEditor";
+import { isoToDateSTD } from "./dateUtils";
 
 export function subjectContextToFormattedStr(context: SubjectContext) {
 	const subjectContextMap = {
@@ -65,56 +67,6 @@ export function calcDeaths(node: DistinctTreeNode, tree: Tree) {
 		case "subject":
 			return node.log.length;
 	}
-}
-
-export function isoToDateSTD(isoSTR: string) {
-	const dateObj = new Date(isoSTR);
-	const year = String(dateObj.getFullYear());
-	let month = String(dateObj.getMonth() + 1);
-	let day = String(dateObj.getDate());
-	if (month.length == 1) {
-		month = "0" + month;
-	}
-	if (day.length == 1) {
-		day = "0" + day;
-	}
-	return `${year}-${month}-${day}`;
-}
-
-export function isoToTimeSTD(isoSTR: string) {
-	const dateObj = new Date(isoSTR);
-	const hour = dateObj.getHours();
-	const mins = dateObj.getMinutes();
-	const secs = dateObj.getSeconds();
-
-	function addLeadingZeroes(time: number): string {
-		return time >= 10 ? String(time) : `0${time}`;
-	}
-
-	return `${addLeadingZeroes(hour)}:${addLeadingZeroes(mins)}:${addLeadingZeroes(secs)}`;
-}
-
-export function dateTimeSTDToISO(
-	formattedDateStr: string,
-	formattedTimeStr: string,
-) {
-	const parsedDate = formattedDateStr.split("-");
-	const parsedTime = formattedTimeStr.split(":");
-	const dateObj = new Date(
-		Number(parsedDate[0]),
-		Number(parsedDate[1]) - 1,
-		Number(parsedDate[2]),
-		Number(parsedTime[0]),
-		Number(parsedTime[1]),
-		Number(parsedTime[2]),
-	);
-	return dateObj.toISOString();
-}
-
-export function maxDate(isoSTR: string) {
-	const dateObj = new Date(isoSTR);
-	dateObj.setFullYear(dateObj.getFullYear() + 1);
-	return isoToDateSTD(dateObj.toISOString());
 }
 
 export function hasFormBeenEdited(context: ValidationContext) {
@@ -268,39 +220,6 @@ export function sortChildIDS(parentNode: TreeNode, tree: Tree) {
 		return result;
 	});
 	return sorted;
-}
-
-/**
- * Resolves a given timestamp, determines the correct ISO string to return, ensuring only dirty timestamp inputs are updated.
- */
-export function resolveTimestampUpdate(
-	modalForm: UseFormReturn<FormDeath, any, FormDeath>,
-	formData: FormDeath,
-	focusedDeathID: string,
-	subject: Subject,
-) {
-	let isoStr: string;
-	const death = subject.log.find((death) => death.id == focusedDeathID);
-	assertIsNonNull(death);
-	if (
-		modalForm.formState.dirtyFields.date &&
-		modalForm.formState.dirtyFields.time
-	) {
-		isoStr = dateTimeSTDToISO(formData.date, formData.time);
-	} else if (
-		modalForm.formState.dirtyFields.date &&
-		!modalForm.formState.dirtyFields.time
-	) {
-		isoStr = dateTimeSTDToISO(formData.date, isoToTimeSTD(death.timestamp));
-	} else if (
-		!modalForm.formState.dirtyFields.date &&
-		modalForm.formState.dirtyFields.time
-	) {
-		isoStr = dateTimeSTDToISO(isoToDateSTD(death.timestamp), formData.time);
-	} else {
-		isoStr = death.timestamp;
-	}
-	return isoStr;
 }
 
 export function determineFABType(

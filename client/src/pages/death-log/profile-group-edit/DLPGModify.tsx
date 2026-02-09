@@ -7,7 +7,7 @@ import type {
 } from "../../../model/TreeNodeModel";
 import { formatString } from "../../../stores/utils";
 import { assertIsNonNull } from "../../../utils";
-import { getFormStatus } from "../utils";
+import { getFormStatus } from "../utils/utils";
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
 
 type Props = AddProps | EditProps;

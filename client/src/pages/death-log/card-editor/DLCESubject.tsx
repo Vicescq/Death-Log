@@ -23,9 +23,9 @@ export default function DLCESubject({ node, form }: Props) {
 			</div>
 			<div className="flex">
 				<span className="text-[1rem]">Time Spent</span>
-				<button className="ml-auto">
+				<span className="my-auto ml-auto">
 					{node.timeSpent == null ? "N / A" : node.timeSpent}
-				</button>
+				</span>
 				{/* 3h 18m 5s */}
 			</div>
 			<label className="floating-label">

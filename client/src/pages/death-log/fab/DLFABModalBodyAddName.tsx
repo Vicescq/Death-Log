@@ -19,12 +19,7 @@ export default function DLFABModalBodyAddName({ form, siblingNames }: Props) {
 						className="input bg-base-200 join-item"
 						{...form.register("name", {
 							validate: (inputText) =>
-								validateString(
-									inputText,
-									"add",
-									siblingNames,
-									null,
-								),
+								validateString(inputText, siblingNames, null),
 							maxLength: {
 								value: CONSTANTS.INPUT_MAX,
 								message: "Too long!",

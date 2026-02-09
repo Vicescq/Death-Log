@@ -52,7 +52,7 @@ function AppRoot() {
 	useInitApp();
 
 	if (!root) {
-		// handles ErrorPage sudden flicker and tree not being init yet
+		// wait for app to hydrate
 		return <></>;
 	}
 

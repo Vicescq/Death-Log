@@ -17,7 +17,7 @@ import { formatString } from "../../../stores/utils";
 import { CONSTANTS } from "../../../../shared/constants";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import DLFABModalBodyAdd from "./DLFABModalBodyAdd";
-import { formattedStrTosubjectContext } from "../utils";
+import { formattedStrTosubjectContext } from "../utils/utils";
 
 export type SubjectCharacteristics = Pick<Subject, "reoccurring" | "context">;
 

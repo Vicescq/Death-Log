@@ -5,7 +5,7 @@ import { Virtuoso, type Components, type VirtuosoHandle } from "react-virtuoso";
 import DeathLogBreadcrumb from "./breadcrumb/DeathLogBreadcrumb";
 import DeathLogCardWrapper from "./card/DeathLogCardWrapper";
 import type { DistinctTreeNode } from "../../model/TreeNodeModel";
-import { determineFABType, sortChildIDS } from "./utils";
+import { determineFABType, sortChildIDS } from "./utils/utils";
 import { useDeathLogStore } from "../../stores/useDeathLogStore";
 import { assertIsNonNull } from "../../utils";
 import Modal from "../../components/Modal";

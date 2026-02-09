@@ -5,7 +5,8 @@ import DeathLogBreadcrumb from "../breadcrumb/DeathLogBreadcrumb";
 import NavBar from "../../../components/navBar/NavBar";
 import type { Death, Subject } from "../../../model/TreeNodeModel";
 import { useEffect, useRef, useState } from "react";
-import { isoToDateSTD, isoToTimeSTD, resolveTimestampUpdate } from "../utils";
+import { isoToDateSTD, isoToTimeSTD } from "../utils/dateUtils";
+import { resolveTimestampUpdate } from "../utils/dateUtils";
 import Modal from "../../../components/Modal";
 import { useForm } from "react-hook-form";
 import { type SubmitHandler } from "react-hook-form";
@@ -19,7 +20,7 @@ type Props = {
 	subject: Subject;
 };
 
-export type FormDeath = {
+export type DeathForm = {
 	remark: string;
 	date: string;
 	time: string;
@@ -39,7 +40,7 @@ export default function DeathLogCounter({ subject }: Props) {
 		(a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp),
 	);
 
-	const counterForm = useForm<FormDeath>({
+	const counterForm = useForm<DeathForm>({
 		mode: "onChange",
 		defaultValues: {
 			remark: "",
@@ -47,7 +48,7 @@ export default function DeathLogCounter({ subject }: Props) {
 		},
 	});
 
-	const onIncrementDeath: SubmitHandler<FormDeath> = (formData) => {
+	const onIncrementDeath: SubmitHandler<DeathForm> = (formData) => {
 		const formattedRemark = formatString(formData.remark);
 		const remark = formattedRemark == "" ? null : formattedRemark;
 		const timestampRel = formData.timestampRel == "T" ? true : false;
@@ -79,21 +80,26 @@ export default function DeathLogCounter({ subject }: Props) {
 		});
 	}
 
-	const modalForm = useForm<FormDeath>({
+	const modalForm = useForm<DeathForm>({
 		mode: "onChange",
 	});
 
-	const onEditDeath: SubmitHandler<FormDeath> = (formData) => {
+	const onEditDeath: SubmitHandler<DeathForm> = (formData) => {
 		const formattedRemark = formatString(formData.remark);
 		const remark = formattedRemark == "" ? null : formattedRemark;
 		const timestampRel = formData.timestampRel == "T" ? true : false;
 
 		assertIsNonNull(focusedDeathID);
+		const focusedDeath = subject.log.find(
+			(death) => death.id == focusedDeathID,
+		);
+		assertIsNonNull(focusedDeath);
 		const isoStr = resolveTimestampUpdate(
-			modalForm,
-			formData,
-			focusedDeathID,
-			subject,
+			formData.date,
+			Boolean(modalForm.formState.dirtyFields.date),
+			formData.time,
+			Boolean(modalForm.formState.dirtyFields.time),
+			focusedDeath.timestamp,
 		);
 
 		updateNode({
