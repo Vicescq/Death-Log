@@ -16,7 +16,7 @@ export const CONSTANTS = {
 	},
 	DEATH_LOG_CARD: {
 		ENTRY_CHILDREN: "Folder Button",
-		EDIT_MODAL: "Edit Button",
+		EDIT_MODE: "Edit Button",
 	},
 	START: {
 		GUEST_BTN: "Continue as guest",

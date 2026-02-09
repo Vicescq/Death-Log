@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate, useParams } from "react-router";
 import NavBar from "../../../components/navBar/NavBar";
 import type {
 	DistinctTreeNode,
@@ -11,14 +11,17 @@ import DLCESubject from "./DLCESubject";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { formatString, validateString } from "../../../stores/utils";
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
-import { subjectContextToFormattedStr } from "../utils/utils";
-import { isoToDateSTD, isoToTimeSTD } from "../utils/dateUtils";
+import {
+	formattedStrTosubjectContext,
+	subjectContextToFormattedStr,
+} from "../utils/utils";
+import {
+	isoToDateSTD,
+	isoToTimeSTD,
+	resolveTimestampUpdate,
+} from "../utils/dateUtils";
 import { CONSTANTS } from "../../../../shared/constants";
 import { assertIsNonNull } from "../../../utils";
-
-type Props = {
-	node: DistinctTreeNode;
-};
 
 export type NodeForm = {
 	name: string;
@@ -27,16 +30,21 @@ export type NodeForm = {
 	startRel: boolean;
 	dateEnd: string | null;
 	timeEnd: string | null;
-	endRel: boolean | null;
+	endRel: boolean;
 	notes: string;
 
 	// only subjects use these
-	reoccurring: boolean | null;
-	context: string | null;
+	reoccurring: boolean;
+	context: string;
 };
 
-export default function DeathLogCardEditor({ node }: Props) {
+export default function DeathLogCardEditor({
+	node,
+}: {
+	node: DistinctTreeNode;
+}) {
 	const tree = useDeathLogStore((state) => state.tree);
+
 	const parent = tree.get(node.parentID);
 	assertIsNonNull(parent);
 	const siblingNames = parent.childIDS.map((id) => {
@@ -45,7 +53,10 @@ export default function DeathLogCardEditor({ node }: Props) {
 		return sibling.name;
 	});
 
+	const updateNode = useDeathLogStore((state) => state.updateNode);
+
 	const navigate = useNavigate();
+
 	const form = useForm<NodeForm>({
 		defaultValues: {
 			name: node.name,
@@ -60,32 +71,78 @@ export default function DeathLogCardEditor({ node }: Props) {
 				node.completed && node.dateEnd
 					? isoToTimeSTD(node.dateEnd)
 					: null,
-			endRel: node.completed && node.dateEnd ? node.dateEndRel : null,
+			endRel: node.dateEndRel,
 			notes: node.notes,
-			reoccurring: node.type == "subject" ? node.reoccurring : null,
+			reoccurring: node.type == "subject" ? node.reoccurring : false,
 			context:
 				node.type == "subject"
 					? subjectContextToFormattedStr(node.context)
-					: null,
+					: "Boss",
 		},
 		mode: "onTouched",
 	});
 
 	const onSubmit: SubmitHandler<NodeForm> = (formData) => {
 		const name = formatString(formData.name);
+		const dateStart = resolveTimestampUpdate(
+			formData.dateStart,
+			Boolean(form.formState.dirtyFields.dateStart),
+			formData.timeStart,
+			Boolean(form.formState.dirtyFields.timeStart),
+			node.dateStart,
+		);
 
+		let dateEnd: string | null = null;
 		if (node.completed) {
+			assertIsNonNull(node.dateEnd);
+			assertIsNonNull(formData.dateEnd);
+			assertIsNonNull(formData.timeEnd);
+			dateEnd = resolveTimestampUpdate(
+				formData.dateEnd,
+				Boolean(form.formState.dirtyFields.dateEnd),
+				formData.timeEnd,
+				Boolean(form.formState.dirtyFields.timeEnd),
+				node.dateEnd,
+			);
 		}
 
-		if (node.type == "profile") {
+		if (node.type == "game") {
+			updateNode({
+				...node,
+				name: name,
+				dateStart: dateStart,
+				dateStartRel: formData.startRel,
+				dateEnd: dateEnd,
+				dateEndRel: formData.endRel,
+				notes: formData.notes,
+			});
+		} else if (node.type == "profile") {
+			updateNode({
+				...node,
+				name: name,
+				dateStart: dateStart,
+				dateStartRel: formData.startRel,
+				dateEnd: dateEnd,
+				dateEndRel: formData.endRel,
+				notes: formData.notes,
+			});
+		} else if (node.type == "subject") {
+			updateNode({
+				...node,
+				name: name,
+				dateStart: dateStart,
+				dateStartRel: formData.startRel,
+				dateEnd: dateEnd,
+				dateEndRel: formData.endRel,
+				notes: formData.notes,
+				reoccurring: formData.reoccurring,
+				context: formattedStrTosubjectContext(formData.context),
+			});
 		}
 
-		if (node.type == "subject") {
-		}
-
-		// updateNode({ ...node, name: name });
 		console.log(form.formState.dirtyFields);
 		console.log(formData);
+		navigate("../..");
 	};
 
 	return (
@@ -152,14 +209,17 @@ export default function DeathLogCardEditor({ node }: Props) {
 						<button
 							type="submit"
 							className="btn btn-success mt-4 w-full"
-							disabled={!form.formState.isValid}
+							disabled={
+								!form.formState.isValid ||
+								!form.formState.isDirty
+							}
 						>
 							Save Changes
 						</button>
 						<button
 							onClick={(e) => {
 								e.preventDefault();
-								navigate(-1);
+								navigate("../..");
 							}}
 							className="btn btn-error w-full"
 						>

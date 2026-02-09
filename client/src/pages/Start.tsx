@@ -1,5 +1,5 @@
 import { SignedOut, SignInButton, SignedIn } from "@clerk/clerk-react";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { CONSTANTS } from "../../shared/constants";
 
 export default function Start() {
@@ -52,33 +52,32 @@ export default function Start() {
 							</SignInButton>
 						</SignedOut>
 
-						<button
-							className="btn btn-neutral"
-							onClick={() => navigate("log")}
-						>
-							{CONSTANTS.START.GUEST_BTN}
-						</button>
+						<Link to="log">
+							<button className="btn btn-neutral w-full">
+								{CONSTANTS.START.GUEST_BTN}
+							</button>
+						</Link>
 
 						<SignedIn>
-							<button
-								className="btn btn-neutral"
-								onClick={() => navigate("log")}
-							>
-								Continue with Account
-							</button>
+							<Link to="log">
+								<button className="btn btn-neutral w-full">
+									Continue with Account
+								</button>
+							</Link>
 						</SignedIn>
-						<button
-							className="btn btn-neutral"
-							onClick={() => navigate("data-management")}
-						>
-							Manage Data
-						</button>
-						<button
-							className="btn btn-neutral"
-							onClick={() => navigate("FAQ")}
-						>
-							FAQ
-						</button>
+						<Link to="data-management">
+							<button className="btn btn-neutral w-full">
+								Manage Data
+							</button>
+						</Link>
+						<Link to="FAQ">
+							<button
+								className="btn btn-neutral w-full"
+								onClick={() => navigate("FAQ")}
+							>
+								FAQ
+							</button>
+						</Link>
 					</div>
 				</div>
 			</div>

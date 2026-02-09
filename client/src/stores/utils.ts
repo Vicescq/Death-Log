@@ -184,7 +184,7 @@ export function formatString(str: string) {
 
 export function validateString(
 	inputText: string,
-	names: string[],
+	siblingNames: string[],
 	currentlyEditingName: string | null,
 ) {
 	inputText = formatString(inputText);
@@ -200,7 +200,7 @@ export function validateString(
 		return "Cannot be an empty name!";
 	}
 
-	for (const name of names) {
+	for (const name of siblingNames) {
 		if (name != currentlyEditingName && name == inputText) {
 			return "That name already exists!";
 		}

@@ -1,37 +1,37 @@
-import { useParams, useSearchParams } from "react-router";
-import DeathLog from "./DeathLog";
-import { useDeathLogStore } from "../../stores/useDeathLogStore";
-import DeathLogCounter from "./counter/DeathLogCounter";
-import ErrorPage from "../ErrorPage";
-import { assertIsNonNull, assertIsSubject } from "../../utils";
+import { useParams } from "react-router";
 import { CONSTANTS } from "../../../shared/constants";
+import { useDeathLogStore } from "../../stores/useDeathLogStore";
+import { assertIsNonNull, assertIsSubject } from "../../utils";
+import ErrorPage from "../ErrorPage";
 import DeathLogCardEditor from "./card-editor/DeathLogCardEditor";
+import DeathLogCounter from "./counter/DeathLogCounter";
+import DeathLog from "./DeathLog";
 
-export type CardMainPageTransitionState = {
-	type: "GameToProfiles" | "ProfileToSubjects" | "Terminal";
-	parentID: string;
-};
-
-export default function DeathLogRouter() {
+export default function DeathLogRouter({ isEditing }: { isEditing: boolean }) {
 	const params = useParams();
-	const [searchParams] = useSearchParams();
 	const tree = useDeathLogStore((state) => state.tree);
 
 	const gameID = params.gameID;
-	const profileID = params.profileID;
-	const subjectID = params.subjectID;
+	const profileID = params.profileID == "edit" ? undefined : params.profileID;
+	const subjectID = params.subjectID == "edit" ? undefined : params.subjectID;
 
-	const editParam = searchParams.get("edit");
-	const isEditing = Boolean(editParam && editParam == "true");
+	function isValidNodeID(id: string | undefined) {
+		return id && tree.has(id) && isUniqueID();
+	}
+
+	function isUniqueID() {
+		// handles edge case, where user types in same id as last segment
+		return (
+			new Set(Object.values(params)).size == Object.keys(params).length
+		);
+	}
 
 	if (
-		subjectID &&
-		tree.has(subjectID) &&
-		profileID &&
-		tree.has(profileID) &&
-		gameID &&
-		tree.has(gameID)
+		isValidNodeID(subjectID) &&
+		isValidNodeID(profileID) &&
+		isValidNodeID(gameID)
 	) {
+		assertIsNonNull(subjectID);
 		const subject = tree.get(subjectID);
 		assertIsNonNull(subject);
 		assertIsSubject(subject);
@@ -42,12 +42,11 @@ export default function DeathLogRouter() {
 
 		return <DeathLogCounter subject={subject} />;
 	} else if (
-		profileID &&
-		tree.has(profileID) &&
-		gameID &&
-		tree.has(gameID) &&
-		subjectID == undefined
+		subjectID == undefined &&
+		isValidNodeID(profileID) &&
+		isValidNodeID(gameID)
 	) {
+		assertIsNonNull(profileID);
 		const profile = tree.get(profileID);
 		assertIsNonNull(profile);
 
@@ -55,13 +54,13 @@ export default function DeathLogRouter() {
 			return <DeathLogCardEditor node={profile} />;
 		}
 
-		return <DeathLog parent={profile} key={profileID} />;
+		return <DeathLog parent={profile} />;
 	} else if (
-		gameID &&
-		tree.has(gameID) &&
+		subjectID == undefined &&
 		profileID == undefined &&
-		subjectID == undefined
+		isValidNodeID(gameID)
 	) {
+		assertIsNonNull(gameID);
 		const game = tree.get(gameID);
 		assertIsNonNull(game);
 
@@ -69,7 +68,7 @@ export default function DeathLogRouter() {
 			return <DeathLogCardEditor node={game} />;
 		}
 
-		return <DeathLog parent={game} key={gameID} />;
+		return <DeathLog parent={game} />;
 	}
 
 	return <ErrorPage error={new Error(CONSTANTS.ERROR.URL)} />;

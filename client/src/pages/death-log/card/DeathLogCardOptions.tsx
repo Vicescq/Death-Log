@@ -21,10 +21,10 @@ export default function DeathLogCardOptions({ node }: Props) {
 				</li>
 			</Link>
 			<li>
-				<Link to={{ pathname: node.id, search: "edit=true" }}>
+				<Link to={{ pathname: `${node.id}/edit` }}>
 					<button
 						className="cursor-pointer"
-						aria-label={CONSTANTS.DEATH_LOG_CARD.EDIT_MODAL}
+						aria-label={CONSTANTS.DEATH_LOG_CARD.EDIT_MODE}
 					>
 						<img src={edit} alt="" className="h-4 w-4" />
 					</button>
