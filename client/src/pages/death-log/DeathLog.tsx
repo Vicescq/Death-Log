@@ -3,12 +3,12 @@ import React, { forwardRef, useRef, useState } from "react";
 import DeathLogFAB from "./fab/DeathLogFAB";
 import { Virtuoso, type Components, type VirtuosoHandle } from "react-virtuoso";
 import DeathLogBreadcrumb from "./breadcrumb/DeathLogBreadcrumb";
-import DeathLogCardWrapper from "./card/DeathLogCardWrapper";
 import type { DistinctTreeNode } from "../../model/TreeNodeModel";
 import { determineFABType, sortChildIDS } from "./utils/utils";
 import { useDeathLogStore } from "../../stores/useDeathLogStore";
 import { assertIsNonNull } from "../../utils";
 import Modal from "../../components/Modal";
+import DeathLogCard from "./card/DeathLogCard";
 
 export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 	const tree = useDeathLogStore((state) => state.tree);
@@ -23,18 +23,20 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 		null,
 	);
 
-	const DeathLogWrapper: Components["List"] = forwardRef((props, ref) => {
-		return (
-			<ul
-				ref={ref as React.Ref<HTMLUListElement>} // no other workaround ?
-				{...props}
-				className={`list rounded-box m-auto max-w-[900px] ${pageOpacity}`}
-				inert={deathLogIsInert}
-			>
-				{props.children}
-			</ul>
-		);
-	});
+	const DeathLogCardListWrapper: Components["List"] = forwardRef(
+		(props, ref) => {
+			return (
+				<ul
+					ref={ref as React.Ref<HTMLUListElement>} // no other workaround ?
+					{...props}
+					className={`list rounded-box m-auto max-w-[900px] ${pageOpacity}`}
+					inert={deathLogIsInert}
+				>
+					{props.children}
+				</ul>
+			);
+		},
+	);
 
 	function handleNodeCompletion(nodeToBeUpdated: DistinctTreeNode) {
 		let updatedNode: DistinctTreeNode;
@@ -75,17 +77,19 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 			<Virtuoso
 				ref={virtuosoRef}
 				data={sortedChildIDs}
-				itemContent={(i, id) => (
-					<DeathLogCardWrapper
-						nodeID={id}
-						entryNum={i + 1}
-						onOpenCompletionModal={() => {
-							modalRef.current?.showModal();
-						}}
-						onFocus={(node) => setFocusedNode(node)}
-					/>
-				)}
-				components={{ List: DeathLogWrapper }}
+				itemContent={(i, id) => {
+					const node = tree.get(id);
+					assertIsNonNull(node);
+					return (
+						<DeathLogCard
+							node={node}
+							tree={tree}
+							entryNum={i + 1}
+							onOpenCompletionModal={() => setFocusedNode(node)}
+						/>
+					);
+				}}
+				components={{ List: DeathLogCardListWrapper }}
 				computeItemKey={(_, id) => {
 					return id;
 				}}

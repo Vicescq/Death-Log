@@ -98,14 +98,11 @@ function AppRoot() {
 							</Route>
 						</Route>
 					</Route>
-
-					<Route
-						path="data-management"
-						element={<DataManagement />}
-					/>
-
-					<Route path="FAQ" element={<FAQ />} />
 				</Route>
+
+				<Route path="data-management" element={<DataManagement />} />
+
+				<Route path="FAQ" element={<FAQ />} />
 
 				<Route
 					path="*"

@@ -1,17 +1,21 @@
-import { useParams, useSearchParams } from "react-router";
+import { useLocation, useParams } from "react-router";
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
 import type { BreadcrumbMember } from "./DeathLogBreadcrumb";
 import { assertIsNonNull } from "../../../utils";
 
 export default function useBreadcrumbMembers(): BreadcrumbMember[] {
+	const location = useLocation();
 	const params = useParams();
-	const [searchParams] = useSearchParams();
 	const ids = Object.values(params);
 	const tree = useDeathLogStore((state) => state.tree);
 	const names: string[] = [];
 
-	function isEditing(i: number) {
-		return i == ids.length - 1 && searchParams.get("edit") == "true";
+	function isEditing() {
+		const segments = location.pathname
+			.split("/")
+			.filter((str) => str != "" && str != "log");
+
+		return segments[segments.length - 1] == "edit";
 	}
 
 	for (let i = 0; i < ids.length; i++) {
@@ -19,27 +23,21 @@ export default function useBreadcrumbMembers(): BreadcrumbMember[] {
 		assertIsNonNull(id);
 		const node = tree.get(id);
 		assertIsNonNull(node);
-		if (isEditing(i)) {
-			names.push(`Editing: ${node.name}`);
-		} else {
-			names.push(node.name);
-		}
+		names.push(node.name);
 	}
 
 	let currLink = "/log";
-	let editSearchParams = "?edit=true";
 	const breadcrumbMembers: BreadcrumbMember[] = [];
 	for (let i = 0; i < names.length; i++) {
 		currLink += `/${ids[i]}`;
-		if (isEditing(i)) {
-			breadcrumbMembers.push({
-				name: names[i],
-				link: currLink,
-				searchParams: editSearchParams,
-			});
-		} else {
-			breadcrumbMembers.push({ name: names[i], link: currLink });
-		}
+
+		breadcrumbMembers.push({ name: names[i], link: currLink });
+	}
+
+	if (isEditing()) {
+		const lastMember = breadcrumbMembers[breadcrumbMembers.length - 1];
+		lastMember.name = `Editing: ${lastMember.name}`;
+		lastMember.link = `${currLink}/edit`;
 	}
 
 	return breadcrumbMembers;

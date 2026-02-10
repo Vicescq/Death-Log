@@ -9,11 +9,7 @@ import type {
 } from "../model/TreeNodeModel";
 import LocalDB from "../services/LocalDB";
 import { nanoid } from "nanoid";
-import { assertIsNonNull, assertIsProfile } from "../utils";
-import type {
-	ValidationContext,
-	NameUniquenessResponse,
-} from "./stringValidation";
+import { assertIsNonNull } from "../utils";
 
 export function identifyDeletedSelfAndChildrenIDS(
 	node: DistinctTreeNode,
@@ -203,47 +199,6 @@ export function validateString(
 	for (const name of siblingNames) {
 		if (name != currentlyEditingName && name == inputText) {
 			return "That name already exists!";
-		}
-	}
-
-	return true;
-}
-
-export function isNameUniqueTEMP(
-	inputText: string,
-	context: ValidationContext,
-): NameUniquenessResponse {
-	if (context.type == "nodeAdd" || context.type == "nodeEdit") {
-		const parent = context.tree.get(context.parentID);
-		assertIsNonNull(parent);
-		if (
-			context.type == "nodeEdit" &&
-			context.originalNode.name == inputText
-		)
-			return "defaultEditedName";
-		for (let i = 0; i < parent.childIDS.length; i++) {
-			const child: DistinctTreeNode | undefined = context.tree.get(
-				parent.childIDS[i],
-			); // dont know why TS doesnt auto complete the type and labels it as any?
-			assertIsNonNull(child);
-
-			if (child.name == inputText) {
-				return false;
-			}
-		}
-	} else {
-		const profile = context.profile;
-		if (profile) {
-			assertIsProfile(profile);
-			const groupings = profile.groupings;
-			if (
-				context.type == "profileGroupEdit" &&
-				context.originalProfileGroup.title == inputText
-			)
-				return "defaultEditedName";
-			for (let i = 0; i < groupings.length; i++) {
-				if (groupings[i].title == inputText) return false;
-			}
 		}
 	}
 

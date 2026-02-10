@@ -9,7 +9,6 @@ export type BreadcrumbMember = {
 	link: string;
 	name: string;
 	condensedMembers?: BreadcrumbMember[];
-	searchParams?: string;
 };
 
 export default function DeathLogBreadcrumb() {
@@ -123,7 +122,6 @@ export default function DeathLogBreadcrumb() {
 								<Link
 									to={{
 										pathname: member.link,
-										search: member.searchParams,
 									}}
 								>
 									{member.name}
