@@ -237,6 +237,7 @@ export default function DeathLogCardEditor({
 						</button>
 
 						<button
+							type="reset"
 							className="btn btn-primary"
 							onClick={(e) => {
 								e.preventDefault();

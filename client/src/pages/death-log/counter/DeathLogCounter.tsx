@@ -3,8 +3,8 @@ import up from "../../../assets/up.svg";
 import down from "../../../assets/down.svg";
 import DeathLogBreadcrumb from "../breadcrumb/DeathLogBreadcrumb";
 import NavBar from "../../../components/navBar/NavBar";
-import type { Death, Subject } from "../../../model/TreeNodeModel";
-import { useEffect, useRef, useState } from "react";
+import type { Subject } from "../../../model/TreeNodeModel";
+import { useRef, useState } from "react";
 import { isoToDateSTD, isoToTimeSTD } from "../utils/dateUtils";
 import { resolveTimestampUpdate } from "../utils/dateUtils";
 import Modal from "../../../components/Modal";
@@ -12,7 +12,6 @@ import { useForm } from "react-hook-form";
 import { type SubmitHandler } from "react-hook-form";
 import DeathCounterModalBody from "./DeathCounterModalBody";
 import { createDeath, formatString } from "../../../stores/utils";
-import useConsoleLogOnStateChange from "../../../hooks/useConsoleLogOnStateChange";
 import DeathSettingsAndHistory from "./DeathSettingsAndHistory";
 import { assertIsNonNull } from "../../../utils";
 
@@ -189,6 +188,7 @@ export default function DeathLogCounter({ subject }: Props) {
 					onFocusDeath={(id) => handleFocusDeath(id)}
 					onDeleteDeathConfirm={(id) => handleDeleteDeathConfirm(id)}
 					sortedDeaths={sortedDeaths}
+					focusedDeathID={focusedDeathID}
 				/>
 			</div>
 

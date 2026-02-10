@@ -75,6 +75,10 @@ export default function DeathCounterModalBody({
 									value: true,
 									message: CONSTANTS.ERROR.REQ_TIME,
 								},
+								pattern: {
+									value: /^\d{2}:\d{2}:\d{2}$/,
+									message: "Needs to have all HH:MM:SS",
+								},
 							})}
 						/>
 					</label>
@@ -116,7 +120,18 @@ export default function DeathCounterModalBody({
 					}
 					className="btn btn-success my-2 w-full"
 				>
-					Confirm
+					{CONSTANTS.DEATH_LOG_EDITOR.SUBMIT}
+				</button>
+				<button
+					type="reset"
+					disabled={!form.formState.isDirty}
+					className="btn btn-primary w-full"
+					onClick={(e) => {
+						e.preventDefault();
+						form.reset();
+					}}
+				>
+					{CONSTANTS.DEATH_LOG_EDITOR.RESET}
 				</button>
 			</form>
 		);

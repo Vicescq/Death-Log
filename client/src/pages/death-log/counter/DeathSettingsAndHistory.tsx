@@ -13,6 +13,7 @@ type Props = {
 	deathHistoryRef: React.RefObject<HTMLUListElement | null>;
 	onDeleteDeathConfirm: (id: string) => void;
 	sortedDeaths: Death[];
+	focusedDeathID: string | null;
 };
 
 export default function DeathSettingsAndHistory({
@@ -22,6 +23,7 @@ export default function DeathSettingsAndHistory({
 	onFocusDeath,
 	onDeleteDeathConfirm,
 	sortedDeaths,
+	focusedDeathID,
 }: Props) {
 	return (
 		<>
@@ -98,7 +100,10 @@ export default function DeathSettingsAndHistory({
 					ref={deathHistoryRef}
 				>
 					{sortedDeaths.map((death) => (
-						<li className="list-row flex" key={death.id}>
+						<li
+							className={`list-row flex ${focusedDeathID == death.id ? "bg-neutral" : ""}`}
+							key={death.id}
+						>
 							<div className="flex flex-col gap-1">
 								<div className="badge badge-neutral badge-sm flex gap-2">
 									{isoToDateSTD(death.timestamp)}{" "}

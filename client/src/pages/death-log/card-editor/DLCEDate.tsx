@@ -34,10 +34,17 @@ export default function DLCEDate({ node, form }: Props) {
 							message: CONSTANTS.ERROR.REQ_DATE,
 						},
 					})}
+					disabled={form.formState.dirtyFields.dateEnd}
 				/>
 				{form.formState.errors.dateStart && (
 					<div className="text-error">
 						{form.formState.errors.dateStart.message}
+					</div>
+				)}
+				{form.formState.dirtyFields.dateEnd && (
+					<div className="text-info">
+						Please finish editing Date Completed field to edit this
+						field.
 					</div>
 				)}
 			</label>
@@ -88,8 +95,8 @@ export default function DLCEDate({ node, form }: Props) {
 						)}
 						{form.formState.dirtyFields.dateStart && (
 							<div className="text-info">
-								Please finish editing Date Created to edit this
-								field.
+								Please finish editing Date Created field to edit
+								this field.
 							</div>
 						)}
 					</label>

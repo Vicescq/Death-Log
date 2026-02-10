@@ -27,6 +27,7 @@ export default function DLCEDel({
 					value={delStr}
 				/>
 				<button
+					type="button"
 					className={`btn join-item btn-success p-3`}
 					onClick={(e) => {
 						e.preventDefault();
