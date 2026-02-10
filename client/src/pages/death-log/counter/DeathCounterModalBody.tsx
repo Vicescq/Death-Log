@@ -57,7 +57,7 @@ export default function DeathCounterModalBody({
 							{...form.register("date", {
 								required: {
 									value: true,
-									message: "Date is required",
+									message: CONSTANTS.ERROR.MAX_DATE,
 								},
 							})}
 						/>
@@ -77,7 +77,7 @@ export default function DeathCounterModalBody({
 							{...form.register("time", {
 								required: {
 									value: true,
-									message: "Date is required",
+									message: CONSTANTS.ERROR.REQ_TIME,
 								},
 							})}
 						/>

@@ -2,6 +2,8 @@ import type { DistinctTreeNode } from "../../../model/TreeNodeModel";
 import { CONSTANTS } from "../../../../shared/constants";
 import type { UseFormReturn } from "react-hook-form";
 import type { NodeForm } from "./DeathLogCardEditor";
+import { isoToDateSTD, maxDate } from "../utils/dateUtils";
+import { assertIsNonNull } from "../../../utils";
 
 type Props = {
 	node: DistinctTreeNode;
@@ -16,8 +18,28 @@ export default function DLCEDate({ node, form }: Props) {
 				<input
 					type="date"
 					className="input join-item w-full"
-					{...form.register("dateStart")}
+					{...form.register("dateStart", {
+						max: {
+							value: form.getValues("dateEnd")
+								? (() => {
+										const max = form.getValues("dateEnd"); // IIFE to use assert and avoid TS usage of !
+										assertIsNonNull(max);
+										return max;
+									})()
+								: isoToDateSTD(new Date().toISOString()),
+							message: CONSTANTS.ERROR.MAX_DATE,
+						},
+						required: {
+							value: true,
+							message: CONSTANTS.ERROR.REQ_DATE,
+						},
+					})}
 				/>
+				{form.formState.errors.dateStart && (
+					<div className="text-error">
+						{form.formState.errors.dateStart.message}
+					</div>
+				)}
 			</label>
 
 			<label className="floating-label">
@@ -25,9 +47,19 @@ export default function DLCEDate({ node, form }: Props) {
 				<input
 					type="time"
 					className="input join-item w-full"
-					{...form.register("timeStart")}
+					{...form.register("timeStart", {
+						required: {
+							value: true,
+							message: CONSTANTS.ERROR.REQ_TIME,
+						},
+					})}
 					step={1}
 				/>
+				{form.formState.errors.timeStart && (
+					<div className="text-error">
+						{form.formState.errors.timeStart.message}
+					</div>
+				)}
 			</label>
 
 			{node.completed && node.dateEnd ? (
@@ -37,8 +69,29 @@ export default function DLCEDate({ node, form }: Props) {
 						<input
 							type="date"
 							className="input join-item w-full"
-							{...form.register("dateEnd")}
+							{...form.register("dateEnd", {
+								min: {
+									value: form.getValues("dateStart"),
+									message: CONSTANTS.ERROR.MIN_DATE,
+								},
+								required: {
+									value: true,
+									message: CONSTANTS.ERROR.REQ_DATE,
+								},
+							})}
+							disabled={form.formState.dirtyFields.dateStart}
 						/>
+						{form.formState.errors.dateEnd && (
+							<div className="text-error">
+								{form.formState.errors.dateEnd.message}
+							</div>
+						)}
+						{form.formState.dirtyFields.dateStart && (
+							<div className="text-info">
+								Please finish editing Date Created to edit this
+								field.
+							</div>
+						)}
 					</label>
 					<label className="floating-label">
 						<span>Time Completed</span>

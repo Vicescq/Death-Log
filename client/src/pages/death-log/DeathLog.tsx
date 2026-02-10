@@ -85,7 +85,10 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 							node={node}
 							tree={tree}
 							entryNum={i + 1}
-							onOpenCompletionModal={() => setFocusedNode(node)}
+							onOpenCompletionModal={() => {
+								setFocusedNode(node);
+								modalRef.current?.showModal();
+							}}
 						/>
 					);
 				}}

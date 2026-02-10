@@ -21,7 +21,8 @@ import {
 	resolveTimestampUpdate,
 } from "../utils/dateUtils";
 import { CONSTANTS } from "../../../../shared/constants";
-import { assertIsNonNull } from "../../../utils";
+import { assertIsNonNull, delay } from "../../../utils";
+import { useState } from "react";
 
 export type NodeForm = {
 	name: string;
@@ -54,6 +55,7 @@ export default function DeathLogCardEditor({
 	});
 
 	const updateNode = useDeathLogStore((state) => state.updateNode);
+	const deleteNode = useDeathLogStore((state) => state.deleteNode);
 
 	const navigate = useNavigate();
 
@@ -140,10 +142,20 @@ export default function DeathLogCardEditor({
 			});
 		}
 
-		console.log(form.formState.dirtyFields);
-		console.log(formData);
-		navigate("../..");
+		// console.log("DIRTY:", form.formState.dirtyFields);
+		// console.log("ERR:", form.formState.errors);
+		// console.log("DATA:", formData);
+		// console.log("REST VALS:", form.getValues());
+		form.reset(formData);
 	};
+
+	const [delStr, setDelStr] = useState("");
+
+	async function handleDelete(node: DistinctTreeNode) {
+		navigate("../..");
+		await delay(100); // TODO: maybe figure out a better soln?
+		deleteNode(node);
+	}
 
 	return (
 		<>
@@ -178,7 +190,7 @@ export default function DeathLogCardEditor({
 											),
 										maxLength: {
 											value: CONSTANTS.INPUT_MAX,
-											message: "Too long!",
+											message: CONSTANTS.ERROR.MAX_LENGTH,
 										},
 									})}
 								/>
@@ -203,7 +215,14 @@ export default function DeathLogCardEditor({
 								/>
 							</label>
 
-							<DLCEDel node={node} />
+							<DLCEDel
+								node={node}
+								onDelete={handleDelete}
+								delStr={delStr}
+								onDelStrChange={(inputString) =>
+									setDelStr(inputString)
+								}
+							/>
 						</div>
 
 						<button
@@ -214,16 +233,27 @@ export default function DeathLogCardEditor({
 								!form.formState.isDirty
 							}
 						>
-							Save Changes
+							Save
+						</button>
+
+						<button
+							className="btn btn-primary"
+							onClick={(e) => {
+								e.preventDefault();
+								form.reset();
+							}}
+							disabled={!form.formState.isDirty}
+						>
+							Reset
 						</button>
 						<button
+							className="btn btn-accent w-full"
 							onClick={(e) => {
 								e.preventDefault();
 								navigate("../..");
 							}}
-							className="btn btn-error w-full"
 						>
-							Cancel
+							Return
 						</button>
 					</fieldset>
 				</form>
