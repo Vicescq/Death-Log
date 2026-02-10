@@ -42,7 +42,7 @@ export default function DeathSettingsAndHistory({
 								className="input w-full"
 								{...form.register("remark", {
 									maxLength: {
-										value: CONSTANTS.DEATH_REMARK_MAX,
+										value: CONSTANTS.NUMS.DEATH_REMARK_MAX,
 										message: CONSTANTS.ERROR.MAX_LENGTH,
 									},
 								})}
@@ -60,7 +60,7 @@ export default function DeathSettingsAndHistory({
 								Is Timestamp Reliable?
 							</span>
 							<TooltipButton
-								tooltip={CONSTANTS.RELIABILITY}
+								tooltip={CONSTANTS.INFO.RELIABILITY}
 								css="tooltip-primary"
 							/>
 							<div className="ml-auto">

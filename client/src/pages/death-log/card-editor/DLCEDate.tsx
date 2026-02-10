@@ -109,7 +109,7 @@ export default function DLCEDate({ node, form }: Props) {
 				<div className="divider my-1">
 					<div
 						className="tooltip tooltip-info"
-						data-tip={CONSTANTS.RELIABILITY}
+						data-tip={CONSTANTS.INFO.RELIABILITY}
 					>
 						↓ Reliability Flags ↓
 					</div>

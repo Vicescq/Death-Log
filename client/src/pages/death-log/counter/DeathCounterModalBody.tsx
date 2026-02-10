@@ -1,9 +1,5 @@
 import { CONSTANTS } from "../../../../shared/constants";
-import {
-	Controller,
-	type SubmitHandler,
-	type UseFormReturn,
-} from "react-hook-form";
+import { type SubmitHandler, type UseFormReturn } from "react-hook-form";
 import type { DeathForm } from "./DeathLogCounter";
 
 type Props = {
@@ -34,7 +30,7 @@ export default function DeathCounterModalBody({
 							className="input bg-base-200"
 							{...form.register("remark", {
 								maxLength: {
-									value: CONSTANTS.DEATH_REMARK_MAX,
+									value: CONSTANTS.NUMS.DEATH_REMARK_MAX,
 									message: CONSTANTS.ERROR.MAX_LENGTH,
 								},
 							})}

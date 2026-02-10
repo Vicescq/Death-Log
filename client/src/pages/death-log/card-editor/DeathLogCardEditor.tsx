@@ -189,7 +189,7 @@ export default function DeathLogCardEditor({
 												node.name,
 											),
 										maxLength: {
-											value: CONSTANTS.INPUT_MAX,
+											value: CONSTANTS.NUMS.INPUT_MAX,
 											message: CONSTANTS.ERROR.MAX_LENGTH,
 										},
 									})}
@@ -233,7 +233,7 @@ export default function DeathLogCardEditor({
 								!form.formState.isDirty
 							}
 						>
-							Save
+							{CONSTANTS.DEATH_LOG_EDITOR.SUBMIT}
 						</button>
 
 						<button
@@ -244,7 +244,7 @@ export default function DeathLogCardEditor({
 							}}
 							disabled={!form.formState.isDirty}
 						>
-							Reset
+							{CONSTANTS.DEATH_LOG_EDITOR.RESET}
 						</button>
 						<button
 							className="btn btn-accent w-full"
@@ -253,7 +253,7 @@ export default function DeathLogCardEditor({
 								navigate("../..");
 							}}
 						>
-							Return
+							{CONSTANTS.DEATH_LOG_EDITOR.RETURN}
 						</button>
 					</fieldset>
 				</form>

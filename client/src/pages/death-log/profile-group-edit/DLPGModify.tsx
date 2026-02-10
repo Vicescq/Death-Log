@@ -122,7 +122,7 @@ export default function DLPGModify(props: Props) {
 					placeholder={
 						props.type == "add" ? "New Profile Group" : undefined
 					}
-					maxLength={CONSTANTS.INPUT_MAX}
+					maxLength={CONSTANTS.NUMS.INPUT_MAX}
 					value={props.modifiedProfileGroup.title}
 					onChange={(e) => {
 						props.onModifiedProfileGroup({
@@ -160,8 +160,8 @@ export default function DLPGModify(props: Props) {
 						description: e.currentTarget.value,
 					});
 				}}
-				maxLength={CONSTANTS.TEXTAREA.TEXTAREA_MAX}
-				rows={CONSTANTS.TEXTAREA.TEXTAREA_ROWS}
+				maxLength={CONSTANTS.NUMS.TEXTAREA_MAX}
+				rows={CONSTANTS.NUMS.TEXTAREA_ROW_MAX}
 			/>
 
 			{props.modifiedProfileGroup.members.length > 0 ? (

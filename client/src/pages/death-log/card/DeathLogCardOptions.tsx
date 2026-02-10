@@ -14,7 +14,7 @@ export default function DeathLogCardOptions({ node }: Props) {
 			<Link to={{ pathname: node.id }}>
 				<li>
 					<button
-						aria-label={CONSTANTS.DEATH_LOG_CARD.ENTRY_CHILDREN}
+						aria-label={CONSTANTS.DEATH_LOG_CARD.ENTRY_CHILDREN_ARIA}
 					>
 						<img src={stepInto} alt="" className="h-4 w-4" />
 					</button>
@@ -24,7 +24,7 @@ export default function DeathLogCardOptions({ node }: Props) {
 				<Link to={{ pathname: `${node.id}/edit` }}>
 					<button
 						className="cursor-pointer"
-						aria-label={CONSTANTS.DEATH_LOG_CARD.EDIT_MODE}
+						aria-label={CONSTANTS.DEATH_LOG_CARD.EDIT_MODE_ARIA}
 					>
 						<img src={edit} alt="" className="h-4 w-4" />
 					</button>

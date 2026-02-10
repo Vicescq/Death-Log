@@ -22,7 +22,7 @@ export default function DLCEDel({
 				<input
 					type="search"
 					className="input join-item w-full"
-					placeholder={CONSTANTS.DEATH_LOG_MODAL.DEL_PH}
+					placeholder={CONSTANTS.DEATH_LOG_EDITOR.DEL_PH}
 					onChange={(e) => onDelStrChange(e.currentTarget.value)}
 					value={delStr}
 				/>
@@ -32,7 +32,7 @@ export default function DLCEDel({
 						e.preventDefault();
 						onDelete(node);
 					}}
-					aria-label={CONSTANTS.DEATH_LOG_MODAL.DEL_SUBMIT}
+					aria-label={CONSTANTS.DEATH_LOG_EDITOR.DEL_SUBMIT_ARIA}
 					disabled={delStr != "DEL"}
 				>
 					<img className="w-4" src={trash} alt="" />

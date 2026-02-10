@@ -10,7 +10,7 @@ export default function PaginationNav({ onPageTurn, page, css }: Props) {
 	return (
 		<div className={`join ${css} flex`}>
 			<button
-				aria-label={CONSTANTS.DEATH_LOG_MODAL.TURN_LEFT}
+				aria-label={CONSTANTS.PAGINATION_NAV.TURN_LEFT_ARIA}
 				className="join-item btn"
 				onClick={(e) => {
 					e.preventDefault();
@@ -26,7 +26,7 @@ export default function PaginationNav({ onPageTurn, page, css }: Props) {
 				Page {page}
 			</button>
 			<button
-				aria-label={CONSTANTS.DEATH_LOG_MODAL.TURN_RIGHT}
+				aria-label={CONSTANTS.PAGINATION_NAV.TURN_RIGHT_ARIA}
 				className="join-item btn"
 				onClick={(e) => {
 					e.preventDefault();

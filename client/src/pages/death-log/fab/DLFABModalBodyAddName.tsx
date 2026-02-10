@@ -21,8 +21,8 @@ export default function DLFABModalBodyAddName({ form, siblingNames }: Props) {
 							validate: (inputText) =>
 								validateString(inputText, siblingNames, null),
 							maxLength: {
-								value: CONSTANTS.INPUT_MAX,
-								message: "Too long!",
+								value: CONSTANTS.NUMS.INPUT_MAX,
+								message: CONSTANTS.ERROR.MAX_LENGTH,
 							},
 						})}
 					/>
@@ -31,7 +31,7 @@ export default function DLFABModalBodyAddName({ form, siblingNames }: Props) {
 						className="btn join-item btn-success"
 						disabled={!form.formState.isValid}
 					>
-						+
+						{CONSTANTS.DEATH_LOG_FAB.ADD_SUBMIT}
 					</button>
 				</div>
 			</label>
