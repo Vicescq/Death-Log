@@ -15,37 +15,16 @@ import { createDeath, formatString } from "../../../stores/utils";
 import DeathSettingsAndHistory from "./DeathSettingsAndHistory";
 import { assertIsNonNull, delay } from "../../../utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { CONSTANTS } from "../../../../shared/constants";
+import {
+	DeathCounterFormSchema,
+	EditDeathFormSchema,
+	type DeathCounterForm,
+	type EditDeathForm,
+} from "./schema";
 
 type Props = {
 	subject: Subject;
 };
-
-const EditDeathFormSchema = z.object({
-	remark: z.string().max(CONSTANTS.NUMS.DEATH_REMARK_MAX, {
-		error: CONSTANTS.ERROR.MAX_LENGTH,
-	}),
-	date: z.iso.date({ error: CONSTANTS.ERROR.DATE }).refine(
-		(isoDate) => {
-			const today = isoToDateSTD(new Date().toISOString());
-			return Date.parse(isoDate) <= Date.parse(today);
-		},
-		{
-			error: CONSTANTS.ERROR.TODAY,
-		},
-	),
-	time: z.iso.time({ precision: 0, error: CONSTANTS.ERROR.TIME }),
-	timestampRel: z.literal(["T", "F"]),
-});
-
-const DeathCounterFormSchema = EditDeathFormSchema.pick({
-	remark: true,
-	timestampRel: true,
-});
-
-export type EditDeathForm = z.infer<typeof EditDeathFormSchema>;
-export type DeathCounterForm = z.infer<typeof DeathCounterFormSchema>;
 
 export default function DeathLogCounter({ subject }: Props) {
 	const updateNode = useDeathLogStore((state) => state.updateNode);

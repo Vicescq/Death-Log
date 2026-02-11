@@ -21,26 +21,7 @@ import { CONSTANTS } from "../../../../shared/constants";
 import { assertIsNonNull, delay } from "../../../utils";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-
-const NodeFormSchema = z.object({
-	name: z.string(),
-});
-
-export type NodeForm = {
-	name: string;
-	dateStart: string;
-	timeStart: string;
-	startRel: boolean;
-	dateEnd: string | null;
-	timeEnd: string | null;
-	endRel: boolean;
-	notes: string;
-
-	// only subjects use these
-	reoccurring: boolean;
-	context: string;
-};
+import { NodeFormSchema, type NodeForm } from "./schema";
 
 export default function DeathLogCardEditor({
 	node,
@@ -85,6 +66,7 @@ export default function DeathLogCardEditor({
 					: "Boss",
 		},
 		mode: "onTouched",
+		resolver: zodResolver(NodeFormSchema),
 	});
 
 	const onSubmit: SubmitHandler<NodeForm> = (formData) => {
@@ -184,18 +166,7 @@ export default function DeathLogCardEditor({
 								<input
 									type="search"
 									className="input w-full"
-									{...form.register("name", {
-										validate: (inputText) =>
-											validateString(
-												inputText,
-												siblingNames,
-												node.name,
-											),
-										maxLength: {
-											value: CONSTANTS.NUMS.INPUT_MAX,
-											message: CONSTANTS.ERROR.MAX_LENGTH,
-										},
-									})}
+									{...form.register("name")}
 								/>
 								{form.formState.errors.name && (
 									<div className="text-error">
