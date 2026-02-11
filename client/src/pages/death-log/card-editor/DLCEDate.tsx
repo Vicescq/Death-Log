@@ -1,7 +1,7 @@
 import type { DistinctTreeNode } from "../../../model/TreeNodeModel";
 import { CONSTANTS } from "../../../../shared/constants";
 import type { UseFormReturn } from "react-hook-form";
-import type { NodeForm } from "./DeathLogCardEditor";
+import type { NodeForm } from "./schema";
 
 type Props = {
 	node: DistinctTreeNode;
@@ -77,6 +77,11 @@ export default function DLCEDate({ node, form }: Props) {
 							{...form.register("timeEnd")}
 							step={1}
 						/>
+						{form.formState.errors.timeEnd && (
+							<div className="text-error">
+								{form.formState.errors.timeEnd.message}
+							</div>
+						)}
 					</label>
 				</>
 			) : null}

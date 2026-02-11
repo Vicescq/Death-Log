@@ -6,7 +6,7 @@ import DLCEDate from "./DLCEDate";
 import DLCEDel from "./DLCEDel";
 import DLCESubject from "./DLCESubject";
 import { useForm, type SubmitHandler } from "react-hook-form";
-import { formatString, validateString } from "../../../stores/utils";
+import { formatString } from "../../../stores/utils";
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
 import {
 	formattedStrTosubjectContext,
@@ -22,26 +22,41 @@ import { assertIsNonNull, delay } from "../../../utils";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { NodeFormSchema, type NodeForm } from "./schema";
+import { useShallow } from "zustand/react/shallow";
 
 export default function DeathLogCardEditor({
 	node,
 }: {
 	node: DistinctTreeNode;
 }) {
-	const tree = useDeathLogStore((state) => state.tree);
-
-	const parent = tree.get(node.parentID);
-	assertIsNonNull(parent);
-	const siblingNames = parent.childIDS.map((id) => {
-		const sibling = tree.get(id);
-		assertIsNonNull(sibling);
-		return sibling.name;
-	});
-
+	const siblingNames = useDeathLogStore(
+		useShallow((state) => {
+			const parent = state.tree.get(node.parentID);
+			assertIsNonNull(parent);
+			return parent.childIDS.map((id) => {
+				const childNode = state.tree.get(id);
+				assertIsNonNull(childNode);
+				return childNode.name;
+			});
+		}),
+	);
 	const updateNode = useDeathLogStore((state) => state.updateNode);
 	const deleteNode = useDeathLogStore((state) => state.deleteNode);
-
 	const navigate = useNavigate();
+
+	console.log(siblingNames)
+	
+	function isUnique(
+		siblingNames: string[],
+		currentlyEditingName: string | null,
+		inputText: string,
+	) {
+		for (const name of siblingNames) {
+			if (name != currentlyEditingName && name == inputText) {
+				return "That name already exists!";
+			}
+		}
+	}
 
 	const form = useForm<NodeForm>({
 		defaultValues: {
@@ -65,7 +80,7 @@ export default function DeathLogCardEditor({
 					? subjectContextToFormattedStr(node.context)
 					: "Boss",
 		},
-		mode: "onTouched",
+		mode: "onChange",
 		resolver: zodResolver(NodeFormSchema),
 	});
 
@@ -186,7 +201,13 @@ export default function DeathLogCardEditor({
 								<textarea
 									className="textarea w-full"
 									{...form.register("notes")}
+									rows={CONSTANTS.NUMS.TEXTAREA_ROW_MAX}
 								/>
+								{form.formState.errors.notes && (
+									<div className="text-error">
+										{form.formState.errors.notes.message}
+									</div>
+								)}
 							</label>
 
 							<DLCEDel
@@ -222,6 +243,7 @@ export default function DeathLogCardEditor({
 							{CONSTANTS.DEATH_LOG_EDITOR.RESET}
 						</button>
 						<button
+							type="button"
 							className="btn btn-accent w-full"
 							onClick={(e) => {
 								e.preventDefault();

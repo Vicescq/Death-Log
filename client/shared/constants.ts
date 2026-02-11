@@ -12,7 +12,8 @@ export const CONSTANTS = {
 		MIN_TIME: "Minimum time reached!",
 		DATE: "Invalid date!",
 		TIME: "Invalid time!",
-		TODAY: "Cannot set a future date!"
+		TODAY: "Cannot set a future date!",
+		EMPTY: "Cannot be empty!",
 	},
 	NUMS: {
 		INPUT_MAX: 60,
