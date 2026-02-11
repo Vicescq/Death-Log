@@ -1,9 +1,6 @@
-import { useLocation, useNavigate, useParams } from "react-router";
+import { useNavigate } from "react-router";
 import NavBar from "../../../components/navBar/NavBar";
-import type {
-	DistinctTreeNode,
-	SubjectContext,
-} from "../../../model/TreeNodeModel";
+import type { DistinctTreeNode } from "../../../model/TreeNodeModel";
 import DeathLogBreadcrumb from "../breadcrumb/DeathLogBreadcrumb";
 import DLCEDate from "./DLCEDate";
 import DLCEDel from "./DLCEDel";

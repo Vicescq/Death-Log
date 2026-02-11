@@ -28,12 +28,7 @@ export default function DeathCounterModalBody({
 						<input
 							type="search"
 							className="input bg-base-200"
-							{...form.register("remark", {
-								maxLength: {
-									value: CONSTANTS.NUMS.DEATH_REMARK_MAX,
-									message: CONSTANTS.ERROR.MAX_LENGTH,
-								},
-							})}
+							{...form.register("remark")}
 						/>
 					</label>
 
@@ -50,12 +45,7 @@ export default function DeathCounterModalBody({
 						<input
 							type="date"
 							className="input bg-base-200"
-							{...form.register("date", {
-								required: {
-									value: true,
-									message: CONSTANTS.ERROR.MAX_DATE,
-								},
-							})}
+							{...form.register("date")}
 						/>
 					</label>
 					{form.formState.errors.date && (
@@ -70,16 +60,7 @@ export default function DeathCounterModalBody({
 							type="time"
 							className="input bg-base-200"
 							step={1}
-							{...form.register("time", {
-								required: {
-									value: true,
-									message: CONSTANTS.ERROR.REQ_TIME,
-								},
-								pattern: {
-									value: /^\d{2}:\d{2}:\d{2}$/,
-									message: "Needs to have all HH:MM:SS",
-								},
-							})}
+							{...form.register("time")}
 						/>
 					</label>
 					{form.formState.errors.time && (

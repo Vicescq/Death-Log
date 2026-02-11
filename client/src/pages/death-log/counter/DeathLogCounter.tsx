@@ -14,17 +14,32 @@ import DeathCounterModalBody from "./DeathCounterModalBody";
 import { createDeath, formatString } from "../../../stores/utils";
 import DeathSettingsAndHistory from "./DeathSettingsAndHistory";
 import { assertIsNonNull } from "../../../utils";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { CONSTANTS } from "../../../../shared/constants";
 
 type Props = {
 	subject: Subject;
 };
 
-export type DeathForm = {
-	remark: string;
-	date: string;
-	time: string;
-	timestampRel: "T" | "F";
-};
+const DeathFormSchema = z.object({
+	remark: z.string().max(CONSTANTS.NUMS.DEATH_REMARK_MAX, {
+		error: CONSTANTS.ERROR.MAX_LENGTH,
+	}),
+	date: z.iso.date({ error: CONSTANTS.ERROR.DATE }).refine(
+		(isoDate) => {
+			const today = isoToDateSTD(new Date().toISOString());
+			return Date.parse(isoDate) <= Date.parse(today);
+		},
+		{
+			error: CONSTANTS.ERROR.TODAY,
+		},
+	),
+	time: z.iso.time({ precision: 0, error: CONSTANTS.ERROR.TIME }),
+	timestampRel: z.literal(["T", "F"]),
+});
+
+export type DeathForm = z.infer<typeof DeathFormSchema>;
 
 export default function DeathLogCounter({ subject }: Props) {
 	const updateNode = useDeathLogStore((state) => state.updateNode);
@@ -81,6 +96,7 @@ export default function DeathLogCounter({ subject }: Props) {
 
 	const modalForm = useForm<DeathForm>({
 		mode: "onChange",
+		resolver: zodResolver(DeathFormSchema),
 	});
 
 	const onEditDeath: SubmitHandler<DeathForm> = (formData) => {

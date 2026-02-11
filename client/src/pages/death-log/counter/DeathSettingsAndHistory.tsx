@@ -42,12 +42,7 @@ export default function DeathSettingsAndHistory({
 								type="search"
 								placeholder="Wasnt my fault, died to a bug!"
 								className="input w-full"
-								{...form.register("remark", {
-									maxLength: {
-										value: CONSTANTS.NUMS.DEATH_REMARK_MAX,
-										message: CONSTANTS.ERROR.MAX_LENGTH,
-									},
-								})}
+								{...form.register("remark")}
 							/>
 						</label>
 
