@@ -1,11 +1,11 @@
 import { CONSTANTS } from "../../../../shared/constants";
 import { type SubmitHandler, type UseFormReturn } from "react-hook-form";
-import type { DeathForm } from "./DeathLogCounter";
+import type { EditDeathForm } from "./DeathLogCounter";
 
 type Props = {
 	type: "edit" | "delete";
-	form: UseFormReturn<DeathForm, any, DeathForm>;
-	onEditDeath: SubmitHandler<DeathForm>;
+	form: UseFormReturn<EditDeathForm, any, EditDeathForm>;
+	onEditDeath: SubmitHandler<EditDeathForm>;
 	onDeleteDeath: () => void;
 };
 

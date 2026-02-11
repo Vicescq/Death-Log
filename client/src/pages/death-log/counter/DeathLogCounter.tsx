@@ -13,7 +13,7 @@ import { type SubmitHandler } from "react-hook-form";
 import DeathCounterModalBody from "./DeathCounterModalBody";
 import { createDeath, formatString } from "../../../stores/utils";
 import DeathSettingsAndHistory from "./DeathSettingsAndHistory";
-import { assertIsNonNull } from "../../../utils";
+import { assertIsNonNull, delay } from "../../../utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { CONSTANTS } from "../../../../shared/constants";
@@ -22,7 +22,7 @@ type Props = {
 	subject: Subject;
 };
 
-const DeathFormSchema = z.object({
+const EditDeathFormSchema = z.object({
 	remark: z.string().max(CONSTANTS.NUMS.DEATH_REMARK_MAX, {
 		error: CONSTANTS.ERROR.MAX_LENGTH,
 	}),
@@ -39,7 +39,13 @@ const DeathFormSchema = z.object({
 	timestampRel: z.literal(["T", "F"]),
 });
 
-export type DeathForm = z.infer<typeof DeathFormSchema>;
+const DeathCounterFormSchema = EditDeathFormSchema.pick({
+	remark: true,
+	timestampRel: true,
+});
+
+export type EditDeathForm = z.infer<typeof EditDeathFormSchema>;
+export type DeathCounterForm = z.infer<typeof DeathCounterFormSchema>;
 
 export default function DeathLogCounter({ subject }: Props) {
 	const updateNode = useDeathLogStore((state) => state.updateNode);
@@ -54,15 +60,16 @@ export default function DeathLogCounter({ subject }: Props) {
 		(a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp),
 	);
 
-	const counterForm = useForm<DeathForm>({
+	const counterForm = useForm<DeathCounterForm>({
 		mode: "onChange",
 		defaultValues: {
 			remark: "",
 			timestampRel: "T",
 		},
+		resolver: zodResolver(DeathCounterFormSchema),
 	});
 
-	const onIncrementDeath: SubmitHandler<DeathForm> = (formData) => {
+	const onIncrementDeath: SubmitHandler<DeathCounterForm> = (formData) => {
 		const formattedRemark = formatString(formData.remark);
 		const remark = formattedRemark == "" ? null : formattedRemark;
 		const timestampRel = formData.timestampRel == "T" ? true : false;
@@ -94,12 +101,12 @@ export default function DeathLogCounter({ subject }: Props) {
 		});
 	}
 
-	const modalForm = useForm<DeathForm>({
+	const modalForm = useForm<EditDeathForm>({
 		mode: "onChange",
-		resolver: zodResolver(DeathFormSchema),
+		resolver: zodResolver(EditDeathFormSchema),
 	});
 
-	const onEditDeath: SubmitHandler<DeathForm> = (formData) => {
+	const onEditDeath: SubmitHandler<EditDeathForm> = (formData) => {
 		const formattedRemark = formatString(formData.remark);
 		const remark = formattedRemark == "" ? null : formattedRemark;
 		const timestampRel = formData.timestampRel == "T" ? true : false;
@@ -131,6 +138,7 @@ export default function DeathLogCounter({ subject }: Props) {
 					: death,
 			),
 		});
+
 		modalRef.current?.close();
 	};
 

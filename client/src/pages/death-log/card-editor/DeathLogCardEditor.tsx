@@ -20,6 +20,12 @@ import {
 import { CONSTANTS } from "../../../../shared/constants";
 import { assertIsNonNull, delay } from "../../../utils";
 import { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+
+const NodeFormSchema = z.object({
+	name: z.string(),
+});
 
 export type NodeForm = {
 	name: string;

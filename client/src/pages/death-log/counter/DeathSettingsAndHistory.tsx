@@ -2,12 +2,12 @@ import { Controller, type UseFormReturn } from "react-hook-form";
 import { CONSTANTS } from "../../../../shared/constants";
 import TooltipButton from "../../../components/TooltipButton";
 import { isoToDateSTD, isoToTimeSTD } from "../utils/dateUtils";
-import type { DeathForm } from "./DeathLogCounter";
+import type { DeathCounterForm, EditDeathForm } from "./DeathLogCounter";
 import type { Death, Subject } from "../../../model/TreeNodeModel";
 import edit from "../../../assets/edit_single.svg";
 
 type Props = {
-	form: UseFormReturn<DeathForm, any, DeathForm>;
+	form: UseFormReturn<DeathCounterForm, any, DeathCounterForm>;
 	subject: Subject;
 	onFocusDeath: (id: string) => void;
 	deathHistoryRef: React.RefObject<HTMLUListElement | null>;
