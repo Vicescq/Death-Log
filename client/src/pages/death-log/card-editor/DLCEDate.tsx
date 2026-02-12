@@ -17,17 +17,10 @@ export default function DLCEDate({ node, form }: Props) {
 					type="date"
 					className="input join-item w-full"
 					{...form.register("dateStart")}
-					disabled={form.formState.dirtyFields.dateEnd}
 				/>
 				{form.formState.errors.dateStart && (
 					<div className="text-error">
 						{form.formState.errors.dateStart.message}
-					</div>
-				)}
-				{form.formState.dirtyFields.dateEnd && (
-					<div className="text-info">
-						Please finish editing Date Completed field to edit this
-						field.
 					</div>
 				)}
 			</label>
@@ -55,17 +48,10 @@ export default function DLCEDate({ node, form }: Props) {
 							type="date"
 							className="input join-item w-full"
 							{...form.register("dateEnd")}
-							disabled={form.formState.dirtyFields.dateStart}
 						/>
 						{form.formState.errors.dateEnd && (
 							<div className="text-error">
 								{form.formState.errors.dateEnd.message}
-							</div>
-						)}
-						{form.formState.dirtyFields.dateStart && (
-							<div className="text-info">
-								Please finish editing Date Created field to edit
-								this field.
 							</div>
 						)}
 					</label>

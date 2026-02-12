@@ -6,15 +6,7 @@ export const EditDeathFormSchema = z.object({
 	remark: z.string().max(CONSTANTS.NUMS.DEATH_REMARK_MAX, {
 		error: CONSTANTS.ERROR.MAX_LENGTH,
 	}),
-	date: z.iso.date({ error: CONSTANTS.ERROR.DATE }).refine(
-		(isoDate) => {
-			const today = isoToDateSTD(new Date().toISOString());
-			return Date.parse(isoDate) <= Date.parse(today);
-		},
-		{
-			error: CONSTANTS.ERROR.TODAY,
-		},
-	),
+	date: z.iso.date({ error: CONSTANTS.ERROR.DATE }),
 	time: z.iso.time({ precision: 0, error: CONSTANTS.ERROR.TIME }),
 	timestampRel: z.literal(["T", "F"]),
 });

@@ -22,41 +22,15 @@ import { assertIsNonNull, delay } from "../../../utils";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { NodeFormSchema, type NodeForm } from "./schema";
-import { useShallow } from "zustand/react/shallow";
 
 export default function DeathLogCardEditor({
 	node,
 }: {
 	node: DistinctTreeNode;
 }) {
-	const siblingNames = useDeathLogStore(
-		useShallow((state) => {
-			const parent = state.tree.get(node.parentID);
-			assertIsNonNull(parent);
-			return parent.childIDS.map((id) => {
-				const childNode = state.tree.get(id);
-				assertIsNonNull(childNode);
-				return childNode.name;
-			});
-		}),
-	);
 	const updateNode = useDeathLogStore((state) => state.updateNode);
 	const deleteNode = useDeathLogStore((state) => state.deleteNode);
 	const navigate = useNavigate();
-
-	console.log(siblingNames)
-	
-	function isUnique(
-		siblingNames: string[],
-		currentlyEditingName: string | null,
-		inputText: string,
-	) {
-		for (const name of siblingNames) {
-			if (name != currentlyEditingName && name == inputText) {
-				return "That name already exists!";
-			}
-		}
-	}
 
 	const form = useForm<NodeForm>({
 		defaultValues: {
@@ -142,10 +116,6 @@ export default function DeathLogCardEditor({
 			});
 		}
 
-		// console.log("DIRTY:", form.formState.dirtyFields);
-		// console.log("ERR:", form.formState.errors);
-		// console.log("DATA:", formData);
-		// console.log("REST VALS:", form.getValues());
 		form.reset(formData);
 	};
 
@@ -156,7 +126,6 @@ export default function DeathLogCardEditor({
 		await delay(100); // TODO: maybe figure out a better soln?
 		deleteNode(node);
 	}
-
 	return (
 		<>
 			<NavBar
