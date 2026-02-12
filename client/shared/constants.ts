@@ -9,7 +9,9 @@ export const CONSTANTS = {
 		EMPTY: "Cannot be empty!",
 		DATE_START_SURPASSED_END: "Created date cannot surpass completed date!",
 		DATE_SURPASSED_TODAY: "Date cannot be set in the future!",
-		NON_UNIQUE: "Name already exists!"
+		NON_UNIQUE: "Name already exists!",
+		TIME_START_SURPASSED_END:
+			"Creation time cannot surpass completion time!",
 	},
 	NUMS: {
 		INPUT_MAX: 60,
@@ -20,6 +22,8 @@ export const CONSTANTS = {
 	INFO: {
 		RELIABILITY:
 			"A reliable date will be displayed when graphed. An unreliable date will be omitted by default but still can be shown.",
+		EDITOR_DATE_START_DISABLED: "In order to edit this field, please finish editing Date Completed field.",
+		EDITOR_DATE_END_DISABLED: "In order to edit this field, please finish editing Date Created field.",
 	},
 	DEATH_LOG_EDITOR: {
 		DEL_PH: "Type DEL to delete",

@@ -16,12 +16,21 @@ export default function DLCEDate({ node, form }: Props) {
 				<input
 					type="date"
 					className="input join-item w-full"
-					{...form.register("dateStart")}
+					{...form.register("dateStart", {
+						onChange: () =>
+							form.setValue("timeStart", "00:00:00", {
+								shouldValidate: true,
+							}),
+					})}
+					disabled={form.formState.dirtyFields.dateEnd}
 				/>
 				{form.formState.errors.dateStart && (
 					<div className="text-error">
 						{form.formState.errors.dateStart.message}
 					</div>
+				)}
+				{form.formState.dirtyFields.dateEnd && (
+					<div className="text-info">{CONSTANTS.INFO.EDITOR_DATE_START_DISABLED}</div>
 				)}
 			</label>
 
@@ -47,12 +56,19 @@ export default function DLCEDate({ node, form }: Props) {
 						<input
 							type="date"
 							className="input join-item w-full"
-							{...form.register("dateEnd")}
+							{...form.register("dateEnd", {
+								onChange: () =>
+									form.setValue("timeEnd", "00:00:00"),
+							})}
+							disabled={form.formState.dirtyFields.dateStart}
 						/>
 						{form.formState.errors.dateEnd && (
 							<div className="text-error">
 								{form.formState.errors.dateEnd.message}
 							</div>
+						)}
+						{form.formState.dirtyFields.dateStart && (
+							<div className="text-info">{CONSTANTS.INFO.EDITOR_DATE_END_DISABLED}</div>
 						)}
 					</label>
 					<label className="floating-label">

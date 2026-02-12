@@ -139,7 +139,7 @@ export default function DeathLogCardEditor({
 		await delay(100); // TODO: maybe figure out a better soln?
 		deleteNode(node);
 	}
-	console.log(form.formState.errors);
+
 	return (
 		<>
 			<NavBar

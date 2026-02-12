@@ -66,55 +66,71 @@ export const createNodeFormEditSchema = (
 	);
 
 	const NodeFormEditSchema = BaseNodeFormSchema.superRefine((schema, ctx) => {
-		if (schema.dateEnd && schema.timeEnd) {
-			// have to put this due to superRefine() firing even if date iso validation in BaseNodeFormSchema produces an error
-			if (
-				!schema.dateStart ||
-				!schema.dateEnd ||
-				!schema.timeStart ||
-				!schema.timeEnd
-			)
-				return;
+		// have to wrap in try catch due to superRefine() firing even if date iso validation in BaseNodeFormSchema produces an error
+		try {
+			if (schema.dateEnd && schema.timeEnd) {
+				// have to do this because schema.date (YYYY:MM:DD) has an implcit timezone which is binded to the user where Date.parse does not know about. Need to transform that date into UTC iso string then pass it to .parse()
+				const parsedUTCdateStart = Date.parse(
+					dateTimeSTDToISO(schema.dateStart, "00:00:00"),
+				);
+				const parsedUTCdateEnd = Date.parse(
+					dateTimeSTDToISO(schema.dateEnd, "00:00:00"),
+				);
 
-			// have to do this because schema.date (YYYY:MM:DD) has an implcit timezone which is binded to the user where Date.parse does not know about. Need to transform that date into UTC iso string then pass it to .parse()
-			const parsedUTCdateStart = Date.parse(
-				dateTimeSTDToISO(schema.dateStart, "00:00:00"),
-			);
-			const parsedUTCdateEnd = Date.parse(
-				dateTimeSTDToISO(schema.dateEnd, "00:00:00"),
-			);
+				// placeholder dates, only care abt local time -> utc time conversion
+				const parsedUTCtimeStart = Date.parse(
+					dateTimeSTDToISO("2025-01-01", schema.timeStart),
+				);
+				const parsedUTCtimeEnd = Date.parse(
+					dateTimeSTDToISO("2025-01-01", schema.timeEnd),
+				);
 
-			if (parsedUTCdateStart > parsedUTCdateEnd) {
-				ctx.addIssue({
-					code: "custom",
-					message: CONSTANTS.ERROR.DATE_START_SURPASSED_END,
-					path: ["dateStart"],
-				});
-				ctx.addIssue({
-					code: "custom",
-					message: CONSTANTS.ERROR.DATE_START_SURPASSED_END,
-					path: ["dateEnd"],
-				});
+				if (
+					parsedUTCdateStart == parsedUTCdateEnd &&
+					parsedUTCtimeStart > parsedUTCtimeEnd
+				) {
+					ctx.addIssue({
+						code: "custom",
+						message: CONSTANTS.ERROR.TIME_START_SURPASSED_END,
+						path: ["timeStart"],
+					});
+					ctx.addIssue({
+						code: "custom",
+						message: CONSTANTS.ERROR.TIME_START_SURPASSED_END,
+						path: ["timeEnd"],
+					});
+				} else if (parsedUTCdateStart > parsedUTCdateEnd) {
+					ctx.addIssue({
+						code: "custom",
+						message: CONSTANTS.ERROR.DATE_START_SURPASSED_END,
+						path: ["dateStart"],
+					});
+					ctx.addIssue({
+						code: "custom",
+						message: CONSTANTS.ERROR.DATE_START_SURPASSED_END,
+						path: ["dateEnd"],
+					});
+				} else if (parsedUTCdateEnd > Date.now()) {
+					ctx.addIssue({
+						code: "custom",
+						message: CONSTANTS.ERROR.DATE_SURPASSED_TODAY,
+						path: ["dateEnd"],
+					});
+				}
+			} else {
+				const parsedUTCdateStart = Date.parse(
+					dateTimeSTDToISO(schema.dateStart, "00:00:00"),
+				);
+				if (parsedUTCdateStart > Date.now()) {
+					ctx.addIssue({
+						code: "custom",
+						message: CONSTANTS.ERROR.DATE_SURPASSED_TODAY,
+						path: ["dateStart"],
+					});
+				}
 			}
-
-			if (parsedUTCdateEnd > Date.now()) {
-				ctx.addIssue({
-					code: "custom",
-					message: CONSTANTS.ERROR.DATE_SURPASSED_TODAY,
-					path: ["dateEnd"],
-				});
-			}
-		} else {
-			const parsedUTCdateStart = Date.parse(
-				dateTimeSTDToISO(schema.dateStart, "00:00:00"),
-			);
-			if (parsedUTCdateStart > Date.now()) {
-				ctx.addIssue({
-					code: "custom",
-					message: CONSTANTS.ERROR.DATE_SURPASSED_TODAY,
-					path: ["dateStart"],
-				});
-			}
+		} catch {
+			return;
 		}
 	});
 
