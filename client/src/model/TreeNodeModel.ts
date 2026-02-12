@@ -57,3 +57,5 @@ export type SubjectContext =
 	| "other"
 	| "genericEnemy"
 	| "miniBoss";
+
+export type SubjectCharacteristics = Pick<Subject, "reoccurring" | "context">;

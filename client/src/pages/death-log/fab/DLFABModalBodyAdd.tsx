@@ -1,21 +1,15 @@
 import type { SubmitHandler, UseFormReturn } from "react-hook-form";
-import type { AddForm } from "./DeathLogFAB";
 import type { DistinctTreeNode } from "../../../model/TreeNodeModel";
 import DLFABModalBodyAddName from "./DLFABModalBodyAddName";
+import type { AddForm } from "./schema";
 
 type Props = {
 	type: Exclude<DistinctTreeNode["type"], "ROOT_NODE">;
 	form: UseFormReturn<AddForm, any, AddForm>;
 	onAdd: SubmitHandler<AddForm>;
-	siblingNames: string[];
 };
 
-export default function DLFABModalBodyAdd({
-	type,
-	form,
-	onAdd,
-	siblingNames,
-}: Props) {
+export default function DLFABModalBodyAdd({ type, form, onAdd }: Props) {
 	return (
 		<form onSubmit={form.handleSubmit(onAdd)}>
 			{type == "subject" ? (
@@ -24,10 +18,7 @@ export default function DLFABModalBodyAdd({
 						Subject title & Characteristics
 					</legend>
 
-					<DLFABModalBodyAddName
-						form={form}
-						siblingNames={siblingNames}
-					/>
+					<DLFABModalBodyAddName form={form} />
 
 					<label className="floating-label mt-4">
 						<span>Context</span>
@@ -54,10 +45,7 @@ export default function DLFABModalBodyAdd({
 				</fieldset>
 			) : (
 				<div className="my-4">
-					<DLFABModalBodyAddName
-						form={form}
-						siblingNames={siblingNames}
-					/>
+					<DLFABModalBodyAddName form={form} />
 				</div>
 			)}
 		</form>

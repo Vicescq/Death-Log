@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import add from "../../../assets/add.svg";
 import fabEdit from "../../../assets/fab_edit.svg";
 import filter from "../../../assets/filter.svg";
@@ -8,18 +8,14 @@ import down from "../../../assets/down.svg";
 import Modal from "../../../components/Modal";
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
 import type { VirtuosoHandle } from "react-virtuoso";
-import type {
-	DistinctTreeNode,
-	Subject,
-	SubjectContext,
-} from "../../../model/TreeNodeModel";
+import type { DistinctTreeNode } from "../../../model/TreeNodeModel";
 import { formatString } from "../../../stores/utils";
 import { CONSTANTS } from "../../../../shared/constants";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import DLFABModalBodyAdd from "./DLFABModalBodyAdd";
 import { formattedStrTosubjectContext } from "../utils/utils";
-
-export type SubjectCharacteristics = Pick<Subject, "reoccurring" | "context">;
+import { AddFormSchema, type AddForm } from "./schema";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 type Props = {
 	type: Exclude<DistinctTreeNode["type"], "ROOT_NODE">;
@@ -27,13 +23,6 @@ type Props = {
 	onFocus: () => void;
 	onBlur: () => void;
 	virtuosoRef: React.RefObject<VirtuosoHandle | null>;
-	siblingNames: string[];
-};
-
-export type AddForm = {
-	name: string;
-	reoccurring: boolean; // only subjects
-	context: string; // only subjects
 };
 
 export default function DeathLogFAB({
@@ -42,7 +31,6 @@ export default function DeathLogFAB({
 	onFocus,
 	onBlur,
 	virtuosoRef,
-	siblingNames,
 }: Props) {
 	const addNode = useDeathLogStore((state) => state.addNode);
 	const modalRef = useRef<HTMLDialogElement>(null);
@@ -53,7 +41,8 @@ export default function DeathLogFAB({
 			context: "Boss",
 			reoccurring: false,
 		},
-		mode: "onTouched",
+		mode: "onChange",
+		resolver: zodResolver(AddFormSchema),
 	});
 
 	const onAdd: SubmitHandler<AddForm> = (formData) => {
@@ -165,7 +154,6 @@ export default function DeathLogFAB({
 							type={type}
 							form={addForm}
 							onAdd={onAdd}
-							siblingNames={siblingNames}
 						/>
 					</>
 				}

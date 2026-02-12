@@ -177,30 +177,3 @@ export async function refreshTree(
 export function formatString(str: string) {
 	return str.replace(/\s+/g, " ").trim();
 }
-
-export function validateString(
-	inputText: string,
-	siblingNames: string[],
-	currentlyEditingName: string | null,
-) {
-	inputText = formatString(inputText);
-	if (typeof inputText != "string") {
-		return "Not a string!";
-	}
-
-	if (inputText.match(/^\.{1,}$/)) {
-		return "No ellipses allowed!";
-	}
-
-	if (inputText == "") {
-		return "Cannot be an empty name!";
-	}
-
-	for (const name of siblingNames) {
-		if (name != currentlyEditingName && name == inputText) {
-			return "That name already exists!";
-		}
-	}
-
-	return true;
-}

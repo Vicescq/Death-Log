@@ -59,11 +59,6 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 	}
 
 	const sortedChildIDs = sortChildIDS(parent, tree);
-	const nodeNames = parent.childIDS.map((id) => {
-		const node = tree.get(id);
-		assertIsNonNull(node);
-		return node.name;
-	});
 
 	return (
 		<>
@@ -111,7 +106,6 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 					setPageOpacity("");
 					setDeathLogIsInert(false);
 				}}
-				siblingNames={nodeNames}
 			/>
 
 			<Modal

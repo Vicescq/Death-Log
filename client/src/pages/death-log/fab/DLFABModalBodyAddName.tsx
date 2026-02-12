@@ -1,14 +1,12 @@
 import type { UseFormReturn } from "react-hook-form";
 import { CONSTANTS } from "../../../../shared/constants";
-import { validateString } from "../../../stores/utils";
-import type { AddForm } from "./DeathLogFAB";
+import type { AddForm } from "./schema";
 
 type Props = {
 	form: UseFormReturn<AddForm, any, AddForm>;
-	siblingNames: string[];
 };
 
-export default function DLFABModalBodyAddName({ form, siblingNames }: Props) {
+export default function DLFABModalBodyAddName({ form }: Props) {
 	return (
 		<>
 			<label className="floating-label">
@@ -17,14 +15,7 @@ export default function DLFABModalBodyAddName({ form, siblingNames }: Props) {
 					<input
 						type="search"
 						className="input bg-base-200 join-item"
-						{...form.register("name", {
-							validate: (inputText) =>
-								validateString(inputText, siblingNames, null),
-							maxLength: {
-								value: CONSTANTS.NUMS.INPUT_MAX,
-								message: CONSTANTS.ERROR.MAX_LENGTH,
-							},
-						})}
+						{...form.register("name")}
 					/>
 					<button
 						type="submit"

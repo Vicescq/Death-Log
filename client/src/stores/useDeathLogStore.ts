@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import type { DistinctTreeNode, RootNode, Tree } from "../model/TreeNodeModel";
 import LocalDB from "../services/LocalDB";
-import type { SubjectCharacteristics } from "../pages/death-log/fab/DeathLogFAB";
+import type { SubjectCharacteristics } from "../model/TreeNodeModel";
 import { assertIsNonNull } from "../utils";
 import {
 	createRootNode,
