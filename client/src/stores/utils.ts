@@ -6,10 +6,11 @@ import type {
 	RootNode,
 	Tree,
 	Death,
+	SubjectContext,
 } from "../model/TreeNodeModel";
 import LocalDB from "../services/LocalDB";
 import { nanoid } from "nanoid";
-import { assertIsNonNull } from "../utils";
+import { assertIsNonNull } from "../utils/asserts";
 
 export function identifyDeletedSelfAndChildrenIDS(
 	node: DistinctTreeNode,
@@ -118,18 +119,14 @@ export function createDeath(
 	subject: Subject,
 	remark: string | null,
 	timestampRel: boolean,
-	timestampOvr?: string,
-	subjectIDOvr?: string,
 ): Death {
 	return {
-		id: subjectIDOvr
-			? subjectIDOvr
-			: generateAndValidateID({
-					type: "death",
-					ids: subject.log.map((death) => death.id),
-				}),
+		id: generateAndValidateID({
+			type: "death",
+			ids: subject.log.map((death) => death.id),
+		}),
 		parentID: subject.id,
-		timestamp: timestampOvr ? timestampOvr : new Date().toISOString(),
+		timestamp: new Date().toISOString(),
 		timestampRel: timestampRel,
 		remark: remark,
 	};
@@ -174,6 +171,26 @@ export async function refreshTree(
 	initTree(nodes);
 }
 
-export function formatString(str: string) {
-	return str.replace(/\s+/g, " ").trim();
+export function subjectContextToFormattedStr(context: SubjectContext) {
+	const subjectContextMap = {
+		boss: "Boss",
+		location: "Location",
+		other: "Other",
+		genericEnemy: "Generic Enemy",
+		miniBoss: "Mini Boss",
+	};
+	return subjectContextMap[context];
+}
+
+export function formattedStrTosubjectContext(
+	formattedStr: string,
+): SubjectContext {
+	const properStrMap: Record<string, SubjectContext> = {
+		Boss: "boss",
+		Location: "location",
+		Other: "other",
+		"Generic Enemy": "genericEnemy",
+		"Mini Boss": "miniBoss",
+	};
+	return properStrMap[formattedStr];
 }

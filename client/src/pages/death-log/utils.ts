@@ -1,34 +1,11 @@
 import type {
 	DistinctTreeNode,
-	SubjectContext,
+	Subject,
 	Tree,
 	TreeNode,
-} from "../../../model/TreeNodeModel";
-import { assertIsNonNull } from "../../../utils";
-
-export function subjectContextToFormattedStr(context: SubjectContext) {
-	const subjectContextMap = {
-		boss: "Boss",
-		location: "Location",
-		other: "Other",
-		genericEnemy: "Generic Enemy",
-		miniBoss: "Mini Boss",
-	};
-	return subjectContextMap[context];
-}
-
-export function formattedStrTosubjectContext(
-	formattedStr: string,
-): SubjectContext {
-	const properStrMap: Record<string, SubjectContext> = {
-		Boss: "boss",
-		Location: "location",
-		Other: "other",
-		"Generic Enemy": "genericEnemy",
-		"Mini Boss": "miniBoss",
-	};
-	return properStrMap[formattedStr];
-}
+} from "../../model/TreeNodeModel";
+import { createDeath } from "../../stores/utils";
+import { assertIsNonNull } from "../../utils/asserts";
 
 export function calcDeaths(node: DistinctTreeNode, tree: Tree) {
 	let sum = 0;
@@ -59,9 +36,9 @@ export function calcDeaths(node: DistinctTreeNode, tree: Tree) {
 	}
 }
 
-// export function stressTestDeathObjects(size: number, id: string) {
-// 	return Array.from({ length: size }, () => createDeath(id, null, true));
-// }
+export function stressTestDeathObjects(size: number, subject: Subject) {
+	return Array.from({ length: size }, () => createDeath(subject, null, true));
+}
 
 export function sortChildIDS(parentNode: TreeNode, tree: Tree) {
 	const sorted = parentNode.childIDS.toSorted((a, b) => {
@@ -101,17 +78,4 @@ export function sortChildIDS(parentNode: TreeNode, tree: Tree) {
 		return result;
 	});
 	return sorted;
-}
-
-export function determineFABType(
-	parent: DistinctTreeNode,
-): Exclude<DistinctTreeNode["type"], "ROOT_NODE"> {
-	switch (parent.type) {
-		case "ROOT_NODE":
-			return "game";
-		case "game":
-			return "profile";
-		default:
-			return "subject";
-	}
 }

@@ -1,4 +1,5 @@
-import type { DistinctTreeNode, Profile, Subject } from "./model/TreeNodeModel";
+import type { DistinctTreeNode, Profile, Subject } from "../model/TreeNodeModel";
+
 
 export function assertIsNonNull<T>(value: T): asserts value is NonNullable<T> {
 	if (value === undefined || value === null) {
@@ -7,7 +8,7 @@ export function assertIsNonNull<T>(value: T): asserts value is NonNullable<T> {
 }
 
 export function assertIsProfile(
-	value: DistinctTreeNode,
+	value: DistinctTreeNode
 ): asserts value is Profile {
 	if (value.type != "profile") {
 		throw new Error("DEV ERROR! Expected profile type is non profile!");
@@ -15,17 +16,9 @@ export function assertIsProfile(
 }
 
 export function assertIsSubject(
-	value: DistinctTreeNode,
+	value: DistinctTreeNode
 ): asserts value is Subject {
 	if (value.type != "subject") {
 		throw new Error("DEV ERROR! Expected subject type is non subject!");
 	}
-}
-
-export async function delay(ms: number) {
-	await new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-export function calcRequiredPages(totalSize: number, pageSize: number) {
-	return Math.max(1, Math.ceil(totalSize / pageSize));
 }

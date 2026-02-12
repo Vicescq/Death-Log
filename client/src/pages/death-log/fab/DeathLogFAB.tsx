@@ -9,17 +9,16 @@ import Modal from "../../../components/Modal";
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
 import type { VirtuosoHandle } from "react-virtuoso";
 import type { DistinctTreeNode } from "../../../model/TreeNodeModel";
-import { formatString } from "../../../stores/utils";
+import { formatString } from "../../../utils/general";
 import { CONSTANTS } from "../../../../shared/constants";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import DLFABModalBodyAdd from "./DLFABModalBodyAdd";
-import { formattedStrTosubjectContext } from "../utils/utils";
+import { formattedStrTosubjectContext } from "../../../stores/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { assertIsNonNull } from "../../../utils";
+import { assertIsNonNull } from "../../../utils/asserts";
 import { createNodeFormAddSchema, type NodeFormAdd } from "../schema";
 
 type Props = {
-	type: Exclude<DistinctTreeNode["type"], "ROOT_NODE">;
 	onFocus: () => void;
 	onBlur: () => void;
 	virtuosoRef: React.RefObject<VirtuosoHandle | null>;
@@ -27,7 +26,6 @@ type Props = {
 };
 
 export default function DeathLogFAB({
-	type,
 	onFocus,
 	onBlur,
 	virtuosoRef,
@@ -42,6 +40,19 @@ export default function DeathLogFAB({
 		assertIsNonNull(node);
 		return node.name;
 	});
+
+	let type: Exclude<DistinctTreeNode["type"], "ROOT_NODE">;
+	switch (parent.type) {
+		case "ROOT_NODE":
+			type = "game";
+			break;
+		case "game":
+			type = "profile";
+			break;
+		default:
+			type = "subject";
+	}
+
 	const NodeFormAdd = createNodeFormAddSchema(siblingNames, null);
 
 	const addForm = useForm<NodeFormAdd>({

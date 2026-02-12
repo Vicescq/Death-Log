@@ -4,12 +4,11 @@ import DeathLogFAB from "./fab/DeathLogFAB";
 import { Virtuoso, type Components, type VirtuosoHandle } from "react-virtuoso";
 import DeathLogBreadcrumb from "./breadcrumb/DeathLogBreadcrumb";
 import type { DistinctTreeNode } from "../../model/TreeNodeModel";
-import { determineFABType, sortChildIDS } from "./utils/utils";
+import { sortChildIDS } from "./utils";
 import { useDeathLogStore } from "../../stores/useDeathLogStore";
-import { assertIsNonNull } from "../../utils";
+import { assertIsNonNull } from "../../utils/asserts";
 import Modal from "../../components/Modal";
 import DeathLogCard from "./card/DeathLogCard";
-import { isoToDateSTD } from "./utils/dateUtils";
 
 export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 	const tree = useDeathLogStore((state) => state.tree);
@@ -96,7 +95,6 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 
 			<DeathLogFAB
 				virtuosoRef={virtuosoRef}
-				type={determineFABType(parent)}
 				onFocus={() => {
 					setPageOpacity("opacity-25");
 					setDeathLogIsInert(true);

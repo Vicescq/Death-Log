@@ -5,15 +5,17 @@ import DeathLogBreadcrumb from "../breadcrumb/DeathLogBreadcrumb";
 import NavBar from "../../../components/navBar/NavBar";
 import type { Subject } from "../../../model/TreeNodeModel";
 import { useRef, useState } from "react";
-import { isoToDateSTD, isoToTimeSTD } from "../utils/dateUtils";
-import { resolveTimestampUpdate } from "../utils/dateUtils";
+import { isoToDateSTD, isoToTimeSTD } from "../../../utils/date";
+import { resolveTimestampUpdate } from "../../../utils/date";
 import Modal from "../../../components/Modal";
 import { useForm } from "react-hook-form";
 import { type SubmitHandler } from "react-hook-form";
 import DeathCounterModalBody from "./DeathCounterModalBody";
-import { createDeath, formatString } from "../../../stores/utils";
+import { createDeath } from "../../../stores/utils";
+import { formatString } from "../../../utils/general";
 import DeathSettingsAndHistory from "./DeathSettingsAndHistory";
-import { assertIsNonNull, delay } from "../../../utils";
+import { delay } from "../../../utils/general";
+import { assertIsNonNull } from "../../../utils/asserts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
 	DeathCounterFormSchema,
@@ -107,13 +109,12 @@ export default function DeathLogCounter({ subject }: Props) {
 			...subject,
 			log: subject.log.map((death) =>
 				death.id === focusedDeathID
-					? createDeath(
-							subject,
-							remark,
-							timestampRel,
-							isoStr,
-							death.id,
-						)
+					? {
+							...death,
+							remark: remark,
+							timestamp: isoStr,
+							timestampRel: timestampRel,
+						}
 					: death,
 			),
 		});

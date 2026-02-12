@@ -1,37 +1,8 @@
-import { assertIsNonNull } from "../../../utils";
-
-/**
- * Resolves a given timestamp, determines the correct ISO string to return, ensuring only dirty timestamp inputs are updated.
- * If not used timestamps may be less precise.
- */
-export function resolveTimestampUpdate(
-	dirtyDate: string | undefined,
-	isDirtyDate: boolean,
-	dirtyTime: string | undefined,
-	isDirtyTime: boolean,
-	ogISOTimestamp: string,
-) {
-	let isoStr: string;
-	if (isDirtyDate && isDirtyTime) {
-		assertIsNonNull(dirtyDate);
-		assertIsNonNull(dirtyTime);
-		isoStr = dateTimeSTDToISO(dirtyDate, dirtyTime);
-	} else if (isDirtyDate && !isDirtyTime) {
-		assertIsNonNull(dirtyDate);
-		isoStr = dateTimeSTDToISO(dirtyDate, isoToTimeSTD(ogISOTimestamp));
-	} else if (!isDirtyDate && isDirtyTime) {
-		assertIsNonNull(dirtyTime);
-		isoStr = dateTimeSTDToISO(isoToDateSTD(ogISOTimestamp), dirtyTime);
-	} else {
-		isoStr = ogISOTimestamp;
-	}
-	return isoStr;
-}
-
+import { assertIsNonNull } from "./asserts";
 /**
  * ISO string to standard date format
- * @param isoSTR 
- * @returns 
+ * @param isoSTR
+ * @returns
  */
 export function isoToDateSTD(isoSTR: string) {
 	const dateObj = new Date(isoSTR);
@@ -47,11 +18,10 @@ export function isoToDateSTD(isoSTR: string) {
 	return `${year}-${month}-${day}`;
 }
 
-
 /**
  * ISO string to standard time format
- * @param isoSTR 
- * @returns 
+ * @param isoSTR
+ * @returns
  */
 export function isoToTimeSTD(isoSTR: string) {
 	const dateObj = new Date(isoSTR);
@@ -93,8 +63,30 @@ export function dateTimeSTDToISO(
 	return dateObj.toISOString();
 }
 
-export function maxDate(isoSTR: string) {
-	const dateObj = new Date(isoSTR);
-	dateObj.setFullYear(dateObj.getFullYear() + 1);
-	return isoToDateSTD(dateObj.toISOString());
+/**
+ * Resolves a given timestamp, determines the correct ISO string to return, ensuring only dirty timestamp inputs are updated.
+ * If not used timestamps may be less precise.
+ */
+export function resolveTimestampUpdate(
+	dirtyDate: string | undefined,
+	isDirtyDate: boolean,
+	dirtyTime: string | undefined,
+	isDirtyTime: boolean,
+	ogISOTimestamp: string,
+) {
+	let isoStr: string;
+	if (isDirtyDate && isDirtyTime) {
+		assertIsNonNull(dirtyDate);
+		assertIsNonNull(dirtyTime);
+		isoStr = dateTimeSTDToISO(dirtyDate, dirtyTime);
+	} else if (isDirtyDate && !isDirtyTime) {
+		assertIsNonNull(dirtyDate);
+		isoStr = dateTimeSTDToISO(dirtyDate, isoToTimeSTD(ogISOTimestamp));
+	} else if (!isDirtyDate && isDirtyTime) {
+		assertIsNonNull(dirtyTime);
+		isoStr = dateTimeSTDToISO(isoToDateSTD(ogISOTimestamp), dirtyTime);
+	} else {
+		isoStr = ogISOTimestamp;
+	}
+	return isoStr;
 }

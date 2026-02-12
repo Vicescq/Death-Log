@@ -1,7 +1,7 @@
 import { Controller, type UseFormReturn } from "react-hook-form";
 import { CONSTANTS } from "../../../../shared/constants";
 import TooltipButton from "../../../components/TooltipButton";
-import { isoToDateSTD, isoToTimeSTD } from "../utils/dateUtils";
+import { isoToDateSTD, isoToTimeSTD } from "../../../utils/date";
 import type { Death, Subject } from "../../../model/TreeNodeModel";
 import edit from "../../../assets/edit_single.svg";
 import type { DeathCounterForm } from "./schema";

@@ -1,7 +1,7 @@
 import { useLocation, useParams } from "react-router";
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
 import type { BreadcrumbMember } from "./DeathLogBreadcrumb";
-import { assertIsNonNull } from "../../../utils";
+import { assertIsNonNull } from "../../../utils/asserts";
 
 export default function useBreadcrumbMembers(): BreadcrumbMember[] {
 	const location = useLocation();

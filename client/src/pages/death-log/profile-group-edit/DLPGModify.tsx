@@ -5,9 +5,9 @@ import type {
 	ProfileGroup,
 	Subject,
 } from "../../../model/TreeNodeModel";
-import { formatString } from "../../../stores/utils";
-import { assertIsNonNull } from "../../../utils";
-import { getFormStatus } from "../utils/utils";
+import { formatString } from "../../../utils/general";
+import { assertIsNonNull } from "../../../utils/asserts";
+import { getFormStatus } from "../utils";
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
 
 type Props = AddProps | EditProps;
