@@ -1,14 +1,13 @@
 import { useState } from "react";
-import { CONSTANTS } from "../../../../shared/constants";
+import { CONSTANTS } from "../../../../../shared/constants";
 import type {
 	Profile,
 	ProfileGroup,
 	Subject,
-} from "../../../model/TreeNodeModel";
-import { formatString } from "../../../utils/general";
-import { assertIsNonNull } from "../../../utils/asserts";
-import { getFormStatus } from "../utils";
-import { useDeathLogStore } from "../../../stores/useDeathLogStore";
+} from "../../../../model/TreeNodeModel";
+import { formatString } from "../../../../utils/general";
+import { assertIsNonNull } from "../../../../utils/asserts";
+import { useDeathLogStore } from "../../../../stores/useDeathLogStore";
 
 type Props = AddProps | EditProps;
 
@@ -47,24 +46,6 @@ export default function DLPGModify(props: Props) {
 							subject.id,
 						),
 				);
-
-	const { inputTextError, submitBtnCSS } = getFormStatus(
-		props.modifiedProfileGroup.title,
-		props.type == "edit"
-			? {
-					type: "profileGroupEdit",
-					profile: props.profile,
-					profileGroup: props.modifiedProfileGroup,
-					originalProfileGroup:
-						props.profile.groupings[
-							props.currEditingProfileGroupIndex
-						],
-				}
-			: {
-					type: "profileGroupAdd",
-					profile: props.profile,
-				},
-	);
 
 	function handleProfileGroupAdd() {
 		updateNode({
@@ -138,18 +119,18 @@ export default function DLPGModify(props: Props) {
 					}}
 				/>
 				<button
-					className={`btn ${submitBtnCSS} join-item rounded-r-full`}
+					className={`btn join-item rounded-r-full`}
 					onClick={() =>
 						props.type == "add"
 							? handleProfileGroupAdd()
 							: handleProfileGroupEdit()
 					}
-					disabled={submitBtnCSS == "btn-disabled"}
+					// disabled={submitBtnCSS == "btn-disabled"}
 				>
 					{props.type == "add" ? "+" : "Edit"}
 				</button>
 			</div>
-			<span className="text-error">{inputTextError}</span>
+			{/* <span className="text-error">{inputTextError}</span> */}
 			<label className="label mt-4">Description</label>
 			<textarea
 				className="textarea w-full"

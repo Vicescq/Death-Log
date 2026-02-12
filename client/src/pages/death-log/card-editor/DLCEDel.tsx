@@ -21,14 +21,14 @@ export default function DLCEDel({
 			<div className="join w-full">
 				<input
 					type="search"
-					className="input join-item w-full"
+					className={`${delStr == "DEL" ? "input-error" : ""} input join-item w-full`}
 					placeholder={CONSTANTS.DEATH_LOG_EDITOR.DEL_PH}
 					onChange={(e) => onDelStrChange(e.currentTarget.value)}
 					value={delStr}
 				/>
 				<button
 					type="button"
-					className={`btn join-item btn-success p-3`}
+					className={`btn join-item btn-error p-3`}
 					onClick={(e) => {
 						e.preventDefault();
 						onDelete(node);

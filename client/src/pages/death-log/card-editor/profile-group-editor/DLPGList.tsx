@@ -1,8 +1,8 @@
-import type { Profile } from "../../../model/TreeNodeModel";
+import type { Profile } from "../../../../model/TreeNodeModel";
 import edit from "../../../assets/edit.svg";
-import Modal from "../../../components/Modal";
+import Modal from "../../../../components/Modal";
 import { useRef, useState } from "react";
-import { assertIsNonNull } from "../../../utils/asserts";
+import { assertIsNonNull } from "../../../../utils/asserts";
 
 type Props = {
 	profile: Profile;

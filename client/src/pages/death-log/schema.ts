@@ -119,13 +119,18 @@ export const createNodeFormEditSchema = (
 				}
 			} else {
 				const parsedUTCdateStart = Date.parse(
-					dateTimeSTDToISO(schema.dateStart, "00:00:00"),
+					dateTimeSTDToISO(schema.dateStart, schema.timeStart),
 				);
 				if (parsedUTCdateStart > Date.now()) {
 					ctx.addIssue({
 						code: "custom",
 						message: CONSTANTS.ERROR.DATE_SURPASSED_TODAY,
 						path: ["dateStart"],
+					});
+					ctx.addIssue({
+						code: "custom",
+						message: CONSTANTS.ERROR.DATE_SURPASSED_TODAY,
+						path: ["timeStart"],
 					});
 				}
 			}

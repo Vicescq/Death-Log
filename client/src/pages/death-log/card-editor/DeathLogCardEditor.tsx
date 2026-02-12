@@ -10,13 +10,10 @@ import { formatString } from "../../../utils/general";
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
 import {
 	formattedStrTosubjectContext,
-	subjectContextToFormattedStr
+	subjectContextToFormattedStr,
 } from "../../../stores/utils";
 import { resolveTimestampUpdate } from "../../../utils/date";
-import {
-	isoToDateSTD,
-	isoToTimeSTD
-} from "../../../utils/date";
+import { isoToDateSTD, isoToTimeSTD } from "../../../utils/date";
 import { CONSTANTS } from "../../../../shared/constants";
 import { delay } from "../../../utils/general";
 import { assertIsNonNull } from "../../../utils/asserts";
@@ -32,6 +29,14 @@ export default function DeathLogCardEditor({
 	const updateNode = useDeathLogStore((state) => state.updateNode);
 	const deleteNode = useDeathLogStore((state) => state.deleteNode);
 	const navigate = useNavigate();
+
+	const [timeStartUpdateNotice, setTimeStartUpdateNotice] = useState<
+		string | null
+	>(null);
+
+	const [timeEndUpdateNotice, setTimeEndUpdateNotice] = useState<
+		string | null
+	>(null);
 
 	const tree = useDeathLogStore((state) => state.tree);
 	const parent = tree.get(node.parentID);
@@ -141,6 +146,17 @@ export default function DeathLogCardEditor({
 		deleteNode(node);
 	}
 
+	function handleTimeNoticeChange(
+		noticeType: "start" | "end",
+		notice: string | null,
+	) {
+		if (noticeType == "start") {
+			setTimeStartUpdateNotice(notice);
+		} else {
+			setTimeEndUpdateNotice(notice);
+		}
+	}
+
 	return (
 		<>
 			<NavBar
@@ -164,7 +180,7 @@ export default function DeathLogCardEditor({
 								<span>Name</span>
 								<input
 									type="search"
-									className="input w-full"
+									className={`input ${form.formState.dirtyFields.name ? "input-primary" : ""} w-full`}
 									{...form.register("name")}
 								/>
 								{form.formState.errors.name && (
@@ -174,7 +190,13 @@ export default function DeathLogCardEditor({
 								)}
 							</label>
 
-							<DLCEDate node={node} form={form} />
+							<DLCEDate
+								node={node}
+								form={form}
+								timeStartUpdateNotice={timeStartUpdateNotice}
+								timeEndUpdateNotice={timeEndUpdateNotice}
+								onTimeNoticeChange={handleTimeNoticeChange}
+							/>
 
 							{node.type == "subject" ? (
 								<DLCESubject node={node} form={form} />
@@ -183,7 +205,7 @@ export default function DeathLogCardEditor({
 							<label className="floating-label">
 								<span>Notes</span>
 								<textarea
-									className="textarea w-full"
+									className={`${form.formState.dirtyFields.notes ? "textarea-success" : ""} textarea w-full`}
 									{...form.register("notes")}
 									rows={CONSTANTS.NUMS.TEXTAREA_ROW_MAX}
 								/>
@@ -220,6 +242,8 @@ export default function DeathLogCardEditor({
 							className="btn btn-primary"
 							onClick={(e) => {
 								e.preventDefault();
+								setTimeStartUpdateNotice(null);
+								setTimeEndUpdateNotice(null);
 								form.reset();
 							}}
 							disabled={!form.formState.isDirty}

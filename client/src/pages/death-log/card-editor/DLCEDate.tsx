@@ -2,25 +2,43 @@ import type { DistinctTreeNode } from "../../../model/TreeNodeModel";
 import { CONSTANTS } from "../../../../shared/constants";
 import type { UseFormReturn } from "react-hook-form";
 import type { NodeFormEdit } from "../schema";
+import { useState } from "react";
 
 type Props = {
 	node: DistinctTreeNode;
 	form: UseFormReturn<NodeFormEdit, any, NodeFormEdit>;
+	timeStartUpdateNotice: string | null;
+	timeEndUpdateNotice: string | null;
+	onTimeNoticeChange: (
+		noticeType: "start" | "end",
+		notice: string | null,
+	) => void;
 };
 
-export default function DLCEDate({ node, form }: Props) {
+export default function DLCEDate({
+	node,
+	form,
+	timeStartUpdateNotice,
+	timeEndUpdateNotice,
+	onTimeNoticeChange,
+}: Props) {
 	return (
 		<>
 			<label className="floating-label">
 				<span>Date Created</span>
 				<input
 					type="date"
-					className="input join-item w-full"
+					className={`input ${form.formState.dirtyFields.dateStart ? "input-primary" : ""} join-item w-full`}
 					{...form.register("dateStart", {
-						onChange: () =>
+						onChange: () => {
 							form.setValue("timeStart", "00:00:00", {
-								shouldValidate: true,
-							}),
+								shouldDirty: true,
+							});
+							onTimeNoticeChange(
+								"start",
+								CONSTANTS.INFO.TIME_AUTO_EDIT_VIA_DATE_START,
+							);
+						},
 					})}
 					disabled={form.formState.dirtyFields.dateEnd}
 				/>
@@ -30,7 +48,9 @@ export default function DLCEDate({ node, form }: Props) {
 					</div>
 				)}
 				{form.formState.dirtyFields.dateEnd && (
-					<div className="text-info">{CONSTANTS.INFO.EDITOR_DATE_START_DISABLED}</div>
+					<div className="text-info">
+						{CONSTANTS.INFO.EDITOR_DATE_START_DISABLED}
+					</div>
 				)}
 			</label>
 
@@ -38,13 +58,20 @@ export default function DLCEDate({ node, form }: Props) {
 				<span>Time Created</span>
 				<input
 					type="time"
-					className="input join-item w-full"
-					{...form.register("timeStart")}
+					className={`input ${form.formState.dirtyFields.timeStart ? "input-primary" : ""} join-item w-full`}
+					{...form.register("timeStart", {
+						onChange: () => onTimeNoticeChange("start", null),
+					})}
 					step={1}
 				/>
 				{form.formState.errors.timeStart && (
 					<div className="text-error">
 						{form.formState.errors.timeStart.message}
+					</div>
+				)}
+				{timeStartUpdateNotice && (
+					<div className="text-info">
+						{CONSTANTS.INFO.TIME_AUTO_EDIT_VIA_DATE_START}
 					</div>
 				)}
 			</label>
@@ -55,10 +82,18 @@ export default function DLCEDate({ node, form }: Props) {
 						<span>Date Completed</span>
 						<input
 							type="date"
-							className="input join-item w-full"
+							className={`input ${form.formState.dirtyFields.dateEnd ? "input-primary" : ""} join-item w-full`}
 							{...form.register("dateEnd", {
-								onChange: () =>
-									form.setValue("timeEnd", "00:00:00"),
+								onChange: () => {
+									form.setValue("timeEnd", "00:00:00", {
+										shouldDirty: true,
+									});
+									onTimeNoticeChange(
+										"end",
+										CONSTANTS.INFO
+											.TIME_AUTO_EDIT_VIA_DATE_END,
+									);
+								},
 							})}
 							disabled={form.formState.dirtyFields.dateStart}
 						/>
@@ -68,20 +103,29 @@ export default function DLCEDate({ node, form }: Props) {
 							</div>
 						)}
 						{form.formState.dirtyFields.dateStart && (
-							<div className="text-info">{CONSTANTS.INFO.EDITOR_DATE_END_DISABLED}</div>
+							<div className="text-info">
+								{CONSTANTS.INFO.EDITOR_DATE_END_DISABLED}
+							</div>
 						)}
 					</label>
 					<label className="floating-label">
 						<span>Time Completed</span>
 						<input
 							type="time"
-							className="input join-item w-full"
-							{...form.register("timeEnd")}
+							className={`input ${form.formState.dirtyFields.timeEnd ? "input-primary" : ""} join-item w-full`}
+							{...form.register("timeEnd", {
+								onChange: () => onTimeNoticeChange("end", null),
+							})}
 							step={1}
 						/>
 						{form.formState.errors.timeEnd && (
 							<div className="text-error">
 								{form.formState.errors.timeEnd.message}
+							</div>
+						)}
+						{timeEndUpdateNotice && (
+							<div className="text-info">
+								{CONSTANTS.INFO.TIME_AUTO_EDIT_VIA_DATE_END}
 							</div>
 						)}
 					</label>
@@ -102,7 +146,7 @@ export default function DLCEDate({ node, form }: Props) {
 					<div className="flex">
 						<label
 							htmlFor="creation-date-reliable-toggle"
-							className="text-[1rem]"
+							className={`text-[1rem] ${form.formState.dirtyFields.startRel ? "text-success" : ""}`}
 						>
 							Creation Timestamp
 						</label>
@@ -118,7 +162,7 @@ export default function DLCEDate({ node, form }: Props) {
 						<div className="flex">
 							<label
 								htmlFor="completion-date-reliable-toggle"
-								className="text-[1rem]"
+								className={`text-[1rem] ${form.formState.dirtyFields.endRel ? "text-success" : ""}`}
 							>
 								Completion Timestamp
 							</label>

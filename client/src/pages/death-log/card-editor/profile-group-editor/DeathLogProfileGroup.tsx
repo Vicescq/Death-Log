@@ -1,11 +1,9 @@
-import NavBar from "../../../components/navBar/NavBar";
-import type { Profile, ProfileGroup } from "../../../model/TreeNodeModel";
-import { useDeathLogStore } from "../../../stores/useDeathLogStore";
-import { assertIsNonNull, assertIsSubject } from "../../../utils/asserts";
-import DeathLogBreadcrumb from "../breadcrumb/DeathLogBreadcrumb";
-import DLPGModify from "./DLPGModify";
-import DLPGList from "./DLPGList";
+import type { Profile, ProfileGroup } from "../../../../model/TreeNodeModel";
+import { useDeathLogStore } from "../../../../stores/useDeathLogStore";
+import { assertIsNonNull, assertIsSubject } from "../../../../utils/asserts";
 import { useState } from "react";
+import DLPGList from "./DLPGList";
+import DLPGModify from "./DLPGModify";
 
 type Props = {
 	profile: Profile;
@@ -65,11 +63,7 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 
 	return (
 		<>
-			<NavBar
-				endNavContent={<DeathLogBreadcrumb />}
-				endNavContentCSS="w-[70%]"
-				startNavContentCSS="w-[30%]"
-			/>
+
 
 			<div className="m-auto mb-8 w-[90%] lg:max-w-[45rem]">
 				<h1 className="text-center text-4xl font-bold">
