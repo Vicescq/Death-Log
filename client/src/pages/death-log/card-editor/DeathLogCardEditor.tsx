@@ -30,6 +30,14 @@ export default function DeathLogCardEditor({
 	const deleteNode = useDeathLogStore((state) => state.deleteNode);
 	const navigate = useNavigate();
 
+	const [timeStartUpdateNotice, setTimeStartUpdateNotice] = useState<
+		string | null
+	>(null);
+
+	const [timeEndUpdateNotice, setTimeEndUpdateNotice] = useState<
+		string | null
+	>(null);
+
 	const tree = useDeathLogStore((state) => state.tree);
 	const parent = tree.get(node.parentID);
 	assertIsNonNull(parent);
@@ -138,6 +146,17 @@ export default function DeathLogCardEditor({
 		deleteNode(node);
 	}
 
+	function handleTimeNoticeChange(
+		noticeType: "start" | "end",
+		notice: string | null,
+	) {
+		if (noticeType == "start") {
+			setTimeStartUpdateNotice(notice);
+		} else {
+			setTimeEndUpdateNotice(notice);
+		}
+	}
+
 	return (
 		<>
 			<NavBar
@@ -171,7 +190,13 @@ export default function DeathLogCardEditor({
 								)}
 							</label>
 
-							<DLCEDate node={node} form={form} />
+							<DLCEDate
+								node={node}
+								form={form}
+								timeStartUpdateNotice={timeStartUpdateNotice}
+								timeEndUpdateNotice={timeEndUpdateNotice}
+								onTimeNoticeChange={handleTimeNoticeChange}
+							/>
 
 							{node.type == "subject" ? (
 								<DLCESubject node={node} form={form} />
@@ -206,6 +231,8 @@ export default function DeathLogCardEditor({
 							className="btn btn-primary mt-4"
 							onClick={(e) => {
 								e.preventDefault();
+								setTimeStartUpdateNotice(null);
+								setTimeEndUpdateNotice(null);
 								form.reset();
 							}}
 							disabled={!form.formState.isDirty}
@@ -233,6 +260,10 @@ export default function DeathLogCardEditor({
 								!form.formState.isValid ||
 								!form.formState.isDirty
 							}
+							onClick={() => {
+								setTimeStartUpdateNotice(null);
+								setTimeEndUpdateNotice(null);
+							}}
 						>
 							{CONSTANTS.DEATH_LOG_EDITOR.SUBMIT}
 						</button>

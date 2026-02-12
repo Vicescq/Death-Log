@@ -7,9 +7,21 @@ import { useState } from "react";
 type Props = {
 	node: DistinctTreeNode;
 	form: UseFormReturn<NodeFormEdit, any, NodeFormEdit>;
+	timeStartUpdateNotice: string | null;
+	timeEndUpdateNotice: string | null;
+	onTimeNoticeChange: (
+		noticeType: "start" | "end",
+		notice: string | null,
+	) => void;
 };
 
-export default function DLCEDate({ node, form }: Props) {
+export default function DLCEDate({
+	node,
+	form,
+	timeStartUpdateNotice,
+	timeEndUpdateNotice,
+	onTimeNoticeChange,
+}: Props) {
 	return (
 		<>
 			<label className="floating-label">
@@ -18,11 +30,16 @@ export default function DLCEDate({ node, form }: Props) {
 					type="date"
 					className={`input ${form.formState.dirtyFields.dateStart ? "input-primary" : ""} join-item w-full`}
 					{...form.register("dateStart", {
-						onChange: () =>
+						onChange: () => {
 							form.setValue("timeStart", "00:00:00", {
 								shouldDirty: true,
 								shouldValidate: true,
-							}),
+							});
+							onTimeNoticeChange(
+								"start",
+								CONSTANTS.INFO.EDITOR_TIME_RESET_NOTICE,
+							);
+						},
 					})}
 					disabled={
 						form.formState.dirtyFields.dateEnd ||
@@ -43,6 +60,7 @@ export default function DLCEDate({ node, form }: Props) {
 					className={`input ${form.formState.dirtyFields.timeStart ? "input-primary" : ""} join-item w-full`}
 					{...form.register("timeStart", {
 						onChange: () => {
+							onTimeNoticeChange("start", null);
 							form.trigger("dateStart");
 						},
 					})}
@@ -57,6 +75,9 @@ export default function DLCEDate({ node, form }: Props) {
 						{form.formState.errors.timeStart.message}
 					</div>
 				)}
+				{timeStartUpdateNotice && (
+					<div className="text-info">{timeStartUpdateNotice}</div>
+				)}
 			</label>
 
 			{node.completed && node.dateEnd ? (
@@ -67,11 +88,16 @@ export default function DLCEDate({ node, form }: Props) {
 							type="date"
 							className={`input ${form.formState.dirtyFields.dateEnd ? "input-primary" : ""} join-item w-full`}
 							{...form.register("dateEnd", {
-								onChange: () =>
+								onChange: () => {
 									form.setValue("timeEnd", "00:00:00", {
 										shouldDirty: true,
 										shouldValidate: true,
-									}),
+									});
+									onTimeNoticeChange(
+										"end",
+										CONSTANTS.INFO.EDITOR_TIME_RESET_NOTICE,
+									);
+								},
 							})}
 							disabled={
 								form.formState.dirtyFields.dateStart ||
@@ -91,6 +117,7 @@ export default function DLCEDate({ node, form }: Props) {
 							className={`input ${form.formState.dirtyFields.timeEnd ? "input-primary" : ""} join-item w-full`}
 							{...form.register("timeEnd", {
 								onChange: () => {
+									onTimeNoticeChange("end", null);
 									form.trigger("dateEnd");
 								},
 							})}
@@ -103,6 +130,11 @@ export default function DLCEDate({ node, form }: Props) {
 						{form.formState.errors.timeEnd && (
 							<div className="text-error">
 								{form.formState.errors.timeEnd.message}
+							</div>
+						)}
+						{timeEndUpdateNotice && (
+							<div className="text-info">
+								{timeEndUpdateNotice}
 							</div>
 						)}
 					</label>
