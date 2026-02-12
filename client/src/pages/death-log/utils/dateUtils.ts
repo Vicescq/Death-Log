@@ -4,7 +4,6 @@ import { assertIsNonNull } from "../../../utils";
  * Resolves a given timestamp, determines the correct ISO string to return, ensuring only dirty timestamp inputs are updated.
  * If not used timestamps may be less precise.
  */
-
 export function resolveTimestampUpdate(
 	dirtyDate: string | undefined,
 	isDirtyDate: boolean,
@@ -29,6 +28,11 @@ export function resolveTimestampUpdate(
 	return isoStr;
 }
 
+/**
+ * ISO string to standard date format
+ * @param isoSTR 
+ * @returns 
+ */
 export function isoToDateSTD(isoSTR: string) {
 	const dateObj = new Date(isoSTR);
 	const year = String(dateObj.getFullYear());
@@ -43,6 +47,12 @@ export function isoToDateSTD(isoSTR: string) {
 	return `${year}-${month}-${day}`;
 }
 
+
+/**
+ * ISO string to standard time format
+ * @param isoSTR 
+ * @returns 
+ */
 export function isoToTimeSTD(isoSTR: string) {
 	const dateObj = new Date(isoSTR);
 	const hour = dateObj.getHours();
@@ -56,6 +66,16 @@ export function isoToTimeSTD(isoSTR: string) {
 	return `${addLeadingZeroes(hour)}:${addLeadingZeroes(mins)}:${addLeadingZeroes(secs)}`;
 }
 
+/**
+ * Standard date time to iso string.
+ *
+ * @param formattedDateStr
+ * @param formattedTimeStr
+ * **Note**: pass in 00:00:00 in time param
+ * in order to convert an implicit local date string eg. YYYY:MM:DD into iso format
+ * in order for consistency in comparsions when using Date.parse()
+ * @returns
+ */
 export function dateTimeSTDToISO(
 	formattedDateStr: string,
 	formattedTimeStr: string,

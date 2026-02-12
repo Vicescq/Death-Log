@@ -9,6 +9,7 @@ import { useDeathLogStore } from "../../stores/useDeathLogStore";
 import { assertIsNonNull } from "../../utils";
 import Modal from "../../components/Modal";
 import DeathLogCard from "./card/DeathLogCard";
+import { isoToDateSTD } from "./utils/dateUtils";
 
 export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 	const tree = useDeathLogStore((state) => state.tree);
@@ -59,7 +60,6 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 	}
 
 	const sortedChildIDs = sortChildIDS(parent, tree);
-
 	return (
 		<>
 			<NavBar
@@ -97,7 +97,6 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 			<DeathLogFAB
 				virtuosoRef={virtuosoRef}
 				type={determineFABType(parent)}
-				parentID={parent.id}
 				onFocus={() => {
 					setPageOpacity("opacity-25");
 					setDeathLogIsInert(true);
@@ -106,6 +105,7 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 					setPageOpacity("");
 					setDeathLogIsInert(false);
 				}}
+				parent={parent}
 			/>
 
 			<Modal

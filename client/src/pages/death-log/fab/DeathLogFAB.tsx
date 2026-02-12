@@ -14,43 +14,52 @@ import { CONSTANTS } from "../../../../shared/constants";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import DLFABModalBodyAdd from "./DLFABModalBodyAdd";
 import { formattedStrTosubjectContext } from "../utils/utils";
-import { AddFormSchema, type AddForm } from "./schema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { assertIsNonNull } from "../../../utils";
+import { createNodeFormAddSchema, type NodeFormAdd } from "../schema";
 
 type Props = {
 	type: Exclude<DistinctTreeNode["type"], "ROOT_NODE">;
-	parentID: string;
 	onFocus: () => void;
 	onBlur: () => void;
 	virtuosoRef: React.RefObject<VirtuosoHandle | null>;
+	parent: DistinctTreeNode;
 };
 
 export default function DeathLogFAB({
 	type,
-	parentID,
 	onFocus,
 	onBlur,
 	virtuosoRef,
+	parent,
 }: Props) {
 	const addNode = useDeathLogStore((state) => state.addNode);
 	const modalRef = useRef<HTMLDialogElement>(null);
 
-	const addForm = useForm<AddForm>({
+	const tree = useDeathLogStore((state) => state.tree);
+	const siblingNames = parent.childIDS.map((id) => {
+		const node = tree.get(id);
+		assertIsNonNull(node);
+		return node.name;
+	});
+	const NodeFormAdd = createNodeFormAddSchema(siblingNames, null);
+
+	const addForm = useForm<NodeFormAdd>({
 		defaultValues: {
 			name: "",
 			context: "Boss",
 			reoccurring: false,
 		},
 		mode: "onChange",
-		resolver: zodResolver(AddFormSchema),
+		resolver: zodResolver(NodeFormAdd),
 	});
 
-	const onAdd: SubmitHandler<AddForm> = (formData) => {
+	const onAdd: SubmitHandler<NodeFormAdd> = (formData) => {
 		if (type != "subject") {
-			addNode(type, formatString(formData.name), parentID);
+			addNode(type, formatString(formData.name), parent.id);
 		} else {
 			const context = formattedStrTosubjectContext(formData.context);
-			addNode(type, formatString(formData.name), parentID, {
+			addNode(type, formatString(formData.name), parent.id, {
 				context: context,
 				reoccurring: formData.reoccurring,
 			});

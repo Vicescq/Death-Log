@@ -7,6 +7,9 @@ export const CONSTANTS = {
 		DATE: "Invalid date!",
 		TIME: "Invalid time!",
 		EMPTY: "Cannot be empty!",
+		DATE_START_SURPASSED_END: "Created date cannot surpass completed date!",
+		DATE_SURPASSED_TODAY: "Date cannot be set in the future!",
+		NON_UNIQUE: "Name already exists!"
 	},
 	NUMS: {
 		INPUT_MAX: 60,

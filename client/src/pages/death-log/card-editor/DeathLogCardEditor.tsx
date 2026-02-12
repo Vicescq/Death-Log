@@ -21,7 +21,7 @@ import { CONSTANTS } from "../../../../shared/constants";
 import { assertIsNonNull, delay } from "../../../utils";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { NodeFormSchema, type NodeForm } from "./schema";
+import { createNodeFormEditSchema, type NodeFormEdit } from "../schema";
 
 export default function DeathLogCardEditor({
 	node,
@@ -32,7 +32,20 @@ export default function DeathLogCardEditor({
 	const deleteNode = useDeathLogStore((state) => state.deleteNode);
 	const navigate = useNavigate();
 
-	const form = useForm<NodeForm>({
+	const tree = useDeathLogStore((state) => state.tree);
+	const parent = tree.get(node.parentID);
+	assertIsNonNull(parent);
+	const siblingNames = parent.childIDS.map((id) => {
+		const node = tree.get(id);
+		assertIsNonNull(node);
+		return node.name;
+	});
+	const NodeFormEditSchema = createNodeFormEditSchema(
+		siblingNames,
+		node.name,
+	);
+
+	const form = useForm<NodeFormEdit>({
 		defaultValues: {
 			name: node.name,
 			dateStart: isoToDateSTD(node.dateStart),
@@ -55,10 +68,10 @@ export default function DeathLogCardEditor({
 					: "Boss",
 		},
 		mode: "onChange",
-		resolver: zodResolver(NodeFormSchema),
+		resolver: zodResolver(NodeFormEditSchema),
 	});
 
-	const onSubmit: SubmitHandler<NodeForm> = (formData) => {
+	const onSubmit: SubmitHandler<NodeFormEdit> = (formData) => {
 		const name = formatString(formData.name);
 		const dateStart = resolveTimestampUpdate(
 			formData.dateStart,
@@ -126,6 +139,7 @@ export default function DeathLogCardEditor({
 		await delay(100); // TODO: maybe figure out a better soln?
 		deleteNode(node);
 	}
+	console.log(form.formState.errors);
 	return (
 		<>
 			<NavBar

@@ -1,10 +1,10 @@
 import type { UseFormReturn } from "react-hook-form";
 import type { Subject } from "../../../model/TreeNodeModel";
-import type { NodeForm } from "./schema";
+import type { NodeFormEdit } from "../schema";
 
 type Props = {
 	node: Subject;
-	form: UseFormReturn<NodeForm, any, NodeForm>;
+	form: UseFormReturn<NodeFormEdit, any, NodeFormEdit>;
 };
 
 export default function DLCESubject({ node, form }: Props) {

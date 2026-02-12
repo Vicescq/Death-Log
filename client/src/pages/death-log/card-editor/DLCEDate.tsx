@@ -1,11 +1,11 @@
 import type { DistinctTreeNode } from "../../../model/TreeNodeModel";
 import { CONSTANTS } from "../../../../shared/constants";
 import type { UseFormReturn } from "react-hook-form";
-import type { NodeForm } from "./schema";
+import type { NodeFormEdit } from "../schema";
 
 type Props = {
 	node: DistinctTreeNode;
-	form: UseFormReturn<NodeForm, any, NodeForm>;
+	form: UseFormReturn<NodeFormEdit, any, NodeFormEdit>;
 };
 
 export default function DLCEDate({ node, form }: Props) {
