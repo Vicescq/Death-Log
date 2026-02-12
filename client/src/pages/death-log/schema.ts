@@ -66,70 +66,69 @@ export const createNodeFormEditSchema = (
 	);
 
 	const NodeFormEditSchema = BaseNodeFormSchema.superRefine((schema, ctx) => {
-		// have to wrap in try catch due to superRefine() firing even if date iso validation in BaseNodeFormSchema produces an error
+		// try catch due to superRefine() having possibility of malformed date time strings which throws errors in dateTimeSTDToISO fn
 		try {
 			if (schema.dateEnd && schema.timeEnd) {
 				// have to do this because schema.date (YYYY:MM:DD) has an implcit timezone which is binded to the user where Date.parse does not know about. Need to transform that date into UTC iso string then pass it to .parse()
-				const parsedUTCdateStart = Date.parse(
-					dateTimeSTDToISO(schema.dateStart, "00:00:00"),
+				const parsedUTCdateTimeStart = Date.parse(
+					dateTimeSTDToISO(schema.dateStart, schema.timeStart),
 				);
-				const parsedUTCdateEnd = Date.parse(
-					dateTimeSTDToISO(schema.dateEnd, "00:00:00"),
-				);
-
-				// placeholder dates, only care abt local time -> utc time conversion
-				const parsedUTCtimeStart = Date.parse(
-					dateTimeSTDToISO("2025-01-01", schema.timeStart),
-				);
-				const parsedUTCtimeEnd = Date.parse(
-					dateTimeSTDToISO("2025-01-01", schema.timeEnd),
+				const parsedUTCdateTimeEnd = Date.parse(
+					dateTimeSTDToISO(schema.dateEnd, schema.timeEnd),
 				);
 
-				if (
-					parsedUTCdateStart == parsedUTCdateEnd &&
-					parsedUTCtimeStart > parsedUTCtimeEnd
-				) {
+				// max for start, min for end, completed
+				if (parsedUTCdateTimeStart > parsedUTCdateTimeEnd) {
 					ctx.addIssue({
 						code: "custom",
-						message: CONSTANTS.ERROR.TIME_START_SURPASSED_END,
+						message: CONSTANTS.ERROR.DATETIME_START_SURPASSED_END,
+						path: ["dateStart"],
+					});
+					ctx.addIssue({
+						code: "custom",
+						message: CONSTANTS.ERROR.DATETIME_START_SURPASSED_END,
 						path: ["timeStart"],
 					});
 					ctx.addIssue({
 						code: "custom",
-						message: CONSTANTS.ERROR.TIME_START_SURPASSED_END,
+						message: CONSTANTS.ERROR.DATETIME_START_SURPASSED_END,
+						path: ["dateEnd"],
+					});
+					ctx.addIssue({
+						code: "custom",
+						message: CONSTANTS.ERROR.DATETIME_START_SURPASSED_END,
 						path: ["timeEnd"],
 					});
-				} else if (parsedUTCdateStart > parsedUTCdateEnd) {
+				}
+
+				// max for end
+				if (parsedUTCdateTimeEnd > Date.now()) {
 					ctx.addIssue({
 						code: "custom",
-						message: CONSTANTS.ERROR.DATE_START_SURPASSED_END,
-						path: ["dateStart"],
-					});
-					ctx.addIssue({
-						code: "custom",
-						message: CONSTANTS.ERROR.DATE_START_SURPASSED_END,
+						message: CONSTANTS.ERROR.DATETIME_SURPASSED_TODAY,
 						path: ["dateEnd"],
 					});
-				} else if (parsedUTCdateEnd > Date.now()) {
 					ctx.addIssue({
 						code: "custom",
-						message: CONSTANTS.ERROR.DATE_SURPASSED_TODAY,
-						path: ["dateEnd"],
+						message: CONSTANTS.ERROR.DATETIME_SURPASSED_TODAY,
+						path: ["timeEnd"],
 					});
 				}
 			} else {
-				const parsedUTCdateStart = Date.parse(
+				const parsedUTCdateTimeStart = Date.parse(
 					dateTimeSTDToISO(schema.dateStart, schema.timeStart),
 				);
-				if (parsedUTCdateStart > Date.now()) {
+
+				// max for start, uncompleted
+				if (parsedUTCdateTimeStart > Date.now()) {
 					ctx.addIssue({
 						code: "custom",
-						message: CONSTANTS.ERROR.DATE_SURPASSED_TODAY,
+						message: CONSTANTS.ERROR.DATETIME_SURPASSED_TODAY,
 						path: ["dateStart"],
 					});
 					ctx.addIssue({
 						code: "custom",
-						message: CONSTANTS.ERROR.DATE_SURPASSED_TODAY,
+						message: CONSTANTS.ERROR.DATETIME_SURPASSED_TODAY,
 						path: ["timeStart"],
 					});
 				}

@@ -30,14 +30,6 @@ export default function DeathLogCardEditor({
 	const deleteNode = useDeathLogStore((state) => state.deleteNode);
 	const navigate = useNavigate();
 
-	const [timeStartUpdateNotice, setTimeStartUpdateNotice] = useState<
-		string | null
-	>(null);
-
-	const [timeEndUpdateNotice, setTimeEndUpdateNotice] = useState<
-		string | null
-	>(null);
-
 	const tree = useDeathLogStore((state) => state.tree);
 	const parent = tree.get(node.parentID);
 	assertIsNonNull(parent);
@@ -146,17 +138,6 @@ export default function DeathLogCardEditor({
 		deleteNode(node);
 	}
 
-	function handleTimeNoticeChange(
-		noticeType: "start" | "end",
-		notice: string | null,
-	) {
-		if (noticeType == "start") {
-			setTimeStartUpdateNotice(notice);
-		} else {
-			setTimeEndUpdateNotice(notice);
-		}
-	}
-
 	return (
 		<>
 			<NavBar
@@ -190,13 +171,7 @@ export default function DeathLogCardEditor({
 								)}
 							</label>
 
-							<DLCEDate
-								node={node}
-								form={form}
-								timeStartUpdateNotice={timeStartUpdateNotice}
-								timeEndUpdateNotice={timeEndUpdateNotice}
-								onTimeNoticeChange={handleTimeNoticeChange}
-							/>
+							<DLCEDate node={node} form={form} />
 
 							{node.type == "subject" ? (
 								<DLCESubject node={node} form={form} />
@@ -227,29 +202,17 @@ export default function DeathLogCardEditor({
 						</div>
 
 						<button
-							type="submit"
-							className="btn btn-success mt-4 w-full"
-							disabled={
-								!form.formState.isValid ||
-								!form.formState.isDirty
-							}
-						>
-							{CONSTANTS.DEATH_LOG_EDITOR.SUBMIT}
-						</button>
-
-						<button
 							type="reset"
-							className="btn btn-primary"
+							className="btn btn-primary mt-4"
 							onClick={(e) => {
 								e.preventDefault();
-								setTimeStartUpdateNotice(null);
-								setTimeEndUpdateNotice(null);
 								form.reset();
 							}}
 							disabled={!form.formState.isDirty}
 						>
 							{CONSTANTS.DEATH_LOG_EDITOR.RESET}
 						</button>
+
 						<button
 							type="button"
 							className="btn btn-accent w-full"
@@ -259,6 +222,19 @@ export default function DeathLogCardEditor({
 							}}
 						>
 							{CONSTANTS.DEATH_LOG_EDITOR.RETURN}
+						</button>
+
+						<div className="divider m-3"></div>
+
+						<button
+							type="submit"
+							className="btn btn-success w-full"
+							disabled={
+								!form.formState.isValid ||
+								!form.formState.isDirty
+							}
+						>
+							{CONSTANTS.DEATH_LOG_EDITOR.SUBMIT}
 						</button>
 					</fieldset>
 				</form>

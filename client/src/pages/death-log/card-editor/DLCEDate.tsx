@@ -7,21 +7,9 @@ import { useState } from "react";
 type Props = {
 	node: DistinctTreeNode;
 	form: UseFormReturn<NodeFormEdit, any, NodeFormEdit>;
-	timeStartUpdateNotice: string | null;
-	timeEndUpdateNotice: string | null;
-	onTimeNoticeChange: (
-		noticeType: "start" | "end",
-		notice: string | null,
-	) => void;
 };
 
-export default function DLCEDate({
-	node,
-	form,
-	timeStartUpdateNotice,
-	timeEndUpdateNotice,
-	onTimeNoticeChange,
-}: Props) {
+export default function DLCEDate({ node, form }: Props) {
 	return (
 		<>
 			<label className="floating-label">
@@ -30,26 +18,20 @@ export default function DLCEDate({
 					type="date"
 					className={`input ${form.formState.dirtyFields.dateStart ? "input-primary" : ""} join-item w-full`}
 					{...form.register("dateStart", {
-						onChange: () => {
+						onChange: () =>
 							form.setValue("timeStart", "00:00:00", {
 								shouldDirty: true,
-							});
-							onTimeNoticeChange(
-								"start",
-								CONSTANTS.INFO.TIME_AUTO_EDIT_VIA_DATE_START,
-							);
-						},
+								shouldValidate: true,
+							}),
 					})}
-					disabled={form.formState.dirtyFields.dateEnd}
+					disabled={
+						form.formState.dirtyFields.dateEnd ||
+						form.formState.dirtyFields.timeEnd
+					}
 				/>
 				{form.formState.errors.dateStart && (
 					<div className="text-error">
 						{form.formState.errors.dateStart.message}
-					</div>
-				)}
-				{form.formState.dirtyFields.dateEnd && (
-					<div className="text-info">
-						{CONSTANTS.INFO.EDITOR_DATE_START_DISABLED}
 					</div>
 				)}
 			</label>
@@ -60,18 +42,19 @@ export default function DLCEDate({
 					type="time"
 					className={`input ${form.formState.dirtyFields.timeStart ? "input-primary" : ""} join-item w-full`}
 					{...form.register("timeStart", {
-						onChange: () => onTimeNoticeChange("start", null),
+						onChange: () => {
+							form.trigger("dateStart");
+						},
 					})}
 					step={1}
+					disabled={
+						form.formState.dirtyFields.dateEnd ||
+						form.formState.dirtyFields.timeEnd
+					}
 				/>
 				{form.formState.errors.timeStart && (
 					<div className="text-error">
 						{form.formState.errors.timeStart.message}
-					</div>
-				)}
-				{timeStartUpdateNotice && (
-					<div className="text-info">
-						{CONSTANTS.INFO.TIME_AUTO_EDIT_VIA_DATE_START}
 					</div>
 				)}
 			</label>
@@ -84,27 +67,20 @@ export default function DLCEDate({
 							type="date"
 							className={`input ${form.formState.dirtyFields.dateEnd ? "input-primary" : ""} join-item w-full`}
 							{...form.register("dateEnd", {
-								onChange: () => {
+								onChange: () =>
 									form.setValue("timeEnd", "00:00:00", {
 										shouldDirty: true,
-									});
-									onTimeNoticeChange(
-										"end",
-										CONSTANTS.INFO
-											.TIME_AUTO_EDIT_VIA_DATE_END,
-									);
-								},
+										shouldValidate: true,
+									}),
 							})}
-							disabled={form.formState.dirtyFields.dateStart}
+							disabled={
+								form.formState.dirtyFields.dateStart ||
+								form.formState.dirtyFields.timeStart
+							}
 						/>
 						{form.formState.errors.dateEnd && (
 							<div className="text-error">
 								{form.formState.errors.dateEnd.message}
-							</div>
-						)}
-						{form.formState.dirtyFields.dateStart && (
-							<div className="text-info">
-								{CONSTANTS.INFO.EDITOR_DATE_END_DISABLED}
 							</div>
 						)}
 					</label>
@@ -114,18 +90,19 @@ export default function DLCEDate({
 							type="time"
 							className={`input ${form.formState.dirtyFields.timeEnd ? "input-primary" : ""} join-item w-full`}
 							{...form.register("timeEnd", {
-								onChange: () => onTimeNoticeChange("end", null),
+								onChange: () => {
+									form.trigger("dateEnd");
+								},
 							})}
 							step={1}
+							disabled={
+								form.formState.dirtyFields.dateStart ||
+								form.formState.dirtyFields.timeStart
+							}
 						/>
 						{form.formState.errors.timeEnd && (
 							<div className="text-error">
 								{form.formState.errors.timeEnd.message}
-							</div>
-						)}
-						{timeEndUpdateNotice && (
-							<div className="text-info">
-								{CONSTANTS.INFO.TIME_AUTO_EDIT_VIA_DATE_END}
 							</div>
 						)}
 					</label>
