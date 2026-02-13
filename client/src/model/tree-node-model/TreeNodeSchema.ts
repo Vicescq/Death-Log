@@ -1,6 +1,10 @@
 import z from "zod";
 import { CONSTANTS } from "../../../shared/constants";
 import { formatString } from "../../utils/general";
+import type { Game } from "./GameSchema";
+import type { Profile } from "./ProfileSchema";
+import type { RootNode } from "./RootNodeSchema";
+import type { Subject } from "./SubjectSchema";
 
 export const createTreeNodeSchema = (
 	siblingNames: string[],
@@ -53,4 +57,6 @@ export const createTreeNodeSchema = (
 	});
 };
 
-type TreeNode = z.infer<ReturnType<typeof createTreeNodeSchema>>;
+export type TreeNode = z.infer<ReturnType<typeof createTreeNodeSchema>>;
+export type DistinctTreeNode = Game | Profile | Subject | RootNode;
+export type Tree = Map<string, DistinctTreeNode>;

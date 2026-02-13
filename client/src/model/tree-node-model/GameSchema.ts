@@ -1,7 +1,7 @@
 import { createTreeNodeSchema } from "./TreeNodeSchema";
 import z from "zod";
 
-const createGameSchema = (
+export const createGameSchema = (
 	siblingNames: string[],
 	currEditingName: string | null,
 ) => {
@@ -9,4 +9,5 @@ const createGameSchema = (
 		type: z.literal("game"),
 	});
 };
-type Game = z.infer<ReturnType<typeof createGameSchema>>;
+
+export type Game = z.infer<ReturnType<typeof createGameSchema>>;

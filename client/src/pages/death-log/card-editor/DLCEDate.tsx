@@ -1,8 +1,7 @@
-import type { DistinctTreeNode } from "../../../model/TreeNodeModel";
 import { CONSTANTS } from "../../../../shared/constants";
 import type { UseFormReturn } from "react-hook-form";
 import type { NodeFormEdit } from "../schema";
-import { useState } from "react";
+import type { DistinctTreeNode } from "../../../model/tree-node-model/TreeNodeSchema";
 
 type Props = {
 	node: DistinctTreeNode;

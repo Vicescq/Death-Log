@@ -1,7 +1,5 @@
 import { create } from "zustand";
-import type { DistinctTreeNode, RootNode, Tree } from "../model/TreeNodeModel";
 import LocalDB from "../services/LocalDB";
-import type { SubjectCharacteristics } from "../model/TreeNodeModel";
 import { assertIsNonNull } from "../utils/asserts";
 import {
 	createRootNode,
@@ -10,6 +8,9 @@ import {
 	createSubject,
 	identifyDeletedSelfAndChildrenIDS,
 } from "./utils";
+import type { RootNode } from "../model/tree-node-model/RootNodeSchema";
+import type { SubjectCharacteristics } from "../model/tree-node-model/SubjectSchema";
+import type { Tree, DistinctTreeNode } from "../model/tree-node-model/TreeNodeSchema";
 
 type DeathLogState = {
 	tree: Tree;

@@ -8,7 +8,6 @@ import down from "../../../assets/down.svg";
 import Modal from "../../../components/Modal";
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
 import type { VirtuosoHandle } from "react-virtuoso";
-import type { DistinctTreeNode } from "../../../model/TreeNodeModel";
 import { formatString } from "../../../utils/general";
 import { CONSTANTS } from "../../../../shared/constants";
 import { useForm, type SubmitHandler } from "react-hook-form";
@@ -17,6 +16,7 @@ import { formattedStrTosubjectContext } from "../../../stores/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { assertIsNonNull } from "../../../utils/asserts";
 import { createNodeFormAddSchema, type NodeFormAdd } from "../schema";
+import type { DistinctTreeNode } from "../../../model/tree-node-model/TreeNodeSchema";
 
 type Props = {
 	onFocus: () => void;

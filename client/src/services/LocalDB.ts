@@ -1,5 +1,5 @@
 import { db } from "../model/LocalDBSchema";
-import type { DistinctTreeNode } from "../model/TreeNodeModel";
+import type { DistinctTreeNode } from "../model/tree-node-model";
 
 export default class LocalDB {
     constructor() { }

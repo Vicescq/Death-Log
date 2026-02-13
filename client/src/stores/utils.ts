@@ -7,7 +7,7 @@ import type {
 	Tree,
 	Death,
 	SubjectContext,
-} from "../model/TreeNodeModel";
+} from "../model/tree-node-model";
 import LocalDB from "../services/LocalDB";
 import { nanoid } from "nanoid";
 import { assertIsNonNull } from "../utils/asserts";

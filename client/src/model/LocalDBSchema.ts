@@ -1,5 +1,5 @@
 import Dexie, { type Table } from "dexie";
-import type { DistinctTreeNode } from "./TreeNodeModel";
+import type { DistinctTreeNode } from "./tree-node-model/TreeNodeSchema";
 
 export type NodeEntry = {
 	node_id: string;

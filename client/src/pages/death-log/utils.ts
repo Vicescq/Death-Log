@@ -3,7 +3,7 @@ import type {
 	Subject,
 	Tree,
 	TreeNode,
-} from "../../model/TreeNodeModel";
+} from "../../model/tree-node-model";
 import { createDeath } from "../../stores/utils";
 import { assertIsNonNull } from "../../utils/asserts";
 

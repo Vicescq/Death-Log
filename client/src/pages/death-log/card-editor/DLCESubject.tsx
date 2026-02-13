@@ -1,6 +1,6 @@
 import type { UseFormReturn } from "react-hook-form";
-import type { Subject } from "../../../model/TreeNodeModel";
 import type { NodeFormEdit } from "../schema";
+import type { Subject } from "../../../model/tree-node-model/SubjectSchema";
 
 type Props = {
 	node: Subject;

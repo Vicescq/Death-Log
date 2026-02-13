@@ -1,6 +1,4 @@
 import { useNavigate } from "react-router";
-import NavBar from "../../../components/navBar/NavBar";
-import type { DistinctTreeNode } from "../../../model/TreeNodeModel";
 import DeathLogBreadcrumb from "../breadcrumb/DeathLogBreadcrumb";
 import DLCEDate from "./DLCEDate";
 import DLCEDel from "./DLCEDel";
@@ -20,6 +18,8 @@ import { assertIsNonNull } from "../../../utils/asserts";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createNodeFormEditSchema, type NodeFormEdit } from "../schema";
+import NavBar from "../../../components/nav-bar/NavBar";
+import type { DistinctTreeNode } from "../../../model/tree-node-model/TreeNodeSchema";
 
 export default function DeathLogCardEditor({
 	node,

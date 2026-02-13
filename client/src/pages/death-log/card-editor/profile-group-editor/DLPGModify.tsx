@@ -4,7 +4,7 @@ import type {
 	Profile,
 	ProfileGroup,
 	Subject,
-} from "../../../../model/TreeNodeModel";
+} from "../../../../model/tree-node-model";
 import { formatString } from "../../../../utils/general";
 import { assertIsNonNull } from "../../../../utils/asserts";
 import { useDeathLogStore } from "../../../../stores/useDeathLogStore";

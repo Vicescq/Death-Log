@@ -2,7 +2,7 @@ import { CONSTANTS } from "../../../shared/constants";
 import { createTreeNodeSchema } from "./TreeNodeSchema";
 import z from "zod";
 
-const createSubjectSchema = (
+export const createSubjectSchema = (
 	siblingNames: string[],
 	currEditingName: string | null,
 ) => {
@@ -15,7 +15,7 @@ const createSubjectSchema = (
 	});
 };
 
-const DeathSchema = z.object({
+export const DeathSchema = z.object({
 	id: z.string().length(8),
 	parentID: z.string().length(8),
 	timestamp: z.iso.datetime(),
@@ -23,7 +23,7 @@ const DeathSchema = z.object({
 	remark: z.string().length(CONSTANTS.NUMS.INPUT_MAX_LESS).nullable(),
 });
 
-const SubjectContextSchema = z.literal([
+export const SubjectContextSchema = z.literal([
 	"Boss",
 	"Location",
 	"Other",
@@ -31,7 +31,7 @@ const SubjectContextSchema = z.literal([
 	"Mini Boss",
 ]);
 
-type Subject = z.infer<ReturnType<typeof createSubjectSchema>>;
-type Death = z.infer<typeof DeathSchema>;
-type SubjectContext = z.infer<typeof SubjectContextSchema>;
-type SubjectCharacteristics = Pick<Subject, "reoccurring" | "context">;
+export type Subject = z.infer<ReturnType<typeof createSubjectSchema>>;
+export type Death = z.infer<typeof DeathSchema>;
+export type SubjectContext = z.infer<typeof SubjectContextSchema>;
+export type SubjectCharacteristics = Pick<Subject, "reoccurring" | "context">;

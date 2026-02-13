@@ -1,8 +1,8 @@
 import DeathLogCardOptions from "./DeathLogCardOptions";
 import loop from "../../../assets/loop.svg";
 import skullRed from "../../../assets/skull_red.svg";
-import type { DistinctTreeNode, Tree } from "../../../model/TreeNodeModel";
 import { calcDeaths } from "../utils";
+import type { DistinctTreeNode, Tree } from "../../../model/tree-node-model/TreeNodeSchema";
 
 type Props = {
 	node: DistinctTreeNode;

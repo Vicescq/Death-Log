@@ -1,4 +1,4 @@
-import type { Profile } from "../../../../model/TreeNodeModel";
+import type { Profile } from "../../../../model/tree-node-model";
 import edit from "../../../assets/edit.svg";
 import Modal from "../../../../components/Modal";
 import { useRef, useState } from "react";

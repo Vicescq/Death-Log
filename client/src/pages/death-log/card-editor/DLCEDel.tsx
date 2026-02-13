@@ -1,6 +1,6 @@
-import type { DistinctTreeNode } from "../../../model/TreeNodeModel";
 import trash from "../../../assets/trash.svg";
 import { CONSTANTS } from "../../../../shared/constants";
+import type { DistinctTreeNode } from "../../../model/tree-node-model/TreeNodeSchema";
 
 type Props = {
 	node: DistinctTreeNode;

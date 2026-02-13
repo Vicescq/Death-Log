@@ -1,4 +1,4 @@
-import type { Profile, ProfileGroup } from "../../../../model/TreeNodeModel";
+import type { Profile, ProfileGroup } from "../../../../model/tree-node-model";
 import { useDeathLogStore } from "../../../../stores/useDeathLogStore";
 import { assertIsNonNull, assertIsSubject } from "../../../../utils/asserts";
 import { useState } from "react";

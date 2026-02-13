@@ -1,8 +1,8 @@
 import stepInto from "../../../assets/step_into.svg";
 import edit from "../../../assets/edit.svg";
-import type { DistinctTreeNode } from "../../../model/TreeNodeModel";
 import { Link } from "react-router";
 import { CONSTANTS } from "../../../../shared/constants";
+import type { DistinctTreeNode } from "../../../model/tree-node-model/TreeNodeSchema";
 
 type Props = {
 	node: DistinctTreeNode;

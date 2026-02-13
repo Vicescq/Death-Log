@@ -1,7 +1,7 @@
 import { createTreeNodeSchema } from "./TreeNodeSchema";
 import z from "zod";
 
-const createRootNodeSchema = (
+export const createRootNodeSchema = (
 	siblingNames: string[],
 	currEditingName: string | null,
 ) => {
@@ -9,4 +9,5 @@ const createRootNodeSchema = (
 		type: z.literal("ROOT_NODE"),
 	});
 };
-type RootNode = z.infer<ReturnType<typeof createRootNodeSchema>>;
+
+export type RootNode = z.infer<ReturnType<typeof createRootNodeSchema>>;

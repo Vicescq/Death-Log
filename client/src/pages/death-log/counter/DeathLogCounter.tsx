@@ -2,8 +2,6 @@ import { useDeathLogStore } from "../../../stores/useDeathLogStore";
 import up from "../../../assets/up.svg";
 import down from "../../../assets/down.svg";
 import DeathLogBreadcrumb from "../breadcrumb/DeathLogBreadcrumb";
-import NavBar from "../../../components/navBar/NavBar";
-import type { Subject } from "../../../model/TreeNodeModel";
 import { useRef, useState } from "react";
 import { isoToDateSTD, isoToTimeSTD } from "../../../utils/date";
 import { resolveTimestampUpdate } from "../../../utils/date";
@@ -14,7 +12,6 @@ import DeathCounterModalBody from "./DeathCounterModalBody";
 import { createDeath } from "../../../stores/utils";
 import { formatString } from "../../../utils/general";
 import DeathSettingsAndHistory from "./DeathSettingsAndHistory";
-import { delay } from "../../../utils/general";
 import { assertIsNonNull } from "../../../utils/asserts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -23,6 +20,8 @@ import {
 	type DeathCounterForm,
 	type EditDeathForm,
 } from "./schema";
+import NavBar from "../../../components/nav-bar/NavBar";
+import type { Subject } from "../../../model/tree-node-model/SubjectSchema";
 
 type Props = {
 	subject: Subject;

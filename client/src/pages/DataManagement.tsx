@@ -6,7 +6,7 @@ import { useDeathLogStore } from "../stores/useDeathLogStore";
 import skull from "../assets/skull.svg";
 import { db } from "../model/LocalDBSchema";
 import FeedbackToast from "../components/FeedbackToast";
-import type { DistinctTreeNode, TreeNode } from "../model/TreeNodeModel";
+import type { DistinctTreeNode, TreeNode } from "../model/tree-node-model";
 import NavBar from "../components/nav-bar/NavBar";
 
 type DeathLogBackup = {
