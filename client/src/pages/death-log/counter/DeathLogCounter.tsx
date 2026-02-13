@@ -22,6 +22,7 @@ import {
 } from "./schema";
 import NavBar from "../../../components/nav-bar/NavBar";
 import type { Subject } from "../../../model/tree-node-model/SubjectSchema";
+import useNotifyDateReset from "../../../hooks/useNotifyDateReset";
 
 type Props = {
 	subject: Subject;
@@ -39,6 +40,9 @@ export default function DeathLogCounter({ subject }: Props) {
 	const sortedDeaths = subject.log.toSorted(
 		(a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp),
 	);
+
+	const { timeNotice, onResetNotice, onTimeNoticeChange } =
+		useNotifyDateReset();
 
 	const counterForm = useForm<DeathCounterForm>({
 		mode: "onChange",
@@ -203,6 +207,9 @@ export default function DeathLogCounter({ subject }: Props) {
 						form={modalForm}
 						onEditDeath={onEditDeath}
 						onDeleteDeath={handleDeleteDeath}
+						timeNotice={timeNotice}
+						onTimeNoticeChange={onTimeNoticeChange}
+						onResetNotice={onResetNotice}
 					/>
 				}
 				closeBtnName="Cancel"

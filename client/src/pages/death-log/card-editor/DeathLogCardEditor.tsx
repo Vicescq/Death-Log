@@ -16,6 +16,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { createNodeFormEditSchema, type NodeFormEdit } from "../schema";
 import NavBar from "../../../components/nav-bar/NavBar";
 import type { DistinctTreeNode } from "../../../model/tree-node-model/TreeNodeSchema";
+import useNotifyDateReset from "../../../hooks/useNotifyDateReset";
 
 export default function DeathLogCardEditor({
 	node,
@@ -26,13 +27,17 @@ export default function DeathLogCardEditor({
 	const deleteNode = useDeathLogStore((state) => state.deleteNode);
 	const navigate = useNavigate();
 
-	const [timeStartUpdateNotice, setTimeStartUpdateNotice] = useState<
-		string | null
-	>(null);
+	const {
+		timeNotice: timeStartUpdateNotice,
+		onResetNotice: onResetTimeStartNotice,
+		onTimeNoticeChange: onTimeStartNoticeChange,
+	} = useNotifyDateReset();
 
-	const [timeEndUpdateNotice, setTimeEndUpdateNotice] = useState<
-		string | null
-	>(null);
+	const {
+		timeNotice: timeEndUpdateNotice,
+		onResetNotice: onResetTimeEndNotice,
+		onTimeNoticeChange: onTimeEndNoticeChange,
+	} = useNotifyDateReset();
 
 	const tree = useDeathLogStore((state) => state.tree);
 	const parent = tree.get(node.parentID);
@@ -139,17 +144,6 @@ export default function DeathLogCardEditor({
 		deleteNode(node);
 	}
 
-	function handleTimeNoticeChange(
-		noticeType: "start" | "end",
-		notice: string | null,
-	) {
-		if (noticeType == "start") {
-			setTimeStartUpdateNotice(notice);
-		} else {
-			setTimeEndUpdateNotice(notice);
-		}
-	}
-
 	return (
 		<>
 			<NavBar
@@ -188,7 +182,12 @@ export default function DeathLogCardEditor({
 								form={form}
 								timeStartUpdateNotice={timeStartUpdateNotice}
 								timeEndUpdateNotice={timeEndUpdateNotice}
-								onTimeNoticeChange={handleTimeNoticeChange}
+								onResetTimeStartNotice={onResetTimeStartNotice}
+								onResetTimeEndNotice={onResetTimeEndNotice}
+								onTimeStartNoticeChange={
+									onTimeStartNoticeChange
+								}
+								onTimeEndNoticeChange={onTimeEndNoticeChange}
 							/>
 
 							{node.type == "subject" ? (
@@ -224,8 +223,8 @@ export default function DeathLogCardEditor({
 							className="btn btn-primary mt-4"
 							onClick={(e) => {
 								e.preventDefault();
-								setTimeStartUpdateNotice(null);
-								setTimeEndUpdateNotice(null);
+								onResetTimeStartNotice();
+								onResetTimeEndNotice();
 								form.reset();
 							}}
 							disabled={!form.formState.isDirty}
@@ -254,8 +253,8 @@ export default function DeathLogCardEditor({
 								!form.formState.isDirty
 							}
 							onClick={() => {
-								setTimeStartUpdateNotice(null);
-								setTimeEndUpdateNotice(null);
+								onResetTimeStartNotice();
+								onResetTimeEndNotice();
 							}}
 						>
 							{CONSTANTS.DEATH_LOG_EDITOR.SUBMIT}

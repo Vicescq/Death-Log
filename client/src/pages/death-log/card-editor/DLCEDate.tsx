@@ -8,10 +8,10 @@ type Props = {
 	form: UseFormReturn<NodeFormEdit, any, NodeFormEdit>;
 	timeStartUpdateNotice: string | null;
 	timeEndUpdateNotice: string | null;
-	onTimeNoticeChange: (
-		noticeType: "start" | "end",
-		notice: string | null,
-	) => void;
+	onResetTimeStartNotice: () => void;
+	onResetTimeEndNotice: () => void;
+	onTimeStartNoticeChange: (notice: string | null) => void;
+	onTimeEndNoticeChange: (notice: string | null) => void;
 };
 
 export default function DLCEDate({
@@ -19,7 +19,10 @@ export default function DLCEDate({
 	form,
 	timeStartUpdateNotice,
 	timeEndUpdateNotice,
-	onTimeNoticeChange,
+	onResetTimeStartNotice,
+	onResetTimeEndNotice,
+	onTimeStartNoticeChange,
+	onTimeEndNoticeChange,
 }: Props) {
 	return (
 		<>
@@ -34,9 +37,8 @@ export default function DLCEDate({
 								shouldDirty: true,
 								shouldValidate: true,
 							});
-							onTimeNoticeChange(
-								"start",
-								CONSTANTS.INFO.EDITOR_TIME_RESET_NOTICE,
+							onTimeStartNoticeChange(
+								CONSTANTS.INFO.TIME_RESET_NOTICE,
 							);
 						},
 					})}
@@ -59,7 +61,7 @@ export default function DLCEDate({
 					className={`input ${form.formState.dirtyFields.timeStart ? "input-primary" : ""} join-item w-full`}
 					{...form.register("timeStart", {
 						onChange: () => {
-							onTimeNoticeChange("start", null);
+							onResetTimeStartNotice();
 							form.trigger("dateStart");
 						},
 					})}
@@ -92,9 +94,8 @@ export default function DLCEDate({
 										shouldDirty: true,
 										shouldValidate: true,
 									});
-									onTimeNoticeChange(
-										"end",
-										CONSTANTS.INFO.EDITOR_TIME_RESET_NOTICE,
+									onTimeEndNoticeChange(
+										CONSTANTS.INFO.TIME_RESET_NOTICE,
 									);
 								},
 							})}
@@ -116,7 +117,7 @@ export default function DLCEDate({
 							className={`input ${form.formState.dirtyFields.timeEnd ? "input-primary" : ""} join-item w-full`}
 							{...form.register("timeEnd", {
 								onChange: () => {
-									onTimeNoticeChange("end", null);
+									onResetTimeEndNotice();
 									form.trigger("dateEnd");
 								},
 							})}

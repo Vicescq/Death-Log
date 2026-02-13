@@ -1,7 +1,10 @@
 import LocalDB from "../services/LocalDB";
 import { nanoid } from "nanoid";
 import { assertIsNonNull } from "../utils/asserts";
-import type { Game } from "../model/tree-node-model/GameSchema";
+import {
+	createGameSchema,
+	type Game,
+} from "../model/tree-node-model/GameSchema";
 import type { Profile } from "../model/tree-node-model/ProfileSchema";
 import type { RootNode } from "../model/tree-node-model/RootNodeSchema";
 import type { Subject, Death } from "../model/tree-node-model/SubjectSchema";
@@ -9,6 +12,7 @@ import type {
 	DistinctTreeNode,
 	Tree,
 } from "../model/tree-node-model/TreeNodeSchema";
+import z from "zod";
 
 export function identifyDeletedSelfAndChildrenIDS(
 	node: DistinctTreeNode,

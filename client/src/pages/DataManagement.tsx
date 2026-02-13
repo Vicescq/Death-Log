@@ -6,8 +6,11 @@ import { useDeathLogStore } from "../stores/useDeathLogStore";
 import skull from "../assets/skull.svg";
 import { db } from "../model/LocalDBSchema";
 import FeedbackToast from "../components/FeedbackToast";
-import type { DistinctTreeNode, TreeNode } from "../model/tree-node-model";
 import NavBar from "../components/nav-bar/NavBar";
+import type {
+	DistinctTreeNode,
+	TreeNode,
+} from "../model/tree-node-model/TreeNodeSchema";
 
 type DeathLogBackup = {
 	type: "DEATH-LOG Backup";
@@ -235,7 +238,7 @@ export default function DataManagement() {
 
 	return (
 		<>
-			<NavBar/>
+			<NavBar />
 			<FeedbackToast
 				msg={feedbackToastMsg}
 				bgCSS={feedbackToastCSS}

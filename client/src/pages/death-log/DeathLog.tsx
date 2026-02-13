@@ -60,13 +60,6 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 
 	const sortedChildIDs = sortChildIDS(parent, tree);
 
-	tree.forEach((node) => {
-		assertIsNonNull(node);
-		if (node.type == "subject") {
-			console.log(node.context);
-		}
-	});
-
 	return (
 		<>
 			<NavBar

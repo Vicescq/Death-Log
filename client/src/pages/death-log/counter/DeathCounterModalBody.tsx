@@ -7,6 +7,9 @@ type Props = {
 	form: UseFormReturn<EditDeathForm, any, EditDeathForm>;
 	onEditDeath: SubmitHandler<EditDeathForm>;
 	onDeleteDeath: () => void;
+	timeNotice: string | null;
+	onTimeNoticeChange: (notice: string | null) => void;
+	onResetNotice: () => void;
 };
 
 export default function DeathCounterModalBody({
@@ -14,6 +17,9 @@ export default function DeathCounterModalBody({
 	form,
 	onEditDeath,
 	onDeleteDeath,
+	timeNotice,
+	onTimeNoticeChange,
+	onResetNotice,
 }: Props) {
 	if (type == "edit") {
 		return (
@@ -45,7 +51,18 @@ export default function DeathCounterModalBody({
 						<input
 							type="date"
 							className="input bg-base-200"
-							{...form.register("date")}
+							{...form.register("date", {
+								onChange: () => {
+									form.trigger("time");
+									form.setValue("time", "00:00:00", {
+										shouldValidate: true,
+										shouldDirty: true,
+									});
+									onTimeNoticeChange(
+										CONSTANTS.INFO.TIME_RESET_NOTICE,
+									);
+								},
+							})}
 						/>
 					</label>
 					{form.formState.errors.date && (
@@ -60,13 +77,21 @@ export default function DeathCounterModalBody({
 							type="time"
 							className="input bg-base-200"
 							step={1}
-							{...form.register("time")}
+							{...form.register("time", {
+								onChange: () => {
+									onResetNotice();
+									form.trigger("date");
+								},
+							})}
 						/>
 					</label>
 					{form.formState.errors.time && (
 						<div className="text-error">
 							{form.formState.errors.time.message}
 						</div>
+					)}
+					{timeNotice && (
+						<div className="text-info">{timeNotice}</div>
 					)}
 
 					<div className="mt-4 flex items-center">
@@ -100,6 +125,7 @@ export default function DeathCounterModalBody({
 						!form.formState.isValid || !form.formState.isDirty
 					}
 					className="btn btn-success my-2 w-full"
+					onClick={() => onResetNotice()}
 				>
 					{CONSTANTS.DEATH_LOG_EDITOR.SUBMIT}
 				</button>
@@ -110,6 +136,7 @@ export default function DeathCounterModalBody({
 					onClick={(e) => {
 						e.preventDefault();
 						form.reset();
+						onResetNotice();
 					}}
 				>
 					{CONSTANTS.DEATH_LOG_EDITOR.RESET}

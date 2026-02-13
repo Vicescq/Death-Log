@@ -13,7 +13,7 @@ export const createTreeNodeSchema = (
 	return z.object({
 		type: z.literal(["game", "profile", "subject", "ROOT_NODE"]),
 		id: z.string().length(8), // add validation?
-		parentID: z.string().length(8),
+		parentID: z.string(),
 		childIDS: z.array(z.string()),
 		name: z
 			.string()

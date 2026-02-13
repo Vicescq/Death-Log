@@ -21,7 +21,7 @@ export const CONSTANTS = {
 	INFO: {
 		RELIABILITY:
 			"A reliable date will be displayed when graphed. An unreliable date will be omitted by default but still can be shown.",
-		EDITOR_TIME_RESET_NOTICE:
+		TIME_RESET_NOTICE:
 			"You have changed a date field, time has been reset to 12:00:00 AM for a clean slate!",
 	},
 	DEATH_LOG_EDITOR: {
