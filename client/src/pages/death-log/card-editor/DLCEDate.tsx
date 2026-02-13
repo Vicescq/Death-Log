@@ -154,7 +154,7 @@ export default function DLCEDate({
 					<div className="flex">
 						<label
 							htmlFor="creation-date-reliable-toggle"
-							className={`text-[1rem] ${form.formState.dirtyFields.startRel ? "text-success" : ""}`}
+							className={`text-[1rem] ${form.formState.dirtyFields.dateStartRel ? "text-success" : ""}`}
 						>
 							Creation Timestamp
 						</label>
@@ -162,7 +162,7 @@ export default function DLCEDate({
 							id="creation-date-reliable-toggle"
 							type="checkbox"
 							className="toggle toggle-primary my-auto ml-auto"
-							{...form.register("startRel")}
+							{...form.register("dateStartRel")}
 						/>
 					</div>
 
@@ -170,7 +170,7 @@ export default function DLCEDate({
 						<div className="flex">
 							<label
 								htmlFor="completion-date-reliable-toggle"
-								className={`text-[1rem] ${form.formState.dirtyFields.endRel ? "text-success" : ""}`}
+								className={`text-[1rem] ${form.formState.dirtyFields.dateEndRel ? "text-success" : ""}`}
 							>
 								Completion Timestamp
 							</label>
@@ -178,7 +178,7 @@ export default function DLCEDate({
 								id="completion-date-reliable-toggle"
 								type="checkbox"
 								className="toggle toggle-primary my-auto ml-auto"
-								{...form.register("endRel")}
+								{...form.register("dateEndRel")}
 							/>
 						</div>
 					) : null}

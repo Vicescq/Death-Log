@@ -56,7 +56,7 @@ export default function DeathLogCardEditor({
 			name: node.name,
 			dateStart: isoToDateSTD(node.dateStart),
 			timeStart: isoToTimeSTD(node.dateStart),
-			startRel: node.dateStartRel,
+			dateStartRel: node.dateStartRel,
 			dateEnd:
 				node.completed && node.dateEnd
 					? isoToDateSTD(node.dateEnd)
@@ -65,7 +65,7 @@ export default function DeathLogCardEditor({
 				node.completed && node.dateEnd
 					? isoToTimeSTD(node.dateEnd)
 					: null,
-			endRel: node.dateEndRel,
+			dateEndRel: node.dateEndRel,
 			notes: node.notes,
 			reoccurring: node.type == "subject" ? node.reoccurring : false,
 			context:
@@ -106,9 +106,9 @@ export default function DeathLogCardEditor({
 				...node,
 				name: name,
 				dateStart: dateStart,
-				dateStartRel: formData.startRel,
+				dateStartRel: formData.dateStartRel,
 				dateEnd: dateEnd,
-				dateEndRel: formData.endRel,
+				dateEndRel: formData.dateEndRel,
 				notes: formData.notes,
 			});
 		} else if (node.type == "profile") {
@@ -116,9 +116,9 @@ export default function DeathLogCardEditor({
 				...node,
 				name: name,
 				dateStart: dateStart,
-				dateStartRel: formData.startRel,
+				dateStartRel: formData.dateStartRel,
 				dateEnd: dateEnd,
-				dateEndRel: formData.endRel,
+				dateEndRel: formData.dateEndRel,
 				notes: formData.notes,
 			});
 		} else if (node.type == "subject") {
@@ -126,9 +126,9 @@ export default function DeathLogCardEditor({
 				...node,
 				name: name,
 				dateStart: dateStart,
-				dateStartRel: formData.startRel,
+				dateStartRel: formData.dateStartRel,
 				dateEnd: dateEnd,
-				dateEndRel: formData.endRel,
+				dateEndRel: formData.dateEndRel,
 				notes: formData.notes,
 				reoccurring: formData.reoccurring,
 				context: formattedStrTosubjectContext(formData.context),
