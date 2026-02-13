@@ -3,12 +3,12 @@ import React, { forwardRef, useRef, useState } from "react";
 import DeathLogFAB from "./fab/DeathLogFAB";
 import { Virtuoso, type Components, type VirtuosoHandle } from "react-virtuoso";
 import DeathLogBreadcrumb from "./breadcrumb/DeathLogBreadcrumb";
-import type { DistinctTreeNode } from "../../model/tree-node-model";
 import { sortChildIDS } from "./utils";
 import { useDeathLogStore } from "../../stores/useDeathLogStore";
 import { assertIsNonNull } from "../../utils/asserts";
 import Modal from "../../components/Modal";
 import DeathLogCard from "./card/DeathLogCard";
+import type { DistinctTreeNode } from "../../model/tree-node-model/TreeNodeSchema";
 
 export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 	const tree = useDeathLogStore((state) => state.tree);
@@ -59,6 +59,14 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 	}
 
 	const sortedChildIDs = sortChildIDS(parent, tree);
+
+	tree.forEach((node) => {
+		assertIsNonNull(node);
+		if (node.type == "subject") {
+			console.log(node.context);
+		}
+	});
+
 	return (
 		<>
 			<NavBar

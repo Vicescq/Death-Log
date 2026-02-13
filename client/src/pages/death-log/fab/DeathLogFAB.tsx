@@ -12,7 +12,6 @@ import { formatString } from "../../../utils/general";
 import { CONSTANTS } from "../../../../shared/constants";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import DLFABModalBodyAdd from "./DLFABModalBodyAdd";
-import { formattedStrTosubjectContext } from "../../../stores/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { assertIsNonNull } from "../../../utils/asserts";
 import { createNodeFormAddSchema, type NodeFormAdd } from "../schema";
@@ -69,7 +68,7 @@ export default function DeathLogFAB({
 		if (type != "subject") {
 			addNode(type, formatString(formData.name), parent.id);
 		} else {
-			const context = formattedStrTosubjectContext(formData.context);
+			const context = formData.context;
 			addNode(type, formatString(formData.name), parent.id, {
 				context: context,
 				reoccurring: formData.reoccurring,

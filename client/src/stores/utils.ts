@@ -1,16 +1,14 @@
-import type {
-	Subject,
-	DistinctTreeNode,
-	Game,
-	Profile,
-	RootNode,
-	Tree,
-	Death,
-	SubjectContext,
-} from "../model/tree-node-model";
 import LocalDB from "../services/LocalDB";
 import { nanoid } from "nanoid";
 import { assertIsNonNull } from "../utils/asserts";
+import type { Game } from "../model/tree-node-model/GameSchema";
+import type { Profile } from "../model/tree-node-model/ProfileSchema";
+import type { RootNode } from "../model/tree-node-model/RootNodeSchema";
+import type { Subject, Death } from "../model/tree-node-model/SubjectSchema";
+import type {
+	DistinctTreeNode,
+	Tree,
+} from "../model/tree-node-model/TreeNodeSchema";
 
 export function identifyDeletedSelfAndChildrenIDS(
 	node: DistinctTreeNode,
@@ -107,7 +105,7 @@ export function createSubject(inputText: string, parentID: string, tree: Tree) {
 		dateEnd: null,
 		log: [],
 		reoccurring: false,
-		context: "boss",
+		context: "Boss",
 		timeSpent: null,
 		dateStartRel: true,
 		dateEndRel: true,
@@ -169,28 +167,4 @@ export async function refreshTree(
 ) {
 	const nodes = await LocalDB.getNodes();
 	initTree(nodes);
-}
-
-export function subjectContextToFormattedStr(context: SubjectContext) {
-	const subjectContextMap = {
-		boss: "Boss",
-		location: "Location",
-		other: "Other",
-		genericEnemy: "Generic Enemy",
-		miniBoss: "Mini Boss",
-	};
-	return subjectContextMap[context];
-}
-
-export function formattedStrTosubjectContext(
-	formattedStr: string,
-): SubjectContext {
-	const properStrMap: Record<string, SubjectContext> = {
-		Boss: "boss",
-		Location: "location",
-		Other: "other",
-		"Generic Enemy": "genericEnemy",
-		"Mini Boss": "miniBoss",
-	};
-	return properStrMap[formattedStr];
 }

@@ -13,6 +13,7 @@ export const createProfileSchema = (
 };
 
 export const ProfileGroupSchema = z.object({
+	id: z.string().length(8),
 	title: z.string().length(CONSTANTS.NUMS.INPUT_MAX_LESS),
 	members: z.array(z.string()),
 	description: z.string().length(CONSTANTS.NUMS.INPUT_MAX),

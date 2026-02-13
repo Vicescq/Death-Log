@@ -6,10 +6,6 @@ import DLCESubject from "./DLCESubject";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { formatString } from "../../../utils/general";
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
-import {
-	formattedStrTosubjectContext,
-	subjectContextToFormattedStr,
-} from "../../../stores/utils";
 import { resolveTimestampUpdate } from "../../../utils/date";
 import { isoToDateSTD, isoToTimeSTD } from "../../../utils/date";
 import { CONSTANTS } from "../../../../shared/constants";
@@ -68,10 +64,7 @@ export default function DeathLogCardEditor({
 			dateEndRel: node.dateEndRel,
 			notes: node.notes,
 			reoccurring: node.type == "subject" ? node.reoccurring : false,
-			context:
-				node.type == "subject"
-					? subjectContextToFormattedStr(node.context)
-					: "Boss",
+			context: node.type == "subject" ? node.context : "Boss",
 		},
 		mode: "onChange",
 		resolver: zodResolver(NodeFormEditSchema),
@@ -131,7 +124,7 @@ export default function DeathLogCardEditor({
 				dateEndRel: formData.dateEndRel,
 				notes: formData.notes,
 				reoccurring: formData.reoccurring,
-				context: formattedStrTosubjectContext(formData.context),
+				context: formData.context,
 			});
 		}
 
