@@ -3,11 +3,11 @@ import LocalDB from "../services/LocalDB";
 import { refreshTree } from "../stores/utils";
 import Modal, { type ModalBtn } from "../components/Modal";
 import { useDeathLogStore } from "../stores/useDeathLogStore";
-import NavBar from "../components/navBar/NavBar";
 import skull from "../assets/skull.svg";
 import { db } from "../model/LocalDBSchema";
 import FeedbackToast from "../components/FeedbackToast";
 import type { DistinctTreeNode, TreeNode } from "../model/TreeNodeModel";
+import NavBar from "../components/nav-bar/NavBar";
 
 type DeathLogBackup = {
 	type: "DEATH-LOG Backup";

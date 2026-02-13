@@ -2,7 +2,7 @@ import z from "zod";
 import { CONSTANTS } from "../../../../shared/constants";
 
 export const EditDeathFormSchema = z.object({
-	remark: z.string().max(CONSTANTS.NUMS.DEATH_REMARK_MAX, {
+	remark: z.string().max(CONSTANTS.NUMS.INPUT_MAX_LESS, {
 		error: CONSTANTS.ERROR.MAX_LENGTH,
 	}),
 	date: z.iso.date({ error: CONSTANTS.ERROR.DATE }),

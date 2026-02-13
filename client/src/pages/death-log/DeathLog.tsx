@@ -1,4 +1,4 @@
-import NavBar from "../../components/navBar/NavBar";
+import NavBar from "../../components/nav-bar/NavBar";
 import React, { forwardRef, useRef, useState } from "react";
 import DeathLogFAB from "./fab/DeathLogFAB";
 import { Virtuoso, type Components, type VirtuosoHandle } from "react-virtuoso";

@@ -1,4 +1,4 @@
-import NavBar from "../components/navBar/NavBar";
+import NavBar from "../components/nav-bar/NavBar";
 
 export default function FAQ() {
 	return (
