@@ -2,7 +2,10 @@ import DeathLogCardOptions from "./DeathLogCardOptions";
 import loop from "../../../assets/loop.svg";
 import skullRed from "../../../assets/skull_red.svg";
 import { calcDeaths } from "../utils";
-import type { DistinctTreeNode, Tree } from "../../../model/tree-node-model/TreeNodeSchema";
+import type {
+	DistinctTreeNode,
+	Tree,
+} from "../../../model/tree-node-model/TreeNodeSchema";
 
 type Props = {
 	node: DistinctTreeNode;
@@ -20,9 +23,7 @@ export default function DeathLogCard({
 	return (
 		<li className={`list-row hover:bg-neutral rounded-none`} inert={false}>
 			<div className="flex items-center justify-center">
-				<span className="text-accent line-clamp-1 w-8 text-xs">
-					{entryNum}
-				</span>
+				<span className="text-accent line-clamp-1 w-8">{entryNum}</span>
 				<div>
 					{node.type == "subject" && node.reoccurring ? (
 						<img src={loop} alt="" className="w-6" />

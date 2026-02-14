@@ -23,6 +23,7 @@ import {
 import NavBar from "../../../components/nav-bar/NavBar";
 import type { Subject } from "../../../model/tree-node-model/SubjectSchema";
 import useNotifyDateReset from "../../../hooks/useNotifyDateReset";
+import Container from "../../../components/Container";
 
 type Props = {
 	subject: Subject;
@@ -161,9 +162,9 @@ export default function DeathLogCounter({ subject }: Props) {
 				endNavContentCSS="w-[70%]"
 				startNavContentCSS="w-[30%]"
 			/>
-			<div className="m-auto mt-4 flex w-full flex-col items-center justify-center rounded-4xl sm:max-w-[85%] md:max-w-2xl">
+			<Container>
 				<h1
-					className={`mx-6 rounded-2xl p-6 text-center text-4xl break-all md:text-6xl ${subject.completed ? "text-neutral line-through" : ""}`}
+					className={`mx-6 rounded-2xl p-6 text-center text-4xl break-words md:text-6xl ${subject.completed ? "text-neutral line-through" : ""}`}
 				>
 					{subject.name}
 				</h1>
@@ -197,7 +198,7 @@ export default function DeathLogCounter({ subject }: Props) {
 					sortedDeaths={sortedDeaths}
 					focusedDeathID={focusedDeathID}
 				/>
-			</div>
+			</Container>
 
 			<Modal
 				ref={modalRef}

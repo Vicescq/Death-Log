@@ -17,6 +17,7 @@ import NavBar from "../../../components/nav-bar/NavBar";
 import type { DistinctTreeNode } from "../../../model/tree-node-model/TreeNodeSchema";
 import useNotifyDateReset from "../../../hooks/useNotifyDateReset";
 import useResolveEditReturn from "../../../hooks/useResolveEditReturn";
+import Container from "../../../components/Container";
 
 export default function DeathLogCardEditor({
 	node,
@@ -151,9 +152,8 @@ export default function DeathLogCardEditor({
 				endNavContentCSS="w-[70%]"
 				startNavContentCSS="w-[30%]"
 			/>
-
-			<div className="m-auto mb-8 w-[90%] sm:max-w-[75%] lg:max-w-[40rem]">
-				<h1 className="my-6 text-center text-4xl font-bold break-all">
+			<Container>
+				<h1 className="my-6 text-center text-4xl font-bold break-words">
 					Editing: {node.name}
 				</h1>
 				<form onSubmit={form.handleSubmit(onSubmit)}>
@@ -261,7 +261,7 @@ export default function DeathLogCardEditor({
 						</button>
 					</fieldset>
 				</form>
-			</div>
+			</Container>
 		</>
 	);
 }
