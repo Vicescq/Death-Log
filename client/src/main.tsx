@@ -51,53 +51,19 @@ function AppRoot() {
 			onReset={() => navigate("/")}
 		>
 			<Routes>
-				<Route path="/">
-					<Route index element={<Start />} />
+				<Route path="/" element={<Start />} />
 
-					<Route path="log">
-						<Route index element={<DeathLog parent={root} />} />
-
-						<Route path=":gameID">
-							<Route
-								index
-								element={<DeathLogRouter isEditing={false} />}
-							/>
-							<Route
-								path="edit"
-								element={<DeathLogRouter isEditing={true} />}
-							/>
-
-							<Route path=":profileID">
-								<Route
-									index
-									element={
-										<DeathLogRouter isEditing={false} />
-									}
-								/>
-								<Route
-									path="edit"
-									element={
-										<DeathLogRouter isEditing={true} />
-									}
-								/>
-
-								<Route path=":subjectID">
-									<Route
-										index
-										element={
-											<DeathLogRouter isEditing={false} />
-										}
-									/>
-									<Route
-										path="edit"
-										element={
-											<DeathLogRouter isEditing={true} />
-										}
-									/>
-								</Route>
-							</Route>
-						</Route>
-					</Route>
+				<Route path="log">
+					<Route index element={<DeathLog parent={root} />} />
+					<Route path=":gameID" element={<DeathLogRouter />} />
+					<Route
+						path=":gameID/:profileID"
+						element={<DeathLogRouter />}
+					/>
+					<Route
+						path=":gameID/:profileID/:subjectID"
+						element={<DeathLogRouter />}
+					/>
 				</Route>
 
 				<Route path="data-management" element={<DataManagement />} />

@@ -1,4 +1,4 @@
-import { useParams } from "react-router";
+import { useParams, useSearchParams } from "react-router";
 import { CONSTANTS } from "../../../shared/constants";
 import { useDeathLogStore } from "../../stores/useDeathLogStore";
 import { assertIsNonNull, assertIsSubject } from "../../utils/asserts";
@@ -7,16 +7,17 @@ import DeathLogCardEditor from "./card-editor/DeathLogCardEditor";
 import DeathLogCounter from "./counter/DeathLogCounter";
 import DeathLog from "./DeathLog";
 
-export default function DeathLogRouter({ isEditing }: { isEditing: boolean }) {
+export default function DeathLogRouter() {
 	const params = useParams();
+	const [qParams] = useSearchParams();
 	const tree = useDeathLogStore((state) => state.tree);
 
 	const gameID = params.gameID;
-	const profileID = params.profileID == "edit" ? undefined : params.profileID;
-	const subjectID = params.subjectID == "edit" ? undefined : params.subjectID;
+	const profileID = params.profileID;
+	const subjectID = params.subjectID;
 
 	function isValidNodeID(id: string | undefined) {
-		return id && tree.has(id) && isUniqueID();
+		return id && tree.has(id) && isUniqueID() && id != "ROOT_NODE";
 	}
 
 	function isUniqueID() {
@@ -25,6 +26,8 @@ export default function DeathLogRouter({ isEditing }: { isEditing: boolean }) {
 			new Set(Object.values(params)).size == Object.keys(params).length
 		);
 	}
+
+	const isEditing = qParams.get("edit") === "true";
 
 	if (
 		isValidNodeID(subjectID) &&

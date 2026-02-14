@@ -9,6 +9,7 @@ export type BreadcrumbMember = {
 	link: string;
 	name: string;
 	condensedMembers?: BreadcrumbMember[];
+	qParam?: string;
 };
 
 export default function DeathLogBreadcrumb() {
@@ -122,6 +123,7 @@ export default function DeathLogBreadcrumb() {
 								<Link
 									to={{
 										pathname: member.link,
+										search: member.qParam,
 									}}
 								>
 									{member.name}
@@ -142,7 +144,10 @@ export default function DeathLogBreadcrumb() {
 									<li className="rounded-xl p-0.5" key={i}>
 										<Link
 											className="flex gap-2"
-											to={{ pathname: member.link }}
+											to={{
+												pathname: member.link,
+												search: member.qParam,
+											}}
 										>
 											<span className="text-accent w-2">
 												{i + 1}
