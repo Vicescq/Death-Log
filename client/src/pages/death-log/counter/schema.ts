@@ -18,21 +18,26 @@ export const DeathCounterFormSchema = BaseEditDeathFormSchema.pick({
 
 export const EditDeathFormSchema = BaseEditDeathFormSchema.superRefine(
 	(schema, ctx) => {
-		const parsedUTCdateTime = Date.parse(
-			dateTimeSTDToISO(schema.date, schema.time),
-		);
+		// see edit form schema for try catch explanation
+		try {
+			const parsedUTCdateTime = Date.parse(
+				dateTimeSTDToISO(schema.date, schema.time),
+			);
 
-		if (parsedUTCdateTime > Date.now()) {
-			ctx.addIssue({
-				code: "custom",
-				message: CONSTANTS.ERROR.DATETIME_SURPASSED_TODAY,
-				path: ["date"],
-			});
-			ctx.addIssue({
-				code: "custom",
-				message: CONSTANTS.ERROR.DATETIME_SURPASSED_TODAY,
-				path: ["time"],
-			});
+			if (parsedUTCdateTime > Date.now()) {
+				ctx.addIssue({
+					code: "custom",
+					message: CONSTANTS.ERROR.DATETIME_SURPASSED_TODAY,
+					path: ["date"],
+				});
+				ctx.addIssue({
+					code: "custom",
+					message: CONSTANTS.ERROR.DATETIME_SURPASSED_TODAY,
+					path: ["time"],
+				});
+			}
+		} catch {
+			return;
 		}
 	},
 );
