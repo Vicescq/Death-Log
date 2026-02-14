@@ -1,9 +1,12 @@
-import type { Profile, ProfileGroup } from "../../../../model/tree-node-model";
 import { useDeathLogStore } from "../../../../stores/useDeathLogStore";
 import { assertIsNonNull, assertIsSubject } from "../../../../utils/asserts";
 import { useState } from "react";
 import DLPGList from "./DLPGList";
 import DLPGModify from "./DLPGModify";
+import type {
+	Profile,
+	ProfileGroup,
+} from "../../../../model/tree-node-model/ProfileSchema";
 
 type Props = {
 	profile: Profile;
@@ -63,8 +66,6 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 
 	return (
 		<>
-
-
 			<div className="m-auto mb-8 w-[90%] lg:max-w-[45rem]">
 				<h1 className="text-center text-4xl font-bold">
 					{profile.name} Profile Groups

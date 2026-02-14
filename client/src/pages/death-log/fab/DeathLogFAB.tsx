@@ -8,7 +8,6 @@ import down from "../../../assets/down.svg";
 import Modal from "../../../components/Modal";
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
 import type { VirtuosoHandle } from "react-virtuoso";
-import { formatString } from "../../../utils/general";
 import { CONSTANTS } from "../../../../shared/constants";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import DLFABModalBodyAdd from "./DLFABModalBodyAdd";
@@ -66,10 +65,10 @@ export default function DeathLogFAB({
 
 	const onAdd: SubmitHandler<NodeFormAdd> = (formData) => {
 		if (type != "subject") {
-			addNode(type, formatString(formData.name), parent.id);
+			addNode(type, formData.name, parent.id);
 		} else {
 			const context = formData.context;
-			addNode(type, formatString(formData.name), parent.id, {
+			addNode(type, formData.name, parent.id, {
 				context: context,
 				reoccurring: formData.reoccurring,
 			});

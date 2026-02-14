@@ -17,33 +17,37 @@ export const createTreeNodeSchema = (
 		childIDS: z.array(z.string()),
 		name: z
 			.string()
-			.max(CONSTANTS.NUMS.INPUT_MAX, {
-				error: CONSTANTS.ERROR.MAX_LENGTH,
-			})
-			.refine((name) => formatString(name) != "", {
-				error: CONSTANTS.ERROR.EMPTY,
-			})
-			.refine(
-				(name) => {
-					const formattedName = formatString(name);
-					if (currEditingName == null) {
-						return !siblingNames.includes(formattedName);
-					} else {
-						let isUnique = true;
-						siblingNames.forEach((name) => {
-							if (
-								name != currEditingName &&
-								name == formattedName
-							) {
-								isUnique = false;
+			.transform((name) => formatString(name))
+			.pipe(
+				z
+					.string()
+					.max(CONSTANTS.NUMS.INPUT_MAX, {
+						error: CONSTANTS.ERROR.MAX_LENGTH,
+					})
+					.min(1, {
+						error: CONSTANTS.ERROR.EMPTY,
+					})
+					.refine(
+						(name) => {
+							if (currEditingName == null) {
+								return !siblingNames.includes(name);
+							} else {
+								let isUnique = true;
+								siblingNames.forEach((siblingName) => {
+									if (
+										siblingName != currEditingName &&
+										siblingName == name
+									) {
+										isUnique = false;
+									}
+								});
+								return isUnique;
 							}
-						});
-						return isUnique;
-					}
-				},
-				{
-					error: CONSTANTS.ERROR.NON_UNIQUE,
-				},
+						},
+						{
+							error: CONSTANTS.ERROR.NON_UNIQUE,
+						},
+					),
 			),
 
 		completed: z.boolean(),

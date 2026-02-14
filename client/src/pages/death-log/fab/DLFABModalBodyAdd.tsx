@@ -1,11 +1,12 @@
 import type { SubmitHandler, UseFormReturn } from "react-hook-form";
 import DLFABModalBodyAddName from "./DLFABModalBodyAddName";
 import type { DistinctTreeNode } from "../../../model/tree-node-model/TreeNodeSchema";
+import type { NodeFormAdd } from "../schema";
 
 type Props = {
 	type: Exclude<DistinctTreeNode["type"], "ROOT_NODE">;
-	form: UseFormReturn<AddForm, any, AddForm>;
-	onAdd: SubmitHandler<AddForm>;
+	form: UseFormReturn<NodeFormAdd, any, NodeFormAdd>;
+	onAdd: SubmitHandler<NodeFormAdd>;
 };
 
 export default function DLFABModalBodyAdd({ type, form, onAdd }: Props) {

@@ -3,6 +3,7 @@ import { CONSTANTS } from "../../../shared/constants";
 import { dateTimeSTDToISO } from "../../utils/date";
 import { createTreeNodeSchema } from "../../model/tree-node-model/TreeNodeSchema";
 import { createSubjectSchema } from "../../model/tree-node-model/SubjectSchema";
+import { createProfileSchema } from "../../model/tree-node-model/ProfileSchema";
 
 const createBaseNodeFormSchema = (
 	siblingNames: string[],

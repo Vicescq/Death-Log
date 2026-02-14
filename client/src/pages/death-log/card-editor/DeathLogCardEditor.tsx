@@ -4,7 +4,6 @@ import DLCEDate from "./DLCEDate";
 import DLCEDel from "./DLCEDel";
 import DLCESubject from "./DLCESubject";
 import { useForm, type SubmitHandler } from "react-hook-form";
-import { formatString } from "../../../utils/general";
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
 import { resolveTimestampUpdate } from "../../../utils/date";
 import { isoToDateSTD, isoToTimeSTD } from "../../../utils/date";
@@ -76,7 +75,6 @@ export default function DeathLogCardEditor({
 	});
 
 	const onSubmit: SubmitHandler<NodeFormEdit> = (formData) => {
-		const name = formatString(formData.name);
 		const dateStart = resolveTimestampUpdate(
 			formData.dateStart,
 			Boolean(form.formState.dirtyFields.dateStart),
@@ -102,7 +100,7 @@ export default function DeathLogCardEditor({
 		if (node.type == "game") {
 			updateNode({
 				...node,
-				name: name,
+				name: formData.name,
 				dateStart: dateStart,
 				dateStartRel: formData.dateStartRel,
 				dateEnd: dateEnd,
@@ -112,7 +110,7 @@ export default function DeathLogCardEditor({
 		} else if (node.type == "profile") {
 			updateNode({
 				...node,
-				name: name,
+				name: formData.name,
 				dateStart: dateStart,
 				dateStartRel: formData.dateStartRel,
 				dateEnd: dateEnd,
@@ -122,7 +120,7 @@ export default function DeathLogCardEditor({
 		} else if (node.type == "subject") {
 			updateNode({
 				...node,
-				name: name,
+				name: formData.name,
 				dateStart: dateStart,
 				dateStartRel: formData.dateStartRel,
 				dateEnd: dateEnd,
