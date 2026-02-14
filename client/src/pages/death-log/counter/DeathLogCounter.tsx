@@ -161,9 +161,9 @@ export default function DeathLogCounter({ subject }: Props) {
 				endNavContentCSS="w-[70%]"
 				startNavContentCSS="w-[30%]"
 			/>
-			<div className="m-auto mt-4 flex w-full flex-col items-center justify-center rounded-4xl sm:w-[85%] md:w-2xl">
+			<div className="m-auto mt-4 flex w-full flex-col items-center justify-center rounded-4xl sm:max-w-[85%] md:max-w-2xl">
 				<h1
-					className={`mx-6 w-fit rounded-2xl p-6 text-center text-4xl md:text-6xl ${subject.completed ? "text-neutral line-through" : ""}`}
+					className={`mx-6 rounded-2xl p-6 text-center text-4xl break-all md:text-6xl ${subject.completed ? "text-neutral line-through" : ""}`}
 				>
 					{subject.name}
 				</h1>

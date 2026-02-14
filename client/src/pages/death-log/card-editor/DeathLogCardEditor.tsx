@@ -16,6 +16,7 @@ import { createNodeFormEditSchema, type NodeFormEdit } from "../schema";
 import NavBar from "../../../components/nav-bar/NavBar";
 import type { DistinctTreeNode } from "../../../model/tree-node-model/TreeNodeSchema";
 import useNotifyDateReset from "../../../hooks/useNotifyDateReset";
+import useResolveEditReturn from "../../../hooks/useResolveEditReturn";
 
 export default function DeathLogCardEditor({
 	node,
@@ -25,6 +26,7 @@ export default function DeathLogCardEditor({
 	const updateNode = useDeathLogStore((state) => state.updateNode);
 	const deleteNode = useDeathLogStore((state) => state.deleteNode);
 	const navigate = useNavigate();
+	useResolveEditReturn();
 
 	const {
 		timeNotice: timeStartUpdateNotice,
@@ -151,7 +153,7 @@ export default function DeathLogCardEditor({
 			/>
 
 			<div className="m-auto mb-8 w-[90%] sm:max-w-[75%] lg:max-w-[40rem]">
-				<h1 className="my-6 text-center text-4xl font-bold">
+				<h1 className="my-6 text-center text-4xl font-bold break-all">
 					Editing: {node.name}
 				</h1>
 				<form onSubmit={form.handleSubmit(onSubmit)}>
