@@ -17,6 +17,7 @@ import NavBar from "../../../components/nav-bar/NavBar";
 import type { DistinctTreeNode } from "../../../model/tree-node-model/TreeNodeSchema";
 import useNotifyDateReset from "../../../hooks/useNotifyDateReset";
 import Container from "../../../components/Container";
+import DeathLogProfileGroup from "./profile-group-editor/DeathLogProfileGroup";
 
 export default function DeathLogCardEditor({
 	node,
@@ -150,7 +151,7 @@ export default function DeathLogCardEditor({
 				endNavContentCSS="w-[70%]"
 				startNavContentCSS="w-[30%]"
 			/>
-			<Container>
+			<Container noBotMargin={node.type == "profile" ? true : false}>
 				<h1 className="my-6 text-center text-4xl font-bold break-words">
 					Editing: {node.name}
 				</h1>
@@ -260,6 +261,13 @@ export default function DeathLogCardEditor({
 					</fieldset>
 				</form>
 			</Container>
+
+			{node.type == "profile" ? (
+				<Container>
+					<div className="divider"/>
+					<DeathLogProfileGroup profile={node} />
+				</Container>
+			) : null}
 		</>
 	);
 }
