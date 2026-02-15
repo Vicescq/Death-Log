@@ -30,7 +30,7 @@ export default function DeathSettingsAndHistory({
 }: Props) {
 	return (
 		<>
-			<fieldset className="fieldset bg-base-200 border-base-300 rounded-box mb-0 w-full rounded-b-none border p-4 sm:mb-8 sm:rounded-2xl">
+			<fieldset className="fieldset bg-base-200 border-base-300 rounded-box mb-0 w-full rounded-2xl border p-4 sm:mb-8">
 				<legend className="fieldset-legend">
 					{!subject.completed
 						? "Death Settings & History"
@@ -43,7 +43,7 @@ export default function DeathSettingsAndHistory({
 							<span>Death Remark (Optional)</span>
 							<input
 								type="search"
-								placeholder="Wasnt my fault, died to a bug!"
+								placeholder="Died to a bug!"
 								className="input w-full"
 								{...form.register("remark")}
 							/>
