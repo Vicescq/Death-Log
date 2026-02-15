@@ -20,7 +20,12 @@ export const DeathSchema = z.object({
 	parentID: z.string().length(8),
 	timestamp: z.iso.datetime(),
 	timestampRel: z.boolean(),
-	remark: z.string().length(CONSTANTS.NUMS.INPUT_MAX_LESS).nullable(),
+	remark: z
+		.string()
+		.length(CONSTANTS.NUMS.INPUT_MAX_LESS, {
+			error: CONSTANTS.ERROR.MAX_LENGTH,
+		})
+		.nullable(),
 });
 
 export const SubjectContextSchema = z.literal([

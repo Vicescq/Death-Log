@@ -1,11 +1,18 @@
 import z from "zod";
 import { CONSTANTS } from "../../../../shared/constants";
 import { dateTimeSTDToISO } from "../../../utils/date";
+import { formatString } from "../../../utils/general";
 
 const BaseEditDeathFormSchema = z.object({
-	remark: z.string().max(CONSTANTS.NUMS.INPUT_MAX_LESS, {
-		error: CONSTANTS.ERROR.MAX_LENGTH,
-	}),
+	remark: z
+		.string()
+		.transform((remark) => formatString(remark))
+		.pipe(
+			z.string().max(CONSTANTS.NUMS.INPUT_MAX_LESS, {
+				error: CONSTANTS.ERROR.MAX_LENGTH,
+			}),
+		),
+
 	date: z.iso.date({ error: CONSTANTS.ERROR.DATE }),
 	time: z.iso.time({ precision: 0, error: CONSTANTS.ERROR.TIME }),
 	timestampRel: z.literal(["T", "F"]),

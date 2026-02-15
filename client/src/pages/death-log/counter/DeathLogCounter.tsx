@@ -10,7 +10,6 @@ import { useForm } from "react-hook-form";
 import { type SubmitHandler } from "react-hook-form";
 import DeathCounterModalBody from "./DeathCounterModalBody";
 import { createDeath } from "../../../stores/utils";
-import { formatString } from "../../../utils/general";
 import DeathSettingsAndHistory from "./DeathSettingsAndHistory";
 import { assertIsNonNull } from "../../../utils/asserts";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -55,8 +54,7 @@ export default function DeathLogCounter({ subject }: Props) {
 	});
 
 	const onIncrementDeath: SubmitHandler<DeathCounterForm> = (formData) => {
-		const formattedRemark = formatString(formData.remark);
-		const remark = formattedRemark == "" ? null : formattedRemark;
+		const remark = formData.remark == "" ? null : formData.remark;
 		const timestampRel = formData.timestampRel == "T" ? true : false;
 		updateNode({
 			...subject,
@@ -92,8 +90,7 @@ export default function DeathLogCounter({ subject }: Props) {
 	});
 
 	const onEditDeath: SubmitHandler<EditDeathForm> = (formData) => {
-		const formattedRemark = formatString(formData.remark);
-		const remark = formattedRemark == "" ? null : formattedRemark;
+		const remark = formData.remark == "" ? null : formData.remark;
 		const timestampRel = formData.timestampRel == "T" ? true : false;
 
 		assertIsNonNull(focusedDeathID);
@@ -153,6 +150,8 @@ export default function DeathLogCounter({ subject }: Props) {
 		setfocusedDeathID(id);
 		modalRef.current?.showModal();
 	}
+
+	console.log(counterForm.formState.errors);
 
 	return (
 		<>
