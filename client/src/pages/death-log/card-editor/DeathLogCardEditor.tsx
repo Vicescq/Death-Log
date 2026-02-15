@@ -16,7 +16,6 @@ import { createNodeFormEditSchema, type NodeFormEdit } from "../schema";
 import NavBar from "../../../components/nav-bar/NavBar";
 import type { DistinctTreeNode } from "../../../model/tree-node-model/TreeNodeSchema";
 import useNotifyDateReset from "../../../hooks/useNotifyDateReset";
-import useResolveEditReturn from "../../../hooks/useResolveEditReturn";
 import Container from "../../../components/Container";
 
 export default function DeathLogCardEditor({
@@ -27,7 +26,6 @@ export default function DeathLogCardEditor({
 	const updateNode = useDeathLogStore((state) => state.updateNode);
 	const deleteNode = useDeathLogStore((state) => state.deleteNode);
 	const navigate = useNavigate();
-	useResolveEditReturn();
 
 	const {
 		timeNotice: timeStartUpdateNotice,
@@ -140,7 +138,7 @@ export default function DeathLogCardEditor({
 	const [delStr, setDelStr] = useState("");
 
 	async function handleDelete(node: DistinctTreeNode) {
-		navigate("../..");
+		navigate("..");
 		await delay(100); // TODO: maybe figure out a better soln?
 		deleteNode(node);
 	}
@@ -237,7 +235,7 @@ export default function DeathLogCardEditor({
 							className="btn btn-accent w-full"
 							onClick={(e) => {
 								e.preventDefault();
-								navigate("../..");
+								navigate("..");
 							}}
 						>
 							{CONSTANTS.DEATH_LOG_EDITOR.RETURN}

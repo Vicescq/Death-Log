@@ -162,9 +162,9 @@ export default function DeathLogCounter({ subject }: Props) {
 				endNavContentCSS="w-[70%]"
 				startNavContentCSS="w-[30%]"
 			/>
-			<Container >
+			<Container>
 				<h1
-					className={`mx-6 rounded-2xl p-6 text-center text-4xl break-words md:text-6xl ${subject.completed ? "text-neutral line-through" : ""}`}
+					className={`my-6 text-center text-4xl font-bold break-words ${subject.completed ? "text-neutral line-through" : ""}`}
 				>
 					{subject.name}
 				</h1>
@@ -172,7 +172,7 @@ export default function DeathLogCounter({ subject }: Props) {
 					{!subject.completed ? (
 						<button
 							onClick={counterForm.handleSubmit(onIncrementDeath)}
-							className="btn m-auto w-fit rounded-xl"
+							className="btn btn-ghost m-auto w-fit rounded-xl"
 						>
 							<img src={up} className="m-auto w-8" />
 						</button>
@@ -187,7 +187,7 @@ export default function DeathLogCounter({ subject }: Props) {
 					{!subject.completed ? (
 						<button
 							onClick={handleDecrementDeath}
-							className="btn m-auto w-fit rounded-xl"
+							className="btn btn-ghost m-auto w-fit rounded-xl"
 						>
 							<img src={down} className="m-auto w-8" />
 						</button>
