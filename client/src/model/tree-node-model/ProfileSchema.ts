@@ -17,6 +17,10 @@ export const ProfileGroupSchema = z.object({
 	title: z.string().length(CONSTANTS.NUMS.INPUT_MAX_LESS),
 	members: z.array(z.string()),
 	description: z.string().length(CONSTANTS.NUMS.INPUT_MAX),
+	dateStart: z.iso.datetime({ error: CONSTANTS.ERROR.DATE }),
+	dateEnd: z.iso.datetime({ error: CONSTANTS.ERROR.DATE }).nullable(),
+	dateStartRel: z.boolean(),
+	dateEndRel: z.boolean(),
 });
 
 export type Profile = z.infer<ReturnType<typeof createProfileSchema>>;

@@ -13,11 +13,7 @@ export default function DLFABModalBodyAdd({ type, form, onAdd }: Props) {
 	return (
 		<form onSubmit={form.handleSubmit(onAdd)}>
 			{type == "subject" ? (
-				<fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-full border p-4">
-					<legend className="fieldset-legend">
-						Subject title & Characteristics
-					</legend>
-
+				<div className="my-4 flex flex-col gap-2">
 					<DLFABModalBodyAddName form={form} />
 
 					<label className="floating-label mt-4">
@@ -42,7 +38,7 @@ export default function DLFABModalBodyAdd({ type, form, onAdd }: Props) {
 							{...form.register("reoccurring")}
 						/>
 					</div>
-				</fieldset>
+				</div>
 			) : (
 				<div className="my-4">
 					<DLFABModalBodyAddName form={form} />

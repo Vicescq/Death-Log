@@ -1,62 +1,43 @@
 import { useDeathLogStore } from "../../../../stores/useDeathLogStore";
 import { assertIsNonNull, assertIsSubject } from "../../../../utils/asserts";
-import { useState } from "react";
+import { useRef } from "react";
 import DLPGList from "./DLPGList";
 import DLPGModify from "./DLPGModify";
-import type {
-	Profile,
-	ProfileGroup,
-} from "../../../../model/tree-node-model/ProfileSchema";
+import type { Profile } from "../../../../model/tree-node-model/ProfileSchema";
+import Modal from "../../../../components/Modal";
+import type { SubmitHandler, UseFormReturn } from "react-hook-form";
+import type { NodeFormEdit } from "../../schema";
 
 type Props = {
 	profile: Profile;
+	form: UseFormReturn<NodeFormEdit, any, NodeFormEdit>;
+	modalRef: React.RefObject<HTMLDialogElement | null>;
 };
 
-export default function DeathLogProfileGroup({ profile }: Props) {
+export default function DeathLogProfileGroup({
+	profile,
+	form,
+	modalRef,
+}: Props) {
 	const tree = useDeathLogStore((state) => state.tree);
-	const updateNode = useDeathLogStore((state) => state.updateNode);
-
-	function handleDelete(i: number) {
-		updateNode({
-			...profile,
-			groupings: profile.groupings.filter((_, index) => i != index),
-		});
-		// if (i == currEditingProfileGroupIndex) {
-		// 	setCurrEditingProfileGroupIndex(null);
-		// 	setCurrEditingProfileGroup(null);
-		// } else if (
-		// 	currEditingProfileGroupIndex &&
-		// 	i < currEditingProfileGroupIndex
-		// ) {
-		// 	const prevIndex = currEditingProfileGroupIndex;
-		// 	setCurrEditingProfileGroupIndex(prevIndex - 1);
-		// }
-	}
-
-	function handleEditFocus(i: number) {
-		// if (i == currEditingProfileGroupIndex) {
-		// 	setCurrEditingProfileGroupIndex(null);
-		// } else {
-		// 	setCurrEditingProfileGroupIndex(i);
-		// 	setCurrEditingProfileGroup(profile.groupings[i]);
-		// }
-	}
-
-	const subjects = profile.childIDS.map((id) => {
-		const subject = tree.get(id);
-		assertIsNonNull(subject);
-		assertIsSubject(subject);
-		return subject;
-	});
 
 	return (
 		<>
-			<DLPGList
-				profile={profile}
-				onDelete={handleDelete}
-				onEditFocus={handleEditFocus}
-			/>
-			<DLPGModify profile={profile} subjects={subjects} type="add" />
+			<div className="flex flex-col gap-4">
+				<div className="divider my-0.5">↓ Profile Groups ↓</div>
+				<button
+					type="button"
+					className="btn btn-neutral rounded-xl"
+					onClick={(e) => {
+						e.preventDefault();
+						modalRef.current?.showModal();
+					}}
+				>
+					Add Profile Group
+				</button>
+				<DLPGList profile={profile} />
+				<div className="divider my-0.5"></div>
+			</div>
 		</>
 	);
 }

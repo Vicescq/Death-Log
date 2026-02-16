@@ -14,7 +14,7 @@ export default function DLCESubject({ node, form }: Props) {
 				<label className="floating-label">
 					<span>Context</span>
 					<select
-						className="select w-full"
+						className={`select ${form.formState.dirtyFields.context ? "select-success" : ""} w-full`}
 						{...form.register("context")}
 					>
 						<option>Boss</option>
@@ -26,7 +26,10 @@ export default function DLCESubject({ node, form }: Props) {
 				</label>
 			</div>
 			<div className="flex">
-				<label htmlFor="reoccurring-toggle" className="text-[1rem]">
+				<label
+					htmlFor="reoccurring-toggle"
+					className={`${form.formState.dirtyFields.reoccurring ? "text-success" : ""} text-[1rem]`}
+				>
 					Reoccurring
 				</label>
 				<input

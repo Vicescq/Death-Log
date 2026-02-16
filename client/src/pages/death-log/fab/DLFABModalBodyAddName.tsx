@@ -1,9 +1,9 @@
 import type { UseFormReturn } from "react-hook-form";
 import { CONSTANTS } from "../../../../shared/constants";
-import type { AddForm } from "./schema";
+import type { NodeFormAdd } from "../schema";
 
 type Props = {
-	form: UseFormReturn<AddForm, any, AddForm>;
+	form: UseFormReturn<NodeFormAdd, any, NodeFormAdd>;
 };
 
 export default function DLFABModalBodyAddName({ form }: Props) {
@@ -14,7 +14,7 @@ export default function DLFABModalBodyAddName({ form }: Props) {
 				<div className="join w-full">
 					<input
 						type="search"
-						className="input bg-base-200 join-item"
+						className="input join-item"
 						{...form.register("name")}
 					/>
 					<button
