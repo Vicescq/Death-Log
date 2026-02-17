@@ -1,4 +1,4 @@
-import type { Profile } from "../../../../model/tree-node-model/ProfileSchema";
+import type { Profile } from "../../model/tree-node-model/ProfileSchema";
 
 type Props = {
 	profile: Profile;

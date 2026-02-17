@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { useDeathLogStore } from "../../../../stores/useDeathLogStore";
-import type { Profile } from "../../../../model/tree-node-model/ProfileSchema";
-import type { Subject } from "../../../../model/tree-node-model/SubjectSchema";
-import { CONSTANTS } from "../../../../../shared/constants";
+import { useDeathLogStore } from "../../stores/useDeathLogStore";
+import type { Profile } from "../../model/tree-node-model/ProfileSchema";
+import type { Subject } from "../../model/tree-node-model/SubjectSchema";
+import { CONSTANTS } from "../../../shared/constants";
+import { formatString } from "../../utils/general";
 
 type Props = {
 	profile: Profile;
@@ -15,7 +16,7 @@ export default function DLPGModify({ type, profile, subjects }: Props) {
 	const updateNode = useDeathLogStore((state) => state.updateNode);
 	const [searchQuery, setSearchQuery] = useState("");
 
-	const filteredSearchQuery =
+	const filteredResults =
 		searchQuery == ""
 			? []
 			: subjects.filter((subject) =>
@@ -45,6 +46,29 @@ export default function DLPGModify({ type, profile, subjects }: Props) {
 							rows={CONSTANTS.NUMS.TEXTAREA_ROW_MAX}
 						/>
 					</label>
+					<label className="floating-label">
+						<span>Subject Search</span>
+						<input
+							type="search"
+							className="input join-item w-full"
+							placeholder="Search for Subjects"
+							onChange={(e) =>
+								setSearchQuery(e.currentTarget.value)
+							}
+						/>
+					</label>
+					{filteredResults.length > 0 ? (
+						<ul className="list bg-base-200 max-h-96 overflow-auto rounded-4xl py-1">
+							{filteredResults.map((subject) => (
+								<li className="list-row">
+									{subject.name}{" "}
+									<button className="cursor-pointer text-end" type="button">
+										+
+									</button>
+								</li>
+							))}
+						</ul>
+					) : null}
 				</>
 			) : null}
 		</>

@@ -17,9 +17,9 @@ import NavBar from "../../../components/nav-bar/NavBar";
 import type { DistinctTreeNode } from "../../../model/tree-node-model/TreeNodeSchema";
 import useNotifyDateReset from "../../../hooks/useNotifyDateReset";
 import Container from "../../../components/Container";
-import DeathLogProfileGroup from "./profile-group-editor/DeathLogProfileGroup";
 import Modal from "../../../components/Modal";
-import DLPGModify from "./profile-group-editor/DLPGModify";
+import DLPGModify from "../../../components/profile-group/DLPGModify";
+import DLCEProfileGroup from "./DLCEProfileGroup";
 
 export default function DeathLogCardEditor({
 	node,
@@ -212,7 +212,7 @@ export default function DeathLogCardEditor({
 							</label>
 
 							{node.type == "profile" ? (
-								<DeathLogProfileGroup
+								<DLCEProfileGroup
 									profile={node}
 									form={form}
 									modalRef={modalRef}
@@ -230,8 +230,19 @@ export default function DeathLogCardEditor({
 						</div>
 
 						<button
+							type="button"
+							className="btn btn-accent mt-4 w-full"
+							onClick={(e) => {
+								e.preventDefault();
+								navigate("..");
+							}}
+						>
+							{CONSTANTS.DEATH_LOG_EDITOR.RETURN}
+						</button>
+
+						<button
 							type="reset"
-							className="btn btn-primary mt-4"
+							className="btn btn-primary"
 							onClick={(e) => {
 								e.preventDefault();
 								onResetTimeStartNotice();
@@ -241,17 +252,6 @@ export default function DeathLogCardEditor({
 							disabled={!form.formState.isDirty}
 						>
 							{CONSTANTS.DEATH_LOG_EDITOR.RESET}
-						</button>
-
-						<button
-							type="button"
-							className="btn btn-accent w-full"
-							onClick={(e) => {
-								e.preventDefault();
-								navigate("..");
-							}}
-						>
-							{CONSTANTS.DEATH_LOG_EDITOR.RETURN}
 						</button>
 
 						<div className="divider m-3"></div>
