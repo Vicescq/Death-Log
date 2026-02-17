@@ -3,7 +3,6 @@ import { useDeathLogStore } from "../../stores/useDeathLogStore";
 import type { Profile } from "../../model/tree-node-model/ProfileSchema";
 import type { Subject } from "../../model/tree-node-model/SubjectSchema";
 import { CONSTANTS } from "../../../shared/constants";
-import { formatString } from "../../utils/general";
 
 type Props = {
 	profile: Profile;
@@ -62,7 +61,10 @@ export default function DLPGModify({ type, profile, subjects }: Props) {
 							{filteredResults.map((subject) => (
 								<li className="list-row">
 									{subject.name}{" "}
-									<button className="cursor-pointer text-end" type="button">
+									<button
+										className="cursor-pointer text-end"
+										type="button"
+									>
 										+
 									</button>
 								</li>

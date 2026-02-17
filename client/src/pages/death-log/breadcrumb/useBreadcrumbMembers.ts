@@ -28,11 +28,16 @@ export default function useBreadcrumbMembers(): BreadcrumbMember[] {
 		breadcrumbMembers.push({ name: names[i], link: currLink });
 	}
 
-	if (isEditing) {
+	if (isEditing || isProfileGroupEditing) {
 		const lastMember = breadcrumbMembers[breadcrumbMembers.length - 1];
 		lastMember.name = `Editing: ${lastMember.name}`;
 		lastMember.link = currLink;
-		lastMember.qParam = "?edit=main";
+		if (isEditing) {
+			lastMember.qParam = "?edit=main";
+		}
+		if (isProfileGroupEditing) {
+			lastMember.qParam = "?edit=pg";
+		}
 	}
 
 	return breadcrumbMembers;

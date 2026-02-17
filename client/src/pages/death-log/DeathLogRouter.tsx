@@ -1,7 +1,11 @@
 import { useParams, useSearchParams } from "react-router";
 import { CONSTANTS } from "../../../shared/constants";
 import { useDeathLogStore } from "../../stores/useDeathLogStore";
-import { assertIsNonNull, assertIsSubject } from "../../utils/asserts";
+import {
+	assertIsNonNull,
+	assertIsProfile,
+	assertIsSubject,
+} from "../../utils/asserts";
 import ErrorPage from "../ErrorPage";
 import DeathLogCardEditor from "./card-editor/DeathLogCardEditor";
 import DeathLogCounter from "./counter/DeathLogCounter";
@@ -61,13 +65,14 @@ export default function DeathLogRouter() {
 		assertIsNonNull(profileID);
 		const profile = tree.get(profileID);
 		assertIsNonNull(profile);
+		assertIsProfile(profile);
 
 		if (isEditing) {
 			return <DeathLogCardEditor node={profile} />;
 		}
 
 		if (isProfileGroupEditing) {
-			return <DeathLogProfileGroupEdit />;
+			return <DeathLogProfileGroupEdit profile={profile} />;
 		}
 
 		return <DeathLog parent={profile} />;

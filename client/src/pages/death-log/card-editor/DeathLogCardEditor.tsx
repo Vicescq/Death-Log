@@ -9,17 +9,14 @@ import { resolveTimestampUpdate } from "../../../utils/date";
 import { isoToDateSTD, isoToTimeSTD } from "../../../utils/date";
 import { CONSTANTS } from "../../../../shared/constants";
 import { delay } from "../../../utils/general";
-import { assertIsNonNull, assertIsSubject } from "../../../utils/asserts";
-import { useRef, useState } from "react";
+import { assertIsNonNull } from "../../../utils/asserts";
+import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createNodeFormEditSchema, type NodeFormEdit } from "../schema";
 import NavBar from "../../../components/nav-bar/NavBar";
 import type { DistinctTreeNode } from "../../../model/tree-node-model/TreeNodeSchema";
 import useNotifyDateReset from "../../../hooks/useNotifyDateReset";
 import Container from "../../../components/Container";
-import Modal from "../../../components/Modal";
-import DLPGModify from "../../../components/profile-group/DLPGModify";
-import DLCEProfileGroup from "./DLCEProfileGroup";
 
 export default function DeathLogCardEditor({
 	node,
@@ -29,8 +26,6 @@ export default function DeathLogCardEditor({
 	const updateNode = useDeathLogStore((state) => state.updateNode);
 	const deleteNode = useDeathLogStore((state) => state.deleteNode);
 	const navigate = useNavigate();
-
-	const modalRef = useRef<HTMLDialogElement | null>(null);
 
 	const {
 		timeNotice: timeStartUpdateNotice,
@@ -211,14 +206,6 @@ export default function DeathLogCardEditor({
 								)}
 							</label>
 
-							{node.type == "profile" ? (
-								<DLCEProfileGroup
-									profile={node}
-									form={form}
-									modalRef={modalRef}
-								/>
-							) : null}
-
 							<DLCEDel
 								node={node}
 								onDelete={handleDelete}
@@ -273,42 +260,6 @@ export default function DeathLogCardEditor({
 					</fieldset>
 				</form>
 			</Container>
-
-			{node.type == "profile"
-				? (() => {
-						const subjects = node.childIDS.map((id) => {
-							const subject = tree.get(id);
-							assertIsNonNull(subject);
-							assertIsSubject(subject);
-							return subject;
-						});
-						return (
-							<Modal
-								header="Add Profile Group"
-								closeBtnName="Cancel"
-								content={
-									<form>
-										<div className="my-4 flex flex-col gap-4">
-											<DLPGModify
-												profile={node}
-												subjects={subjects}
-												type="add"
-											/>
-											<button
-												type="button"
-												className="btn btn-success w-full"
-											>
-												Add
-											</button>
-										</div>
-									</form>
-								}
-								ref={modalRef}
-								modalBtns={[]}
-							/>
-						);
-					})()
-				: null}
 		</>
 	);
 }
