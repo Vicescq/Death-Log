@@ -1,5 +1,6 @@
 import stepInto from "../../../assets/step_into.svg";
 import edit from "../../../assets/edit.svg";
+import profileEdit from "../../../assets/group.svg";
 import { Link } from "react-router";
 import { CONSTANTS } from "../../../../shared/constants";
 import type { DistinctTreeNode } from "../../../model/tree-node-model/TreeNodeSchema";
@@ -11,19 +12,20 @@ type Props = {
 export default function DeathLogCardOptions({ node }: Props) {
 	return (
 		<ul className="menu menu-horizontal menu-xs rounded-box m-auto p-0">
-			<Link to={{ pathname: node.id }}>
-				<li>
+			<li>
+				<Link to={{ pathname: node.id }}>
 					<button
+						className="cursor-pointer"
 						aria-label={
 							CONSTANTS.DEATH_LOG_CARD.ENTRY_CHILDREN_ARIA
 						}
 					>
 						<img src={stepInto} alt="" className="h-4 w-4" />
 					</button>
-				</li>
-			</Link>
+				</Link>
+			</li>
 			<li>
-				<Link to={{ pathname: node.id, search: "?edit=true" }}>
+				<Link to={{ pathname: node.id, search: "?edit=main" }}>
 					<button
 						className="cursor-pointer"
 						aria-label={CONSTANTS.DEATH_LOG_CARD.EDIT_MODE_ARIA}
@@ -32,6 +34,18 @@ export default function DeathLogCardOptions({ node }: Props) {
 					</button>
 				</Link>
 			</li>
+			{node.type == "profile" ? (
+				<li>
+					<Link to={{ pathname: node.id, search: "?edit=pg" }}>
+						<button
+							className="cursor-pointer"
+							aria-label={CONSTANTS.DEATH_LOG_CARD.EDIT_MODE_ARIA}
+						>
+							<img src={profileEdit} alt="" className="h-4 w-4" />
+						</button>
+					</Link>
+				</li>
+			) : null}
 		</ul>
 	);
 }

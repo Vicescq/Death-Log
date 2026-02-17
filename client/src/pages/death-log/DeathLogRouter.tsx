@@ -6,6 +6,7 @@ import ErrorPage from "../ErrorPage";
 import DeathLogCardEditor from "./card-editor/DeathLogCardEditor";
 import DeathLogCounter from "./counter/DeathLogCounter";
 import DeathLog from "./DeathLog";
+import DeathLogProfileGroupEdit from "./DeathLogProfileGroupEdit";
 
 export default function DeathLogRouter() {
 	const params = useParams();
@@ -27,13 +28,25 @@ export default function DeathLogRouter() {
 		);
 	}
 
-	const isEditing = qParams.get("edit") === "true";
+	const isEditing = qParams.get("edit") === "main";
+	const isProfileGroupEditing = qParams.get("edit") === "pg";
 
-	if (
+	const parentIsSubject =
 		isValidNodeID(subjectID) &&
 		isValidNodeID(profileID) &&
-		isValidNodeID(gameID)
-	) {
+		isValidNodeID(gameID);
+
+	const parentIsProfile =
+		subjectID == undefined &&
+		isValidNodeID(profileID) &&
+		isValidNodeID(gameID);
+
+	const parentIsGame =
+		subjectID == undefined &&
+		profileID == undefined &&
+		isValidNodeID(gameID);
+
+	if (parentIsSubject) {
 		assertIsNonNull(subjectID);
 		const subject = tree.get(subjectID);
 		assertIsNonNull(subject);
@@ -44,11 +57,7 @@ export default function DeathLogRouter() {
 		}
 
 		return <DeathLogCounter subject={subject} />;
-	} else if (
-		subjectID == undefined &&
-		isValidNodeID(profileID) &&
-		isValidNodeID(gameID)
-	) {
+	} else if (parentIsProfile) {
 		assertIsNonNull(profileID);
 		const profile = tree.get(profileID);
 		assertIsNonNull(profile);
@@ -57,12 +66,12 @@ export default function DeathLogRouter() {
 			return <DeathLogCardEditor node={profile} />;
 		}
 
+		if (isProfileGroupEditing) {
+			return <DeathLogProfileGroupEdit />;
+		}
+
 		return <DeathLog parent={profile} />;
-	} else if (
-		subjectID == undefined &&
-		profileID == undefined &&
-		isValidNodeID(gameID)
-	) {
+	} else if (parentIsGame) {
 		assertIsNonNull(gameID);
 		const game = tree.get(gameID);
 		assertIsNonNull(game);

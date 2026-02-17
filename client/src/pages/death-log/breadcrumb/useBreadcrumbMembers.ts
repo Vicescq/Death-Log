@@ -1,17 +1,17 @@
-import { useLocation, useParams, useSearchParams } from "react-router";
+import { useParams, useSearchParams } from "react-router";
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
 import type { BreadcrumbMember } from "./DeathLogBreadcrumb";
 import { assertIsNonNull } from "../../../utils/asserts";
 
 export default function useBreadcrumbMembers(): BreadcrumbMember[] {
-	const location = useLocation();
 	const params = useParams();
 	const [qParams] = useSearchParams();
 	const ids = Object.values(params);
 	const tree = useDeathLogStore((state) => state.tree);
 	const names: string[] = [];
 
-	const isEditing = qParams.get("edit") === "true";
+	const isEditing = qParams.get("edit") === "main";
+	const isProfileGroupEditing = qParams.get("edit") === "pg";
 
 	for (let i = 0; i < ids.length; i++) {
 		const id = ids[i];
@@ -32,7 +32,7 @@ export default function useBreadcrumbMembers(): BreadcrumbMember[] {
 		const lastMember = breadcrumbMembers[breadcrumbMembers.length - 1];
 		lastMember.name = `Editing: ${lastMember.name}`;
 		lastMember.link = currLink;
-		lastMember.qParam = "?edit=true";
+		lastMember.qParam = "?edit=main";
 	}
 
 	return breadcrumbMembers;
