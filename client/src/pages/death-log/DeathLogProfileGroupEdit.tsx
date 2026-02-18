@@ -1,6 +1,7 @@
 import Container from "../../components/Container";
 import NavBar from "../../components/nav-bar/NavBar";
-import DLPGModify from "../../components/profile-group-edit/DLPGModify";
+import DLPGEList from "../../components/profile-group-edit/DLPGEList";
+import DLPGEModify from "../../components/profile-group-edit/DLPGEModify";
 import type { Profile } from "../../model/tree-node-model/ProfileSchema";
 import { useDeathLogStore } from "../../stores/useDeathLogStore";
 import { assertIsNonNull, assertIsSubject } from "../../utils/asserts";
@@ -20,24 +21,31 @@ export default function DeathLogProfileGroupEdit({ profile }: Props) {
 	});
 	return (
 		<>
-			<NavBar endNavContent={<DeathLogBreadcrumb/>}/>
+			<NavBar endNavContent={<DeathLogBreadcrumb />} />
 			<Container>
 				<form>
 					<h1 className="my-6 text-center text-4xl font-bold break-words">
 						Editing: {profile.name}
 					</h1>
-					<fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-full border p-4">
+					<fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-full gap-4 border p-4">
 						<legend className="fieldset-legend">
 							Profile Groupings Edit
 						</legend>
-						<DLPGModify
+						<DLPGEList profile={profile} />
+
+						<div className="divider my-0.5" />
+
+						<DLPGEModify
 							profile={profile}
 							subjects={subjects}
 							type="add"
 						/>
+
+						<div className="divider my-0.5" />
+
 						<button
 							type="button"
-							className="btn btn-success w-full"
+							className="btn btn-success mt-4 w-full"
 						>
 							Add
 						</button>

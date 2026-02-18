@@ -22,7 +22,6 @@ export default function DeathLogBreadcrumb() {
 	const breakpointMid = "(width >= 500px)";
 	const onBreakpontChange = () => {
 		condensedMembersModalRef.current?.close();
-		setModalCSS("transition-none");
 	};
 	const { vpMatched: vpMatchedHighest } = useMediaQuery(
 		breakpointHighest,
@@ -98,7 +97,7 @@ export default function DeathLogBreadcrumb() {
 	}
 	return (
 		<>
-			<div className="breadcrumbs border-b-1 text-sm">
+			<div className="breadcrumbs  text-sm">
 				<ul>
 					{formattedBreadcrumbMembers.map((member, i) => {
 						if (member.name == "...") {

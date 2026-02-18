@@ -4,9 +4,9 @@ type Props = {
 	profile: Profile;
 };
 
-export default function DLPGList({ profile }: Props) {
+export default function DLPGEList({ profile }: Props) {
 	return (
-		<div>
+		<section>
 			<span className="text-[1rem]">
 				Profile Groups:{" "}
 				{profile.groupings.length == 0 ? (
@@ -20,13 +20,13 @@ export default function DLPGList({ profile }: Props) {
 				<li className="list-row">abc</li>
 				<li className="list-row">abc</li>
 			</ul> */}
-			<ul className="list">
-				{profile.groupings.length > 0
-					? profile.groupings.map((group, i) => (
-							<li className="list-row">{group.id}</li>
-						))
-					: null}
-			</ul>
-		</div>
+			{profile.groupings.length > 0 ? (
+				<ul className="list">
+					{profile.groupings.map((group, i) => (
+						<li className="list-row">{group.id}</li>
+					))}
+				</ul>
+			) : null}
+		</section>
 	);
 }
