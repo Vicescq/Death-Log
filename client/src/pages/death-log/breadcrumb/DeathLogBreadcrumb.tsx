@@ -15,7 +15,6 @@ export type BreadcrumbMember = {
 export default function DeathLogBreadcrumb() {
 	const breadcrumbMembers = useBreadcrumbMembers();
 	const condensedMembersModalRef = useRef<HTMLDialogElement>(null);
-	const [modalCSS, setModalCSS] = useState("");
 
 	const breakpointHighest = "(width >= 920px)";
 	const breakpointHigh = "(width >= 700px)";
@@ -97,14 +96,13 @@ export default function DeathLogBreadcrumb() {
 	}
 	return (
 		<>
-			<div className="breadcrumbs  text-sm">
+			<div className="breadcrumbs text-sm">
 				<ul>
 					{formattedBreadcrumbMembers.map((member, i) => {
 						if (member.name == "...") {
 							return (
 								<li
 									onClick={() => {
-										setModalCSS("");
 										condensedMembersModalRef.current?.showModal();
 									}}
 									className="btn btn-xs btn-ghost"
@@ -133,7 +131,6 @@ export default function DeathLogBreadcrumb() {
 				</ul>
 			</div>
 			<Modal
-				css={modalCSS}
 				closeBtnName="Close"
 				content={
 					<ul className="rounded-box my-2 flex flex-col gap-4">

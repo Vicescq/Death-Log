@@ -151,8 +151,6 @@ export default function DeathLogCounter({ subject }: Props) {
 		modalRef.current?.showModal();
 	}
 
-	console.log(counterForm.formState.errors);
-
 	return (
 		<>
 			<NavBar
