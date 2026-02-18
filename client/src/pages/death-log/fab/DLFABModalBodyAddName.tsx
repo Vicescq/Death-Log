@@ -1,6 +1,6 @@
 import type { UseFormReturn } from "react-hook-form";
 import { CONSTANTS } from "../../../../shared/constants";
-import type { NodeFormAdd } from "../schema";
+import type { NodeFormAdd } from "../EditorAndFABschema";
 
 type Props = {
 	form: UseFormReturn<NodeFormAdd, any, NodeFormAdd>;

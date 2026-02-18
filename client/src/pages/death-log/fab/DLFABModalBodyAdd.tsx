@@ -1,7 +1,7 @@
 import type { SubmitHandler, UseFormReturn } from "react-hook-form";
 import DLFABModalBodyAddName from "./DLFABModalBodyAddName";
 import type { DistinctTreeNode } from "../../../model/tree-node-model/TreeNodeSchema";
-import type { NodeFormAdd } from "../schema";
+import type { NodeFormAdd } from "../EditorAndFABschema";
 
 type Props = {
 	type: Exclude<DistinctTreeNode["type"], "ROOT_NODE">;

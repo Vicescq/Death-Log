@@ -10,7 +10,7 @@ import ErrorPage from "../ErrorPage";
 import DeathLogCardEditor from "./card-editor/DeathLogCardEditor";
 import DeathLogCounter from "./counter/DeathLogCounter";
 import DeathLog from "./DeathLog";
-import DeathLogProfileGroupEdit from "./DeathLogProfileGroupEdit";
+import DeathLogProfileGroupEdit from "./profile-group-edit/DeathLogProfileGroupEdit";
 
 export default function DeathLogRouter() {
 	const params = useParams();

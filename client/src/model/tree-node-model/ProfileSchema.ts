@@ -1,4 +1,5 @@
 import { CONSTANTS } from "../../../shared/constants";
+import { formatString } from "../../utils/general";
 import { createTreeNodeSchema } from "./TreeNodeSchema";
 import z from "zod";
 
@@ -14,7 +15,10 @@ export const createProfileSchema = (
 
 export const ProfileGroupSchema = z.object({
 	id: z.string().length(8),
-	title: z.string().length(CONSTANTS.NUMS.INPUT_MAX_LESS),
+	title: z
+		.string()
+		.transform((title) => formatString(title))
+		.pipe(z.string().length(CONSTANTS.NUMS.INPUT_MAX_LESS)),
 	members: z.array(z.string()),
 	description: z.string().length(CONSTANTS.NUMS.INPUT_MAX),
 	dateStart: z.iso.datetime({ error: CONSTANTS.ERROR.DATE }),

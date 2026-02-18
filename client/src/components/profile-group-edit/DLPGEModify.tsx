@@ -1,9 +1,7 @@
 import { useState } from "react";
-import { useDeathLogStore } from "../../stores/useDeathLogStore";
 import type { Profile } from "../../model/tree-node-model/ProfileSchema";
 import type { Subject } from "../../model/tree-node-model/SubjectSchema";
 import { CONSTANTS } from "../../../shared/constants";
-import DLPGEList from "./DLPGEList";
 
 type Props = {
 	profile: Profile;
@@ -12,8 +10,6 @@ type Props = {
 };
 
 export default function DLPGEModify({ type, profile, subjects }: Props) {
-	const tree = useDeathLogStore((state) => state.tree);
-	const updateNode = useDeathLogStore((state) => state.updateNode);
 	const [searchQuery, setSearchQuery] = useState("");
 
 	const filteredResults =
@@ -29,8 +25,6 @@ export default function DLPGEModify({ type, profile, subjects }: Props) {
 		<>
 			{type == "add" ? (
 				<>
-					
-
 					<label className="floating-label">
 						<span>Profile Group Name</span>
 
@@ -74,7 +68,7 @@ export default function DLPGEModify({ type, profile, subjects }: Props) {
 								<li className="list-row">
 									{subject.name}{" "}
 									<button
-										className="cursor-pointer text-end"
+										className="ml-auto cursor-pointer"
 										type="button"
 									>
 										+

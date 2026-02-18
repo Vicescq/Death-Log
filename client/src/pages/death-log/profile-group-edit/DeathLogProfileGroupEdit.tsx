@@ -1,11 +1,11 @@
-import Container from "../../components/Container";
-import NavBar from "../../components/nav-bar/NavBar";
-import DLPGEList from "../../components/profile-group-edit/DLPGEList";
-import DLPGEModify from "../../components/profile-group-edit/DLPGEModify";
-import type { Profile } from "../../model/tree-node-model/ProfileSchema";
-import { useDeathLogStore } from "../../stores/useDeathLogStore";
-import { assertIsNonNull, assertIsSubject } from "../../utils/asserts";
-import DeathLogBreadcrumb from "./breadcrumb/DeathLogBreadcrumb";
+import Container from "../../../components/Container";
+import NavBar from "../../../components/nav-bar/NavBar";
+import DLPGEList from "../../../components/profile-group-edit/DLPGEList";
+import DLPGEModify from "../../../components/profile-group-edit/DLPGEModify";
+import type { Profile } from "../../../model/tree-node-model/ProfileSchema";
+import { useDeathLogStore } from "../../../stores/useDeathLogStore";
+import { assertIsNonNull, assertIsSubject } from "../../../utils/asserts";
+import DeathLogBreadcrumb from "../breadcrumb/DeathLogBreadcrumb";
 
 type Props = {
 	profile: Profile;
@@ -13,6 +13,10 @@ type Props = {
 
 export default function DeathLogProfileGroupEdit({ profile }: Props) {
 	const tree = useDeathLogStore((state) => state.tree);
+	
+	// const 
+
+
 	const subjects = profile.childIDS.map((id) => {
 		const subject = tree.get(id);
 		assertIsNonNull(subject);
