@@ -7,6 +7,7 @@ export const createRootNodeSchema = (
 ) => {
 	return createTreeNodeSchema(siblingNames, currEditingName).extend({
 		type: z.literal("ROOT_NODE"),
+		parentID: z.literal("ROOT_NODE"),
 	});
 };
 

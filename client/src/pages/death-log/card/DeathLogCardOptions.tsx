@@ -13,7 +13,7 @@ export default function DeathLogCardOptions({ node }: Props) {
 	return (
 		<ul className="menu menu-horizontal menu-xs rounded-box m-auto p-0">
 			<li>
-				<Link to={{ pathname: node.id }}>
+				<Link to={{ pathname: `/log/${node.id}` }}>
 					<button
 						className="cursor-pointer"
 						aria-label={
@@ -25,7 +25,9 @@ export default function DeathLogCardOptions({ node }: Props) {
 				</Link>
 			</li>
 			<li>
-				<Link to={{ pathname: node.id, search: "?edit=main" }}>
+				<Link
+					to={{ pathname: `/log/${node.id}`, search: "?edit=main" }}
+				>
 					<button
 						className="cursor-pointer"
 						aria-label={CONSTANTS.DEATH_LOG_CARD.EDIT_MODE_ARIA}
@@ -36,7 +38,9 @@ export default function DeathLogCardOptions({ node }: Props) {
 			</li>
 			{node.type == "profile" ? (
 				<li>
-					<Link to={{ pathname: node.id, search: "?edit=pg" }}>
+					<Link
+						to={{ pathname: `/log/${node.id}`, search: "?edit=pg" }}
+					>
 						<button
 							className="cursor-pointer"
 							aria-label={CONSTANTS.DEATH_LOG_CARD.EDIT_MODE_ARIA}

@@ -52,10 +52,7 @@ export default function DeathLogBreadcrumb() {
 		return formattedBreadcrumbMembers;
 	}
 
-	let formattedBreadcrumbMembers: BreadcrumbMember[] = [
-		{ name: "Death Log", link: "/log" },
-		...breadcrumbMembers,
-	];
+	let formattedBreadcrumbMembers: BreadcrumbMember[] = [...breadcrumbMembers];
 
 	if (formattedBreadcrumbMembers.length == 4) {
 		if (!vpMatchedMid) {

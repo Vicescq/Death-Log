@@ -138,8 +138,10 @@ export default function DeathLogCardEditor({
 	const [delStr, setDelStr] = useState("");
 
 	async function handleDelete(node: DistinctTreeNode) {
-		navigate("..");
-		await delay(100); // TODO: maybe figure out a better soln?
+		const parentID =
+			node.parentID == "ROOT_NODE" ? "" : `/${node.parentID}`;
+		navigate(`/log${parentID}`);
+		await delay(150);
 		deleteNode(node);
 	}
 
@@ -215,17 +217,6 @@ export default function DeathLogCardEditor({
 								}
 							/>
 						</div>
-
-						<button
-							type="button"
-							className="btn btn-accent mt-4 w-full"
-							onClick={(e) => {
-								e.preventDefault();
-								navigate("..");
-							}}
-						>
-							{CONSTANTS.DEATH_LOG_EDITOR.RETURN}
-						</button>
 
 						<button
 							type="reset"

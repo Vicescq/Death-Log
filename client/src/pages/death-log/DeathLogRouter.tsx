@@ -17,75 +17,36 @@ export default function DeathLogRouter() {
 	const [qParams] = useSearchParams();
 	const tree = useDeathLogStore((state) => state.tree);
 
-	const gameID = params.gameID;
-	const profileID = params.profileID;
-	const subjectID = params.subjectID;
-
-	function isValidNodeID(id: string | undefined) {
-		return id && tree.has(id) && isUniqueID() && id != "ROOT_NODE";
-	}
-
-	function isUniqueID() {
-		// handles edge case, where user types in same id as last segment
-		return (
-			new Set(Object.values(params)).size == Object.keys(params).length
-		);
-	}
-
+	const id = params.id;
 	const isEditing = qParams.get("edit") === "main";
 	const isProfileGroupEditing = qParams.get("edit") === "pg";
 
-	const parentIsSubject =
-		isValidNodeID(subjectID) &&
-		isValidNodeID(profileID) &&
-		isValidNodeID(gameID);
+	if (id && tree.has(id) && id != "ROOT_NODE") {
+		const node = tree.get(id);
+		assertIsNonNull(node);
+		switch (node.type) {
+			case "game":
+				if (isEditing) {
+					return <DeathLogCardEditor node={node} />;
+				}
+				return <DeathLog parent={node} />;
+			case "profile":
+				if (isEditing) {
+					return <DeathLogCardEditor node={node} />;
+				}
 
-	const parentIsProfile =
-		subjectID == undefined &&
-		isValidNodeID(profileID) &&
-		isValidNodeID(gameID);
+				if (isProfileGroupEditing) {
+					return <DeathLogProfileGroupEdit profile={node} />;
+				}
 
-	const parentIsGame =
-		subjectID == undefined &&
-		profileID == undefined &&
-		isValidNodeID(gameID);
+				return <DeathLog parent={node} />;
+			case "subject":
+				if (isEditing) {
+					return <DeathLogCardEditor node={node} />;
+				}
 
-	if (parentIsSubject) {
-		assertIsNonNull(subjectID);
-		const subject = tree.get(subjectID);
-		assertIsNonNull(subject);
-		assertIsSubject(subject);
-
-		if (isEditing) {
-			return <DeathLogCardEditor node={subject} />;
+				return <DeathLogCounter subject={node} />;
 		}
-
-		return <DeathLogCounter subject={subject} />;
-	} else if (parentIsProfile) {
-		assertIsNonNull(profileID);
-		const profile = tree.get(profileID);
-		assertIsNonNull(profile);
-		assertIsProfile(profile);
-
-		if (isEditing) {
-			return <DeathLogCardEditor node={profile} />;
-		}
-
-		if (isProfileGroupEditing) {
-			return <DeathLogProfileGroupEdit profile={profile} />;
-		}
-
-		return <DeathLog parent={profile} />;
-	} else if (parentIsGame) {
-		assertIsNonNull(gameID);
-		const game = tree.get(gameID);
-		assertIsNonNull(game);
-
-		if (isEditing) {
-			return <DeathLogCardEditor node={game} />;
-		}
-
-		return <DeathLog parent={game} />;
 	}
 
 	return <ErrorPage error={new Error(CONSTANTS.ERROR.URL)} />;

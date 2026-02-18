@@ -46,7 +46,7 @@ export function createRootNode() {
 		type: "ROOT_NODE",
 		id: "ROOT_NODE",
 		childIDS: [],
-		parentID: "NONE",
+		parentID: "ROOT_NODE",
 		name: "",
 		completed: false,
 		notes: "",

@@ -6,12 +6,26 @@ import { assertIsNonNull } from "../../../utils/asserts";
 export default function useBreadcrumbMembers(): BreadcrumbMember[] {
 	const params = useParams();
 	const [qParams] = useSearchParams();
-	const ids = Object.values(params);
 	const tree = useDeathLogStore((state) => state.tree);
 	const names: string[] = [];
-
 	const isEditing = qParams.get("edit") === "main";
 	const isProfileGroupEditing = qParams.get("edit") === "pg";
+
+	const ids: string[] = [];
+	function traceNodeLineage(id: string) {
+		const node = tree.get(id);
+		assertIsNonNull(node);
+		if (id == "ROOT_NODE") {
+			return;
+		}
+		ids.push(id);
+		traceNodeLineage(node.parentID);
+	}
+	if (params.id) {
+		traceNodeLineage(params.id);
+		ids.reverse();
+		console.log(ids);
+	}
 
 	for (let i = 0; i < ids.length; i++) {
 		const id = ids[i];
@@ -21,17 +35,16 @@ export default function useBreadcrumbMembers(): BreadcrumbMember[] {
 		names.push(node.name);
 	}
 
-	let currLink = "/log";
-	const breadcrumbMembers: BreadcrumbMember[] = [];
+	const breadcrumbMembers: BreadcrumbMember[] = [
+		{ name: "Death Log", link: "/log" },
+	];
 	for (let i = 0; i < names.length; i++) {
-		currLink += `/${ids[i]}`;
-		breadcrumbMembers.push({ name: names[i], link: currLink });
+		breadcrumbMembers.push({ name: names[i], link: `/log/${ids[i]}` });
 	}
 
 	if (isEditing || isProfileGroupEditing) {
 		const lastMember = breadcrumbMembers[breadcrumbMembers.length - 1];
 		lastMember.name = `Editing: ${lastMember.name}`;
-		lastMember.link = currLink;
 		if (isEditing) {
 			lastMember.qParam = "?edit=main";
 		}

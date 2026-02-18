@@ -55,15 +55,7 @@ function AppRoot() {
 
 				<Route path="log">
 					<Route index element={<DeathLog parent={root} />} />
-					<Route path=":gameID">
-						<Route index element={<DeathLogRouter />} />
-						<Route path=":profileID">
-							<Route index element={<DeathLogRouter />} />
-							<Route path=":subjectID">
-								<Route index element={<DeathLogRouter />} />
-							</Route>
-						</Route>
-					</Route>
+					<Route path=":id" element={<DeathLogRouter />} />
 				</Route>
 
 				<Route path="data-management" element={<DataManagement />} />
