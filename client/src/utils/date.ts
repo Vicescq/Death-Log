@@ -1,4 +1,7 @@
+import z from "zod";
+import { CONSTANTS } from "../../shared/constants";
 import { assertIsNonNull } from "./asserts";
+
 /**
  * ISO string to standard date format
  * @param isoSTR
@@ -89,4 +92,94 @@ export function resolveTimestampUpdate(
 		isoStr = ogISOTimestamp;
 	}
 	return isoStr;
+}
+
+export const DateRangeSchema = z.object({
+	dateStart: z.iso.date({ error: CONSTANTS.ERROR.DATE }),
+	timeStart: z.iso.time({
+		precision: 0,
+		error: CONSTANTS.ERROR.TIME,
+	}),
+	dateEnd: z.iso.date({ error: CONSTANTS.ERROR.DATE }).nullable(),
+	timeEnd: z.iso
+		.time({ precision: 0, error: CONSTANTS.ERROR.TIME })
+		.nullable(),
+});
+
+type DateRange = z.infer<typeof DateRangeSchema>;
+
+export function validateDateRange<T extends DateRange>(
+	schema: T,
+	ctx: z.core.$RefinementCtx,
+) {
+	// try catch due to superRefine() having possibility of malformed date time strings which throws errors in dateTimeSTDToISO fn
+	try {
+		if (schema.dateEnd && schema.timeEnd) {
+			// have to do this because schema.date (YYYY:MM:DD) has an implcit timezone which is binded to the user where Date.parse does not know about. Need to transform that date into UTC iso string then pass it to .parse()
+			const parsedUTCdateTimeStart = Date.parse(
+				dateTimeSTDToISO(schema.dateStart, schema.timeStart),
+			);
+			const parsedUTCdateTimeEnd = Date.parse(
+				dateTimeSTDToISO(schema.dateEnd, schema.timeEnd),
+			);
+
+			// max for start, min for end, completed
+			if (parsedUTCdateTimeStart > parsedUTCdateTimeEnd) {
+				ctx.addIssue({
+					code: "custom",
+					message: CONSTANTS.ERROR.DATETIME_START_SURPASSED_END,
+					path: ["dateStart"],
+				});
+				ctx.addIssue({
+					code: "custom",
+					message: CONSTANTS.ERROR.DATETIME_START_SURPASSED_END,
+					path: ["timeStart"],
+				});
+				ctx.addIssue({
+					code: "custom",
+					message: CONSTANTS.ERROR.DATETIME_START_SURPASSED_END,
+					path: ["dateEnd"],
+				});
+				ctx.addIssue({
+					code: "custom",
+					message: CONSTANTS.ERROR.DATETIME_START_SURPASSED_END,
+					path: ["timeEnd"],
+				});
+			}
+
+			// max for end
+			if (parsedUTCdateTimeEnd > Date.now()) {
+				ctx.addIssue({
+					code: "custom",
+					message: CONSTANTS.ERROR.DATETIME_SURPASSED_TODAY,
+					path: ["dateEnd"],
+				});
+				ctx.addIssue({
+					code: "custom",
+					message: CONSTANTS.ERROR.DATETIME_SURPASSED_TODAY,
+					path: ["timeEnd"],
+				});
+			}
+		} else {
+			const parsedUTCdateTimeStart = Date.parse(
+				dateTimeSTDToISO(schema.dateStart, schema.timeStart),
+			);
+
+			// max for start, uncompleted
+			if (parsedUTCdateTimeStart > Date.now()) {
+				ctx.addIssue({
+					code: "custom",
+					message: CONSTANTS.ERROR.DATETIME_SURPASSED_TODAY,
+					path: ["dateStart"],
+				});
+				ctx.addIssue({
+					code: "custom",
+					message: CONSTANTS.ERROR.DATETIME_SURPASSED_TODAY,
+					path: ["timeStart"],
+				});
+			}
+		}
+	} catch {
+		return;
+	}
 }

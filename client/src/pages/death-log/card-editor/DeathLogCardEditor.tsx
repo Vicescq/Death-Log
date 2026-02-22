@@ -12,7 +12,7 @@ import { delay } from "../../../utils/general";
 import { assertIsNonNull } from "../../../utils/asserts";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createNodeFormEditSchema, type NodeFormEdit } from "../EditorAndFABschema";
+import { createNodeFormEditSchema, type NodeFormEdit } from "../schema";
 import NavBar from "../../../components/nav-bar/NavBar";
 import type { DistinctTreeNode } from "../../../model/tree-node-model/TreeNodeSchema";
 import useNotifyDateReset from "../../../hooks/useNotifyDateReset";

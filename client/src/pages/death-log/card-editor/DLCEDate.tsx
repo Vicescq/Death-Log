@@ -1,6 +1,6 @@
 import { CONSTANTS } from "../../../../shared/constants";
 import type { UseFormReturn } from "react-hook-form";
-import type { NodeFormEdit } from "../EditorAndFABschema";
+import type { NodeFormEdit } from "../schema";
 import type { DistinctTreeNode } from "../../../model/tree-node-model/TreeNodeSchema";
 
 type Props = {

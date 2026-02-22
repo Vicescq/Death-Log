@@ -13,7 +13,7 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import DLFABModalBodyAdd from "./DLFABModalBodyAdd";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { assertIsNonNull } from "../../../utils/asserts";
-import { createNodeFormAddSchema, type NodeFormAdd } from "../EditorAndFABschema";
+import { createNodeFormAddSchema, type NodeFormAdd } from "../schema";
 import type { DistinctTreeNode } from "../../../model/tree-node-model/TreeNodeSchema";
 
 type Props = {

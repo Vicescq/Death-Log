@@ -3,7 +3,7 @@ import { CONSTANTS } from "../../../../shared/constants";
 import TooltipButton from "../../../components/TooltipButton";
 import { isoToDateSTD, isoToTimeSTD } from "../../../utils/date";
 import edit from "../../../assets/edit_single.svg";
-import type { DeathCounterForm } from "./schema";
+import type { DeathCounterForm } from "../schema";
 import type {
 	Subject,
 	Death,

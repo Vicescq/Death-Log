@@ -1,9 +1,9 @@
+import type { Subject } from "../../model/tree-node-model/SubjectSchema";
 import type {
 	DistinctTreeNode,
-	Subject,
 	Tree,
 	TreeNode,
-} from "../../model/tree-node-model";
+} from "../../model/tree-node-model/TreeNodeSchema";
 import { createDeath } from "../../stores/utils";
 import { assertIsNonNull } from "../../utils/asserts";
 
