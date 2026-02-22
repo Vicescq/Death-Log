@@ -6,10 +6,7 @@ import {
 } from "../../utils/date";
 import { createTreeNodeSchema } from "../../model/tree-node-model/TreeNodeSchema";
 import { createSubjectSchema } from "../../model/tree-node-model/SubjectSchema";
-import {
-	createProfileSchema,
-	ProfileGroupSchema,
-} from "../../model/tree-node-model/ProfileSchema";
+import { ProfileGroupSchema } from "../../model/tree-node-model/ProfileSchema";
 import { CONSTANTS } from "../../../shared/constants";
 import { formatString } from "../../utils/general";
 
@@ -123,14 +120,21 @@ export const EditDeathFormSchema = BaseEditDeathFormSchema.superRefine(
 export type EditDeathForm = z.infer<typeof EditDeathFormSchema>;
 export type DeathCounterForm = z.infer<typeof DeathCounterFormSchema>;
 
-const PGEFormSchema = ProfileGroupSchema.pick({
+const PGFormAddSchema = ProfileGroupSchema.pick({
 	title: true,
 	description: true,
 	members: true,
-	dateStartRel: true,
-	dateEndRel: true,
 })
 	.extend(DateRangeSchema.shape)
 	.superRefine(validateDateRange);
 
-type PGEForm = z.infer<typeof PGEFormSchema>;
+const PGFormEditSchema = ProfileGroupSchema.pick({
+	title: true,
+	description: true,
+	members: true,
+})
+	.extend(DateRangeSchema.shape)
+	.superRefine(validateDateRange);
+
+type PGFormAdd = z.infer<typeof PGFormAddSchema>;
+type PGFormEdit = z.infer<typeof PGFormEditSchema>;

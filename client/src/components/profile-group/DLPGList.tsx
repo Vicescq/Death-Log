@@ -4,7 +4,7 @@ type Props = {
 	profile: Profile;
 };
 
-export default function DLPGEList({ profile }: Props) {
+export default function DLPGList({ profile }: Props) {
 	return (
 		<section>
 			<span className="text-[1rem]">

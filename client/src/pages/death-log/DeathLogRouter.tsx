@@ -6,7 +6,7 @@ import ErrorPage from "../ErrorPage";
 import DeathLogCardEditor from "./card-editor/DeathLogCardEditor";
 import DeathLogCounter from "./counter/DeathLogCounter";
 import DeathLog from "./DeathLog";
-import DeathLogProfileGroupEdit from "./profile-group-edit/DeathLogProfileGroupEdit";
+import DeathLogProfileGroup from "./profile-group/DeathLogProfileGroup";
 
 export default function DeathLogRouter() {
 	const params = useParams();
@@ -32,7 +32,7 @@ export default function DeathLogRouter() {
 				}
 
 				if (isProfileGroupEditing) {
-					return <DeathLogProfileGroupEdit profile={node} />;
+					return <DeathLogProfileGroup profile={node} />;
 				}
 
 				return <DeathLog parent={node} />;

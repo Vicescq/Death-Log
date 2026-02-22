@@ -9,7 +9,7 @@ type Props = {
 	type: "add" | "edit";
 };
 
-export default function DLPGEModify({ type, profile, subjects }: Props) {
+export default function DLPGModify({ type, profile, subjects }: Props) {
 	const [searchQuery, setSearchQuery] = useState("");
 
 	const filteredResults =

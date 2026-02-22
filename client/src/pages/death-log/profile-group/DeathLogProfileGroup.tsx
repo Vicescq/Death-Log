@@ -1,7 +1,7 @@
 import Container from "../../../components/Container";
 import NavBar from "../../../components/nav-bar/NavBar";
-import DLPGEList from "../../../components/profile-group-edit/DLPGEList";
-import DLPGEModify from "../../../components/profile-group-edit/DLPGEModify";
+import DLPGList from "../../../components/profile-group/DLPGList";
+import DLPGModify from "../../../components/profile-group/DLPGModify";
 import type { Profile } from "../../../model/tree-node-model/ProfileSchema";
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
 import { assertIsNonNull, assertIsSubject } from "../../../utils/asserts";
@@ -11,7 +11,7 @@ type Props = {
 	profile: Profile;
 };
 
-export default function DeathLogProfileGroupEdit({ profile }: Props) {
+export default function DeathLogProfileGroup({ profile }: Props) {
 	const tree = useDeathLogStore((state) => state.tree);
 	
 	// const 
@@ -35,11 +35,11 @@ export default function DeathLogProfileGroupEdit({ profile }: Props) {
 						<legend className="fieldset-legend">
 							Profile Groupings Edit
 						</legend>
-						<DLPGEList profile={profile} />
+						<DLPGList profile={profile} />
 
 						<div className="divider my-0.5" />
 
-						<DLPGEModify
+						<DLPGModify
 							profile={profile}
 							subjects={subjects}
 							type="add"
