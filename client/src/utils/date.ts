@@ -10,15 +10,9 @@ import { assertIsNonNull } from "./asserts";
 export function isoToDateSTD(isoSTR: string) {
 	const dateObj = new Date(isoSTR);
 	const year = String(dateObj.getFullYear());
-	let month = String(dateObj.getMonth() + 1);
-	let day = String(dateObj.getDate());
-	if (month.length == 1) {
-		month = "0" + month;
-	}
-	if (day.length == 1) {
-		day = "0" + day;
-	}
-	return `${year}-${month}-${day}`;
+	const month = dateObj.getMonth() + 1;
+	const day = dateObj.getDate();
+	return `${year}-${addLeadingZeroes(month)}-${addLeadingZeroes(day)}`;
 }
 
 /**
@@ -31,10 +25,6 @@ export function isoToTimeSTD(isoSTR: string) {
 	const hour = dateObj.getHours();
 	const mins = dateObj.getMinutes();
 	const secs = dateObj.getSeconds();
-
-	function addLeadingZeroes(time: number): string {
-		return time >= 10 ? String(time) : `0${time}`;
-	}
 
 	return `${addLeadingZeroes(hour)}:${addLeadingZeroes(mins)}:${addLeadingZeroes(secs)}`;
 }
@@ -182,4 +172,17 @@ export function validateDateRange<T extends DateRange>(
 	} catch {
 		return;
 	}
+}
+
+export function formatDLExportFile(date: Date) {
+	const year = date.getFullYear();
+	const month = date.getMonth() + 1;
+	const day = date.getDate();
+
+	const fileName = `Death Log ${year}_${addLeadingZeroes(month)}_${addLeadingZeroes(day)} ${date.toTimeString()}`;
+	return fileName;
+}
+
+function addLeadingZeroes(quantity: number): string {
+	return quantity >= 10 ? String(quantity) : `0${quantity}`;
 }

@@ -11,6 +11,7 @@ import type {
 	DistinctTreeNode,
 	TreeNode,
 } from "../model/tree-node-model/TreeNodeSchema";
+import { formatDLExportFile } from "../utils/date";
 
 type DeathLogBackup = {
 	type: "DEATH-LOG Backup";
@@ -140,7 +141,10 @@ export default function DataManagement() {
 			const url = URL.createObjectURL(blob);
 			const a = document.createElement("a");
 			a.href = url;
-			a.download = `Death Log ${date.toString()}.json`;
+
+			const fileName = formatDLExportFile(date);
+
+			a.download = `${fileName}.json`;
 			document.body.appendChild(a);
 			a.click();
 			document.body.removeChild(a);
