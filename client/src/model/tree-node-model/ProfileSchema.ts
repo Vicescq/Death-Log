@@ -18,9 +18,20 @@ export const ProfileGroupSchema = z.object({
 	title: z
 		.string()
 		.transform((title) => formatString(title))
-		.pipe(z.string().length(CONSTANTS.NUMS.INPUT_MAX_LESS)),
+		.pipe(
+			z
+				.string()
+				.max(CONSTANTS.NUMS.INPUT_MAX_LESSER, {
+					error: CONSTANTS.ERROR.MAX_LENGTH,
+				})
+				.min(1, {
+					error: CONSTANTS.ERROR.EMPTY,
+				}),
+		),
 	members: z.array(z.string()),
-	description: z.string().length(CONSTANTS.NUMS.INPUT_MAX),
+	description: z.string().max(CONSTANTS.NUMS.TEXTAREA_MAX, {
+		error: CONSTANTS.ERROR.MAX_LENGTH,
+	}),
 	dateStart: z.iso.datetime({ error: CONSTANTS.ERROR.DATE }),
 	dateEnd: z.iso.datetime({ error: CONSTANTS.ERROR.DATE }).nullable(),
 	dateStartRel: z.boolean(),

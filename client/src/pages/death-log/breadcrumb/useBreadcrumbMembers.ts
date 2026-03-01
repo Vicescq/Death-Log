@@ -24,7 +24,6 @@ export default function useBreadcrumbMembers(): BreadcrumbMember[] {
 	if (params.id) {
 		traceNodeLineage(params.id);
 		ids.reverse();
-		console.log(ids);
 	}
 
 	for (let i = 0; i < ids.length; i++) {

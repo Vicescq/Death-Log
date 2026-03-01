@@ -76,7 +76,7 @@ const BaseEditDeathFormSchema = z.object({
 		.string()
 		.transform((remark) => formatString(remark))
 		.pipe(
-			z.string().max(CONSTANTS.NUMS.INPUT_MAX_LESS, {
+			z.string().max(CONSTANTS.NUMS.INPUT_MAX_LESSER, {
 				error: CONSTANTS.ERROR.MAX_LENGTH,
 			}),
 		),
@@ -120,7 +120,14 @@ export const EditDeathFormSchema = BaseEditDeathFormSchema.superRefine(
 export type EditDeathForm = z.infer<typeof EditDeathFormSchema>;
 export type DeathCounterForm = z.infer<typeof DeathCounterFormSchema>;
 
-const PGFormAddSchema = ProfileGroupSchema.pick({
+const PGFormMemberSchema = z.object({ memberID: z.string() }); // useFieldArray requires primitives to be wrapped in an obj
+
+export const PGFormAddSchema = ProfileGroupSchema.pick({
+	title: true,
+	description: true,
+}).extend(z.object({ members: z.array(PGFormMemberSchema) }).shape);
+
+export const PGFormEditSchema = ProfileGroupSchema.pick({
 	title: true,
 	description: true,
 	members: true,
@@ -128,13 +135,5 @@ const PGFormAddSchema = ProfileGroupSchema.pick({
 	.extend(DateRangeSchema.shape)
 	.superRefine(validateDateRange);
 
-const PGFormEditSchema = ProfileGroupSchema.pick({
-	title: true,
-	description: true,
-	members: true,
-})
-	.extend(DateRangeSchema.shape)
-	.superRefine(validateDateRange);
-
-type PGFormAdd = z.infer<typeof PGFormAddSchema>;
-type PGFormEdit = z.infer<typeof PGFormEditSchema>;
+export type PGFormAdd = z.infer<typeof PGFormAddSchema>;
+export type PGFormEdit = z.infer<typeof PGFormEditSchema>;

@@ -15,11 +15,7 @@ export default function DLPGList({ profile }: Props) {
 					</span>
 				) : null}
 			</span>
-			{/* <ul className="list">
-				<li className="list-row">abc</li>
-				<li className="list-row">abc</li>
-				<li className="list-row">abc</li>
-			</ul> */}
+
 			{profile.groupings.length > 0 ? (
 				<ul className="list">
 					{profile.groupings.map((group, i) => (

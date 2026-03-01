@@ -22,7 +22,7 @@ export const DeathSchema = z.object({
 	timestampRel: z.boolean(),
 	remark: z
 		.string()
-		.length(CONSTANTS.NUMS.INPUT_MAX_LESS, {
+		.length(CONSTANTS.NUMS.INPUT_MAX_LESSER, {
 			error: CONSTANTS.ERROR.MAX_LENGTH,
 		})
 		.nullable(),
