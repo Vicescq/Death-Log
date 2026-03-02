@@ -96,7 +96,7 @@ export default function DeathLogBreadcrumb() {
 			<div className="breadcrumbs text-sm">
 				<ul>
 					{formattedBreadcrumbMembers.map((member, i) => {
-						if (member.name == "...") {
+						if (member.name == "..." && i == 0) {
 							return (
 								<li
 									onClick={() => {
