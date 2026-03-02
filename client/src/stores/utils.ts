@@ -1,10 +1,7 @@
 import LocalDB from "../services/LocalDB";
 import { nanoid } from "nanoid";
 import { assertIsNonNull } from "../utils/asserts";
-import {
-	createGameSchema,
-	type Game,
-} from "../model/tree-node-model/GameSchema";
+import { type Game } from "../model/tree-node-model/GameSchema";
 import type {
 	Profile,
 	ProfileGroup,
@@ -15,7 +12,7 @@ import type {
 	DistinctTreeNode,
 	Tree,
 } from "../model/tree-node-model/TreeNodeSchema";
-import z from "zod";
+import type { PGFormAdd } from "../pages/death-log/schema";
 
 export function identifyDeletedSelfAndChildrenIDS(
 	node: DistinctTreeNode,
@@ -127,7 +124,7 @@ export function createDeath(
 ): Death {
 	return {
 		id: generateAndValidateID({
-			type: "death",
+			type: "generic",
 			ids: subject.log.map((death) => death.id),
 		}),
 		parentID: subject.id,
@@ -137,24 +134,34 @@ export function createDeath(
 	};
 }
 
-// export function createProfileGroup(): ProfileGroup {
-// 	return {
-// 		id: generateAndValidateID({
-// 			type: "death",
-// 			ids: subject.log.map((death) => death.id),
-// 		}),
-// 	};
-// }
+export function createProfileGroup(
+	profile: Profile,
+	groupInfo: PGFormAdd,
+): ProfileGroup {
+	return {
+		id: generateAndValidateID({
+			type: "generic",
+			ids: profile.groupings.map((group) => group.id),
+		}),
+		title: groupInfo.title,
+		description: groupInfo.description,
+		members: groupInfo.members.map((formMember) => formMember.memberID),
+		dateStart: new Date().toISOString(),
+		dateStartRel: true,
+		dateEnd: null,
+		dateEndRel: true,
+	};
+}
 
-export type GenerateIDContext = GenerateDeathID | GenerateNodeID;
+export type GenerateIDContext = GenerateGenericID | GenerateNodeID;
 
 type GenerateNodeID = {
 	type: "node";
 	tree: Tree;
 };
 
-type GenerateDeathID = {
-	type: "death";
+type GenerateGenericID = {
+	type: "generic";
 	ids: string[];
 };
 

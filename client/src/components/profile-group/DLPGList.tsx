@@ -19,7 +19,9 @@ export default function DLPGList({ profile }: Props) {
 			{profile.groupings.length > 0 ? (
 				<ul className="list">
 					{profile.groupings.map((group, i) => (
-						<li className="list-row">{group.id}</li>
+						<li className="list-row" key={group.id}>
+							{group.title}
+						</li>
 					))}
 				</ul>
 			) : null}

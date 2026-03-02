@@ -12,6 +12,7 @@ import { assertIsNonNull, assertIsSubject } from "../../../utils/asserts";
 import DeathLogBreadcrumb from "../breadcrumb/DeathLogBreadcrumb";
 import { PGFormAddSchema, type PGFormAdd, type PGFormEdit } from "../schema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { createProfileGroup } from "../../../stores/utils";
 
 type Props = {
 	profile: Profile;
@@ -44,8 +45,13 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 	});
 
 	const onAddPGSubmit: SubmitHandler<PGFormAdd> = (formData) => {
-		// const newProfileGroup: ProfileGroup = {id:  ,...formData}
-		// updateNode({...profile, groupings: [...profile.groupings, newProfileGroup]})
+		updateNode({
+			...profile,
+			groupings: [
+				...profile.groupings,
+				createProfileGroup(profile, formData),
+			],
+		});
 	};
 
 	const onEditPGSubmit: SubmitHandler<PGFormEdit> = (formData) => {};
@@ -68,7 +74,7 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 
 				<div className="divider" />
 
-				<form>
+				<form onSubmit={form.handleSubmit(onAddPGSubmit)}>
 					<fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-full gap-4 border p-4">
 						<legend className="fieldset-legend">
 							Add Profile Group
@@ -83,8 +89,12 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 						/>
 
 						<button
-							type="button"
+							type="submit"
 							className="btn btn-success mt-4 w-full"
+							disabled={
+								!form.formState.isDirty ||
+								!form.formState.isValid
+							}
 						>
 							Add
 						</button>
