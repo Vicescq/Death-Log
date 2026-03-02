@@ -1,5 +1,5 @@
 import { CONSTANTS } from "../../../shared/constants";
-import { formatString } from "../../utils/general";
+import { formatString, validateNameUniqueness } from "../../utils/general";
 import { createTreeNodeSchema } from "./TreeNodeSchema";
 import z from "zod";
 
@@ -9,34 +9,49 @@ export const createProfileSchema = (
 ) => {
 	return createTreeNodeSchema(siblingNames, currEditingName).extend({
 		type: z.literal("profile"),
-		groupings: z.array(ProfileGroupSchema),
+		groupings: z.array(
+			createProfileGroupSchema(siblingNames, currEditingName),
+		),
 	});
 };
 
-export const ProfileGroupSchema = z.object({
-	id: z.string().length(8),
-	title: z
-		.string()
-		.transform((title) => formatString(title))
-		.pipe(
-			z
-				.string()
-				.max(CONSTANTS.NUMS.INPUT_MAX_LESSER, {
-					error: CONSTANTS.ERROR.MAX_LENGTH,
-				})
-				.min(1, {
-					error: CONSTANTS.ERROR.EMPTY,
-				}),
-		),
-	members: z.array(z.string()),
-	description: z.string().max(CONSTANTS.NUMS.TEXTAREA_MAX, {
-		error: CONSTANTS.ERROR.MAX_LENGTH,
-	}),
-	dateStart: z.iso.datetime({ error: CONSTANTS.ERROR.DATE }),
-	dateEnd: z.iso.datetime({ error: CONSTANTS.ERROR.DATE }).nullable(),
-	dateStartRel: z.boolean(),
-	dateEndRel: z.boolean(),
-});
+export const createProfileGroupSchema = (
+	siblingNames: string[],
+	currEditingName: string | null,
+) =>
+	z.object({
+		id: z.string().length(8),
+		title: z
+			.string()
+			.transform((title) => formatString(title))
+			.pipe(
+				z
+					.string()
+					.max(CONSTANTS.NUMS.INPUT_MAX_LESSER, {
+						error: CONSTANTS.ERROR.MAX_LENGTH,
+					})
+					.min(1, {
+						error: CONSTANTS.ERROR.EMPTY,
+					}),
+			)
+			.refine(
+				(title) =>
+					validateNameUniqueness(
+						title,
+						siblingNames,
+						currEditingName,
+					),
+				{ error: CONSTANTS.ERROR.NON_UNIQUE },
+			),
+		members: z.array(z.string()),
+		description: z.string().max(CONSTANTS.NUMS.TEXTAREA_MAX, {
+			error: CONSTANTS.ERROR.MAX_LENGTH,
+		}),
+		dateStart: z.iso.datetime({ error: CONSTANTS.ERROR.DATE }),
+		dateEnd: z.iso.datetime({ error: CONSTANTS.ERROR.DATE }).nullable(),
+		dateStartRel: z.boolean(),
+		dateEndRel: z.boolean(),
+	});
 
 export type Profile = z.infer<ReturnType<typeof createProfileSchema>>;
-export type ProfileGroup = z.infer<typeof ProfileGroupSchema>;
+export type ProfileGroup = z.infer<ReturnType<typeof createProfileGroupSchema>>;

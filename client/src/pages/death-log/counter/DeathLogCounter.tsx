@@ -18,7 +18,7 @@ import {
 	EditDeathFormSchema,
 	type DeathCounterForm,
 	type EditDeathForm
-} from "../schema";
+} from "../formSchemas";
 import NavBar from "../../../components/nav-bar/NavBar";
 import type { Subject } from "../../../model/tree-node-model/SubjectSchema";
 import useNotifyDateReset from "../../../hooks/useNotifyDateReset";

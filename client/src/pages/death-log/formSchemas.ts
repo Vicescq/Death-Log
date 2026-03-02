@@ -6,9 +6,9 @@ import {
 } from "../../utils/date";
 import { createTreeNodeSchema } from "../../model/tree-node-model/TreeNodeSchema";
 import { createSubjectSchema } from "../../model/tree-node-model/SubjectSchema";
-import { ProfileGroupSchema } from "../../model/tree-node-model/ProfileSchema";
 import { CONSTANTS } from "../../../shared/constants";
 import { formatString } from "../../utils/general";
+import { createProfileGroupSchema } from "../../model/tree-node-model/ProfileSchema";
 
 const createBaseNodeFormSchema = (
 	siblingNames: string[],
@@ -122,18 +122,29 @@ export type DeathCounterForm = z.infer<typeof DeathCounterFormSchema>;
 
 const PGFormMemberSchema = z.object({ memberID: z.string() }); // useFieldArray requires primitives to be wrapped in an obj
 
-export const PGFormAddSchema = ProfileGroupSchema.pick({
-	title: true,
-	description: true,
-}).extend(z.object({ members: z.array(PGFormMemberSchema) }).shape);
+export const createPGFormAddSchema = (
+	siblingNames: string[],
+	currEditingName: string | null,
+) =>
+	createProfileGroupSchema(siblingNames, currEditingName)
+		.pick({
+			title: true,
+			description: true,
+		})
+		.extend(z.object({ members: z.array(PGFormMemberSchema) }).shape);
 
-export const PGFormEditSchema = ProfileGroupSchema.pick({
-	title: true,
-	description: true,
-	members: true,
-})
-	.extend(DateRangeSchema.shape)
-	.superRefine(validateDateRange);
+export const createPGFormEditSchema = (
+	siblingNames: string[],
+	currEditingName: string | null,
+) =>
+	createProfileGroupSchema(siblingNames, currEditingName)
+		.pick({
+			title: true,
+			description: true,
+			members: true,
+		})
+		.extend(DateRangeSchema.shape)
+		.superRefine(validateDateRange);
 
-export type PGFormAdd = z.infer<typeof PGFormAddSchema>;
-export type PGFormEdit = z.infer<typeof PGFormEditSchema>;
+export type PGFormAdd = z.infer<ReturnType<typeof createPGFormAddSchema>>;
+export type PGFormEdit = z.infer<ReturnType<typeof createPGFormEditSchema>>;

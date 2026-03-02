@@ -10,9 +10,13 @@ import type {
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
 import { assertIsNonNull, assertIsSubject } from "../../../utils/asserts";
 import DeathLogBreadcrumb from "../breadcrumb/DeathLogBreadcrumb";
-import { PGFormAddSchema, type PGFormAdd, type PGFormEdit } from "../schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createProfileGroup } from "../../../stores/utils";
+import {
+	createPGFormAddSchema,
+	type PGFormAdd,
+	type PGFormEdit,
+} from "../formSchemas";
 
 type Props = {
 	profile: Profile;
@@ -22,6 +26,10 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 	const tree = useDeathLogStore((state) => state.tree);
 	const updateNode = useDeathLogStore((state) => state.updateNode);
 
+	const PGFormAddSchema = createPGFormAddSchema(
+		profile.groupings.map((group) => group.title),
+		null,
+	);
 	const form = useForm<PGFormAdd>({
 		defaultValues: {
 			title: "",

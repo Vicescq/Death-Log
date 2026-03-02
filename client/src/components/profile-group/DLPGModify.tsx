@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { Subject } from "../../model/tree-node-model/SubjectSchema";
 import { CONSTANTS } from "../../../shared/constants";
-import type { PGFormAdd } from "../../pages/death-log/schema";
+import type { PGFormAdd } from "../../pages/death-log/formSchemas";
 import type { UseFormReturn } from "react-hook-form";
 import { assertIsNonNull } from "../../utils/asserts";
 

@@ -1,6 +1,6 @@
 import z from "zod";
 import { CONSTANTS } from "../../../shared/constants";
-import { formatString } from "../../utils/general";
+import { formatString, validateNameUniqueness } from "../../utils/general";
 import type { Game } from "./GameSchema";
 import type { Profile } from "./ProfileSchema";
 import type { RootNode } from "./RootNodeSchema";
@@ -28,22 +28,12 @@ export const createTreeNodeSchema = (
 						error: CONSTANTS.ERROR.EMPTY,
 					})
 					.refine(
-						(name) => {
-							if (currEditingName == null) {
-								return !siblingNames.includes(name);
-							} else {
-								let isUnique = true;
-								siblingNames.forEach((siblingName) => {
-									if (
-										siblingName != currEditingName &&
-										siblingName == name
-									) {
-										isUnique = false;
-									}
-								});
-								return isUnique;
-							}
-						},
+						(name) =>
+							validateNameUniqueness(
+								name,
+								siblingNames,
+								currEditingName,
+							),
 						{
 							error: CONSTANTS.ERROR.NON_UNIQUE,
 						},

@@ -12,7 +12,7 @@ import type {
 	DistinctTreeNode,
 	Tree,
 } from "../model/tree-node-model/TreeNodeSchema";
-import type { PGFormAdd } from "../pages/death-log/schema";
+import type { PGFormAdd } from "../pages/death-log/formSchemas";
 
 export function identifyDeletedSelfAndChildrenIDS(
 	node: DistinctTreeNode,
