@@ -1,10 +1,11 @@
-import type { Profile } from "../../model/tree-node-model/ProfileSchema";
+import type { Profile } from "../../../model/tree-node-model/ProfileSchema";
 
 type Props = {
 	profile: Profile;
+	onDelete: (i: number) => void;
 };
 
-export default function DLPGList({ profile }: Props) {
+export default function DLPGList({ profile, onDelete }: Props) {
 	return (
 		<section>
 			<span className="text-[1rem]">
@@ -21,6 +22,13 @@ export default function DLPGList({ profile }: Props) {
 					{profile.groupings.map((group, i) => (
 						<li className="list-row" key={group.id}>
 							{group.title}
+							<button
+								type="button"
+								className="ml-auto cursor-pointer"
+								onClick={() => onDelete(i)}
+							>
+								✕
+							</button>
 						</li>
 					))}
 				</ul>

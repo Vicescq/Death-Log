@@ -1,8 +1,8 @@
 import { useFieldArray, useForm, type SubmitHandler } from "react-hook-form";
 import Container from "../../../components/Container";
 import NavBar from "../../../components/nav-bar/NavBar";
-import DLPGList from "../../../components/profile-group/DLPGList";
-import DLPGModify from "../../../components/profile-group/DLPGModify";
+import DLPGList from "./DLPGList";
+import DLPGModify from "./DLPGModify";
 import type {
 	Profile,
 	ProfileGroup,
@@ -17,6 +17,8 @@ import {
 	type PGFormAdd,
 	type PGFormEdit,
 } from "../formSchemas";
+import Modal from "../../../components/Modal";
+import { useRef, useState } from "react";
 
 type Props = {
 	profile: Profile;
@@ -25,6 +27,11 @@ type Props = {
 export default function DeathLogProfileGroup({ profile }: Props) {
 	const tree = useDeathLogStore((state) => state.tree);
 	const updateNode = useDeathLogStore((state) => state.updateNode);
+	const modalRef = useRef<HTMLDialogElement | null>(null);
+
+	const [modalType, setModalType] = useState<"completion" | "delete">(
+		"completion",
+	);
 
 	const PGFormAddSchema = createPGFormAddSchema(
 		profile.groupings.map((group) => group.title),
@@ -60,9 +67,16 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 				createProfileGroup(profile, formData),
 			],
 		});
+		form.reset();
 	};
 
 	const onEditPGSubmit: SubmitHandler<PGFormEdit> = (formData) => {};
+
+	// console.log(
+	// 	!form.formState.isDirty || !form.formState.isValid,
+	// 	!form.formState.isDirty,
+	// 	!form.formState.isValid,
+	// );
 
 	return (
 		<>
@@ -71,14 +85,16 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 				<h1 className="my-6 text-center text-4xl font-bold break-words">
 					Editing: {profile.name}
 				</h1>
-				<form>
-					<fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-full gap-4 border p-4">
-						<legend className="fieldset-legend">
-							Current Profile Groups
-						</legend>
-						<DLPGList profile={profile} />
-					</fieldset>
-				</form>
+
+				<fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-full gap-4 border p-4">
+					<legend className="fieldset-legend">
+						Current Profile Groups
+					</legend>
+					<DLPGList
+						profile={profile}
+						onDelete={(i) => modalRef.current?.showModal()}
+					/>
+				</fieldset>
 
 				<div className="divider" />
 
@@ -99,10 +115,7 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 						<button
 							type="submit"
 							className="btn btn-success mt-4 w-full"
-							disabled={
-								!form.formState.isDirty ||
-								!form.formState.isValid
-							}
+							disabled={!form.formState.isValid}
 						>
 							Add
 						</button>
@@ -134,6 +147,24 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 					</fieldset>
 				</form> */}
 			</Container>
+
+			<Modal
+				header={
+					modalType == "completion"
+						? "Do you want to mark this as completed?"
+						: "Confirm Deletion"
+				}
+				closeBtnName="Cancel"
+				content={
+					modalType == "completion" ? (
+						<span>completion</span>
+					) : (
+						<span>Do you want to delete this group?</span>
+					)
+				}
+				modalBtns={[]}
+				ref={modalRef}
+			/>
 		</>
 	);
 }

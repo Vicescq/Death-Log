@@ -1,9 +1,9 @@
 import { useState } from "react";
-import type { Subject } from "../../model/tree-node-model/SubjectSchema";
-import { CONSTANTS } from "../../../shared/constants";
-import type { PGFormAdd } from "../../pages/death-log/formSchemas";
+import type { Subject } from "../../../model/tree-node-model/SubjectSchema";
+import { CONSTANTS } from "../../../../shared/constants";
+import type { PGFormAdd } from "../formSchemas";
 import type { UseFormReturn } from "react-hook-form";
-import { assertIsNonNull } from "../../utils/asserts";
+import { assertIsNonNull } from "../../../utils/asserts";
 
 type Props = {
 	subjects: Subject[];
@@ -84,9 +84,11 @@ export default function DLPGModify({
 					<div>
 						<span className="text-[1rem]">
 							Adding the folowing members:{" "}
-							<span className="text-error text-[1rem]">
-								Nothing yet!
-							</span>
+							{members.length == 0 ? (
+								<span className="text-error text-[1rem]">
+									Nothing yet!
+								</span>
+							) : null}
 						</span>
 						<ul className="list">
 							{members.map((member, i) => (
@@ -97,7 +99,7 @@ export default function DLPGModify({
 										type="button"
 										onClick={() => onMemberDelete(i)}
 									>
-										-
+										✕
 									</button>
 								</li>
 							))}
