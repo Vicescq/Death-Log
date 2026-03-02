@@ -5,7 +5,10 @@ import {
 	createGameSchema,
 	type Game,
 } from "../model/tree-node-model/GameSchema";
-import type { Profile } from "../model/tree-node-model/ProfileSchema";
+import type {
+	Profile,
+	ProfileGroup,
+} from "../model/tree-node-model/ProfileSchema";
 import type { RootNode } from "../model/tree-node-model/RootNodeSchema";
 import type { Subject, Death } from "../model/tree-node-model/SubjectSchema";
 import type {
@@ -133,6 +136,15 @@ export function createDeath(
 		remark: remark,
 	};
 }
+
+// export function createProfileGroup(): ProfileGroup {
+// 	return {
+// 		id: generateAndValidateID({
+// 			type: "death",
+// 			ids: subject.log.map((death) => death.id),
+// 		}),
+// 	};
+// }
 
 export type GenerateIDContext = GenerateDeathID | GenerateNodeID;
 

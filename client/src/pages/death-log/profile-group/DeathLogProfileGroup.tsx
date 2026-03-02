@@ -1,4 +1,4 @@
-import { useFieldArray, useForm } from "react-hook-form";
+import { useFieldArray, useForm, type SubmitHandler } from "react-hook-form";
 import Container from "../../../components/Container";
 import NavBar from "../../../components/nav-bar/NavBar";
 import DLPGList from "../../../components/profile-group/DLPGList";
@@ -10,7 +10,7 @@ import type {
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
 import { assertIsNonNull, assertIsSubject } from "../../../utils/asserts";
 import DeathLogBreadcrumb from "../breadcrumb/DeathLogBreadcrumb";
-import { PGFormAddSchema, type PGFormAdd } from "../schema";
+import { PGFormAddSchema, type PGFormAdd, type PGFormEdit } from "../schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 type Props = {
@@ -19,6 +19,7 @@ type Props = {
 
 export default function DeathLogProfileGroup({ profile }: Props) {
 	const tree = useDeathLogStore((state) => state.tree);
+	const updateNode = useDeathLogStore((state) => state.updateNode);
 
 	const form = useForm<PGFormAdd>({
 		defaultValues: {
@@ -30,7 +31,7 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 		resolver: zodResolver(PGFormAddSchema),
 	});
 
-	const { append, fields } = useFieldArray({
+	const { append, remove } = useFieldArray({
 		name: "members",
 		control: form.control,
 	});
@@ -42,33 +43,44 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 		return subject;
 	});
 
-	console.log(fields, form.getValues("members"))
+	const onAddPGSubmit: SubmitHandler<PGFormAdd> = (formData) => {
+		// const newProfileGroup: ProfileGroup = {id:  ,...formData}
+		// updateNode({...profile, groupings: [...profile.groupings, newProfileGroup]})
+	};
+
+	const onEditPGSubmit: SubmitHandler<PGFormEdit> = (formData) => {};
 
 	return (
 		<>
 			<NavBar endNavContent={<DeathLogBreadcrumb />} />
 			<Container>
+				<h1 className="my-6 text-center text-4xl font-bold break-words">
+					Editing: {profile.name}
+				</h1>
 				<form>
-					<h1 className="my-6 text-center text-4xl font-bold break-words">
-						Editing: {profile.name}
-					</h1>
 					<fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-full gap-4 border p-4">
 						<legend className="fieldset-legend">
-							Profile Groupings Edit
+							Current Profile Groups
 						</legend>
 						<DLPGList profile={profile} />
+					</fieldset>
+				</form>
 
-						<div className="divider my-0.5" />
+				<div className="divider" />
+
+				<form>
+					<fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-full gap-4 border p-4">
+						<legend className="fieldset-legend">
+							Add Profile Group
+						</legend>
 
 						<DLPGModify
-							profile={profile}
 							subjects={subjects}
 							type="add"
 							form={form}
 							onMemberAdd={(id) => append({ memberID: id })}
+							onMemberDelete={(i) => remove(i)}
 						/>
-
-						<div className="divider my-0.5" />
 
 						<button
 							type="button"
@@ -78,6 +90,31 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 						</button>
 					</fieldset>
 				</form>
+
+				{/* <div className="divider" />
+
+				<form>
+					<fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-full gap-4 border p-4">
+						<legend className="fieldset-legend">
+							Editing Profile Group
+						</legend>
+
+						<DLPGModify
+							subjects={subjects}
+							type="add"
+							form={form}
+							onMemberAdd={(id) => append({ memberID: id })}
+							onMemberDelete={(i) => remove(i)}
+						/>
+
+						<button
+							type="button"
+							className="btn btn-success mt-4 w-full"
+						>
+							Add
+						</button>
+					</fieldset>
+				</form> */}
 			</Container>
 		</>
 	);

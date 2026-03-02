@@ -1,5 +1,4 @@
 import { useState } from "react";
-import type { Profile } from "../../model/tree-node-model/ProfileSchema";
 import type { Subject } from "../../model/tree-node-model/SubjectSchema";
 import { CONSTANTS } from "../../../shared/constants";
 import type { PGFormAdd } from "../../pages/death-log/schema";
@@ -7,36 +6,45 @@ import type { UseFormReturn } from "react-hook-form";
 import { assertIsNonNull } from "../../utils/asserts";
 
 type Props = {
-	profile: Profile;
 	subjects: Subject[];
 	type: "add" | "edit";
 	form: UseFormReturn<PGFormAdd>;
 	onMemberAdd: (id: string) => void;
+	onMemberDelete: (index: number) => void;
 };
 
 export default function DLPGModify({
 	type,
-	profile,
 	subjects,
 	form,
 	onMemberAdd,
+	onMemberDelete,
 }: Props) {
 	const [searchQuery, setSearchQuery] = useState("");
+	const members = form.getValues("members");
+	const addedMembersFormattedForCompare = members.map((member) =>
+		idToSubject(member.memberID).name.toLowerCase(),
+	);
+	const filteredMembers =
+		searchQuery == ""
+			? []
+			: subjects.filter((subject) => {
+					const formattedSubjectName = subject.name.toLowerCase();
+					return (
+						formattedSubjectName.includes(
+							searchQuery.toLowerCase(),
+						) &&
+						!addedMembersFormattedForCompare.includes(
+							formattedSubjectName,
+						)
+					);
+				});
 
-	function findSubject(memberID: string) {
+	function idToSubject(memberID: string) {
 		const foundSubject = subjects.find((subject) => subject.id == memberID);
 		assertIsNonNull(foundSubject);
 		return foundSubject;
 	}
-
-	const filteredResults =
-		searchQuery == ""
-			? []
-			: subjects.filter((subject) =>
-					subject.name
-						.toLowerCase()
-						.includes(searchQuery.toLowerCase()),
-				);
 
 	return (
 		<>
@@ -81,9 +89,16 @@ export default function DLPGModify({
 							</span>
 						</span>
 						<ul className="list">
-							{form.getValues("members").map((member) => (
-								<li className="list-row">
-									{findSubject(member.memberID).name}
+							{members.map((member, i) => (
+								<li className="list-row" key={member.memberID}>
+									{idToSubject(member.memberID).name}
+									<button
+										className="ml-auto cursor-pointer"
+										type="button"
+										onClick={() => onMemberDelete(i)}
+									>
+										-
+									</button>
 								</li>
 							))}
 						</ul>
@@ -100,9 +115,9 @@ export default function DLPGModify({
 							}
 						/>
 					</label>
-					{filteredResults.length > 0 ? (
+					{filteredMembers.length > 0 ? (
 						<ul className="list bg-base-300 max-h-96 overflow-auto rounded-2xl py-0.5">
-							{filteredResults.map((subject) => (
+							{filteredMembers.map((subject) => (
 								<li className="list-row" key={subject.id}>
 									{subject.name}{" "}
 									<button
