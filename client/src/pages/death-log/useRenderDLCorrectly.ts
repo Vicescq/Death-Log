@@ -6,7 +6,6 @@ import { useParams } from "react-router";
  */
 export default function useRenderDLCorrectly(onCloseModal: () => void) {
 	const { id } = useParams();
-	console.log(id);
 	useEffect(() => {
 		onCloseModal();
 	}, [id]);

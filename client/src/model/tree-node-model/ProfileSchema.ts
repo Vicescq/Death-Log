@@ -27,7 +27,7 @@ export const createProfileGroupSchema = (
 			.pipe(
 				z
 					.string()
-					.max(CONSTANTS.NUMS.INPUT_MAX_LESSER, {
+					.max(CONSTANTS.NUMS.INPUT_MAX, {
 						error: CONSTANTS.ERROR.MAX_LENGTH,
 					})
 					.min(1, {
@@ -51,6 +51,7 @@ export const createProfileGroupSchema = (
 		dateEnd: z.iso.datetime({ error: CONSTANTS.ERROR.DATE }).nullable(),
 		dateStartRel: z.boolean(),
 		dateEndRel: z.boolean(),
+		completed: z.boolean(),
 	});
 
 export type Profile = z.infer<ReturnType<typeof createProfileSchema>>;

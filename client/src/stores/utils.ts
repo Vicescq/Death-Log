@@ -150,6 +150,7 @@ export function createProfileGroup(
 		dateStartRel: true,
 		dateEnd: null,
 		dateEndRel: true,
+		completed: false,
 	};
 }
 

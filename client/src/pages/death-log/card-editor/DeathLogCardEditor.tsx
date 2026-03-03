@@ -74,6 +74,7 @@ export default function DeathLogCardEditor({
 		mode: "onChange",
 		resolver: zodResolver(NodeFormEditSchema),
 	});
+	const { isValid, isDirty } = form.formState; // because of RHF's proxy subscription implementaion, https://github.com/Vicescq/Death-Log/issues/36
 
 	const onSubmit: SubmitHandler<NodeFormEdit> = (formData) => {
 		const dateStart = resolveTimestampUpdate(
@@ -227,7 +228,7 @@ export default function DeathLogCardEditor({
 								onResetTimeEndNotice();
 								form.reset();
 							}}
-							disabled={!form.formState.isDirty}
+							disabled={!isDirty}
 						>
 							{CONSTANTS.DEATH_LOG_EDITOR.RESET}
 						</button>
@@ -237,10 +238,7 @@ export default function DeathLogCardEditor({
 						<button
 							type="submit"
 							className="btn btn-success w-full"
-							disabled={
-								!form.formState.isValid ||
-								!form.formState.isDirty
-							}
+							disabled={!isDirty || !isValid}
 							onClick={() => {
 								onResetTimeStartNotice();
 								onResetTimeEndNotice();

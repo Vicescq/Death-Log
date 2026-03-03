@@ -3,10 +3,7 @@ import Container from "../../../components/Container";
 import NavBar from "../../../components/nav-bar/NavBar";
 import DLPGList from "./DLPGList";
 import DLPGModify from "./DLPGModify";
-import type {
-	Profile,
-	ProfileGroup,
-} from "../../../model/tree-node-model/ProfileSchema";
+import type { Profile } from "../../../model/tree-node-model/ProfileSchema";
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
 import { assertIsNonNull, assertIsSubject } from "../../../utils/asserts";
 import DeathLogBreadcrumb from "../breadcrumb/DeathLogBreadcrumb";
@@ -19,6 +16,7 @@ import {
 } from "../formSchemas";
 import Modal from "../../../components/Modal";
 import { useRef, useState } from "react";
+import DLPGModalBody from "./DLPGModalBody";
 
 type Props = {
 	profile: Profile;
@@ -31,6 +29,9 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 
 	const [modalType, setModalType] = useState<"completion" | "delete">(
 		"completion",
+	);
+	const [focusedGroupIndex, setFocusedGroupIndex] = useState<number | null>(
+		null,
 	);
 
 	const PGFormAddSchema = createPGFormAddSchema(
@@ -72,11 +73,36 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 
 	const onEditPGSubmit: SubmitHandler<PGFormEdit> = (formData) => {};
 
-	// console.log(
-	// 	!form.formState.isDirty || !form.formState.isValid,
-	// 	!form.formState.isDirty,
-	// 	!form.formState.isValid,
-	// );
+	function handleProfileGroupDelete() {
+		updateNode({
+			...profile,
+			groupings: profile.groupings.filter(
+				(_, i) => i != focusedGroupIndex,
+			),
+		});
+		modalRef.current?.close();
+		form.reset();
+	}
+
+	function handleProfileGroupComplete() {
+		updateNode({
+			...profile,
+			groupings: profile.groupings.map((group, i) => {
+				if (i == focusedGroupIndex) {
+					return { ...group, completed: !group.completed };
+				} else {
+					return group;
+				}
+			}),
+		});
+		modalRef.current?.close();
+	}
+
+	function handleModalTypeChange(type: "completion" | "delete", i: number) {
+		modalRef.current?.showModal();
+		setModalType(type);
+		setFocusedGroupIndex(i);
+	}
 
 	return (
 		<>
@@ -92,7 +118,10 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 					</legend>
 					<DLPGList
 						profile={profile}
-						onDelete={(i) => modalRef.current?.showModal()}
+						onDelete={(i) => handleModalTypeChange("delete", i)}
+						onComplete={(i) =>
+							handleModalTypeChange("completion", i)
+						}
 					/>
 				</fieldset>
 
@@ -121,46 +150,23 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 						</button>
 					</fieldset>
 				</form>
-
-				{/* <div className="divider" />
-
-				<form>
-					<fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-full gap-4 border p-4">
-						<legend className="fieldset-legend">
-							Editing Profile Group
-						</legend>
-
-						<DLPGModify
-							subjects={subjects}
-							type="add"
-							form={form}
-							onMemberAdd={(id) => append({ memberID: id })}
-							onMemberDelete={(i) => remove(i)}
-						/>
-
-						<button
-							type="button"
-							className="btn btn-success mt-4 w-full"
-						>
-							Add
-						</button>
-					</fieldset>
-				</form> */}
 			</Container>
 
 			<Modal
 				header={
 					modalType == "completion"
-						? "Do you want to mark this as completed?"
+						? "Confirm Completion Status"
 						: "Confirm Deletion"
 				}
 				closeBtnName="Cancel"
 				content={
-					modalType == "completion" ? (
-						<span>completion</span>
-					) : (
-						<span>Do you want to delete this group?</span>
-					)
+					<DLPGModalBody
+						focusedGroupIndex={focusedGroupIndex}
+						modalType={modalType}
+						onProfileGroupComplete={handleProfileGroupComplete}
+						onProfileGroupDelete={handleProfileGroupDelete}
+						profile={profile}
+					/>
 				}
 				modalBtns={[]}
 				ref={modalRef}
