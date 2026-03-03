@@ -1,9 +1,10 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import useMediaQuery from "../../../hooks/useMediaQuery";
 import Modal from "../../../components/Modal";
 import navIcon from "../../../assets/arrow_forward.svg";
 import { Link } from "react-router";
 import useBreadcrumbMembers from "./useBreadcrumbMembers";
+import useRenderDLCorrectly from "../useRenderDLCorrectly";
 
 export type BreadcrumbMember = {
 	link: string;
@@ -91,6 +92,9 @@ export default function DeathLogBreadcrumb() {
 			);
 		}
 	}
+
+	useRenderDLCorrectly(() => condensedMembersModalRef.current?.close());
+
 	return (
 		<>
 			<div className="breadcrumbs text-sm">
