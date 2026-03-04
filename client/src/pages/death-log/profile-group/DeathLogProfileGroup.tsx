@@ -17,6 +17,7 @@ import {
 import Modal from "../../../components/Modal";
 import { useRef, useState } from "react";
 import DLPGModalBody from "./DLPGModalBody";
+import useConsoleLogOnStateChange from "../../../hooks/useConsoleLogOnStateChange";
 
 type Props = {
 	profile: Profile;
@@ -82,6 +83,7 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 		});
 		modalRef.current?.close();
 		form.reset();
+		setFocusedGroupIndex(null); // here instead due to delete bug referencing non existant array index, have to set it for later ternary statement to not throw error
 	}
 
 	function handleProfileGroupComplete() {
@@ -89,7 +91,21 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 			...profile,
 			groupings: profile.groupings.map((group, i) => {
 				if (i == focusedGroupIndex) {
-					return { ...group, completed: !group.completed };
+					if (group.completed) {
+						// turn into incomplete
+						return {
+							...group,
+							completed: !group.completed,
+							dateEnd: null,
+						};
+					} else {
+						// turn into complete
+						return {
+							...group,
+							completed: !group.completed,
+							dateEnd: new Date().toISOString(),
+						};
+					}
 				} else {
 					return group;
 				}
@@ -103,6 +119,8 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 		setModalType(type);
 		setFocusedGroupIndex(i);
 	}
+
+	useConsoleLogOnStateChange(focusedGroupIndex, focusedGroupIndex);
 
 	return (
 		<>
@@ -122,6 +140,7 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 						onComplete={(i) =>
 							handleModalTypeChange("completion", i)
 						}
+						focusedGroupIndex={focusedGroupIndex}
 					/>
 				</fieldset>
 
@@ -154,9 +173,11 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 
 			<Modal
 				header={
-					modalType == "completion"
-						? "Confirm Completion Status"
-						: "Confirm Deletion"
+					focusedGroupIndex != null && modalType == "completion"
+						? `Confirm Completion Status: ${profile.groupings[focusedGroupIndex].title}`
+						: focusedGroupIndex != null
+							? `Confirm Deletion: ${profile.groupings[focusedGroupIndex].title}`
+							: "ERROR with rendering, pelase reload this page!"
 				}
 				closeBtnName="Cancel"
 				content={
@@ -170,6 +191,7 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 				}
 				modalBtns={[]}
 				ref={modalRef}
+				onClose={() => setFocusedGroupIndex(null)}
 			/>
 		</>
 	);

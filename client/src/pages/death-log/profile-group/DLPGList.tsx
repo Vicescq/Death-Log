@@ -1,12 +1,19 @@
 import type { Profile } from "../../../model/tree-node-model/ProfileSchema";
+import edit from "../../../assets/edit_single.svg";
 
 type Props = {
 	profile: Profile;
 	onDelete: (i: number) => void;
 	onComplete: (i: number) => void;
+	focusedGroupIndex: number | null;
 };
 
-export default function DLPGList({ profile, onDelete, onComplete }: Props) {
+export default function DLPGList({
+	profile,
+	onDelete,
+	onComplete,
+	focusedGroupIndex,
+}: Props) {
 	return (
 		<div>
 			<span className="text-[1rem]">
@@ -19,23 +26,42 @@ export default function DLPGList({ profile, onDelete, onComplete }: Props) {
 			</span>
 
 			{profile.groupings.length > 0 ? (
-				<ul className="list">
+				<ul className="list max-h-96 overflow-auto">
 					{profile.groupings.map((group, i) => (
-						<li className="list-row" key={group.id}>
+						<li
+							className={`list-row ${focusedGroupIndex == i ? "bg-neutral" : ""}`}
+							key={group.id}
+						>
 							<input
 								type="checkbox"
 								checked={group.completed}
 								className="checkbox checkbox-info m-auto"
 								onChange={() => onComplete(i)}
 							/>
-							{group.title}
-							<button
-								type="button"
-								className="my-auto cursor-pointer"
-								onClick={() => onDelete(i)}
+							<span
+								className={
+									group.completed
+										? "text-info line-through"
+										: ""
+								}
 							>
-								✕
-							</button>
+								{group.title}
+							</span>
+							<div className="my-auto flex gap-2">
+								<button
+									className="cursor-pointer"
+									onClick={() => 1}
+								>
+									<img src={edit} className="w-4" alt="" />
+								</button>
+								<button
+									type="button"
+									className="my-auto cursor-pointer"
+									onClick={() => onDelete(i)}
+								>
+									✕
+								</button>
+							</div>
 						</li>
 					))}
 				</ul>

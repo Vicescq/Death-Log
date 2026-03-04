@@ -90,7 +90,7 @@ export default function DLPGModify({
 								</span>
 							) : null}
 						</span>
-						<ul className="list">
+						<ul className="list bg-base-300 max-h-96 overflow-auto rounded-2xl">
 							{members.map((member, i) => (
 								<li className="list-row" key={member.memberID}>
 									{idToSubject(member.memberID).name}
@@ -118,7 +118,7 @@ export default function DLPGModify({
 						/>
 					</label>
 					{filteredMembers.length > 0 ? (
-						<ul className="list bg-base-300 max-h-96 overflow-auto rounded-2xl py-0.5">
+						<ul className="list bg-base-300 max-h-96 overflow-auto rounded-2xl">
 							{filteredMembers.map((subject) => (
 								<li className="list-row" key={subject.id}>
 									{subject.name}{" "}
@@ -133,7 +133,7 @@ export default function DLPGModify({
 							))}
 						</ul>
 					) : searchQuery != "" ? (
-						<span className="text-error text-center">
+						<span className="text-error text-center text-[1rem]">
 							No results found!
 						</span>
 					) : null}
