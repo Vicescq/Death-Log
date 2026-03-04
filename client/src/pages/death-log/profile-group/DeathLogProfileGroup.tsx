@@ -34,6 +34,7 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 	const [focusedGroupIndex, setFocusedGroupIndex] = useState<number | null>(
 		null,
 	);
+	const [addSearchQuery, setAddSearchQuery] = useState("");
 
 	const PGFormAddSchema = createPGFormAddSchema(
 		profile.groupings.map((group) => group.title),
@@ -69,6 +70,7 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 				createProfileGroup(profile, formData),
 			],
 		});
+		setAddSearchQuery(""); // fixes bug where state and HTML val gets unsync due to how .reset() is implemented, this forces search query in terms of react state to reset so other logic is correctly operating
 		form.reset();
 	};
 
@@ -120,8 +122,6 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 		setFocusedGroupIndex(i);
 	}
 
-	useConsoleLogOnStateChange(focusedGroupIndex, focusedGroupIndex);
-
 	return (
 		<>
 			<NavBar endNavContent={<DeathLogBreadcrumb />} />
@@ -158,6 +158,10 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 							form={form}
 							onMemberAdd={(id) => append({ memberID: id })}
 							onMemberDelete={(i) => remove(i)}
+							searchQuery={addSearchQuery}
+							onChangeSearchQuery={(query) =>
+								setAddSearchQuery(query)
+							}
 						/>
 
 						<button

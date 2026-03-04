@@ -141,8 +141,10 @@ export const createPGFormEditSchema = (
 		.pick({
 			title: true,
 			description: true,
-			members: true,
+			dateStartRel: true,
+			dateEndRel: true,
 		})
+		.extend(z.object({ members: z.array(PGFormMemberSchema) }).shape)
 		.extend(DateRangeSchema.shape)
 		.superRefine(validateDateRange);
 

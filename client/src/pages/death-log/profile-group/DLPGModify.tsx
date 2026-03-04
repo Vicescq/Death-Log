@@ -11,6 +11,8 @@ type Props = {
 	form: UseFormReturn<PGFormAdd>;
 	onMemberAdd: (id: string) => void;
 	onMemberDelete: (index: number) => void;
+	searchQuery: string;
+	onChangeSearchQuery: (query: string) => void;
 };
 
 export default function DLPGModify({
@@ -19,8 +21,9 @@ export default function DLPGModify({
 	form,
 	onMemberAdd,
 	onMemberDelete,
+	searchQuery,
+	onChangeSearchQuery,
 }: Props) {
-	const [searchQuery, setSearchQuery] = useState("");
 	const members = form.getValues("members");
 	const addedMembersFormattedForCompare = members.map((member) =>
 		idToSubject(member.memberID).name.toLowerCase(),
@@ -112,8 +115,9 @@ export default function DLPGModify({
 							type="search"
 							className="input join-item w-full"
 							placeholder="Search for members"
+							value={searchQuery}
 							onChange={(e) =>
-								setSearchQuery(e.currentTarget.value)
+								onChangeSearchQuery(e.currentTarget.value)
 							}
 						/>
 					</label>
