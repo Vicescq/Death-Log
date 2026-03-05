@@ -5,6 +5,7 @@ type Props = {
 	profile: Profile;
 	onDelete: (i: number) => void;
 	onComplete: (i: number) => void;
+	onEdit: (i: number) => void;
 	focusedGroupIndex: number | null;
 };
 
@@ -12,6 +13,7 @@ export default function DLPGList({
 	profile,
 	onDelete,
 	onComplete,
+	onEdit,
 	focusedGroupIndex,
 }: Props) {
 	return (
@@ -50,7 +52,7 @@ export default function DLPGList({
 							<div className="my-auto flex gap-2">
 								<button
 									className="cursor-pointer"
-									onClick={() => 1}
+									onClick={() => onEdit(i)}
 								>
 									<img src={edit} className="w-4" alt="" />
 								</button>

@@ -34,13 +34,14 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 	const [focusedGroupIndex, setFocusedGroupIndex] = useState<number | null>(
 		null,
 	);
+	const [isEditing, setIsEditing] = useState(false);
 	const [addSearchQuery, setAddSearchQuery] = useState("");
 
 	const PGFormAddSchema = createPGFormAddSchema(
 		profile.groupings.map((group) => group.title),
 		null,
 	);
-	const form = useForm<PGFormAdd>({
+	const addForm = useForm<PGFormAdd>({
 		defaultValues: {
 			title: "",
 			description: "",
@@ -50,9 +51,30 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 		resolver: zodResolver(PGFormAddSchema),
 	});
 
+	const editForm = useForm<PGFormEdit>({
+		defaultValues: {
+			title: focusedGroupIndex
+				? profile.groupings[focusedGroupIndex].title
+				: "",
+			description: focusedGroupIndex
+				? profile.groupings[focusedGroupIndex].description
+				: "",
+			// members: focusedGroupIndex ? profile.groupings[focusedGroupIndex].members : [],
+			dateStart: focusedGroupIndex
+				? profile.groupings[focusedGroupIndex].dateStart
+				: "",
+			timeStart: focusedGroupIndex
+				? profile.groupings[focusedGroupIndex].dateStart
+				: "",
+			dateStartRel: focusedGroupIndex
+				? profile.groupings[focusedGroupIndex].dateStartRel
+				: true,
+		},
+	});
+
 	const { append, remove } = useFieldArray({
 		name: "members",
-		control: form.control,
+		control: addForm.control,
 	});
 
 	const subjects = profile.childIDS.map((id) => {
@@ -71,7 +93,7 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 			],
 		});
 		setAddSearchQuery(""); // fixes bug where state and HTML val gets unsync due to how .reset() is implemented, this forces search query in terms of react state to reset so other logic is correctly operating
-		form.reset();
+		addForm.reset();
 	};
 
 	const onEditPGSubmit: SubmitHandler<PGFormEdit> = (formData) => {};
@@ -84,7 +106,7 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 			),
 		});
 		modalRef.current?.close();
-		form.reset();
+		addForm.reset();
 		setFocusedGroupIndex(null); // here instead due to delete bug referencing non existant array index, have to set it for later ternary statement to not throw error
 	}
 
@@ -141,12 +163,21 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 							handleModalTypeChange("completion", i)
 						}
 						focusedGroupIndex={focusedGroupIndex}
+						onEdit={(i) => {
+							if (focusedGroupIndex == i) {
+								setFocusedGroupIndex(null);
+								setIsEditing(false);
+							} else {
+								setFocusedGroupIndex(i);
+								setIsEditing(true);
+							}
+						}}
 					/>
 				</fieldset>
 
 				<div className="divider" />
 
-				<form onSubmit={form.handleSubmit(onAddPGSubmit)}>
+				<form onSubmit={addForm.handleSubmit(onAddPGSubmit)}>
 					<fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-full gap-4 border p-4">
 						<legend className="fieldset-legend">
 							Add Profile Group
@@ -155,7 +186,7 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 						<DLPGModify
 							subjects={subjects}
 							type="add"
-							form={form}
+							form={addForm}
 							onMemberAdd={(id) => append({ memberID: id })}
 							onMemberDelete={(i) => remove(i)}
 							searchQuery={addSearchQuery}
@@ -167,12 +198,47 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 						<button
 							type="submit"
 							className="btn btn-success mt-4 w-full"
-							disabled={!form.formState.isValid}
+							disabled={!addForm.formState.isValid}
 						>
 							Add
 						</button>
 					</fieldset>
 				</form>
+
+				{focusedGroupIndex != null && isEditing ? (
+					<>
+						<div className="divider" />
+						<form onSubmit={addForm.handleSubmit(onAddPGSubmit)}>
+							<fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-full gap-4 border p-4">
+								<legend className="fieldset-legend">
+									Add Profile Group
+								</legend>
+
+								<DLPGModify
+									subjects={subjects}
+									type="add"
+									form={addForm}
+									onMemberAdd={(id) =>
+										append({ memberID: id })
+									}
+									onMemberDelete={(i) => remove(i)}
+									searchQuery={addSearchQuery}
+									onChangeSearchQuery={(query) =>
+										setAddSearchQuery(query)
+									}
+								/>
+
+								<button
+									type="submit"
+									className="btn btn-success mt-4 w-full"
+									disabled={!addForm.formState.isValid}
+								>
+									Add
+								</button>
+							</fieldset>
+						</form>
+					</>
+				) : null}
 			</Container>
 
 			<Modal
