@@ -1,4 +1,4 @@
-import z from "zod";
+import z, { boolean } from "zod";
 import { CONSTANTS } from "../../shared/constants";
 import { assertIsNonNull } from "./asserts";
 
@@ -94,6 +94,8 @@ export const DateRangeSchema = z.object({
 	timeEnd: z.iso
 		.time({ precision: 0, error: CONSTANTS.ERROR.TIME })
 		.nullable(),
+	dateStartRel: z.boolean(),
+	dateEndRel: z.boolean(),
 });
 
 type DateRange = z.infer<typeof DateRangeSchema>;

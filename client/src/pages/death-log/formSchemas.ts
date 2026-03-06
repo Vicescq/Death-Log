@@ -29,8 +29,6 @@ const createBaseNodeFormSchema = (
 		.pick({
 			name: true,
 			notes: true,
-			dateStartRel: true,
-			dateEndRel: true,
 		})
 		.extend(DateRangeSchema.shape)
 		.extend(PickedSubjectSchema.shape);
@@ -141,8 +139,6 @@ export const createPGFormEditSchema = (
 		.pick({
 			title: true,
 			description: true,
-			dateStartRel: true,
-			dateEndRel: true,
 		})
 		.extend(z.object({ members: z.array(PGFormMemberSchema) }).shape)
 		.extend(DateRangeSchema.shape)
@@ -150,4 +146,4 @@ export const createPGFormEditSchema = (
 
 export type PGFormAdd = z.infer<ReturnType<typeof createPGFormAddSchema>>;
 export type PGFormEdit = z.infer<ReturnType<typeof createPGFormEditSchema>>;
-export type PGFormMember = z.infer<typeof PGFormMemberSchema>
+export type PGFormMember = z.infer<typeof PGFormMemberSchema>;
