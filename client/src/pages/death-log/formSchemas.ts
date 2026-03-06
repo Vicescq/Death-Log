@@ -150,3 +150,4 @@ export const createPGFormEditSchema = (
 
 export type PGFormAdd = z.infer<ReturnType<typeof createPGFormAddSchema>>;
 export type PGFormEdit = z.infer<ReturnType<typeof createPGFormEditSchema>>;
+export type PGFormMember = z.infer<typeof PGFormMemberSchema>

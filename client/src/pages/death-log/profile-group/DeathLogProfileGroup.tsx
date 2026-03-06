@@ -2,7 +2,6 @@ import { useFieldArray, useForm, type SubmitHandler } from "react-hook-form";
 import Container from "../../../components/Container";
 import NavBar from "../../../components/nav-bar/NavBar";
 import DLPGList from "./DLPGList";
-import DLPGModify from "./DLPGModify";
 import type { Profile } from "../../../model/tree-node-model/ProfileSchema";
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
 import { assertIsNonNull, assertIsSubject } from "../../../utils/asserts";
@@ -17,7 +16,7 @@ import {
 import Modal from "../../../components/Modal";
 import { useRef, useState } from "react";
 import DLPGModalBody from "./DLPGModalBody";
-import useConsoleLogOnStateChange from "../../../hooks/useConsoleLogOnStateChange";
+import DLPGBaseModifyLayout from "./DLPGBaseModifyLayout";
 
 type Props = {
 	profile: Profile;
@@ -183,16 +182,25 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 							Add Profile Group
 						</legend>
 
-						<DLPGModify
-							subjects={subjects}
-							type="add"
-							form={addForm}
-							onMemberAdd={(id) => append({ memberID: id })}
-							onMemberDelete={(i) => remove(i)}
-							searchQuery={addSearchQuery}
+						<DLPGBaseModifyLayout
+							errors={{
+								title: addForm.formState.errors.title,
+								description:
+									addForm.formState.errors.description,
+							}}
+							members={addForm.getValues("members")}
 							onChangeSearchQuery={(query) =>
 								setAddSearchQuery(query)
 							}
+							onMemberAdd={(id) => append({ memberID: id })}
+							onMemberDelete={(i) => remove(i)}
+							register={addForm.register}
+							registeredNames={{
+								title: "title",
+								description: "description",
+							}}
+							searchQuery={addSearchQuery}
+							subjects={subjects}
 						/>
 
 						<button
@@ -205,19 +213,21 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 					</fieldset>
 				</form>
 
-				{focusedGroupIndex != null && isEditing ? (
+				{/* {focusedGroupIndex != null && isEditing ? (
 					<>
 						<div className="divider" />
 						<form onSubmit={addForm.handleSubmit(onAddPGSubmit)}>
 							<fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-full gap-4 border p-4">
 								<legend className="fieldset-legend">
-									Add Profile Group
+									Editing:{" "}
+									{profile.groupings[focusedGroupIndex].title}
 								</legend>
 
 								<DLPGModify
 									subjects={subjects}
-									type="add"
-									form={addForm}
+									type="edit"
+									addForm={addForm}
+									editForm={editForm}
 									onMemberAdd={(id) =>
 										append({ memberID: id })
 									}
@@ -238,7 +248,7 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 							</fieldset>
 						</form>
 					</>
-				) : null}
+				) : null} */}
 			</Container>
 
 			<Modal
