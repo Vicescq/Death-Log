@@ -10,6 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { createProfileGroup } from "../../../stores/utils";
 import {
 	createPGFormAddSchema,
+	createPGFormEditSchema,
 	type PGFormAdd,
 	type PGFormEdit,
 } from "../formSchemas";
@@ -35,6 +36,7 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 	);
 	const [isEditing, setIsEditing] = useState(false);
 	const [addSearchQuery, setAddSearchQuery] = useState("");
+	const [editSearchQuery, setEditSearchQuery] = useState("");
 
 	const PGFormAddSchema = createPGFormAddSchema(
 		profile.groupings.map((group) => group.title),
@@ -50,30 +52,28 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 		resolver: zodResolver(PGFormAddSchema),
 	});
 
+	const PGFormEditSchema = createPGFormEditSchema(
+		profile.groupings.map((group) => group.title),
+		focusedGroupIndex != null
+			? profile.groupings[focusedGroupIndex].title
+			: null,
+	);
 	const editForm = useForm<PGFormEdit>({
-		defaultValues: {
-			title: focusedGroupIndex
-				? profile.groupings[focusedGroupIndex].title
-				: "",
-			description: focusedGroupIndex
-				? profile.groupings[focusedGroupIndex].description
-				: "",
-			// members: focusedGroupIndex ? profile.groupings[focusedGroupIndex].members : [],
-			dateStart: focusedGroupIndex
-				? profile.groupings[focusedGroupIndex].dateStart
-				: "",
-			timeStart: focusedGroupIndex
-				? profile.groupings[focusedGroupIndex].dateStart
-				: "",
-			dateStartRel: focusedGroupIndex
-				? profile.groupings[focusedGroupIndex].dateStartRel
-				: true,
-		},
+		mode: "onChange",
+		resolver: zodResolver(PGFormEditSchema),
 	});
 
-	const { append, remove } = useFieldArray({
+	const { append: pgAddAppend, remove: pgAddRemove } = useFieldArray({
 		name: "members",
 		control: addForm.control,
+	});
+	const {
+		append: pgEditAppend,
+		remove: pgEditRemove,
+		replace: pgEditReplace,
+	} = useFieldArray({
+		name: "members",
+		control: editForm.control,
 	});
 
 	const subjects = profile.childIDS.map((id) => {
@@ -143,6 +143,24 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 		setFocusedGroupIndex(i);
 	}
 
+	function handleEdit(i: number) {
+		pgEditReplace([]);
+		if (focusedGroupIndex == i) {
+			setFocusedGroupIndex(null);
+			setIsEditing(false);
+
+		} else {
+			setFocusedGroupIndex(i);
+			setIsEditing(true);
+
+			editForm.setValue("title", profile.groupings[i].title);
+			editForm.setValue("description", profile.groupings[i].description);
+			profile.groupings[i].members.map((id) =>
+				pgEditAppend({ memberID: id }),
+			);
+		}
+	}
+	
 	return (
 		<>
 			<NavBar endNavContent={<DeathLogBreadcrumb />} />
@@ -162,15 +180,7 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 							handleModalTypeChange("completion", i)
 						}
 						focusedGroupIndex={focusedGroupIndex}
-						onEdit={(i) => {
-							if (focusedGroupIndex == i) {
-								setFocusedGroupIndex(null);
-								setIsEditing(false);
-							} else {
-								setFocusedGroupIndex(i);
-								setIsEditing(true);
-							}
-						}}
+						onEdit={(i) => handleEdit(i)}
 					/>
 				</fieldset>
 
@@ -192,8 +202,8 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 							onChangeSearchQuery={(query) =>
 								setAddSearchQuery(query)
 							}
-							onMemberAdd={(id) => append({ memberID: id })}
-							onMemberDelete={(i) => remove(i)}
+							onMemberAdd={(id) => pgAddAppend({ memberID: id })}
+							onMemberDelete={(i) => pgAddRemove(i)}
 							register={addForm.register}
 							registeredNames={{
 								title: "title",
@@ -213,9 +223,9 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 					</fieldset>
 				</form>
 
-				{/* {focusedGroupIndex != null && isEditing ? (
+				{focusedGroupIndex != null && isEditing ? (
 					<>
-						<div className="divider" />
+						<div className="divider">↓ Edit Mode ↓</div>
 						<form onSubmit={addForm.handleSubmit(onAddPGSubmit)}>
 							<fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-full gap-4 border p-4">
 								<legend className="fieldset-legend">
@@ -223,19 +233,28 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 									{profile.groupings[focusedGroupIndex].title}
 								</legend>
 
-								<DLPGModify
-									subjects={subjects}
-									type="edit"
-									addForm={addForm}
-									editForm={editForm}
-									onMemberAdd={(id) =>
-										append({ memberID: id })
-									}
-									onMemberDelete={(i) => remove(i)}
-									searchQuery={addSearchQuery}
+								<DLPGBaseModifyLayout
+									errors={{
+										title: editForm.formState.errors.title,
+										description:
+											editForm.formState.errors
+												.description,
+									}}
+									members={editForm.getValues("members")}
 									onChangeSearchQuery={(query) =>
-										setAddSearchQuery(query)
+										setEditSearchQuery(query)
 									}
+									onMemberAdd={(id) =>
+										pgEditAppend({ memberID: id })
+									}
+									onMemberDelete={(i) => pgEditRemove(i)}
+									register={editForm.register}
+									registeredNames={{
+										title: "title",
+										description: "description",
+									}}
+									searchQuery={editSearchQuery}
+									subjects={subjects}
 								/>
 
 								<button
@@ -248,7 +267,7 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 							</fieldset>
 						</form>
 					</>
-				) : null} */}
+				) : null}
 			</Container>
 
 			<Modal
