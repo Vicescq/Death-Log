@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router";
 import DeathLogBreadcrumb from "../breadcrumb/DeathLogBreadcrumb";
-import DLCEDate from "./DLCEDate";
 import DLCEDel from "./DLCEDel";
 import DLCESubject from "./DLCESubject";
 import { useForm, type SubmitHandler } from "react-hook-form";
@@ -17,6 +16,7 @@ import NavBar from "../../../components/nav-bar/NavBar";
 import type { DistinctTreeNode } from "../../../model/tree-node-model/TreeNodeSchema";
 import useNotifyDateReset from "../../../hooks/useNotifyDateReset";
 import Container from "../../../components/Container";
+import DateRangeForm from "../../../components/DateRangeForm";
 
 export default function DeathLogCardEditor({
 	node,
@@ -178,17 +178,84 @@ export default function DeathLogCardEditor({
 								)}
 							</label>
 
-							<DLCEDate
-								node={node}
-								form={form}
+							<DateRangeForm
+								contextObj={node}
+								register={form.register}
+								registeredNames={{
+									dateStart: "dateStart",
+									timeStart: "timeStart",
+									dateStartRel: "dateStartRel",
+									dateEnd: "dateEnd",
+									timeEnd: "timeEnd",
+									dateEndRel: "dateEndRel",
+								}}
+								registeredOptions={{
+									dateStart: {
+										onChange: () => {
+											form.setValue(
+												"timeStart",
+												"00:00:00",
+												{
+													shouldDirty: true,
+													shouldValidate: true,
+												},
+											);
+											onTimeStartNoticeChange(
+												CONSTANTS.INFO
+													.TIME_RESET_NOTICE,
+											);
+										},
+									},
+									timeStart: {
+										onChange: () => {
+											onResetTimeStartNotice();
+											form.trigger("dateStart");
+										},
+									},
+									dateEnd: {
+										onChange: () => {
+											form.setValue(
+												"timeEnd",
+												"00:00:00",
+												{
+													shouldDirty: true,
+													shouldValidate: true,
+												},
+											);
+											onTimeEndNoticeChange(
+												CONSTANTS.INFO
+													.TIME_RESET_NOTICE,
+											);
+										},
+									},
+									timeEnd: {
+										onChange: () => {
+											onResetTimeEndNotice();
+											form.trigger("dateEnd");
+										},
+									},
+								}}
+								dirtyFields={{
+									dateStart:
+										form.formState.dirtyFields.dateStart,
+									timeStart:
+										form.formState.dirtyFields.timeStart,
+									dateStartRel:
+										form.formState.dirtyFields.dateStartRel,
+									dateEnd: form.formState.dirtyFields.dateEnd,
+									timeEnd: form.formState.dirtyFields.timeEnd,
+									dateEndRel:
+										form.formState.dirtyFields.dateEndRel,
+								}}
+								errors={{
+									dateStart: form.formState.errors.dateStart,
+									timeStart: form.formState.errors.timeStart,
+
+									dateEnd: form.formState.errors.dateEnd,
+									timeEnd: form.formState.errors.timeEnd,
+								}}
 								timeStartUpdateNotice={timeStartUpdateNotice}
 								timeEndUpdateNotice={timeEndUpdateNotice}
-								onResetTimeStartNotice={onResetTimeStartNotice}
-								onResetTimeEndNotice={onResetTimeEndNotice}
-								onTimeStartNoticeChange={
-									onTimeStartNoticeChange
-								}
-								onTimeEndNoticeChange={onTimeEndNoticeChange}
 							/>
 
 							{node.type == "subject" ? (

@@ -18,6 +18,10 @@ import Modal from "../../../components/Modal";
 import { useRef, useState } from "react";
 import DLPGModalBody from "./DLPGModalBody";
 import DLPGBaseModifyLayout from "./DLPGBaseModifyLayout";
+import { CONSTANTS } from "../../../../shared/constants";
+import DateRangeForm from "../../../components/DateRangeForm";
+import useNotifyDateReset from "../../../hooks/useNotifyDateReset";
+import { isoToDateSTD, isoToTimeSTD } from "../../../utils/date";
 
 type Props = {
 	profile: Profile;
@@ -144,11 +148,11 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 	}
 
 	function handleEdit(i: number) {
+		editForm.reset(); // in order to avoid dirtyField CSS activating, but resetting is not enough, need to manually setValue() each field
 		pgEditReplace([]);
 		if (focusedGroupIndex == i) {
 			setFocusedGroupIndex(null);
 			setIsEditing(false);
-
 		} else {
 			setFocusedGroupIndex(i);
 			setIsEditing(true);
@@ -158,9 +162,51 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 			profile.groupings[i].members.map((id) =>
 				pgEditAppend({ memberID: id }),
 			);
+			editForm.setValue(
+				"dateStart",
+				isoToDateSTD(profile.groupings[i].dateStart),
+			);
+			editForm.setValue(
+				"timeStart",
+				isoToTimeSTD(profile.groupings[i].dateStart),
+			);
+			editForm.setValue(
+				"dateStartRel",
+				profile.groupings[i].dateStartRel,
+			);
+
+			if (
+				profile.groupings[i].completed &&
+				profile.groupings[i].dateEnd
+			) {
+				editForm.setValue(
+					"dateEnd",
+					isoToDateSTD(profile.groupings[i].dateEnd),
+				);
+				editForm.setValue(
+					"timeEnd",
+					isoToTimeSTD(profile.groupings[i].dateEnd),
+				);
+				editForm.setValue(
+					"dateStartRel",
+					profile.groupings[i].dateEndRel,
+				);
+			}
 		}
 	}
-	
+
+	const {
+		timeNotice: timeStartUpdateNotice,
+		onResetNotice: onResetTimeStartNotice,
+		onTimeNoticeChange: onTimeStartNoticeChange,
+	} = useNotifyDateReset();
+
+	const {
+		timeNotice: timeEndUpdateNotice,
+		onResetNotice: onResetTimeEndNotice,
+		onTimeNoticeChange: onTimeEndNoticeChange,
+	} = useNotifyDateReset();
+
 	return (
 		<>
 			<NavBar endNavContent={<DeathLogBreadcrumb />} />
@@ -255,6 +301,102 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 									}}
 									searchQuery={editSearchQuery}
 									subjects={subjects}
+								/>
+
+								<DateRangeForm
+									contextObj={
+										profile.groupings[focusedGroupIndex]
+									}
+									register={editForm.register}
+									registeredNames={{
+										dateStart: "dateStart",
+										timeStart: "timeStart",
+										dateStartRel: "dateStartRel",
+										dateEnd: "dateEnd",
+										timeEnd: "timeEnd",
+										dateEndRel: "dateEndRel",
+									}}
+									registeredOptions={{
+										dateStart: {
+											onChange: () => {
+												editForm.setValue(
+													"timeStart",
+													"00:00:00",
+													{
+														shouldDirty: true,
+														shouldValidate: true,
+													},
+												);
+												onTimeStartNoticeChange(
+													CONSTANTS.INFO
+														.TIME_RESET_NOTICE,
+												);
+											},
+										},
+										timeStart: {
+											onChange: () => {
+												onResetTimeStartNotice();
+												editForm.trigger("dateStart");
+											},
+										},
+										dateEnd: {
+											onChange: () => {
+												editForm.setValue(
+													"timeEnd",
+													"00:00:00",
+													{
+														shouldDirty: true,
+														shouldValidate: true,
+													},
+												);
+												onTimeEndNoticeChange(
+													CONSTANTS.INFO
+														.TIME_RESET_NOTICE,
+												);
+											},
+										},
+										timeEnd: {
+											onChange: () => {
+												onResetTimeEndNotice();
+												editForm.trigger("dateEnd");
+											},
+										},
+									}}
+									dirtyFields={{
+										dateStart:
+											editForm.formState.dirtyFields
+												.dateStart,
+										timeStart:
+											editForm.formState.dirtyFields
+												.timeStart,
+										dateStartRel:
+											editForm.formState.dirtyFields
+												.dateStartRel,
+										dateEnd:
+											editForm.formState.dirtyFields
+												.dateEnd,
+										timeEnd:
+											editForm.formState.dirtyFields
+												.timeEnd,
+										dateEndRel:
+											editForm.formState.dirtyFields
+												.dateEndRel,
+									}}
+									errors={{
+										dateStart:
+											editForm.formState.errors.dateStart,
+										timeStart:
+											editForm.formState.errors.timeStart,
+
+										dateEnd:
+											editForm.formState.errors.dateEnd,
+										timeEnd:
+											editForm.formState.errors.timeEnd,
+									}}
+									timeStartUpdateNotice={
+										timeStartUpdateNotice
+									}
+									timeEndUpdateNotice={timeEndUpdateNotice}
 								/>
 
 								<button
