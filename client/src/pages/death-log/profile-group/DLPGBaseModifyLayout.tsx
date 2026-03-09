@@ -19,6 +19,7 @@ type Props<T extends FieldValues> = {
 	onMemberDelete: (index: number) => void;
 	searchQuery: string;
 	onChangeSearchQuery: (query: string) => void;
+	type: "edit" | "add";
 };
 
 type RegisteredNames<T extends FieldValues> = {
@@ -41,6 +42,7 @@ export default function DLPGBaseModifyLayout<T extends FieldValues>({
 	onMemberDelete,
 	searchQuery,
 	onChangeSearchQuery,
+	type,
 }: Props<T>) {
 	const addedMembersFormattedForCompare = members.map((member) =>
 		idToSubject(member.memberID).name.toLowerCase(),
@@ -74,7 +76,11 @@ export default function DLPGBaseModifyLayout<T extends FieldValues>({
 				<input
 					type="search"
 					className="input join-item w-full"
-					placeholder="Add a new profiile group"
+					placeholder={
+						type == "add"
+							? "Add a new profiile group"
+							: "Profile Group Name"
+					}
 					{...register(registeredNames.title)}
 				/>
 			</label>
@@ -97,7 +103,9 @@ export default function DLPGBaseModifyLayout<T extends FieldValues>({
 
 			<div>
 				<span className="text-[1rem]">
-					Adding the folowing members:{" "}
+					{type == "add"
+						? "Adding the folowing members: "
+						: "Current members: "}
 					{members.length == 0 ? (
 						<span className="text-error text-[1rem]">
 							Nothing yet!

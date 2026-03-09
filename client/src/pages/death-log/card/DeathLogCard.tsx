@@ -39,7 +39,7 @@ export default function DeathLogCard({
 			</div>
 			<div className={`flex flex-col justify-center`}>
 				<div
-					className={`${node.completed ? "text-secondary line-through" : ""} line-clamp-4 sm:line-clamp-2`}
+					className={`${node.completed ? "text-secondary line-through" : ""} line-clamp-4 text-[1rem] sm:line-clamp-2`}
 				>
 					{node.name}
 				</div>
