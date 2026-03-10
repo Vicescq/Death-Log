@@ -5,7 +5,7 @@ import "./index.css";
 import { ErrorBoundary } from "react-error-boundary";
 import ErrorPage from "./pages/ErrorPage.tsx";
 import Start from "./pages/Start.tsx";
-import DataManagement from "./pages/DataManagement.tsx";
+import DataManagement from "./pages/data-management/DataManagement.tsx";
 import MultipleTabs from "./pages/MultipleTabs.tsx";
 import { ClerkProvider } from "@clerk/clerk-react";
 import DeathLog from "./pages/death-log/DeathLog.tsx";

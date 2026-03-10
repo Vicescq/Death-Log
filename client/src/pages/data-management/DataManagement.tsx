@@ -1,17 +1,17 @@
 import { useRef, useState } from "react";
-import LocalDB from "../services/LocalDB";
-import { refreshTree } from "../stores/utils";
-import Modal, { type ModalBtn } from "../components/Modal";
-import { useDeathLogStore } from "../stores/useDeathLogStore";
-import skull from "../assets/skull.svg";
-import { db } from "../model/LocalDBSchema";
-import FeedbackToast from "../components/FeedbackToast";
-import NavBar from "../components/nav-bar/NavBar";
+import LocalDB from "../../services/LocalDB";
+import { refreshTree } from "../../stores/utils";
+import Modal, { type ModalBtn } from "../../components/Modal";
+import { useDeathLogStore } from "../../stores/useDeathLogStore";
+import skull from "../../assets/skull.svg";
+import { db } from "../../model/LocalDBSchema";
+import FeedbackToast from "../../components/FeedbackToast";
+import NavBar from "../../components/nav-bar/NavBar";
 import type {
 	DistinctTreeNode,
 	TreeNode,
-} from "../model/tree-node-model/TreeNodeSchema";
-import { formatDLExportFile } from "../utils/date";
+} from "../../model/tree-node-model/TreeNodeSchema";
+import { formatDLExportFile } from "../../utils/date";
 
 type DeathLogBackup = {
 	type: "DEATH-LOG Backup";
@@ -21,10 +21,22 @@ type DeathLogBackup = {
 	data: DistinctTreeNode[];
 };
 
+type FeedbackToast = {
+	displayed: boolean;
+	msg: string;
+	css: "error" | "success";
+};
+
 export default function DataManagement() {
 	const initTree = useDeathLogStore((state) => state.initTree);
 	const importRef = useRef<HTMLInputElement>(null);
-	const ref = useRef<HTMLDialogElement>(null);
+	const modalRef = useRef<HTMLDialogElement>(null);
+
+	const [feedbackToast, setFeedbackToast] = useState<FeedbackToast>({
+		displayed: false,
+		msg: "",
+		css: "success",
+	});
 
 	const [feedbackToastMsg, setFeedbackToastMsg] = useState("");
 	const [feedbackToastDisplay, setFeedbackToastDisplay] = useState(false);
@@ -48,12 +60,12 @@ export default function DataManagement() {
 					try {
 						await LocalDB.clearData();
 						await refreshTree(initTree);
-						ref.current?.close();
+						modalRef.current?.close();
 						setFeedbackToastMsg("Deletion process was a success!");
 						setFeedbackToastCSS("success");
 					} catch (e) {
 						if (e instanceof Error) {
-							ref.current?.close();
+							modalRef.current?.close();
 							setFeedbackToastMsg(
 								"Something unexpected happened during the deletion process. Please try again.",
 							);
@@ -81,12 +93,12 @@ export default function DataManagement() {
 						await db.delete();
 						await db.open();
 						await refreshTree(initTree);
-						ref.current?.close();
+						modalRef.current?.close();
 						setFeedbackToastMsg("Deletion process was a success!");
 						setFeedbackToastCSS("success");
 					} catch (e) {
 						if (e instanceof Error) {
-							ref.current?.close();
+							modalRef.current?.close();
 							setFeedbackToastMsg(
 								"Something unexpected happened during the deletion process. Please try again.",
 							);
@@ -111,7 +123,7 @@ export default function DataManagement() {
 				text: "PROCEED",
 				fn: () => {
 					importRef.current?.click();
-					ref.current?.close();
+					modalRef.current?.close();
 				},
 				css: "mt-8 btn-info",
 				disabled: false,
@@ -240,6 +252,53 @@ export default function DataManagement() {
 		}
 	}
 
+	function handleImport() {
+		importRef.current?.click();
+		modalRef.current?.close();
+	}
+
+	async function handleDelete() {
+		try {
+			await db.delete();
+			await db.open();
+			await refreshTree(initTree);
+			modalRef.current?.close();
+			// setFeedbackToastMsg("Deletion process was a success!");
+			// setFeedbackToastCSS("success");
+		} catch (e) {
+			if (e instanceof Error) {
+				modalRef.current?.close();
+				// setFeedbackToastMsg(
+				// 	"Something unexpected happened during the deletion process. Please try again.",
+				// );
+				// setFeedbackToastCSS("error");
+			}
+		} finally {
+			// setFeedbackToastDisplay(true);
+		}
+	}
+
+	async function handleReset() {
+		try {
+			await db.delete();
+			await db.open();
+			await refreshTree(initTree);
+			modalRef.current?.close();
+			// setFeedbackToastMsg("Deletion process was a success!");
+			// setFeedbackToastCSS("success");
+		} catch (e) {
+			if (e instanceof Error) {
+				modalRef.current?.close();
+				// setFeedbackToastMsg(
+				// 	"Something unexpected happened during the deletion process. Please try again.",
+				// );
+				// setFeedbackToastCSS("error");
+			}
+		} finally {
+			// setFeedbackToastDisplay(true);
+		}
+	}
+
 	return (
 		<>
 			<NavBar />
@@ -250,7 +309,7 @@ export default function DataManagement() {
 				handleDisplay={() => setFeedbackToastDisplay((val) => !val)}
 			/>
 			<Modal
-				ref={ref}
+				ref={modalRef}
 				content={modalContent}
 				header={modalHeader}
 				closeBtnName={modalCloseBtnName}
@@ -271,7 +330,7 @@ export default function DataManagement() {
 									importModalProps.closeBtnName,
 								);
 								setModalContent(importModalProps.content);
-								ref.current?.showModal();
+								modalRef.current?.showModal();
 							}}
 						>
 							IMPORT
@@ -298,7 +357,7 @@ export default function DataManagement() {
 									deleteModalProps.closeBtnName,
 								);
 								setModalContent(deleteModalProps.content);
-								ref.current?.showModal();
+								modalRef.current?.showModal();
 							}}
 						>
 							DELETE
@@ -314,7 +373,7 @@ export default function DataManagement() {
 									deleteAllModalProps.closeBtnName,
 								);
 								setModalContent(deleteAllModalProps.content);
-								ref.current?.showModal();
+								modalRef.current?.showModal();
 							}}
 						>
 							DELETE ALL
