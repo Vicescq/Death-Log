@@ -17,7 +17,7 @@ import {
 	DeathCounterFormSchema,
 	EditDeathFormSchema,
 	type DeathCounterForm,
-	type EditDeathForm
+	type EditDeathForm,
 } from "../formSchemas";
 import NavBar from "../../../components/nav-bar/NavBar";
 import type { Subject } from "../../../model/tree-node-model/SubjectSchema";
@@ -220,7 +220,6 @@ export default function DeathLogCounter({ subject }: Props) {
 						? "Edit Death Entry"
 						: "Delete this death?"
 				}
-				modalBtns={[]}
 				onClose={() => {
 					modalForm.reset();
 					setfocusedDeathID(null);

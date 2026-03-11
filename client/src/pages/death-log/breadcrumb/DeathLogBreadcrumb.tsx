@@ -165,7 +165,6 @@ export default function DeathLogBreadcrumb() {
 					</ul>
 				}
 				header="Navigation"
-				modalBtns={[]}
 				ref={condensedMembersModalRef}
 			/>
 		</>

@@ -176,7 +176,6 @@ export default function DeathLogFAB({
 					</>
 				}
 				closeBtnName="Close"
-				modalBtns={[]}
 				onClose={() => addForm.reset()}
 			/>
 		</>

@@ -126,7 +126,6 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 					</div>
 				}
 				closeBtnName="Cancel"
-				modalBtns={[]}
 			/>
 
 			<footer className="mb-14"></footer>

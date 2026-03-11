@@ -217,7 +217,6 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 						profile={profile}
 					/>
 				}
-				modalBtns={[]}
 				ref={modalRef}
 				onClose={() => setFocusedGroupIndex(null)}
 			/>

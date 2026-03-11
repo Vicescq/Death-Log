@@ -2,25 +2,23 @@ type Props = {
 	msg: string;
 	bgCSS: "success" | "error";
 	displayed: boolean;
-	handleDisplay: () => void;
+	onClose: () => void;
 };
 
 export default function FeedbackToast({
 	msg,
 	bgCSS,
 	displayed,
-	handleDisplay,
+	onClose,
 }: Props) {
-	const css = {
-		success: "alert-success",
-		error: "alert-error",
-	} as const;
 	return displayed ? (
 		<div className="toast toast-top toast-center z-[1001]">
-			<div className={`alert ${css[bgCSS]}`}>
+			<div
+				className={`alert ${bgCSS == "success" ? "alert-success" : "alert-error"}`}
+			>
 				<button
 					className="btn btn-xs btn-ghost btn-circle"
-					onClick={() => handleDisplay()}
+					onClick={() => onClose()}
 				>
 					✕
 				</button>
