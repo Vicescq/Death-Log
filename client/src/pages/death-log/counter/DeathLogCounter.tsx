@@ -8,7 +8,7 @@ import { resolveTimestampUpdate } from "../../../utils/date";
 import Modal from "../../../components/Modal";
 import { useForm } from "react-hook-form";
 import { type SubmitHandler } from "react-hook-form";
-import DeathCounterModalBody from "./DeathCounterModalBody";
+import DLCModalBody from "./DLCModalBody";
 import { createDeath } from "../../../stores/utils";
 import DeathSettingsAndHistory from "./DeathSettingsAndHistory";
 import { assertIsNonNull } from "../../../utils/asserts";
@@ -227,7 +227,7 @@ export default function DeathLogCounter({ subject }: Props) {
 			<Modal
 				ref={modalRef}
 				content={
-					<DeathCounterModalBody
+					<DLCModalBody
 						type={modalBodyType}
 						form={modalForm}
 						onEditDeath={onEditDeath}

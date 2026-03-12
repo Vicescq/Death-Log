@@ -13,7 +13,7 @@ type Props = {
 	onComplete: () => void;
 };
 
-export default function DeathCounterModalBody({
+export default function DLCModalBody({
 	type,
 	form,
 	onEditDeath,
