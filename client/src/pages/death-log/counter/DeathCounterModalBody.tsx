@@ -3,13 +3,14 @@ import { type SubmitHandler, type UseFormReturn } from "react-hook-form";
 import type { EditDeathForm } from "../formSchemas";
 
 type Props = {
-	type: "edit" | "delete";
+	type: "edit" | "delete" | "complete";
 	form: UseFormReturn<EditDeathForm, any, EditDeathForm>;
 	onEditDeath: SubmitHandler<EditDeathForm>;
 	onDeleteDeath: () => void;
 	timeNotice: string | null;
 	onTimeNoticeChange: (notice: string | null) => void;
 	onResetNotice: () => void;
+	onComplete: () => void;
 };
 
 export default function DeathCounterModalBody({
@@ -20,6 +21,7 @@ export default function DeathCounterModalBody({
 	timeNotice,
 	onTimeNoticeChange,
 	onResetNotice,
+	onComplete,
 }: Props) {
 	if (type == "edit") {
 		return (
@@ -143,13 +145,19 @@ export default function DeathCounterModalBody({
 				</button>
 			</form>
 		);
-	} else {
+	} else if (type == "delete") {
 		return (
 			<button
 				className="btn btn-error mt-4 w-full"
 				onClick={onDeleteDeath}
 			>
 				Delete
+			</button>
+		);
+	} else {
+		return (
+			<button className="btn btn-info mt-4 w-full" onClick={onComplete}>
+				Confirm
 			</button>
 		);
 	}

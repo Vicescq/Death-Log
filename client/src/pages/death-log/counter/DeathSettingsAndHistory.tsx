@@ -17,6 +17,7 @@ type Props = {
 	onDeleteDeathConfirm: (id: string) => void;
 	sortedDeaths: Death[];
 	focusedDeathID: string | null;
+	onCompleteConfirm: () => void;
 };
 
 export default function DeathSettingsAndHistory({
@@ -27,6 +28,7 @@ export default function DeathSettingsAndHistory({
 	onDeleteDeathConfirm,
 	sortedDeaths,
 	focusedDeathID,
+	onCompleteConfirm,
 }: Props) {
 	return (
 		<>
@@ -90,8 +92,20 @@ export default function DeathSettingsAndHistory({
 					</>
 				) : null}
 
+				<div className="flex">
+					<span className="my-auto">Mark as completed?</span>
+					<div className="ml-auto">
+						<input
+							type="checkbox"
+							checked={subject.completed}
+							className="checkbox checkbox-success"
+							onChange={() => onCompleteConfirm()}
+						/>
+					</div>
+				</div>
+
 				{!subject.completed && subject.log.length > 0 ? (
-					<div className="label mt-4">Death History</div>
+					<div className="label mt-2">Death History</div>
 				) : null}
 				<ul
 					className="list max-h-[40rem] overflow-auto"
