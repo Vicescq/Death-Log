@@ -10,7 +10,6 @@ import { useForm } from "react-hook-form";
 import { type SubmitHandler } from "react-hook-form";
 import DLCModalBody from "./DLCModalBody";
 import { createDeath } from "../../../stores/utils";
-import DeathSettingsAndHistory from "./DeathSettingsAndHistory";
 import { assertIsNonNull } from "../../../utils/asserts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -23,6 +22,8 @@ import NavBar from "../../../components/nav-bar/NavBar";
 import type { Subject } from "../../../model/tree-node-model/SubjectSchema";
 import useNotifyDateReset from "../../../hooks/useNotifyDateReset";
 import Container from "../../../components/Container";
+import DLCSettings from "./DLCSettings";
+import DLCHistory from "./DLCHistory";
 
 type Props = {
 	subject: Subject;
@@ -187,7 +188,7 @@ export default function DeathLogCounter({ subject }: Props) {
 				>
 					{subject.name}
 				</h1>
-				<div className="my-4 flex flex-col gap-4">
+				<div className="flex flex-col gap-4">
 					{!subject.completed ? (
 						<button
 							onClick={counterForm.handleSubmit(onIncrementDeath)}
@@ -212,7 +213,26 @@ export default function DeathLogCounter({ subject }: Props) {
 						</button>
 					) : null}
 				</div>
-				<DeathSettingsAndHistory
+
+				<div className="mt-8 flex flex-col gap-4">
+					<DLCSettings
+						subject={subject}
+						form={counterForm}
+						onCompleteConfirm={() => handleCompleteConfirm()}
+					/>
+
+					<DLCHistory
+						subject={subject}
+						deathHistoryRef={deathHistoryRef}
+						focusedDeathID={focusedDeathID}
+						onDeleteDeathConfirm={(id) =>
+							handleDeleteDeathConfirm(id)
+						}
+						onFocusDeath={(id) => handleFocusDeath(id)}
+						sortedDeaths={sortedDeaths}
+					/>
+
+					{/* <DeathSettingsAndHistory
 					deathHistoryRef={deathHistoryRef}
 					form={counterForm}
 					subject={subject}
@@ -221,7 +241,8 @@ export default function DeathLogCounter({ subject }: Props) {
 					sortedDeaths={sortedDeaths}
 					focusedDeathID={focusedDeathID}
 					onCompleteConfirm={() => handleCompleteConfirm()}
-				/>
+				/> */}
+				</div>
 			</Container>
 
 			<Modal
