@@ -53,35 +53,37 @@ export default function DLPGEdit({
 		profile.groupings[focusedGroupIndex].title,
 	);
 
+	const defaultValues =
+		currGroup.completed && currGroup.dateEnd
+			? {
+					title: currGroup.title,
+					description: currGroup.description,
+					members: currGroup.members.map((id) => ({
+						memberID: id,
+					})),
+					dateStart: isoToDateSTD(currGroup.dateStart),
+					timeStart: isoToTimeSTD(currGroup.dateStart),
+					dateStartRel: currGroup.dateStartRel,
+					dateEnd: isoToDateSTD(currGroup.dateEnd),
+					timeEnd: isoToTimeSTD(currGroup.dateEnd),
+					dateEndRel: currGroup.dateEndRel,
+				}
+			: {
+					title: currGroup.title,
+					description: currGroup.description,
+					members: currGroup.members.map((id) => ({
+						memberID: id,
+					})),
+					dateStart: isoToDateSTD(currGroup.dateStart),
+					timeStart: isoToTimeSTD(currGroup.dateStart),
+					dateStartRel: currGroup.dateStartRel,
+					dateEnd: null,
+					timeEnd: null,
+					dateEndRel: currGroup.dateEndRel,
+				};
+
 	const form = useForm<PGFormEdit>({
-		defaultValues:
-			currGroup.completed && currGroup.dateEnd
-				? {
-						title: currGroup.title,
-						description: currGroup.description,
-						members: currGroup.members.map((id) => ({
-							memberID: id,
-						})),
-						dateStart: isoToDateSTD(currGroup.dateStart),
-						timeStart: isoToTimeSTD(currGroup.dateStart),
-						dateStartRel: currGroup.dateStartRel,
-						dateEnd: isoToDateSTD(currGroup.dateEnd),
-						timeEnd: isoToTimeSTD(currGroup.dateEnd),
-						dateEndRel: currGroup.dateEndRel,
-					}
-				: {
-						title: currGroup.title,
-						description: currGroup.description,
-						members: currGroup.members.map((id) => ({
-							memberID: id,
-						})),
-						dateStart: isoToDateSTD(currGroup.dateStart),
-						timeStart: isoToTimeSTD(currGroup.dateStart),
-						dateStartRel: currGroup.dateStartRel,
-						dateEnd: null,
-						timeEnd: null,
-						dateEndRel: currGroup.dateEndRel,
-					},
+		defaultValues: defaultValues,
 		mode: "onChange",
 		resolver: zodResolver(PGFormEditSchema),
 	});
@@ -142,6 +144,7 @@ export default function DLPGEdit({
 
 	useEffect(() => {
 		setSearchQuery("");
+		form.reset(defaultValues);
 	}, [focusedGroupIndex]);
 
 	return (
