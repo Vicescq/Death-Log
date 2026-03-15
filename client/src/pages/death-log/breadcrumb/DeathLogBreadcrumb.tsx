@@ -1,10 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import useMediaQuery from "../../../hooks/useMediaQuery";
 import Modal from "../../../components/Modal";
 import navIcon from "../../../assets/arrow_forward.svg";
 import { Link } from "react-router";
 import useBreadcrumbMembers from "./useBreadcrumbMembers";
-import useRenderDLCorrectly from "../useRenderDLCorrectly";
+import useRenderDLCorrectly from "../hooks/useRenderDLCorrectly";
 
 export type BreadcrumbMember = {
 	link: string;

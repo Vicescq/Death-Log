@@ -185,6 +185,6 @@ export function formatDLExportFile(date: Date) {
 	return fileName;
 }
 
-function addLeadingZeroes(quantity: number): string {
+export function addLeadingZeroes(quantity: number): string {
 	return quantity >= 10 ? String(quantity) : `0${quantity}`;
 }

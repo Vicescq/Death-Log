@@ -24,6 +24,7 @@ import useNotifyDateReset from "../../../hooks/useNotifyDateReset";
 import Container from "../../../components/Container";
 import DLCSettings from "./DLCSettings";
 import DLCHistory from "./DLCHistory";
+import DLCTimeTracker from "./DLCTimeTracker";
 
 type Props = {
 	subject: Subject;
@@ -221,6 +222,8 @@ export default function DeathLogCounter({ subject }: Props) {
 						onCompleteConfirm={() => handleCompleteConfirm()}
 					/>
 
+					<DLCTimeTracker subject={subject} />
+
 					<DLCHistory
 						subject={subject}
 						deathHistoryRef={deathHistoryRef}
@@ -231,19 +234,10 @@ export default function DeathLogCounter({ subject }: Props) {
 						onFocusDeath={(id) => handleFocusDeath(id)}
 						sortedDeaths={sortedDeaths}
 					/>
-
-					{/* <DeathSettingsAndHistory
-					deathHistoryRef={deathHistoryRef}
-					form={counterForm}
-					subject={subject}
-					onFocusDeath={(id) => handleFocusDeath(id)}
-					onDeleteDeathConfirm={(id) => handleDeleteDeathConfirm(id)}
-					sortedDeaths={sortedDeaths}
-					focusedDeathID={focusedDeathID}
-					onCompleteConfirm={() => handleCompleteConfirm()}
-				/> */}
 				</div>
 			</Container>
+
+			<div className="mb-4"></div>
 
 			<Modal
 				ref={modalRef}
