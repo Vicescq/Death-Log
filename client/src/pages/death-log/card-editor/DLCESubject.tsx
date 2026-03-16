@@ -1,6 +1,8 @@
 import type { UseFormReturn } from "react-hook-form";
 import type { NodeFormEdit } from "../formSchemas";
 import type { Subject } from "../../../model/tree-node-model/SubjectSchema";
+import { number } from "zod";
+import { CONSTANTS } from "../../../../shared/constants";
 
 type Props = {
 	node: Subject;
@@ -9,7 +11,7 @@ type Props = {
 
 export default function DLCESubject({ node, form }: Props) {
 	return (
-		<div className="flex flex-col gap-2">
+		<div className="flex flex-col gap-4">
 			<div>
 				<label className="floating-label">
 					<span>Context</span>
@@ -25,6 +27,22 @@ export default function DLCESubject({ node, form }: Props) {
 					</select>
 				</label>
 			</div>
+
+			<label className="floating-label">
+				<span>Time Spent</span>
+				<input
+					type="text"
+					className={`input ${form.formState.dirtyFields.timeSpent ? "input-primary" : ""} w-full`}
+					{...form.register("timeSpent")}
+				/>
+				{form.formState.errors.timeSpent && (
+					<div className="text-error">
+						{form.formState.errors.timeSpent.message}
+					</div>
+				)}
+			</label>
+			<div>{CONSTANTS.INFO.TIMESPENT}</div>
+
 			<div className="flex">
 				<label
 					htmlFor="reoccurring-toggle"
@@ -38,13 +56,6 @@ export default function DLCESubject({ node, form }: Props) {
 					className="toggle toggle-primary my-auto ml-auto"
 					{...form.register("reoccurring")}
 				/>
-			</div>
-			<div className="flex">
-				<span className="text-[1rem]">Time Spent</span>
-				<span className="my-auto ml-auto">
-					{node.timeSpent == null ? "N / A" : node.timeSpent}
-				</span>
-				{/* 3h 18m 5s */}
 			</div>
 		</div>
 	);

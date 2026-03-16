@@ -2,6 +2,8 @@ import { CONSTANTS } from "../../../shared/constants";
 import { createTreeNodeSchema } from "./TreeNodeSchema";
 import z from "zod";
 
+const timeSpentRegex = /^(00|0[1-9]|[1-9]\d+):[0-5]\d:[0-5]\d$/;
+
 export const createSubjectSchema = (
 	siblingNames: string[],
 	currEditingName: string | null,
@@ -11,7 +13,18 @@ export const createSubjectSchema = (
 		log: z.array(DeathSchema),
 		reoccurring: z.boolean(),
 		context: SubjectContextSchema,
-		timeSpent: z.string().nullable(),
+		timeSpent: z
+			.string()
+			.nullable()
+			.refine(
+				(timeSpent) => {
+					if (timeSpent != null) {
+						return timeSpentRegex.test(timeSpent);
+					}
+					return true;
+				},
+				{ error: CONSTANTS.ERROR.TIMESPENT },
+			),
 	});
 };
 
@@ -40,3 +53,15 @@ export type Subject = z.infer<ReturnType<typeof createSubjectSchema>>;
 export type Death = z.infer<typeof DeathSchema>;
 export type SubjectContext = z.infer<typeof SubjectContextSchema>;
 export type SubjectCharacteristics = Pick<Subject, "reoccurring" | "context">;
+
+export const TimeSpentEditSchema = z.object({
+	timeSpent: z.string().refine(
+		(timeSpent) => {
+			if (timeSpent != "N / A") {
+				return timeSpentRegex.test(timeSpent);
+			}
+			return true;
+		},
+		{ error: CONSTANTS.ERROR.TIMESPENT },
+	),
+});

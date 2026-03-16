@@ -5,7 +5,10 @@ import {
 	validateDateRange,
 } from "../../utils/date";
 import { createTreeNodeSchema } from "../../model/tree-node-model/TreeNodeSchema";
-import { createSubjectSchema } from "../../model/tree-node-model/SubjectSchema";
+import {
+	createSubjectSchema,
+	TimeSpentEditSchema,
+} from "../../model/tree-node-model/SubjectSchema";
 import { CONSTANTS } from "../../../shared/constants";
 import { formatString } from "../../utils/general";
 import { createProfileGroupSchema } from "../../model/tree-node-model/ProfileSchema";
@@ -31,7 +34,8 @@ const createBaseNodeFormSchema = (
 			notes: true,
 		})
 		.extend(DateRangeSchema.shape)
-		.extend(PickedSubjectSchema.shape);
+		.extend(PickedSubjectSchema.shape)
+		.extend(TimeSpentEditSchema.shape);
 
 	return BaseNodeFormSchema;
 };

@@ -70,6 +70,10 @@ export default function DeathLogCardEditor({
 			notes: node.notes,
 			reoccurring: node.type == "subject" ? node.reoccurring : false,
 			context: node.type == "subject" ? node.context : "Boss",
+			timeSpent:
+				node.type == "subject" && node.timeSpent != null
+					? node.timeSpent
+					: "N / A",
 		},
 		mode: "onChange",
 		resolver: zodResolver(NodeFormEditSchema),
@@ -130,6 +134,8 @@ export default function DeathLogCardEditor({
 				notes: formData.notes,
 				reoccurring: formData.reoccurring,
 				context: formData.context,
+				timeSpent:
+					formData.timeSpent == "N / A" ? null : formData.timeSpent,
 			});
 		}
 

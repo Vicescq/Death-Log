@@ -11,6 +11,7 @@ export const CONSTANTS = {
 			"Created date time cannot surpass completed date time!",
 		DATETIME_SURPASSED_TODAY: "Date time cannot be set in the future!",
 		NON_UNIQUE: "Name already exists!",
+		TIMESPENT: "Invalid time format!",
 	},
 	NUMS: {
 		INPUT_MAX: 60,
@@ -23,6 +24,8 @@ export const CONSTANTS = {
 			"A reliable date will be displayed when graphed. An unreliable date will be omitted by default but still can be shown.",
 		TIME_RESET_NOTICE:
 			"You have changed a date field, time has been reset to 12:00:00 AM for a clean slate!",
+		TIMESPENT:
+			"Time format has to be the following: HH:MM:SS or N / A. Minutes and seconds have to have a leading zero if 1 digit only. Hours can have more than 2 digits if needed.",
 	},
 	DEATH_LOG_EDITOR: {
 		DEL_PH: "Type DEL to delete",

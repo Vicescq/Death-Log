@@ -13,27 +13,36 @@ export default function useTimeTracker(subject: Subject) {
 	const startTimeRef = useRef(0);
 
 	function start() {
-		setIsTracking(true);
-		startTimeRef.current = Date.now() - elapsedTime;
+		if (!isTracking) {
+			setIsTracking(true);
+			startTimeRef.current = Date.now() - elapsedTime;
+		}
 	}
 
 	function stop() {
-		setIsTracking(false);
-		updateNode({ ...subject, timeSpent: formatTime() });
+		if (isTracking) {
+			setIsTracking(false);
+			updateNode({ ...subject, timeSpent: formatTime() });
+		}
 	}
 
 	function reset() {
 		setElapsedTime(0);
 		setIsTracking(false);
-		updateNode({ ...subject, timeSpent: formatTime() });
+		updateNode({ ...subject, timeSpent: null });
 	}
 
 	function formatTime() {
-		let hrs = Math.floor(elapsedTime / (1000 * 60 * 60));
-		let mins = Math.floor((elapsedTime / (1000 * 60)) % 60);
-		let sec = Math.floor((elapsedTime / 1000) % 60);
+		const hrs = Math.floor(elapsedTime / (1000 * 60 * 60));
+		const mins = Math.floor((elapsedTime / (1000 * 60)) % 60);
+		const sec = Math.floor((elapsedTime / 1000) % 60);
 
-		return `${addLeadingZeroes(hrs)}:${addLeadingZeroes(mins)}:${addLeadingZeroes(sec)}`;
+		const result = `${addLeadingZeroes(hrs)}:${addLeadingZeroes(mins)}:${addLeadingZeroes(sec)}`;
+		if (result == "00:00:00") {
+			return "N / A";
+		}
+
+		return result;
 	}
 
 	function parseFormattedTime(formattedTime: string) {
@@ -55,6 +64,7 @@ export default function useTimeTracker(subject: Subject) {
 		onStartTracking: start,
 		onStopTracking: stop,
 		onResetTracking: reset,
-		time: formatTime(),
+		formattedTime: formatTime(),
+		isTracking,
 	};
 }
