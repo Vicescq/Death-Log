@@ -1,7 +1,6 @@
 import type { UseFormReturn } from "react-hook-form";
 import type { NodeFormEdit } from "../formSchemas";
 import type { Subject } from "../../../model/tree-node-model/SubjectSchema";
-import { number } from "zod";
 import { CONSTANTS } from "../../../../shared/constants";
 
 type Props = {

@@ -7,7 +7,7 @@ import {
 import { createTreeNodeSchema } from "../../model/tree-node-model/TreeNodeSchema";
 import {
 	createSubjectSchema,
-	TimeSpentEditSchema,
+	TimeSpentEditFormSchema,
 } from "../../model/tree-node-model/SubjectSchema";
 import { CONSTANTS } from "../../../shared/constants";
 import { formatString } from "../../utils/general";
@@ -35,7 +35,7 @@ const createBaseNodeFormSchema = (
 		})
 		.extend(DateRangeSchema.shape)
 		.extend(PickedSubjectSchema.shape)
-		.extend(TimeSpentEditSchema.shape);
+		.extend(TimeSpentEditFormSchema.shape);
 
 	return BaseNodeFormSchema;
 };

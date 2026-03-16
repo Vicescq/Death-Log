@@ -22,7 +22,11 @@ export default function useTimeTracker(subject: Subject) {
 	function stop() {
 		if (isTracking) {
 			setIsTracking(false);
-			updateNode({ ...subject, timeSpent: formatTime() });
+			const time = formatTime();
+			updateNode({
+				...subject,
+				timeSpent: time == "N / A" ? null : time,
+			});
 		}
 	}
 

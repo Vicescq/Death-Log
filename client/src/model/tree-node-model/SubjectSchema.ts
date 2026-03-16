@@ -2,7 +2,7 @@ import { CONSTANTS } from "../../../shared/constants";
 import { createTreeNodeSchema } from "./TreeNodeSchema";
 import z from "zod";
 
-const timeSpentRegex = /^(00|0[1-9]|[1-9]\d+):[0-5]\d:[0-5]\d$/;
+const timeSpentRegex = /^(?!00:00:00$)(00|0[1-9]|[1-9]\d+):[0-5]\d:[0-5]\d$/;
 
 export const createSubjectSchema = (
 	siblingNames: string[],
@@ -54,7 +54,10 @@ export type Death = z.infer<typeof DeathSchema>;
 export type SubjectContext = z.infer<typeof SubjectContextSchema>;
 export type SubjectCharacteristics = Pick<Subject, "reoccurring" | "context">;
 
-export const TimeSpentEditSchema = z.object({
+/**
+ * Differs from timeSpent field on subject schema, this is for the card editor which has slightly different model requirements. null -> `N / A`
+ */
+export const TimeSpentEditFormSchema = z.object({
 	timeSpent: z.string().refine(
 		(timeSpent) => {
 			if (timeSpent != "N / A") {
