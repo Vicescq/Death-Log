@@ -33,9 +33,9 @@ type Props = {
 export default function DeathLogCounter({ subject }: Props) {
 	const updateNode = useDeathLogStore((state) => state.updateNode);
 	const modalRef = useRef<HTMLDialogElement>(null);
-	const [modalBodyType, setModalBodyType] = useState<
-		"edit" | "delete" | "complete"
-	>("edit");
+	const [modalBodyType, setModalBodyType] = useState<"edit" | "delete">(
+		"edit",
+	);
 	const [focusedDeathID, setfocusedDeathID] = useState<null | string>(null);
 	const deathHistoryRef = useRef<HTMLUListElement | null>(null);
 
@@ -153,28 +153,6 @@ export default function DeathLogCounter({ subject }: Props) {
 		modalRef.current?.showModal();
 	}
 
-	function handleComplete() {
-		if (subject.completed) {
-			updateNode({
-				...subject,
-				completed: !subject.completed,
-				dateEnd: null,
-			});
-		} else {
-			updateNode({
-				...subject,
-				completed: !subject.completed,
-				dateEnd: new Date().toISOString(),
-			});
-		}
-		modalRef.current?.close();
-	}
-
-	function handleCompleteConfirm() {
-		setModalBodyType("complete");
-		modalRef.current?.showModal();
-	}
-
 	return (
 		<>
 			<NavBar
@@ -216,11 +194,7 @@ export default function DeathLogCounter({ subject }: Props) {
 				</div>
 
 				<div className="mt-8 flex flex-col gap-4">
-					<DLCSettings
-						subject={subject}
-						form={counterForm}
-						onCompleteConfirm={() => handleCompleteConfirm()}
-					/>
+					<DLCSettings subject={subject} form={counterForm} />
 
 					<DLCTimeTracker subject={subject} />
 
@@ -250,7 +224,6 @@ export default function DeathLogCounter({ subject }: Props) {
 						timeNotice={timeNotice}
 						onTimeNoticeChange={onTimeNoticeChange}
 						onResetNotice={onResetNotice}
-						onComplete={handleComplete}
 					/>
 				}
 				closeBtnName="Cancel"

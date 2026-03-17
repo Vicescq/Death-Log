@@ -7,14 +7,9 @@ import TooltipButton from "../../../components/TooltipButton";
 type Props = {
 	subject: Subject;
 	form: UseFormReturn<DeathCounterForm>;
-	onCompleteConfirm: () => void;
 };
 
-export default function DLCSettings({
-	subject,
-	form,
-	onCompleteConfirm,
-}: Props) {
+export default function DLCSettings({ subject, form }: Props) {
 	return (
 		<fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-full rounded-2xl border p-4">
 			<legend className="fieldset-legend">Death Settings</legend>
@@ -69,18 +64,6 @@ export default function DLCSettings({
 					</div>
 				</>
 			) : null}
-
-			<div className="flex">
-				<span className="my-auto">Mark as completed?</span>
-				<div className="ml-auto">
-					<input
-						type="checkbox"
-						checked={subject.completed}
-						className="checkbox checkbox-success"
-						onChange={() => onCompleteConfirm()}
-					/>
-				</div>
-			</div>
 		</fieldset>
 	);
 }
