@@ -131,7 +131,7 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 	return (
 		<>
 			<NavBar endNavContent={<DeathLogBreadcrumb />} />
-			<Container>
+			<Container css="mb-8">
 				<h1 className="my-6 text-center text-4xl font-bold break-words">
 					Editing: {profile.name}
 				</h1>

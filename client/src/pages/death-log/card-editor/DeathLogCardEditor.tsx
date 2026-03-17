@@ -159,7 +159,7 @@ export default function DeathLogCardEditor({
 				endNavContentCSS="w-[70%]"
 				startNavContentCSS="w-[30%]"
 			/>
-			<Container>
+			<Container css="mb-8">
 				<h1 className="my-6 text-center text-4xl font-bold break-words">
 					Editing: {node.name}
 				</h1>

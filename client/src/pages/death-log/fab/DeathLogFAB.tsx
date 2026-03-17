@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import add from "../../../assets/add.svg";
 import fabEdit from "../../../assets/fab_edit.svg";
 import filter from "../../../assets/filter.svg";
@@ -15,6 +15,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { assertIsNonNull } from "../../../utils/asserts";
 import { createNodeFormAddSchema, type NodeFormAdd } from "../formSchemas";
 import type { DistinctTreeNode } from "../../../model/tree-node-model/TreeNodeSchema";
+import FeedbackToast, {
+	type FeedbackToastState,
+} from "../../../components/FeedbackToast";
 
 type Props = {
 	onFocus: () => void;
@@ -31,6 +34,12 @@ export default function DeathLogFAB({
 }: Props) {
 	const addNode = useDeathLogStore((state) => state.addNode);
 	const modalRef = useRef<HTMLDialogElement>(null);
+	const [feedbackToastState, setFeedbackToastState] =
+		useState<FeedbackToastState>({
+			displayed: false,
+			msg: "Something unexpected happened please try again!",
+			css: "error",
+		});
 
 	const tree = useDeathLogStore((state) => state.tree);
 	const siblingNames = parent.childIDS.map((id) => {
@@ -64,14 +73,23 @@ export default function DeathLogFAB({
 	});
 
 	const onAdd: SubmitHandler<NodeFormAdd> = (formData) => {
-		if (type != "subject") {
-			addNode(type, formData.name, parent.id);
-		} else {
-			const context = formData.context;
-			addNode(type, formData.name, parent.id, {
-				context: context,
-				reoccurring: formData.reoccurring,
-			});
+		try {
+			if (type != "subject") {
+				addNode(type, formData.name, parent.id, siblingNames);
+			} else {
+				const context = formData.context;
+				addNode(type, formData.name, parent.id, siblingNames, {
+					context: context,
+					reoccurring: formData.reoccurring,
+				});
+			}
+		} catch (e) {
+			if (e instanceof Error) {
+				setFeedbackToastState((prev) => ({
+					...prev,
+					displayed: true,
+				}));
+			}
 		}
 		modalRef.current?.close();
 	};
@@ -103,7 +121,13 @@ export default function DeathLogFAB({
 						role="button"
 						aria-label={CONSTANTS.DEATH_LOG_FAB.ADD_ARIA}
 						className="btn btn-lg btn-circle btn-success"
-						onClick={() => modalRef.current?.showModal()}
+						onClick={() => {
+							modalRef.current?.showModal();
+							setFeedbackToastState((prev) => ({
+								...prev,
+								displayed: false,
+							}));
+						}}
 					>
 						<img src={add} alt="" />
 					</button>
@@ -167,16 +191,25 @@ export default function DeathLogFAB({
 				ref={modalRef}
 				header={header}
 				content={
-					<>
-						<DLFABModalBodyAdd
-							type={type}
-							form={addForm}
-							onAdd={onAdd}
-						/>
-					</>
+					<DLFABModalBodyAdd
+						type={type}
+						form={addForm}
+						onAdd={onAdd}
+					/>
 				}
 				closeBtnName="Close"
 				onClose={() => addForm.reset()}
+			/>
+			<FeedbackToast
+				bgCSS={feedbackToastState.css}
+				displayed={feedbackToastState.displayed}
+				msg={feedbackToastState.msg}
+				onClose={() =>
+					setFeedbackToastState((prev) => ({
+						...prev,
+						displayed: false,
+					}))
+				}
 			/>
 		</>
 	);

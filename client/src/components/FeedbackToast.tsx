@@ -5,6 +5,12 @@ type Props = {
 	onClose: () => void;
 };
 
+export type FeedbackToastState = {
+	displayed: boolean;
+	msg: string;
+	css: "error" | "success";
+};
+
 export default function FeedbackToast({
 	msg,
 	bgCSS,

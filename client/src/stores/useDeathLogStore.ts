@@ -9,11 +9,16 @@ import {
 	identifyDeletedSelfAndChildrenIDS,
 } from "./utils";
 import type { RootNode } from "../model/tree-node-model/RootNodeSchema";
-import type { SubjectCharacteristics } from "../model/tree-node-model/SubjectSchema";
+import {
+	createSubjectSchema,
+	type SubjectCharacteristics,
+} from "../model/tree-node-model/SubjectSchema";
 import type {
 	Tree,
 	DistinctTreeNode,
 } from "../model/tree-node-model/TreeNodeSchema";
+import { createGameSchema } from "../model/tree-node-model/GameSchema";
+import { createProfileSchema } from "../model/tree-node-model/ProfileSchema";
 
 type DeathLogState = {
 	tree: Tree;
@@ -23,6 +28,7 @@ type DeathLogState = {
 		type: "game" | "profile" | "subject",
 		inputText: string,
 		parentID: string,
+		siblingNames: string[],
 		subjectCharacteristics?: SubjectCharacteristics,
 	) => void;
 	deleteNode: (node: DistinctTreeNode) => void;
@@ -48,19 +54,37 @@ export const useDeathLogStore = create<DeathLogState>((set) => ({
 		});
 	},
 
-	addNode: (type, inputText, parentID, overrides) => {
+	addNode: (
+		type,
+		inputText,
+		parentID,
+		siblingNames,
+		subjectCharacteristics,
+	) => {
 		set((state) => {
 			let node: DistinctTreeNode;
 			switch (type) {
 				case "game":
 					node = createGame(inputText, state.tree);
+					const gameSchema = createGameSchema(siblingNames, null);
+					gameSchema.parse(node);
 					break;
 				case "profile":
 					node = createProfile(inputText, parentID, state.tree);
+					const profileSchema = createProfileSchema(
+						siblingNames,
+						null,
+					);
+					profileSchema.parse(node);
 					break;
 				case "subject":
 					node = createSubject(inputText, parentID, state.tree);
-					node = { ...node, ...overrides };
+					node = { ...node, ...subjectCharacteristics };
+					const subjectSchema = createSubjectSchema(
+						siblingNames,
+						null,
+					);
+					subjectSchema.parse(node);
 					break;
 			}
 

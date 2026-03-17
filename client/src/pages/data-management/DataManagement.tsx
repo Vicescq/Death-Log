@@ -5,7 +5,6 @@ import Modal from "../../components/Modal";
 import { useDeathLogStore } from "../../stores/useDeathLogStore";
 import skull from "../../assets/skull.svg";
 import { db } from "../../model/LocalDBSchema";
-import FeedbackToast from "../../components/FeedbackToast";
 import NavBar from "../../components/nav-bar/NavBar";
 import type {
 	DistinctTreeNode,
@@ -13,6 +12,8 @@ import type {
 } from "../../model/tree-node-model/TreeNodeSchema";
 import { formatDLExportFile } from "../../utils/date";
 import DMModalBody from "./DMModalBody";
+import type { FeedbackToastState } from "../../components/FeedbackToast";
+import FeedbackToast from "../../components/FeedbackToast";
 
 type DeathLogBackup = {
 	type: "DEATH-LOG Backup";
@@ -20,12 +21,6 @@ type DeathLogBackup = {
 	details: "Please do not edit this JSON in a significant way. Doing so might corrupt the data and importing this file in the site will no longer work.";
 	date: string;
 	data: DistinctTreeNode[];
-};
-
-type FeedbackToast = {
-	displayed: boolean;
-	msg: string;
-	css: "error" | "success";
 };
 
 export type DataManagementAction = "import" | "delete" | "migrate" | "reset";
@@ -36,7 +31,7 @@ export default function DataManagement() {
 	const modalRef = useRef<HTMLDialogElement>(null);
 
 	const [action, setAction] = useState<DataManagementAction>("import");
-	const [feedbackToast, setFeedbackToast] = useState<FeedbackToast>({
+	const [feedbackToast, setFeedbackToast] = useState<FeedbackToastState>({
 		displayed: false,
 		msg: "",
 		css: "success",
