@@ -194,7 +194,9 @@ export default function DeathLogCounter({ subject }: Props) {
 				</div>
 
 				<div className="mt-8 flex flex-col gap-4">
-					<DLCSettings subject={subject} form={counterForm} />
+					{!subject.completed ? (
+						<DLCSettings form={counterForm} />
+					) : null}
 
 					<DLCTimeTracker subject={subject} />
 
