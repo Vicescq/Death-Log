@@ -20,7 +20,7 @@ import {
 } from "../formSchemas";
 import NavBar from "../../../components/nav-bar/NavBar";
 import type { Subject } from "../../../model/tree-node-model/SubjectSchema";
-import useNotifyDateReset from "../../../hooks/useNotifyDateReset";
+import useNotifyDateReset from "../hooks/useNotifyDateReset";
 import Container from "../../../components/Container";
 import DLCSettings from "./DLCSettings";
 import DLCHistory from "./DLCHistory";

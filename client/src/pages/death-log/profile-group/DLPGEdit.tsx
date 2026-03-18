@@ -11,7 +11,7 @@ import {
 import { createPGFormEditSchema, type PGFormEdit } from "../formSchemas";
 import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import useNotifyDateReset from "../../../hooks/useNotifyDateReset";
+import useNotifyDateReset from "../hooks/useNotifyDateReset";
 import type { Subject } from "../../../model/tree-node-model/SubjectSchema";
 import {
 	isoToDateSTD,

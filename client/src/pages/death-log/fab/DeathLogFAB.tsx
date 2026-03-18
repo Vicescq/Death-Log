@@ -1,10 +1,10 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import add from "../../../assets/add.svg";
 import fabEdit from "../../../assets/fab_edit.svg";
 import filter from "../../../assets/filter.svg";
-import sort from "../../../assets/sort.svg";
 import up from "../../../assets/up.svg";
 import down from "../../../assets/down.svg";
+import sort from "../../../assets/sort.svg";
 import Modal from "../../../components/Modal";
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
 import type { VirtuosoHandle } from "react-virtuoso";
@@ -15,6 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { assertIsNonNull } from "../../../utils/asserts";
 import { createNodeFormAddSchema, type NodeFormAdd } from "../formSchemas";
 import type { DistinctTreeNode } from "../../../model/tree-node-model/TreeNodeSchema";
+import DLFABModalBodyFS from "./DLFABModalBodyFS";
 
 type Props = {
 	onFocus: () => void;
@@ -30,6 +31,7 @@ export default function DeathLogFAB({
 	parent,
 }: Props) {
 	const addNode = useDeathLogStore((state) => state.addNode);
+	const [modalType, setModalType] = useState<"add" | "flt" | "sort">("add");
 	const modalRef = useRef<HTMLDialogElement>(null);
 
 	const tree = useDeathLogStore((state) => state.tree);
@@ -76,7 +78,12 @@ export default function DeathLogFAB({
 		modalRef.current?.close();
 	};
 
-	const header = "Add " + type[0].toUpperCase() + type.slice(1);
+	const header =
+		modalType == "add"
+			? "Add " + type[0].toUpperCase() + type.slice(1)
+			: modalType == "flt"
+				? "Filter"
+				: "Sort";
 
 	return (
 		<>
@@ -103,27 +110,36 @@ export default function DeathLogFAB({
 						role="button"
 						aria-label={CONSTANTS.DEATH_LOG_FAB.ADD_ARIA}
 						className="btn btn-lg btn-circle btn-success"
-						onClick={() => modalRef.current?.showModal()}
+						onClick={() => {
+							setModalType("add");
+							modalRef.current?.showModal();
+						}}
 					>
 						<img src={add} alt="" />
-					</button>
-				</div>
-				<div>
-					Sort {type}s
-					<button
-						className="btn btn-lg btn-circle btn-neutral"
-						onClick={() => modalRef.current?.showModal()}
-					>
-						<img src={sort} alt="" />
 					</button>
 				</div>
 				<div>
 					Filter {type}s
 					<button
 						className="btn btn-lg btn-circle btn-neutral"
-						onClick={() => modalRef.current?.showModal()}
+						onClick={() => {
+							setModalType("flt");
+							modalRef.current?.showModal();
+						}}
 					>
 						<img src={filter} alt="" />
+					</button>
+				</div>
+				<div>
+					Sort {type}s
+					<button
+						className="btn btn-lg btn-circle btn-neutral"
+						onClick={() => {
+							setModalType("sort");
+							modalRef.current?.showModal();
+						}}
+					>
+						<img src={sort} alt="" />
 					</button>
 				</div>
 				<div>
@@ -167,11 +183,15 @@ export default function DeathLogFAB({
 				ref={modalRef}
 				header={header}
 				content={
-					<DLFABModalBodyAdd
-						type={type}
-						form={addForm}
-						onAdd={onAdd}
-					/>
+					modalType == "add" ? (
+						<DLFABModalBodyAdd
+							type={type}
+							form={addForm}
+							onAdd={onAdd}
+						/>
+					) : (
+						<DLFABModalBodyFS type={modalType} />
+					)
 				}
 				closeBtnName="Close"
 				onClose={() => addForm.reset()}
