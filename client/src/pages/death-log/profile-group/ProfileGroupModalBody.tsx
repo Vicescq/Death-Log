@@ -8,7 +8,7 @@ type Props = {
 	onProfileGroupDelete: () => void;
 };
 
-export default function DLPGModalBody({
+export default function ProfileGroupModalBody({
 	modalType,
 	focusedGroupIndex,
 	profile,

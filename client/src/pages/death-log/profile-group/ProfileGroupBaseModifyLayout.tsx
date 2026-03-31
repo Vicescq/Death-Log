@@ -32,7 +32,7 @@ type Errors = {
 	description: FieldError | undefined;
 };
 
-export default function DLPGBaseModifyLayout<T extends FieldValues>({
+export default function ProfileGroupBaseModifyLayout<T extends FieldValues>({
 	register,
 	registeredNames,
 	errors,

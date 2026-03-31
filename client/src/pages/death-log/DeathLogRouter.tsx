@@ -3,10 +3,10 @@ import { CONSTANTS } from "../../../shared/constants";
 import { useDeathLogStore } from "../../stores/useDeathLogStore";
 import { assertIsNonNull } from "../../utils/asserts";
 import ErrorPage from "../ErrorPage";
-import DeathLogCardEditor from "./card-editor/DeathLogCardEditor";
-import DeathLogCounter from "./counter/DeathLogCounter";
+import CardEditor from "./card-editor/CardEditor";
+import Counter from "./counter/Counter";
 import DeathLog from "./DeathLog";
-import DeathLogProfileGroup from "./profile-group/DeathLogProfileGroup";
+import ProfileGroup from "./profile-group/ProfileGroup";
 
 export default function DeathLogRouter() {
 	const params = useParams();
@@ -23,25 +23,25 @@ export default function DeathLogRouter() {
 		switch (node.type) {
 			case "game":
 				if (isEditing) {
-					return <DeathLogCardEditor node={node} />;
+					return <CardEditor node={node} />;
 				}
 				return <DeathLog parent={node} />;
 			case "profile":
 				if (isEditing) {
-					return <DeathLogCardEditor node={node} />;
+					return <CardEditor node={node} />;
 				}
 
 				if (isProfileGroupEditing) {
-					return <DeathLogProfileGroup profile={node} />;
+					return <ProfileGroup profile={node} />;
 				}
 
 				return <DeathLog parent={node} />;
 			case "subject":
 				if (isEditing) {
-					return <DeathLogCardEditor node={node} />;
+					return <CardEditor node={node} />;
 				}
 
-				return <DeathLogCounter subject={node} />;
+				return <Counter subject={node} />;
 		}
 	}
 

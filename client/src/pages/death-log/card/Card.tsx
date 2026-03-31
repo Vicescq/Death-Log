@@ -1,4 +1,4 @@
-import DeathLogCardOptions from "./DeathLogCardOptions";
+import CardOptions from "./CardOptions";
 import loop from "../../../assets/loop.svg";
 import skullRed from "../../../assets/skull_red.svg";
 import { calcDeaths } from "../utils";
@@ -14,7 +14,7 @@ type Props = {
 	onOpenCompletionModal: () => void;
 };
 
-export default function DeathLogCard({
+export default function Card({
 	node,
 	entryNum,
 	tree,
@@ -48,7 +48,7 @@ export default function DeathLogCard({
 					{calcDeaths(node, tree)}
 				</div>
 			</div>
-			<DeathLogCardOptions node={node} />
+			<CardOptions node={node} />
 		</li>
 	);
 }

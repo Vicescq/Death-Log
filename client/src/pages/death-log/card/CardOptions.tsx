@@ -9,7 +9,7 @@ type Props = {
 	node: DistinctTreeNode;
 };
 
-export default function DeathLogCardOptions({ node }: Props) {
+export default function CardOptions({ node }: Props) {
 	return (
 		<ul className="menu menu-horizontal menu-xs rounded-box m-auto p-0">
 			<li>

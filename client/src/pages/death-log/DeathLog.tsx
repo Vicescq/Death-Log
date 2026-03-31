@@ -1,13 +1,13 @@
 import NavBar from "../../components/nav-bar/NavBar";
 import React, { forwardRef, useEffect, useRef, useState } from "react";
-import DeathLogFAB from "./fab/DeathLogFAB";
+import FAB from "./fab/FAB";
 import { Virtuoso, type Components, type VirtuosoHandle } from "react-virtuoso";
-import DeathLogBreadcrumb from "./breadcrumb/DeathLogBreadcrumb";
+import Breadcrumb from "./breadcrumb/Breadcrumb";
 import { sortChildIDS } from "./utils";
 import { useDeathLogStore } from "../../stores/useDeathLogStore";
 import { assertIsNonNull } from "../../utils/asserts";
 import Modal from "../../components/Modal";
-import DeathLogCard from "./card/DeathLogCard";
+import Card from "./card/Card";
 import type { DistinctTreeNode } from "../../model/tree-node-model/TreeNodeSchema";
 
 export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
@@ -64,7 +64,7 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 		<>
 			<NavBar
 				midNavContent={<></>}
-				endNavContent={<DeathLogBreadcrumb />}
+				endNavContent={<Breadcrumb />}
 				endNavContentCSS="w-[70%]"
 				startNavContentCSS="w-[30%]"
 			/>
@@ -76,7 +76,7 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 					const node = tree.get(id);
 					assertIsNonNull(node);
 					return (
-						<DeathLogCard
+						<Card
 							node={node}
 							tree={tree}
 							entryNum={i + 1}
@@ -94,7 +94,7 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 				useWindowScroll
 			/>
 
-			<DeathLogFAB
+			<FAB
 				virtuosoRef={virtuosoRef}
 				onFocus={() => {
 					setPageOpacity("opacity-25");

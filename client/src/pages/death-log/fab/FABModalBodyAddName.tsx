@@ -6,7 +6,7 @@ type Props = {
 	form: UseFormReturn<NodeFormAdd, any, NodeFormAdd>;
 };
 
-export default function DLFABModalBodyAddName({ form }: Props) {
+export default function FABModalBodyAddName({ form }: Props) {
 	return (
 		<>
 			<label className="floating-label">

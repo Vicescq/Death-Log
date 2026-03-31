@@ -1,12 +1,12 @@
 import type { DistinctTreeNode } from "../../../model/tree-node-model/TreeNodeSchema";
-import DLFABMBFSRange from "./DLFABMBFSRange";
+import FABModalBodyFSRange from "./FABModalBodyFSRange";
 
 type Props = {
 	type: "flt" | "sort";
 	nodeType: Exclude<DistinctTreeNode["type"], "ROOT_NODE">;
 };
 
-export default function DLFABModalBodyFS({ type, nodeType }: Props) {
+export default function FABModalBodyFS({ type, nodeType }: Props) {
 	return (
 		<div className="flex flex-col gap-1">
 			<div className="my-1">
@@ -62,7 +62,7 @@ export default function DLFABModalBodyFS({ type, nodeType }: Props) {
 				</label>
 			</div>
 
-			<DLFABMBFSRange label="Date Range" />
+			<FABModalBodyFSRange label="Date Range" />
 
 			<div className="my-1">
 				<div className="text-info mb-3">Death Range</div>

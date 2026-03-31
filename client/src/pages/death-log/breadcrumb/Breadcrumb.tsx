@@ -13,7 +13,7 @@ export type BreadcrumbMember = {
 	qParam?: string;
 };
 
-export default function DeathLogBreadcrumb() {
+export default function Breadcrumb() {
 	const breadcrumbMembers = useBreadcrumbMembers();
 	const condensedMembersModalRef = useRef<HTMLDialogElement>(null);
 

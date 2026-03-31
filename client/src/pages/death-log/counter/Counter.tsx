@@ -1,14 +1,14 @@
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
 import up from "../../../assets/up.svg";
 import down from "../../../assets/down.svg";
-import DeathLogBreadcrumb from "../breadcrumb/DeathLogBreadcrumb";
+import Breadcrumb from "../breadcrumb/Breadcrumb";
 import { useRef, useState } from "react";
 import { isoToDateSTD, isoToTimeSTD } from "../../../utils/date";
 import { resolveTimestampUpdate } from "../../../utils/date";
 import Modal from "../../../components/Modal";
 import { useForm } from "react-hook-form";
 import { type SubmitHandler } from "react-hook-form";
-import DLCModalBody from "./DLCModalBody";
+import CounterHistoryModalBody from "./CounterHistoryModalBody";
 import { createDeath } from "../../../stores/utils";
 import { assertIsNonNull } from "../../../utils/asserts";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,15 +22,15 @@ import NavBar from "../../../components/nav-bar/NavBar";
 import type { Subject } from "../../../model/tree-node-model/SubjectSchema";
 import useNotifyDateReset from "../hooks/useNotifyDateReset";
 import Container from "../../../components/Container";
-import DLCSettings from "./DLCSettings";
-import DLCHistory from "./DLCHistory";
-import DLCTimeTracker from "./DLCTimeTracker";
+import CounterSettings from "./CounterSettings";
+import CounterHistory from "./CounterHistory";
+import CounterTimeTracker from "./CounterTimeTracker";
 
 type Props = {
 	subject: Subject;
 };
 
-export default function DeathLogCounter({ subject }: Props) {
+export default function Counter({ subject }: Props) {
 	const updateNode = useDeathLogStore((state) => state.updateNode);
 	const modalRef = useRef<HTMLDialogElement>(null);
 	const [modalBodyType, setModalBodyType] = useState<"edit" | "delete">(
@@ -157,7 +157,7 @@ export default function DeathLogCounter({ subject }: Props) {
 		<>
 			<NavBar
 				midNavContent={<></>}
-				endNavContent={<DeathLogBreadcrumb />}
+				endNavContent={<Breadcrumb />}
 				endNavContentCSS="w-[70%]"
 				startNavContentCSS="w-[30%]"
 			/>
@@ -195,12 +195,12 @@ export default function DeathLogCounter({ subject }: Props) {
 
 				<div className="mt-8 flex flex-col gap-4">
 					{!subject.completed ? (
-						<DLCSettings form={counterForm} />
+						<CounterSettings form={counterForm} />
 					) : null}
 
-					<DLCTimeTracker subject={subject} />
+					<CounterTimeTracker subject={subject} />
 
-					<DLCHistory
+					<CounterHistory
 						subject={subject}
 						deathHistoryRef={deathHistoryRef}
 						focusedDeathID={focusedDeathID}
@@ -218,7 +218,7 @@ export default function DeathLogCounter({ subject }: Props) {
 			<Modal
 				ref={modalRef}
 				content={
-					<DLCModalBody
+					<CounterHistoryModalBody
 						type={modalBodyType}
 						form={modalForm}
 						onEditDeath={onEditDeath}

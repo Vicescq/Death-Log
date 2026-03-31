@@ -14,7 +14,7 @@ type Props = {
 	onDeleteDeathConfirm: (id: string) => void;
 };
 
-export default function DLCHistory({
+export default function CounterHistory({
 	subject,
 	deathHistoryRef,
 	sortedDeaths,

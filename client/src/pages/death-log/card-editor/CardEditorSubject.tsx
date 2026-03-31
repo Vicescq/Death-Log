@@ -8,7 +8,7 @@ type Props = {
 	form: UseFormReturn<NodeFormEdit, any, NodeFormEdit>;
 };
 
-export default function DLCESubject({ node, form }: Props) {
+export default function CardEditorSubject({ node, form }: Props) {
 	return (
 		<div className="flex flex-col gap-4">
 			<div>

@@ -1,6 +1,6 @@
 import { CONSTANTS } from "../../../../shared/constants";
 import DateRangeForm from "../../../components/DateRangeForm";
-import DLPGBaseModifyLayout from "./DLPGBaseModifyLayout";
+import ProfileGroupBaseModifyLayout from "./ProfileGroupBaseModifyLayout";
 import type { Profile } from "../../../model/tree-node-model/ProfileSchema";
 import {
 	useFieldArray,
@@ -27,7 +27,7 @@ type Props = {
 	subjects: Subject[];
 };
 
-export default function DLPGEdit({
+export default function ProfileGroupEdit({
 	profile,
 	focusedGroupIndex,
 	subjects,
@@ -156,7 +156,7 @@ export default function DLPGEdit({
 						Editing: {profile.groupings[focusedGroupIndex].title}
 					</legend>
 
-					<DLPGBaseModifyLayout
+					<ProfileGroupBaseModifyLayout
 						errors={{
 							title: form.formState.errors.title,
 							description: form.formState.errors.description,

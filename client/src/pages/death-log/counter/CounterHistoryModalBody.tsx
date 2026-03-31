@@ -12,7 +12,7 @@ type Props = {
 	onResetNotice: () => void;
 };
 
-export default function DLCModalBody({
+export default function CounterHistoryModalBody({
 	type,
 	form,
 	onEditDeath,

@@ -8,7 +8,7 @@ type Props = {
 	onMigrate: () => void;
 };
 
-export default function DMModalBody({
+export default function DataManagementModalBody({
 	action,
 	onImport,
 	onDelete,

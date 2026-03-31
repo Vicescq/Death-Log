@@ -10,12 +10,12 @@ import { useDeathLogStore } from "../../../stores/useDeathLogStore";
 import type { VirtuosoHandle } from "react-virtuoso";
 import { CONSTANTS } from "../../../../shared/constants";
 import { useForm, type SubmitHandler } from "react-hook-form";
-import DLFABModalBodyAdd from "./DLFABModalBodyAdd";
+import FABModalBodyAdd from "./FABModalBodyAdd";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { assertIsNonNull } from "../../../utils/asserts";
 import { createNodeFormAddSchema, type NodeFormAdd } from "../formSchemas";
 import type { DistinctTreeNode } from "../../../model/tree-node-model/TreeNodeSchema";
-import DLFABModalBodyFS from "./DLFABModalBodyFS";
+import FABModalBodyFS from "./FABModalBodyFS";
 
 type Props = {
 	onFocus: () => void;
@@ -24,7 +24,7 @@ type Props = {
 	parent: DistinctTreeNode;
 };
 
-export default function DeathLogFAB({
+export default function FAB({
 	onFocus,
 	onBlur,
 	virtuosoRef,
@@ -184,13 +184,13 @@ export default function DeathLogFAB({
 				header={header}
 				content={
 					modalType == "add" ? (
-						<DLFABModalBodyAdd
+						<FABModalBodyAdd
 							type={type}
 							form={addForm}
 							onAdd={onAdd}
 						/>
 					) : (
-						<DLFABModalBodyFS type={modalType} nodeType={type} />
+						<FABModalBodyFS type={modalType} nodeType={type} />
 					)
 				}
 				closeBtnName="Close"

@@ -1,25 +1,25 @@
 import { useFieldArray, useForm, type SubmitHandler } from "react-hook-form";
 import Container from "../../../components/Container";
 import NavBar from "../../../components/nav-bar/NavBar";
-import DLPGList from "./DLPGList";
+import ProfileGroupList from "./ProfileGroupList";
 import type { Profile } from "../../../model/tree-node-model/ProfileSchema";
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
 import { assertIsNonNull, assertIsSubject } from "../../../utils/asserts";
-import DeathLogBreadcrumb from "../breadcrumb/DeathLogBreadcrumb";
+import Breadcrumb from "../breadcrumb/Breadcrumb";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createProfileGroup } from "../../../stores/utils";
 import { createPGFormAddSchema, type PGFormAdd } from "../formSchemas";
 import Modal from "../../../components/Modal";
 import { useRef, useState } from "react";
-import DLPGModalBody from "./DLPGModalBody";
-import DLPGBaseModifyLayout from "./DLPGBaseModifyLayout";
-import DLPGEdit from "./DLPGEdit";
+import ProfileGroupModalBody from "./ProfileGroupModalBody";
+import ProfileGroupBaseModifyLayout from "./ProfileGroupBaseModifyLayout";
+import ProfileGroupEdit from "./ProfileGroupEdit";
 
 type Props = {
 	profile: Profile;
 };
 
-export default function DeathLogProfileGroup({ profile }: Props) {
+export default function ProfileGroup({ profile }: Props) {
 	const tree = useDeathLogStore((state) => state.tree);
 	const updateNode = useDeathLogStore((state) => state.updateNode);
 	const modalRef = useRef<HTMLDialogElement | null>(null);
@@ -130,7 +130,7 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 
 	return (
 		<>
-			<NavBar endNavContent={<DeathLogBreadcrumb />} />
+			<NavBar endNavContent={<Breadcrumb />} />
 			<Container css="mb-8">
 				<h1 className="my-6 text-center text-4xl font-bold break-words">
 					Editing: {profile.name}
@@ -140,7 +140,7 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 					<legend className="fieldset-legend">
 						Current Profile Groups
 					</legend>
-					<DLPGList
+					<ProfileGroupList
 						profile={profile}
 						onDelete={(i) => handleModalTypeChange("delete", i)}
 						onComplete={(i) =>
@@ -159,7 +159,7 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 							Add Profile Group
 						</legend>
 
-						<DLPGBaseModifyLayout
+						<ProfileGroupBaseModifyLayout
 							errors={{
 								title: form.formState.errors.title,
 								description: form.formState.errors.description,
@@ -191,7 +191,7 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 				</form>
 
 				{focusedGroupIndex != null && isEditing ? (
-					<DLPGEdit
+					<ProfileGroupEdit
 						profile={profile}
 						subjects={subjects}
 						focusedGroupIndex={focusedGroupIndex}
@@ -209,7 +209,7 @@ export default function DeathLogProfileGroup({ profile }: Props) {
 				}
 				closeBtnName="Cancel"
 				content={
-					<DLPGModalBody
+					<ProfileGroupModalBody
 						focusedGroupIndex={focusedGroupIndex}
 						modalType={modalType}
 						onProfileGroupComplete={handleProfileGroupComplete}

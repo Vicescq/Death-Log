@@ -11,7 +11,7 @@ import type {
 	TreeNode,
 } from "../../model/tree-node-model/TreeNodeSchema";
 import { formatDLExportFile } from "../../utils/date";
-import DMModalBody from "./DMModalBody";
+import DataManagementModalBody from "./DataManagementModalBody";
 import type { FeedbackToastState } from "../../components/FeedbackToast";
 import FeedbackToast from "../../components/FeedbackToast";
 
@@ -245,7 +245,7 @@ export default function DataManagement() {
 			<Modal
 				ref={modalRef}
 				content={
-					<DMModalBody
+					<DataManagementModalBody
 						action={action}
 						onImport={handleImport}
 						onDelete={handleDelete}

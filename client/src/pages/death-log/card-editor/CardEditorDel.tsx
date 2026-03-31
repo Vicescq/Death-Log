@@ -9,7 +9,7 @@ type Props = {
 	onDelStrChange: (inputString: string) => void;
 };
 
-export default function DLCEDel({
+export default function CardEditorDel({
 	node,
 	onDelete,
 	delStr,

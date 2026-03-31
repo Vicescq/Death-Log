@@ -7,7 +7,7 @@ type Props = {
 	form: UseFormReturn<DeathCounterForm>;
 };
 
-export default function DLCSettings({ form }: Props) {
+export default function CounterSettings({ form }: Props) {
 	return (
 		<fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-full rounded-2xl border p-4">
 			<legend className="fieldset-legend">Death Settings</legend>

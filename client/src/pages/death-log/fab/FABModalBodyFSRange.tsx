@@ -2,7 +2,7 @@ type Props = {
 	label: string;
 };
 
-export default function DLFABMBFSRange({ label }: Props) {
+export default function FABModalBodyFSRange({ label }: Props) {
 	return (
 		<div className="my-1">
 			<div className="text-info mb-3">{label}</div>

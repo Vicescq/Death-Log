@@ -9,7 +9,7 @@ type Props = {
 	focusedGroupIndex: number | null;
 };
 
-export default function DLPGList({
+export default function ProfileGroupList({
 	profile,
 	onDelete,
 	onComplete,

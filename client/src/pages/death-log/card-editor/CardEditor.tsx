@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router";
-import DeathLogBreadcrumb from "../breadcrumb/DeathLogBreadcrumb";
-import DLCEDel from "./DLCEDel";
-import DLCESubject from "./DLCESubject";
+import Breadcrumb from "../breadcrumb/Breadcrumb";
+import CardEditorDel from "./CardEditorDel";
+import CardEditorSubject from "./CardEditorSubject";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
 import { resolveTimestampUpdate } from "../../../utils/date";
@@ -18,7 +18,7 @@ import useNotifyDateReset from "../hooks/useNotifyDateReset";
 import Container from "../../../components/Container";
 import DateRangeForm from "../../../components/DateRangeForm";
 
-export default function DeathLogCardEditor({
+export default function CardEditor({
 	node,
 }: {
 	node: DistinctTreeNode;
@@ -155,7 +155,7 @@ export default function DeathLogCardEditor({
 	return (
 		<>
 			<NavBar
-				endNavContent={<DeathLogBreadcrumb />}
+				endNavContent={<Breadcrumb />}
 				endNavContentCSS="w-[70%]"
 				startNavContentCSS="w-[30%]"
 			/>
@@ -265,7 +265,7 @@ export default function DeathLogCardEditor({
 							/>
 
 							{node.type == "subject" ? (
-								<DLCESubject node={node} form={form} />
+								<CardEditorSubject node={node} form={form} />
 							) : null}
 
 							<label className="floating-label">
@@ -282,7 +282,7 @@ export default function DeathLogCardEditor({
 								)}
 							</label>
 
-							<DLCEDel
+							<CardEditorDel
 								node={node}
 								onDelete={handleDelete}
 								delStr={delStr}

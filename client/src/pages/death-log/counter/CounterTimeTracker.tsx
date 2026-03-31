@@ -10,7 +10,7 @@ type Props = {
 	subject: Subject;
 };
 
-export default function DLCTimeTracker({ subject }: Props) {
+export default function CounterTimeTracker({ subject }: Props) {
 	const [activeMode, setActiveMode] = useState<"pause" | "play">("pause");
 	const {
 		onStartTracking,

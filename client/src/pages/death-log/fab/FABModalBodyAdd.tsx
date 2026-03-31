@@ -1,5 +1,5 @@
 import type { SubmitHandler, UseFormReturn } from "react-hook-form";
-import DLFABModalBodyAddName from "./DLFABModalBodyAddName";
+import FABModalBodyAddName from "./FABModalBodyAddName";
 import type { DistinctTreeNode } from "../../../model/tree-node-model/TreeNodeSchema";
 import type { NodeFormAdd } from "../formSchemas";
 
@@ -9,12 +9,12 @@ type Props = {
 	onAdd: SubmitHandler<NodeFormAdd>;
 };
 
-export default function DLFABModalBodyAdd({ type, form, onAdd }: Props) {
+export default function FABModalBodyAdd({ type, form, onAdd }: Props) {
 	return (
 		<form onSubmit={form.handleSubmit(onAdd)}>
 			{type == "subject" ? (
 				<div className="my-4 flex flex-col gap-2">
-					<DLFABModalBodyAddName form={form} />
+					<FABModalBodyAddName form={form} />
 
 					<label className="floating-label mt-4">
 						<span>Context</span>
@@ -41,7 +41,7 @@ export default function DLFABModalBodyAdd({ type, form, onAdd }: Props) {
 				</div>
 			) : (
 				<div className="my-4">
-					<DLFABModalBodyAddName form={form} />
+					<FABModalBodyAddName form={form} />
 				</div>
 			)}
 		</form>
