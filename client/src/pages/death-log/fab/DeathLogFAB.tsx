@@ -82,8 +82,8 @@ export default function DeathLogFAB({
 		modalType == "add"
 			? "Add " + type[0].toUpperCase() + type.slice(1)
 			: modalType == "flt"
-				? "Filter"
-				: "Sort";
+				? "Filter options"
+				: "Sort options";
 
 	return (
 		<>
@@ -190,7 +190,7 @@ export default function DeathLogFAB({
 							onAdd={onAdd}
 						/>
 					) : (
-						<DLFABModalBodyFS type={modalType} />
+						<DLFABModalBodyFS type={modalType} nodeType={type} />
 					)
 				}
 				closeBtnName="Close"
