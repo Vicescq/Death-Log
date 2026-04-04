@@ -8,5 +8,6 @@ export default function useFilterAndSortDL(
 	parent: DistinctTreeNode,
 	tree: Tree,
 ) {
-	const sortedChildIDs = sortChildIDS(parent, tree);
+	// const sortedChildIDs = sortChildIDS(parent, tree);
+	console.log("")
 }

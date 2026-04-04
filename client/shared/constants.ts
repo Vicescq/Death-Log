@@ -12,6 +12,7 @@ export const CONSTANTS = {
 		DATETIME_SURPASSED_TODAY: "Date time cannot be set in the future!",
 		NON_UNIQUE: "Name already exists!",
 		TIMESPENT: "Invalid time format!",
+		GEN_FORMAT: "Invalid format!",
 	},
 	NUMS: {
 		INPUT_MAX: 60,
@@ -26,6 +27,8 @@ export const CONSTANTS = {
 			"You have changed a date field, time has been reset to 12:00:00 AM for a clean slate!",
 		TIMESPENT:
 			"Time format has to be the following: HH:MM:SS or N / A. Minutes and seconds have to have a leading zero if 1 digit only. Hours can have more than 2 digits if needed.",
+		AZ_RANGE: "Format has to be X-Y where X and Y can be any character (a-z) case insensitive.",
+		DEATH_RANGE: "Format has to be X-Y where X and Y can be any integer. Or in another format: ~X, where ~ represents an operator (=, =>, <, ...) and X is an integer."
 	},
 	DEATH_LOG_EDITOR: {
 		DEL_PH: "Type DEL to delete",

@@ -1,4 +1,4 @@
-import z from "zod";
+import z, { literal } from "zod";
 import {
 	DateRangeSchema,
 	dateTimeSTDToISO,
@@ -151,3 +151,25 @@ export const createPGFormEditSchema = (
 export type PGFormAdd = z.infer<ReturnType<typeof createPGFormAddSchema>>;
 export type PGFormEdit = z.infer<ReturnType<typeof createPGFormEditSchema>>;
 export type PGFormMember = z.infer<typeof PGFormMemberSchema>;
+
+export const FilterSchema = z.object({
+	uncompleted: z.boolean(),
+	completed: z.boolean(),
+	reoccurring: z.boolean(),
+	azRange: z
+		.string()
+		.regex(/^[a-z]-[a-z]$/i, { error: CONSTANTS.ERROR.GEN_FORMAT }),
+	dateFrom: z.iso.date(),
+	dateTo: z.iso.date(),
+	deathRange: z
+		.string()
+		.regex(/^((=|<|<=|>|>=)\d+|\d+-\d+)$/, {
+			error: CONSTANTS.ERROR.GEN_FORMAT,
+		}),
+	reliable: z.boolean(),
+	unreliable: z.boolean(),
+	notes: z.boolean(),
+	noNotes: z.boolean(),
+});
+
+export type Filter = z.infer<typeof FilterSchema>

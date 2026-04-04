@@ -15,7 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { assertIsNonNull } from "../../../utils/asserts";
 import { createNodeFormAddSchema, type NodeFormAdd } from "../formSchemas";
 import type { DistinctTreeNode } from "../../../model/tree-node-model/TreeNodeSchema";
-import FABModalBodyFS from "./FABModalBodyFS";
+import FABModalBodyFilter from "./FABModalBodyFilter";
 
 type Props = {
 	onFocus: () => void;
@@ -190,7 +190,7 @@ export default function FAB({
 							onAdd={onAdd}
 						/>
 					) : (
-						<FABModalBodyFS type={modalType} nodeType={type} />
+						<FABModalBodyFilter type={modalType} nodeType={type} />
 					)
 				}
 				closeBtnName="Close"

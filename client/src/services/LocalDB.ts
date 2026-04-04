@@ -1,5 +1,6 @@
 import { db } from "../model/LocalDBSchema";
 import type { DistinctTreeNode } from "../model/tree-node-model/TreeNodeSchema";
+import type { Filter } from "../pages/death-log/formSchemas";
 
 export default class LocalDB {
 	constructor() {}
@@ -115,5 +116,19 @@ export default class LocalDB {
 			await LocalDB.clearData();
 			await LocalDB.insertData(nodes);
 		});
+	}
+
+	static getDLFilterPrefs(): Filter {
+		const filtersSTR = localStorage.getItem("filters_DL");
+
+		if (filtersSTR == null) {
+			throw new Error("DL Filter DEV ERROR, must handle in code!");
+		} else {
+			return JSON.parse(filtersSTR);
+		}
+	}
+
+	static setDLFilterPrefs(filters: Filter) {
+		localStorage.setItem("filters_DL", JSON.stringify(filters));
 	}
 }

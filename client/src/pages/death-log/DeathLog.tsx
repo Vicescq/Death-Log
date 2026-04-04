@@ -9,6 +9,7 @@ import { assertIsNonNull } from "../../utils/asserts";
 import Modal from "../../components/Modal";
 import Card from "./card/Card";
 import type { DistinctTreeNode } from "../../model/tree-node-model/TreeNodeSchema";
+import useFilterAndSortDL from "./hooks/useFilterAndSortDL";
 
 export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 	const tree = useDeathLogStore((state) => state.tree);
@@ -59,6 +60,7 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 	}
 
 	const sortedChildIDs = sortChildIDS(parent, tree);
+	useFilterAndSortDL(parent, tree)
 
 	return (
 		<>
