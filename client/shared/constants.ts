@@ -27,8 +27,12 @@ export const CONSTANTS = {
 			"You have changed a date field, time has been reset to 12:00:00 AM for a clean slate!",
 		TIMESPENT:
 			"Time format has to be the following: HH:MM:SS or N / A. Minutes and seconds have to have a leading zero if 1 digit only. Hours can have more than 2 digits if needed.",
-		AZ_RANGE: "Format has to be X-Y where X and Y can be any character (a-z) case insensitive.",
-		DEATH_RANGE: "Format has to be X-Y where X and Y can be any integer. Or in another format: ~X, where ~ represents an operator (=, =>, <, ...) and X is an integer."
+		AZ_RANGE:
+			"Format has to be X-Y where X and Y can be any character (a-z) case insensitive.",
+		DEATH_RANGE:
+			"Format has to be X-Y where X and Y can be any integer. Or in another format: ~X, where ~ represents an operator (=, >=, >, <, <=) and X is an integer.",
+		DATE_RANGE:
+			"Will filter based on completion time if completed, otherwise it filters on creation time.",
 	},
 	DEATH_LOG_EDITOR: {
 		DEL_PH: "Type DEL to delete",

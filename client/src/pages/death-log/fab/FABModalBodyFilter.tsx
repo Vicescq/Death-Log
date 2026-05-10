@@ -1,6 +1,6 @@
 import { useForm, type SubmitHandler } from "react-hook-form";
 import type { DistinctTreeNode } from "../../../model/tree-node-model/TreeNodeSchema";
-import { FilterSchema, type Filter } from "../formSchemas";
+import { FiltersSchema, type Filters } from "../formSchemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { isoToDateSTD } from "../../../utils/date";
 import { CONSTANTS } from "../../../../shared/constants";
@@ -9,30 +9,34 @@ import LocalDB from "../../../services/LocalDB";
 type Props = {
 	type: "flt" | "sort";
 	nodeType: Exclude<DistinctTreeNode["type"], "ROOT_NODE">;
+	onClose: () => void;
 };
 
-export default function FABModalBodyFilter({ type, nodeType }: Props) {
-	const form = useForm<Filter>({
-		defaultValues: {
-			uncompleted: true,
-			completed: true,
-			reoccurring: true,
-			azRange: "A-Z",
-			dateFrom: isoToDateSTD(new Date().toISOString()),
-			dateTo: isoToDateSTD(new Date().toISOString()),
-			deathRange: ">=0",
-			reliable: true,
-			unreliable: true,
-			notes: true,
-			noNotes: true,
-		},
+export default function FABModalBodyFilter({ type, nodeType, onClose }: Props) {
+	const defaultFilters: Filters = {
+		uncompleted: true,
+		completed: true,
+		reoccurring: true,
+		azRange: "A-Z",
+		dateFrom: isoToDateSTD(new Date().toISOString()),
+		dateTo: isoToDateSTD(new Date().toISOString()),
+		dateRangeEnabled: false,
+		deathRange: ">=0",
+		reliable: true,
+		unreliable: true,
+		notes: true,
+		noNotes: true,
+	};
+	const filterPrefs = LocalDB.getDLFilterPrefs();
+	const form = useForm<Filters>({
+		defaultValues: filterPrefs != null ? filterPrefs : defaultFilters,
 		mode: "onChange",
-		resolver: zodResolver(FilterSchema),
+		resolver: zodResolver(FiltersSchema),
 	});
 
-	const onSubmit: SubmitHandler<Filter> = (formData) => {
-		// console.log(LocalDB.getDLFilterPrefs());
-		LocalDB.setDLFilterPrefs(formData)
+	const onSubmit: SubmitHandler<Filters> = (formData) => {
+		LocalDB.setDLFilterPrefs(formData);
+		onClose();
 	};
 
 	return (
@@ -101,7 +105,19 @@ export default function FABModalBodyFilter({ type, nodeType }: Props) {
 				</div>
 
 				<div className="my-1">
-					<div className="text-info mb-3">Date Range</div>
+					<div className="text-info">Date Range</div>
+					<div className="mb-4 flex">
+						<label>
+							<div className="flex gap-4">
+								<input
+									type="checkbox"
+									className="checkbox checkbox-info"
+									{...form.register("dateRangeEnabled")}
+								/>
+								Date Range Filters
+							</div>
+						</label>
+					</div>
 					<div className="flex gap-4">
 						<label className="floating-label w-full">
 							<span>From</span>
@@ -109,6 +125,7 @@ export default function FABModalBodyFilter({ type, nodeType }: Props) {
 								type="date"
 								className="input"
 								{...form.register("dateFrom")}
+								disabled={!form.getValues("dateRangeEnabled")}
 							/>
 						</label>
 						<label className="floating-label w-full">
@@ -117,8 +134,12 @@ export default function FABModalBodyFilter({ type, nodeType }: Props) {
 								type="date"
 								className="input"
 								{...form.register("dateTo")}
+								disabled={!form.getValues("dateRangeEnabled")}
 							/>
 						</label>
+					</div>
+					<div className="text-accent text-sm">
+						{CONSTANTS.INFO.DATE_RANGE}
 					</div>
 				</div>
 
@@ -214,10 +235,10 @@ export default function FABModalBodyFilter({ type, nodeType }: Props) {
 				<button
 					type="reset"
 					className="btn btn-info w-full"
-					disabled={!form.formState.isDirty}
 					onClick={(e) => {
 						e.preventDefault();
-						form.reset();
+						form.reset(defaultFilters);
+						LocalDB.setDLFilterPrefs(defaultFilters);
 					}}
 				>
 					Reset to defaults

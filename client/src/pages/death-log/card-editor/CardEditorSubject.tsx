@@ -40,7 +40,7 @@ export default function CardEditorSubject({ node, form }: Props) {
 					</div>
 				)}
 			</label>
-			<div>{CONSTANTS.INFO.TIMESPENT}</div>
+			<div className="text-info">{CONSTANTS.INFO.TIMESPENT}</div>
 
 			<div className="flex">
 				<label

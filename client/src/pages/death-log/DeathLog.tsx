@@ -60,8 +60,15 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 	}
 
 	const sortedChildIDs = sortChildIDS(parent, tree);
-	useFilterAndSortDL(parent, tree)
-
+	// console.log(useFilterAndSortDL(parent, tree))
+	const ids = useFilterAndSortDL(parent, tree);
+	console.log(
+		ids.map((id) => {
+			const node = tree.get(id);
+			assertIsNonNull(node);
+			return node.name;
+		}),
+	);
 	return (
 		<>
 			<NavBar
@@ -73,7 +80,7 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 
 			<Virtuoso
 				ref={virtuosoRef}
-				data={sortedChildIDs}
+				data={ids}
 				itemContent={(i, id) => {
 					const node = tree.get(id);
 					assertIsNonNull(node);

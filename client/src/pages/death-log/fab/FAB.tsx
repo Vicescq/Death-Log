@@ -24,12 +24,7 @@ type Props = {
 	parent: DistinctTreeNode;
 };
 
-export default function FAB({
-	onFocus,
-	onBlur,
-	virtuosoRef,
-	parent,
-}: Props) {
+export default function FAB({ onFocus, onBlur, virtuosoRef, parent }: Props) {
 	const addNode = useDeathLogStore((state) => state.addNode);
 	const [modalType, setModalType] = useState<"add" | "flt" | "sort">("add");
 	const modalRef = useRef<HTMLDialogElement>(null);
@@ -190,7 +185,11 @@ export default function FAB({
 							onAdd={onAdd}
 						/>
 					) : (
-						<FABModalBodyFilter type={modalType} nodeType={type} />
+						<FABModalBodyFilter
+							type={modalType}
+							nodeType={type}
+							onClose={() => modalRef.current?.close()}
+						/>
 					)
 				}
 				closeBtnName="Close"

@@ -33,6 +33,8 @@ export function calcDeaths(node: DistinctTreeNode, tree: Tree) {
 			return sum;
 		case "subject":
 			return node.log.length;
+		case "ROOT_NODE":
+			return 0; // should never pass ROOT_NODE into this
 	}
 }
 

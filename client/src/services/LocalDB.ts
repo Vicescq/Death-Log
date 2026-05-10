@@ -1,6 +1,6 @@
 import { db } from "../model/LocalDBSchema";
 import type { DistinctTreeNode } from "../model/tree-node-model/TreeNodeSchema";
-import type { Filter } from "../pages/death-log/formSchemas";
+import type { Filters } from "../pages/death-log/formSchemas";
 
 export default class LocalDB {
 	constructor() {}
@@ -118,17 +118,17 @@ export default class LocalDB {
 		});
 	}
 
-	static getDLFilterPrefs(): Filter {
-		const filtersSTR = localStorage.getItem("filters_DL");
+	static getDLFilterPrefs(): Filters | null {
+		const filtersSTR = localStorage.getItem("filters");
 
 		if (filtersSTR == null) {
-			throw new Error("DL Filter DEV ERROR, must handle in code!");
+			return null;
 		} else {
 			return JSON.parse(filtersSTR);
 		}
 	}
 
-	static setDLFilterPrefs(filters: Filter) {
-		localStorage.setItem("filters_DL", JSON.stringify(filters));
+	static setDLFilterPrefs(filters: Filters) {
+		localStorage.setItem("filters", JSON.stringify(filters));
 	}
 }
