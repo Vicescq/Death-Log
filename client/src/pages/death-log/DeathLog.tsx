@@ -1,6 +1,5 @@
 import NavBar from "../../components/nav-bar/NavBar";
-import React, { forwardRef, useEffect, useRef, useState } from "react";
-import FAB from "./fab/FAB";
+import React, { forwardRef, useRef, useState } from "react";
 import { Virtuoso, type Components, type VirtuosoHandle } from "react-virtuoso";
 import Breadcrumb from "./breadcrumb/Breadcrumb";
 import { sortChildIDS } from "./utils";
@@ -63,17 +62,17 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 	const sortedChildIDs = sortChildIDS(parent, tree);
 	// console.log(useFilterAndSortDL(parent, tree))
 	const ids = useFilterAndSortDL(parent, tree);
-	console.log(
-		ids.map((id) => {
-			const node = tree.get(id);
-			assertIsNonNull(node);
-			return node.name;
-		}),
-	);
+	// console.log(
+	// 	ids.map((id) => {
+	// 		const node = tree.get(id);
+	// 		assertIsNonNull(node);
+	// 		return node.name;
+	// 	}),
+	// );
 	return (
 		<>
 			<NavBar
-				midNavContent={<Toolbar/>}
+				midNavContent={<></>}
 				endNavContent={<Breadcrumb />}
 				endNavContentCSS="w-[70%]"
 				startNavContentCSS="w-[30%]"
@@ -104,8 +103,7 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 				useWindowScroll
 			/>
 
-
-			{/* <FAB
+			<Toolbar
 				virtuosoRef={virtuosoRef}
 				onFocus={() => {
 					setPageOpacity("opacity-25");
@@ -116,7 +114,7 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 					setDeathLogIsInert(false);
 				}}
 				parent={parent}
-			/> */}
+			/>
 
 			<Modal
 				ref={modalRef}

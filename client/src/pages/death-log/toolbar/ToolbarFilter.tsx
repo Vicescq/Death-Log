@@ -1,18 +1,18 @@
-import { useForm, type SubmitHandler } from "react-hook-form";
-import type { DistinctTreeNode } from "../../../model/tree-node-model/TreeNodeSchema";
-import { FiltersSchema, type Filters } from "../formSchemas";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { isoToDateSTD } from "../../../utils/date";
+import { useForm, type SubmitHandler } from "react-hook-form";
 import { CONSTANTS } from "../../../../shared/constants";
+import type { DistinctTreeNode } from "../../../model/tree-node-model/TreeNodeSchema";
 import LocalDB from "../../../services/LocalDB";
+import { isoToDateSTD } from "../../../utils/date";
+import { FiltersSchema, type Filters } from "../formSchemas";
 
 type Props = {
-	type: "flt" | "sort";
+	type: "filter" | "sort";
 	nodeType: Exclude<DistinctTreeNode["type"], "ROOT_NODE">;
 	onClose: () => void;
 };
 
-export default function FABModalBodyFilter({ type, nodeType, onClose }: Props) {
+export default function ToolbarFilter({ type, nodeType, onClose }: Props) {
 	const defaultFilters: Filters = {
 		uncompleted: true,
 		completed: true,
