@@ -10,6 +10,7 @@ import Modal from "../../components/Modal";
 import Card from "./card/Card";
 import type { DistinctTreeNode } from "../../model/tree-node-model/TreeNodeSchema";
 import useFilterAndSortDL from "./hooks/useFilterAndSortDL";
+import Toolbar from "./toolbar/Toolbar";
 
 export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 	const tree = useDeathLogStore((state) => state.tree);
@@ -72,7 +73,7 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 	return (
 		<>
 			<NavBar
-				midNavContent={<></>}
+				midNavContent={<Toolbar/>}
 				endNavContent={<Breadcrumb />}
 				endNavContentCSS="w-[70%]"
 				startNavContentCSS="w-[30%]"
@@ -103,7 +104,8 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 				useWindowScroll
 			/>
 
-			<FAB
+
+			{/* <FAB
 				virtuosoRef={virtuosoRef}
 				onFocus={() => {
 					setPageOpacity("opacity-25");
@@ -114,7 +116,7 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 					setDeathLogIsInert(false);
 				}}
 				parent={parent}
-			/>
+			/> */}
 
 			<Modal
 				ref={modalRef}
