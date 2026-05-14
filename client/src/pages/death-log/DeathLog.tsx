@@ -2,14 +2,16 @@ import NavBar from "../../components/nav-bar/NavBar";
 import React, { forwardRef, useRef, useState } from "react";
 import { Virtuoso, type Components, type VirtuosoHandle } from "react-virtuoso";
 import Breadcrumb from "./breadcrumb/Breadcrumb";
-import { sortChildIDS } from "./utils";
 import { useDeathLogStore } from "../../stores/useDeathLogStore";
 import { assertIsNonNull } from "../../utils/asserts";
 import Modal from "../../components/Modal";
 import Card from "./card/Card";
 import type { DistinctTreeNode } from "../../model/tree-node-model/TreeNodeSchema";
-import useFilterAndSortDL from "./hooks/useFilterAndSortDL";
 import Toolbar from "./toolbar/Toolbar";
+import LocalDB from "../../services/LocalDB";
+import type { Filters } from "./formSchemas";
+import { filter, sort } from "./utils";
+import { isoToDateSTD } from "../../utils/date";
 
 export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 	const tree = useDeathLogStore((state) => state.tree);
@@ -59,9 +61,31 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 		modalRef.current?.close();
 	}
 
-	const sortedChildIDs = sortChildIDS(parent, tree);
-	// console.log(useFilterAndSortDL(parent, tree))
-	const ids = useFilterAndSortDL(parent, tree);
+	const defaultFilters: Filters = {
+		uncompleted: true,
+		completed: true,
+		reoccurring: true,
+		azRange: "A-Z",
+		dateFrom: isoToDateSTD(new Date().toISOString()),
+		dateTo: isoToDateSTD(new Date().toISOString()),
+		dateRangeEnabled: false,
+		deathRange: ">=0",
+		reliable: true,
+		unreliable: true,
+		notes: true,
+		noNotes: true,
+	};
+
+	const currFilters = LocalDB.getDLFilterPrefs();
+	const [filters, setFilters] = useState<Filters>(
+		currFilters != null ? currFilters : defaultFilters,
+	);
+
+	const ids = sort(
+		filter(parent.childIDS, filters ? filters : defaultFilters, tree),
+		tree,
+	);
+
 	// console.log(
 	// 	ids.map((id) => {
 	// 		const node = tree.get(id);
@@ -69,6 +93,7 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 	// 		return node.name;
 	// 	}),
 	// );
+
 	return (
 		<>
 			<NavBar
@@ -114,6 +139,12 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 					setDeathLogIsInert(false);
 				}}
 				parent={parent}
+				filters={filters}
+				defaultFilters={defaultFilters}
+				onFilterChange={(newFilters) => {
+					setFilters(newFilters);
+					LocalDB.setDLFilterPrefs(newFilters);
+				}}
 			/>
 
 			<Modal

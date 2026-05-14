@@ -8,17 +8,26 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import type { DistinctTreeNode } from "../../../model/tree-node-model/TreeNodeSchema";
 import { assertIsNonNull } from "../../../utils/asserts";
-import { createNodeFormAddSchema, type NodeFormAdd } from "../formSchemas";
+import {
+	createNodeFormAddSchema,
+	FiltersSchema,
+	type Filters,
+	type NodeFormAdd,
+} from "../formSchemas";
 import type { VirtuosoHandle } from "react-virtuoso";
 import ToolbarAdd from "./ToolbarAdd";
 import Modal from "../../../components/Modal";
 import ToolbarFilter from "./ToolbarFilter";
+import LocalDB from "../../../services/LocalDB";
 
 type Props = {
 	onFocus: () => void;
 	onBlur: () => void;
 	virtuosoRef: React.RefObject<VirtuosoHandle | null>;
 	parent: DistinctTreeNode;
+	filters: Filters;
+	defaultFilters: Filters;
+	onFilterChange: (newFilters: Filters) => void;
 };
 
 export default function Toolbar({
@@ -26,6 +35,9 @@ export default function Toolbar({
 	onBlur,
 	virtuosoRef,
 	parent,
+	filters,
+	defaultFilters,
+	onFilterChange,
 }: Props) {
 	const addNode = useDeathLogStore((state) => state.addNode);
 	const [modalType, setModalType] = useState<"add" | "filter" | "sort">(
@@ -75,6 +87,20 @@ export default function Toolbar({
 			});
 		}
 		modalRef.current?.close();
+	};
+
+	const [pressedFilterConfirm, setPressedFilterConfirm] = useState(false);
+
+	const filterForm = useForm<Filters>({
+		defaultValues: filters,
+		mode: "onChange",
+		resolver: zodResolver(FiltersSchema),
+	});
+
+	const onFilter: SubmitHandler<Filters> = (formData) => {
+		onFilterChange(formData);
+		modalRef.current?.close();
+		setPressedFilterConfirm(true);
 	};
 
 	const header =
@@ -130,14 +156,24 @@ export default function Toolbar({
 						<ToolbarAdd type={type} form={addForm} onAdd={onAdd} />
 					) : (
 						<ToolbarFilter
-							type={modalType}
+							form={filterForm}
 							nodeType={type}
-							onClose={() => modalRef.current?.close()}
+							onFilter={onFilter}
+							onReset={() => {
+								onFilterChange(defaultFilters);
+								filterForm.reset(defaultFilters);
+							}}
 						/>
 					)
 				}
 				closeBtnName="Close"
-				onClose={() => addForm.reset()}
+				onClose={() => {
+					addForm.reset();
+					if (!pressedFilterConfirm) {
+						filterForm.reset(); // resets to what it once before, rather than straight up default
+					}
+					setPressedFilterConfirm(false);
+				}}
 			/>
 		</>
 	);

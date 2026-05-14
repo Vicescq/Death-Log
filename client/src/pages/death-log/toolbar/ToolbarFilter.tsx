@@ -1,46 +1,24 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, type SubmitHandler } from "react-hook-form";
+import { type SubmitHandler, type UseFormReturn } from "react-hook-form";
 import { CONSTANTS } from "../../../../shared/constants";
 import type { DistinctTreeNode } from "../../../model/tree-node-model/TreeNodeSchema";
-import LocalDB from "../../../services/LocalDB";
-import { isoToDateSTD } from "../../../utils/date";
-import { FiltersSchema, type Filters } from "../formSchemas";
+import {} from "../../../utils/date";
+import { type Filters } from "../formSchemas";
 
 type Props = {
-	type: "filter" | "sort";
+	form: UseFormReturn<Filters>;
 	nodeType: Exclude<DistinctTreeNode["type"], "ROOT_NODE">;
-	onClose: () => void;
+	onFilter: SubmitHandler<Filters>;
+	onReset: () => void;
 };
 
-export default function ToolbarFilter({ type, nodeType, onClose }: Props) {
-	const defaultFilters: Filters = {
-		uncompleted: true,
-		completed: true,
-		reoccurring: true,
-		azRange: "A-Z",
-		dateFrom: isoToDateSTD(new Date().toISOString()),
-		dateTo: isoToDateSTD(new Date().toISOString()),
-		dateRangeEnabled: false,
-		deathRange: ">=0",
-		reliable: true,
-		unreliable: true,
-		notes: true,
-		noNotes: true,
-	};
-	const filterPrefs = LocalDB.getDLFilterPrefs();
-	const form = useForm<Filters>({
-		defaultValues: filterPrefs != null ? filterPrefs : defaultFilters,
-		mode: "onChange",
-		resolver: zodResolver(FiltersSchema),
-	});
-
-	const onSubmit: SubmitHandler<Filters> = (formData) => {
-		LocalDB.setDLFilterPrefs(formData);
-		onClose();
-	};
-
+export default function ToolbarFilter({
+	form,
+	nodeType,
+	onFilter,
+	onReset,
+}: Props) {
 	return (
-		<form onSubmit={form.handleSubmit(onSubmit)}>
+		<form onSubmit={form.handleSubmit(onFilter)}>
 			<div className="flex flex-col gap-1">
 				<div className="my-1">
 					<div className="text-info mb-2">Displayed Statuses</div>
@@ -237,8 +215,7 @@ export default function ToolbarFilter({ type, nodeType, onClose }: Props) {
 					className="btn btn-info w-full"
 					onClick={(e) => {
 						e.preventDefault();
-						form.reset(defaultFilters);
-						LocalDB.setDLFilterPrefs(defaultFilters);
+						onReset();
 					}}
 				>
 					Reset to defaults
