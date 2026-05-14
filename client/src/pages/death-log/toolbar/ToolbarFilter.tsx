@@ -1,7 +1,7 @@
 import { type SubmitHandler, type UseFormReturn } from "react-hook-form";
 import { CONSTANTS } from "../../../../shared/constants";
 import type { DistinctTreeNode } from "../../../model/tree-node-model/TreeNodeSchema";
-import {} from "../../../utils/date";
+import { isoToDateSTD } from "../../../utils/date";
 import { type Filters } from "../formSchemas";
 
 type Props = {
@@ -90,7 +90,30 @@ export default function ToolbarFilter({
 								<input
 									type="checkbox"
 									className="checkbox checkbox-info"
-									{...form.register("dateRangeEnabled")}
+									{...form.register("dateRangeEnabled", {
+										onChange: () => {
+											if (
+												!form.getValues(
+													"dateRangeEnabled",
+												)
+											) {
+												form.setValue(
+													"dateFrom",
+													isoToDateSTD(
+														new Date().toISOString(),
+													),
+													{ shouldValidate: true },
+												);
+												form.setValue(
+													"dateTo",
+													isoToDateSTD(
+														new Date().toISOString(),
+													),
+													{ shouldValidate: true },
+												);
+											}
+										},
+									})}
 								/>
 								Date Range Filters
 							</div>

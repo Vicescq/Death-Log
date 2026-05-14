@@ -93,6 +93,7 @@ export default function Toolbar({
 		onFilterChange(formData);
 		modalRef.current?.close();
 		setPressedFilterConfirm(true);
+		filterForm.reset(formData);
 	};
 
 	const header =
@@ -104,7 +105,7 @@ export default function Toolbar({
 	return (
 		<>
 			<div className="fixed bottom-4 left-1/2 z-5 w-max -translate-x-1/2">
-				<ul className="menu menu-xs menu-horizontal bg-neutral rounded-box">
+				<ul className="menu menu-xs menu-horizontal bg-neutral rounded-box gap-1">
 					<li>
 						<button
 							onClick={() => {
@@ -128,7 +129,7 @@ export default function Toolbar({
 								setModalType("filter");
 								modalRef.current?.showModal();
 							}}
-							className="btn btn-neutral"
+							className={`btn ${Object.keys(filters).every((key) => filters[key as keyof Filters] === defaultFilters[key as keyof Filters]) ? "btn-neutral" : ""}`}
 						>
 							<img src={filter} alt="" />
 						</button>
@@ -154,11 +155,12 @@ export default function Toolbar({
 							onReset={() => {
 								onFilterChange(defaultFilters);
 								filterForm.reset(defaultFilters);
+								modalRef.current?.close();
 							}}
 						/>
 					)
 				}
-				closeBtnName="Close"
+				closeBtnName="Cancel"
 				onClose={() => {
 					addForm.reset();
 					if (!pressedFilterConfirm) {
