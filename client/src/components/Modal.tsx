@@ -15,8 +15,9 @@ export default function Modal({
 	closeBtnName,
 	onClose,
 }: Props) {
+	// css: modal duration-0 vs modal, modal for now but choose former if too delayed
 	return (
-		<dialog ref={ref} className={`modal duration-0`} onClose={onClose}>
+		<dialog ref={ref} className={`modal`} onClose={onClose}>
 			<div className="modal-box max-w-96">
 				<h3 className="text-lg font-bold">{header}</h3>
 

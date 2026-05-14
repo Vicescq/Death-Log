@@ -14,16 +14,11 @@ import {
 	type Filters,
 	type NodeFormAdd,
 } from "../formSchemas";
-import type { VirtuosoHandle } from "react-virtuoso";
 import ToolbarAdd from "./ToolbarAdd";
 import Modal from "../../../components/Modal";
 import ToolbarFilter from "./ToolbarFilter";
-import LocalDB from "../../../services/LocalDB";
 
 type Props = {
-	onFocus: () => void;
-	onBlur: () => void;
-	virtuosoRef: React.RefObject<VirtuosoHandle | null>;
 	parent: DistinctTreeNode;
 	filters: Filters;
 	defaultFilters: Filters;
@@ -31,9 +26,6 @@ type Props = {
 };
 
 export default function Toolbar({
-	onFocus,
-	onBlur,
-	virtuosoRef,
 	parent,
 	filters,
 	defaultFilters,

@@ -19,9 +19,6 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 	const virtuosoRef = useRef<VirtuosoHandle>(null);
 	const modalRef = useRef<HTMLDialogElement>(null);
 
-	const [pageOpacity, setPageOpacity] = useState("");
-	const [deathLogIsInert, setDeathLogIsInert] = useState(false);
-
 	const [focusedNode, setFocusedNode] = useState<DistinctTreeNode | null>(
 		null,
 	);
@@ -32,8 +29,7 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 				<ul
 					ref={ref as React.Ref<HTMLUListElement>} // no other workaround ?
 					{...props}
-					className={`list rounded-box m-auto max-w-[900px] ${pageOpacity}`}
-					inert={deathLogIsInert}
+					className={`list rounded-box m-auto max-w-[900px]`}
 				>
 					{props.children}
 				</ul>
@@ -81,10 +77,7 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 		currFilters != null ? currFilters : defaultFilters,
 	);
 
-	const ids = sort(
-		filter(parent.childIDS, filters ? filters : defaultFilters, tree),
-		tree,
-	);
+	const ids = sort(filter(parent.childIDS, filters, tree), tree);
 
 	// console.log(
 	// 	ids.map((id) => {
@@ -129,15 +122,6 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 			/>
 
 			<Toolbar
-				virtuosoRef={virtuosoRef}
-				onFocus={() => {
-					setPageOpacity("opacity-25");
-					setDeathLogIsInert(true);
-				}}
-				onBlur={() => {
-					setPageOpacity("");
-					setDeathLogIsInert(false);
-				}}
 				parent={parent}
 				filters={filters}
 				defaultFilters={defaultFilters}
