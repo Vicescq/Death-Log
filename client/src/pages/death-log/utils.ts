@@ -195,33 +195,6 @@ export function sort(ids: string[], tree: Tree) {
 		assertIsNonNull(nodeA);
 		assertIsNonNull(nodeB);
 
-		let result = 0;
-
-		function applyWeights(node: DistinctTreeNode) {
-			// non complete-> completed
-			let weight = 0;
-			if (node.completed) {
-				weight = -100;
-			} else {
-				weight = 100;
-			}
-			return weight;
-		}
-
-		const nodeAWeights = applyWeights(nodeA);
-		const nodeBWeights = applyWeights(nodeB);
-		if (nodeAWeights == nodeBWeights) {
-			if (nodeA.completed) {
-				assertIsNonNull(nodeA.dateEnd);
-				assertIsNonNull(nodeB.dateEnd);
-				result = Date.parse(nodeB.dateEnd) - Date.parse(nodeA.dateEnd);
-			} else {
-				result =
-					Date.parse(nodeB.dateStart) - Date.parse(nodeA.dateStart);
-			}
-		} else {
-			result = nodeBWeights > nodeAWeights ? 1 : -1;
-		}
-		return result;
+		return Date.parse(nodeB.dateStart) - Date.parse(nodeA.dateStart);
 	});
 }

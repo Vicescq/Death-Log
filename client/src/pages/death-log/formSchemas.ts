@@ -172,3 +172,12 @@ export const FiltersSchema = z.object({
 });
 
 export type Filters = z.infer<typeof FiltersSchema>;
+
+export const SortSchema = z.object({
+	ascending: z.boolean(),
+	created: z.boolean(),
+	completed: z.boolean(),
+	name: z.boolean(),
+	deaths: z.boolean(),
+	timeSpent: z.boolean(),
+});

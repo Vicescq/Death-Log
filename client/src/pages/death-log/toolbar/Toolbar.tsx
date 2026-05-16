@@ -17,6 +17,7 @@ import {
 import ToolbarAdd from "./ToolbarAdd";
 import Modal from "../../../components/Modal";
 import ToolbarFilter from "./ToolbarFilter";
+import ToolbarSort from "./ToolbarSort";
 
 type Props = {
 	parent: DistinctTreeNode;
@@ -135,7 +136,13 @@ export default function Toolbar({
 						</button>
 					</li>
 					<li>
-						<button className="btn btn-neutral">
+						<button
+							className="btn btn-neutral"
+							onClick={() => {
+								setModalType("sort");
+								modalRef.current?.showModal();
+							}}
+						>
 							<img src={sort} alt="" />
 						</button>
 					</li>
@@ -147,7 +154,7 @@ export default function Toolbar({
 				content={
 					modalType == "add" ? (
 						<ToolbarAdd type={type} form={addForm} onAdd={onAdd} />
-					) : (
+					) : modalType == "filter" ? (
 						<ToolbarFilter
 							form={filterForm}
 							nodeType={type}
@@ -158,6 +165,8 @@ export default function Toolbar({
 								modalRef.current?.close();
 							}}
 						/>
+					) : (
+						<ToolbarSort />
 					)
 				}
 				closeBtnName="Cancel"
