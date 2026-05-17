@@ -175,9 +175,13 @@ export type Filters = z.infer<typeof FiltersSchema>;
 
 export const SortSchema = z.object({
 	ascending: z.boolean(),
-	created: z.boolean(),
-	completed: z.boolean(),
-	name: z.boolean(),
-	deaths: z.boolean(),
-	timeSpent: z.boolean(),
+	sortingKey: z.literal([
+		"created",
+		"completed",
+		"name",
+		"deaths",
+		"timeSpent",
+	]),
 });
+
+export type SortSettings = z.infer<typeof SortSchema>;

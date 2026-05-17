@@ -9,7 +9,7 @@ import Card from "./card/Card";
 import type { DistinctTreeNode } from "../../model/tree-node-model/TreeNodeSchema";
 import Toolbar from "./toolbar/Toolbar";
 import LocalDB from "../../services/LocalDB";
-import type { Filters } from "./formSchemas";
+import type { Filters, SortSettings } from "./formSchemas";
 import { filter, sort } from "./utils";
 import { isoToDateSTD } from "../../utils/date";
 
@@ -77,15 +77,17 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 		currFilters != null ? currFilters : defaultFilters,
 	);
 
-	const ids = sort(filter(parent.childIDS, filters, tree), tree);
+	const defaultSortSettings: SortSettings = {
+		ascending: false,
+		sortingKey: "created",
+	};
+	const currSort = LocalDB.getDLSortPrefs();
+	const [sortSettings, setSortSettings] = useState<SortSettings>(
+		currSort != null ? currSort : defaultSortSettings,
+	);
+	console.log("DL:", sortSettings)
 
-	// console.log(
-	// 	ids.map((id) => {
-	// 		const node = tree.get(id);
-	// 		assertIsNonNull(node);
-	// 		return node.name;
-	// 	}),
-	// );
+	const ids = sort(filter(parent.childIDS, filters, tree), tree);
 
 	return (
 		<>
@@ -125,9 +127,15 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 				parent={parent}
 				filters={filters}
 				defaultFilters={defaultFilters}
+				sortSettings={sortSettings}
+				defaultSortSettings={defaultSortSettings}
 				onFilterChange={(newFilters) => {
 					setFilters(newFilters);
 					LocalDB.setDLFilterPrefs(newFilters);
+				}}
+				onSortChange={(newSortSettings) => {
+					setSortSettings(newSortSettings);
+					LocalDB.setDLSortPrefs(newSortSettings);
 				}}
 			/>
 

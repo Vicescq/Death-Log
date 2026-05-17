@@ -11,26 +11,35 @@ import { assertIsNonNull } from "../../../utils/asserts";
 import {
 	createNodeFormAddSchema,
 	FiltersSchema,
+	SortSchema,
 	type Filters,
 	type NodeFormAdd,
+	type SortSettings,
 } from "../formSchemas";
 import ToolbarAdd from "./ToolbarAdd";
 import Modal from "../../../components/Modal";
 import ToolbarFilter from "./ToolbarFilter";
 import ToolbarSort from "./ToolbarSort";
+import useConsoleLogOnStateChange from "../../../hooks/useConsoleLogOnStateChange";
 
 type Props = {
 	parent: DistinctTreeNode;
 	filters: Filters;
 	defaultFilters: Filters;
+	sortSettings: SortSettings;
+	defaultSortSettings: SortSettings;
 	onFilterChange: (newFilters: Filters) => void;
+	onSortChange: (newSortSettings: SortSettings) => void;
 };
 
 export default function Toolbar({
 	parent,
 	filters,
 	defaultFilters,
+	sortSettings,
+	defaultSortSettings,
 	onFilterChange,
+	onSortChange,
 }: Props) {
 	const addNode = useDeathLogStore((state) => state.addNode);
 	const [modalType, setModalType] = useState<"add" | "filter" | "sort">(
@@ -97,6 +106,22 @@ export default function Toolbar({
 		filterForm.reset(formData);
 	};
 
+	const [pressedSortConfirm, setPressedSortConfirm] = useState(false);
+	const sortForm = useForm<SortSettings>({
+		defaultValues: sortSettings,
+		mode: "onChange",
+		resolver: zodResolver(SortSchema),
+	});
+
+	const onSort: SubmitHandler<SortSettings> = (formData) => {
+		onSortChange(formData);
+		modalRef.current?.close();
+		setPressedSortConfirm(true);
+		sortForm.reset(formData);
+	};
+
+	useConsoleLogOnStateChange(sortSettings, sortSettings)
+
 	const header =
 		modalType == "add"
 			? "Add " + type[0].toUpperCase() + type.slice(1)
@@ -130,14 +155,14 @@ export default function Toolbar({
 								setModalType("filter");
 								modalRef.current?.showModal();
 							}}
-							className={`btn ${Object.keys(filters).every((key) => filters[key as keyof Filters] === defaultFilters[key as keyof Filters]) ? "btn-neutral" : ""}`}
+							className={`btn ${Object.keys(defaultFilters).every((key) => filters[key as keyof Filters] === defaultFilters[key as keyof Filters]) ? "btn-neutral" : ""}`}
 						>
 							<img src={filter} alt="" />
 						</button>
 					</li>
 					<li>
 						<button
-							className="btn btn-neutral"
+							className={`btn ${Object.keys(defaultSortSettings).every((key) => sortSettings[key as keyof SortSettings] === defaultSortSettings[key as keyof SortSettings]) ? "btn-neutral" : ""}`}
 							onClick={() => {
 								setModalType("sort");
 								modalRef.current?.showModal();
@@ -166,16 +191,32 @@ export default function Toolbar({
 							}}
 						/>
 					) : (
-						<ToolbarSort />
+						<ToolbarSort
+							form={sortForm}
+							onReset={() => {
+								onSortChange(defaultSortSettings);
+								sortForm.reset(defaultSortSettings);
+								modalRef.current?.close();
+							}}
+							onSort={onSort}
+							nodeType={type}
+						/>
 					)
 				}
 				closeBtnName="Cancel"
 				onClose={() => {
 					addForm.reset();
+
+					// resets to what it once before, rather than straight up default
 					if (!pressedFilterConfirm) {
-						filterForm.reset(); // resets to what it once before, rather than straight up default
+						filterForm.reset();
 					}
+					if (!pressedSortConfirm) {
+						sortForm.reset();
+					}
+
 					setPressedFilterConfirm(false);
+					setPressedSortConfirm(false);
 				}}
 			/>
 		</>

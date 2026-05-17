@@ -115,7 +115,7 @@ export default function ToolbarFilter({
 										},
 									})}
 								/>
-								Date Range Filters
+								Enable Date Range Filters
 							</div>
 						</label>
 					</div>

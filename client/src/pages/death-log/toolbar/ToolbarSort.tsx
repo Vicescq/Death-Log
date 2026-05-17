@@ -1,6 +1,23 @@
-export default function ToolbarSort() {
+import type { UseFormReturn, SubmitHandler } from "react-hook-form";
+import type { SortSettings } from "../formSchemas";
+import type { DistinctTreeNode } from "../../../model/tree-node-model/TreeNodeSchema";
+
+type Props = {
+	form: UseFormReturn<SortSettings>;
+	nodeType: Exclude<DistinctTreeNode["type"], "ROOT_NODE">;
+	onSort: SubmitHandler<SortSettings>;
+	onReset: () => void;
+};
+
+export default function ToolbarSort({
+	form,
+	onReset,
+	onSort,
+	nodeType,
+}: Props) {
+	console.log(form.getValues());
 	return (
-		<form onSubmit={() => 1}>
+		<form onSubmit={form.handleSubmit(onSort)}>
 			<div className="flex flex-col gap-1">
 				<div className="my-1">
 					<label>
@@ -8,7 +25,7 @@ export default function ToolbarSort() {
 							<input
 								type="checkbox"
 								className="checkbox checkbox-info"
-								// {...form.register("uncompleted")}
+								{...form.register("ascending")}
 							/>
 							Ascending
 						</div>
@@ -16,16 +33,16 @@ export default function ToolbarSort() {
 				</div>
 
 				<div className="my-1">
-					<div className="text-info mb-2">Contexts</div>
+					<div className="text-info mb-2">Sorting Key</div>
 					<ul className="flex flex-col gap-2">
 						<li>
 							<label>
 								<div className="flex gap-4">
 									<input
 										type="radio"
-										name="radio-4"
-										className="radio radio-primary"
-										defaultChecked
+										className="radio radio-info"
+										{...form.register("sortingKey")}
+										value={"created"}
 									/>
 									Date Created
 								</div>
@@ -36,8 +53,9 @@ export default function ToolbarSort() {
 								<div className="flex gap-4">
 									<input
 										type="radio"
-										name="radio-4"
-										className="radio radio-primary"
+										className="radio radio-info"
+										{...form.register("sortingKey")}
+										value={"completed"}
 									/>
 									Date Completed
 								</div>
@@ -48,9 +66,9 @@ export default function ToolbarSort() {
 								<div className="flex gap-4">
 									<input
 										type="radio"
-										name="radio-4"
-										className="radio radio-primary"
-										defaultChecked
+										className="radio radio-info"
+										{...form.register("sortingKey")}
+										value={"name"}
 									/>
 									Name
 								</div>
@@ -61,9 +79,9 @@ export default function ToolbarSort() {
 								<div className="flex gap-4">
 									<input
 										type="radio"
-										name="radio-4"
-										className="radio radio-primary"
-										defaultChecked
+										className="radio radio-info"
+										{...form.register("sortingKey")}
+										value={"deaths"}
 									/>
 									Death Count
 								</div>
@@ -74,9 +92,9 @@ export default function ToolbarSort() {
 								<div className="flex gap-4">
 									<input
 										type="radio"
-										name="radio-4"
-										className="radio radio-primary"
-										defaultChecked
+										className="radio radio-info"
+										{...form.register("sortingKey")}
+										value={"timeSpent"}
 									/>
 									Time Spent
 								</div>
@@ -93,19 +111,19 @@ export default function ToolbarSort() {
 				<button
 					type="submit"
 					className="btn btn-success mt-2 w-full"
-					// disabled={
-					// 	!form.formState.isValid || !form.formState.isDirty
-					// }
+					disabled={
+						!form.formState.isValid || !form.formState.isDirty
+					}
 				>
 					Confirm
 				</button>
 				<button
 					type="reset"
 					className="btn btn-info w-full"
-					// onClick={(e) => {
-					// 	e.preventDefault();
-					// 	onReset();
-					// }}
+					onClick={(e) => {
+						e.preventDefault();
+						onReset();
+					}}
 				>
 					Reset to defaults
 				</button>

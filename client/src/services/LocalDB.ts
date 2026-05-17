@@ -1,6 +1,6 @@
 import { db } from "../model/LocalDBSchema";
 import type { DistinctTreeNode } from "../model/tree-node-model/TreeNodeSchema";
-import type { Filters } from "../pages/death-log/formSchemas";
+import type { Filters, SortSettings } from "../pages/death-log/formSchemas";
 
 export default class LocalDB {
 	constructor() {}
@@ -130,5 +130,19 @@ export default class LocalDB {
 
 	static setDLFilterPrefs(filters: Filters) {
 		localStorage.setItem("filters", JSON.stringify(filters));
+	}
+
+	static getDLSortPrefs(): SortSettings | null {
+		const sortSettingsSTR = localStorage.getItem("sort_settings");
+
+		if (sortSettingsSTR == null) {
+			return null;
+		} else {
+			return JSON.parse(sortSettingsSTR);
+		}
+	}
+
+	static setDLSortPrefs(sortSettings: SortSettings) {
+		localStorage.setItem("sort_settings", JSON.stringify(sortSettings));
 	}
 }
