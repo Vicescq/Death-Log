@@ -1,5 +1,5 @@
 import NavBar from "../../components/nav-bar/NavBar";
-import React, { forwardRef, useRef, useState } from "react";
+import React, { forwardRef, useEffect, useRef, useState } from "react";
 import { Virtuoso, type Components, type VirtuosoHandle } from "react-virtuoso";
 import Breadcrumb from "./breadcrumb/Breadcrumb";
 import { useDeathLogStore } from "../../stores/useDeathLogStore";

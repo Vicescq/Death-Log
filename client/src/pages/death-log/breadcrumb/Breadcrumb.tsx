@@ -1,10 +1,9 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import useMediaQuery from "../../../hooks/useMediaQuery";
 import Modal from "../../../components/Modal";
 import navIcon from "../../../assets/arrow_forward.svg";
-import { Link } from "react-router";
+import { Link, useParams } from "react-router";
 import useBreadcrumbMembers from "./useBreadcrumbMembers";
-import useRenderDLCorrectly from "../hooks/useRenderDLCorrectly";
 
 export type BreadcrumbMember = {
 	link: string;
@@ -93,7 +92,11 @@ export default function Breadcrumb() {
 		}
 	}
 
-	useRenderDLCorrectly(() => condensedMembersModalRef.current?.close());
+	// Due to DL's route structure: /:id representing different tree depths, certain UI like navigation dialog for breadcrumbs stay rendered on page transition. This unrenders that dialog for better UX
+	const { id } = useParams();
+	useEffect(() => {
+		condensedMembersModalRef.current?.close();
+	}, [id]);
 
 	return (
 		<>

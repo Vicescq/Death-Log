@@ -25,7 +25,7 @@ export default function DeathLogRouter() {
 				if (isEditing) {
 					return <CardEditor node={node} />;
 				}
-				return <DeathLog parent={node} />;
+				return <DeathLog parent={node} key={node.id} />; // needs key prop in order to treat any /log/:id sibling nodes as diff views instead of same, which in turn forces a rerun of every react state logic for consistency
 			case "profile":
 				if (isEditing) {
 					return <CardEditor node={node} />;
