@@ -10,7 +10,7 @@ import type { DistinctTreeNode } from "../../model/tree-node-model/TreeNodeSchem
 import Toolbar from "./toolbar/Toolbar";
 import LocalDB from "../../services/LocalDB";
 import type { Filters, SortSettings } from "./formSchemas";
-import { filter, sort } from "./utils";
+import { filter, getDeathlogViewType, sort } from "./utils";
 import { isoToDateSTD } from "../../utils/date";
 
 export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
@@ -57,6 +57,8 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 		modalRef.current?.close();
 	}
 
+	const pageViewType = getDeathlogViewType(parent);
+
 	const defaultFilters: Filters = {
 		uncompleted: true,
 		completed: true,
@@ -72,7 +74,7 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 		noNotes: true,
 	};
 
-	const currFilters = LocalDB.getDLFilterPrefs();
+	const currFilters = LocalDB.getDLFilterPrefs(pageViewType);
 	const [filters, setFilters] = useState<Filters>(
 		currFilters != null ? currFilters : defaultFilters,
 	);
@@ -81,11 +83,10 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 		ascending: false,
 		sortingKey: "created",
 	};
-	const currSort = LocalDB.getDLSortPrefs();
+	const currSort = LocalDB.getDLSortPrefs(pageViewType);
 	const [sortSettings, setSortSettings] = useState<SortSettings>(
 		currSort != null ? currSort : defaultSortSettings,
 	);
-	console.log("DL:", sortSettings)
 
 	const ids = sort(filter(parent.childIDS, filters, tree), tree);
 
@@ -131,11 +132,19 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 				defaultSortSettings={defaultSortSettings}
 				onFilterChange={(newFilters) => {
 					setFilters(newFilters);
-					LocalDB.setDLFilterPrefs(newFilters);
+					LocalDB.setDLFilterPrefs(
+						newFilters,
+						pageViewType,
+						defaultFilters,
+					);
 				}}
 				onSortChange={(newSortSettings) => {
 					setSortSettings(newSortSettings);
-					LocalDB.setDLSortPrefs(newSortSettings);
+					LocalDB.setDLSortPrefs(
+						newSortSettings,
+						pageViewType,
+						defaultSortSettings,
+					);
 				}}
 			/>
 

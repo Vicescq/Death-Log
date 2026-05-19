@@ -20,6 +20,7 @@ import ToolbarAdd from "./ToolbarAdd";
 import Modal from "../../../components/Modal";
 import ToolbarFilter from "./ToolbarFilter";
 import ToolbarSort from "./ToolbarSort";
+import { getDeathlogViewType } from "../utils";
 
 type Props = {
 	parent: DistinctTreeNode;
@@ -53,17 +54,7 @@ export default function Toolbar({
 		return node.name;
 	});
 
-	let type: Exclude<DistinctTreeNode["type"], "ROOT_NODE">;
-	switch (parent.type) {
-		case "ROOT_NODE":
-			type = "game";
-			break;
-		case "game":
-			type = "profile";
-			break;
-		default:
-			type = "subject";
-	}
+	const type = getDeathlogViewType(parent);
 
 	const nodeFormAddSchema = createNodeFormAddSchema(siblingNames, null);
 

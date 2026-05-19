@@ -1,6 +1,12 @@
 import { db } from "../model/LocalDBSchema";
 import type { DistinctTreeNode } from "../model/tree-node-model/TreeNodeSchema";
 import type { Filters, SortSettings } from "../pages/death-log/formSchemas";
+import {
+	constructInitPref,
+	type DeathLogViewType,
+} from "../pages/death-log/utils";
+
+export type DeathLogViewPrefs<T> = Record<DeathLogViewType, T>;
 
 export default class LocalDB {
 	constructor() {}
@@ -118,31 +124,101 @@ export default class LocalDB {
 		});
 	}
 
-	static getDLFilterPrefs(): Filters | null {
-		const filtersSTR = localStorage.getItem("filters");
+	static getPrefs(pref: "filters" | "sort") {
+		return localStorage.getItem;
+	}
+
+	static getDLFilterPrefs(type: DeathLogViewType): Filters | null {
+		const filtersSTR = localStorage.getItem(`filters`);
 
 		if (filtersSTR == null) {
 			return null;
 		} else {
-			return JSON.parse(filtersSTR);
+			const obj: DeathLogViewPrefs<Filters> = JSON.parse(filtersSTR);
+			return obj[type];
 		}
 	}
 
-	static setDLFilterPrefs(filters: Filters) {
-		localStorage.setItem("filters", JSON.stringify(filters));
+	static setDLFilterPrefs(
+		filters: Filters,
+		type: DeathLogViewType,
+		defaultFilters: Filters,
+	) {
+		const filtersSTR = localStorage.getItem(`filters`);
+		if (filtersSTR == null) {
+			localStorage.setItem(
+				"filters",
+				JSON.stringify(constructInitPref(defaultFilters)),
+			);
+		} else {
+			const obj: DeathLogViewPrefs<Filters> = JSON.parse(filtersSTR);
+			obj[type] = filters;
+			localStorage.setItem("filters", JSON.stringify(obj));
+		}
 	}
 
-	static getDLSortPrefs(): SortSettings | null {
+	static getDLSortPrefs(type: DeathLogViewType): SortSettings | null {
 		const sortSettingsSTR = localStorage.getItem("sort_settings");
 
 		if (sortSettingsSTR == null) {
 			return null;
 		} else {
-			return JSON.parse(sortSettingsSTR);
+			const obj: DeathLogViewPrefs<SortSettings> =
+				JSON.parse(sortSettingsSTR);
+			return obj[type];
 		}
 	}
 
-	static setDLSortPrefs(sortSettings: SortSettings) {
-		localStorage.setItem("sort_settings", JSON.stringify(sortSettings));
+	static setDLSortPrefs(
+		sortSettings: SortSettings,
+		type: DeathLogViewType,
+		defaultSortSettings: SortSettings,
+	) {
+		const sortSettingsSTR = localStorage.getItem("sort_settings");
+
+		if (sortSettingsSTR == null) {
+			localStorage.setItem(
+				"sort_settings",
+				JSON.stringify(constructInitPref(defaultSortSettings)),
+			);
+		} else {
+			const obj: DeathLogViewPrefs<SortSettings> =
+				JSON.parse(sortSettingsSTR);
+			obj[type] = sortSettings;
+			localStorage.setItem("sort_settings", JSON.stringify(obj));
+		}
 	}
+
+	// static getDLFilterPrefs(type: DeathLogViewType): Filters | null {
+	// 	const filtersSTR = localStorage.getItem(`${type}s_view_filters`);
+
+	// 	if (filtersSTR == null) {
+	// 		return null;
+	// 	} else {
+	// 		return JSON.parse(filtersSTR);
+	// 	}
+	// }
+
+	// static setDLFilterPrefs(filters: Filters, type: DeathLogViewType) {
+	// 	localStorage.setItem(`${type}s_view_filters`, JSON.stringify(filters));
+	// }
+
+	// static getDLSortPrefs(type: DeathLogViewType): SortSettings | null {
+	// 	const sortSettingsSTR = localStorage.getItem(
+	// 		`${type}s_view_sort_settings`,
+	// 	);
+
+	// 	if (sortSettingsSTR == null) {
+	// 		return null;
+	// 	} else {
+	// 		return JSON.parse(sortSettingsSTR);
+	// 	}
+	// }
+
+	// static setDLSortPrefs(sortSettings: SortSettings, type: DeathLogViewType) {
+	// 	localStorage.setItem(
+	// 		`${type}s_view_sort_settings`,
+	// 		JSON.stringify(sortSettings),
+	// 	);
+	// }
 }

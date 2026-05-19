@@ -87,19 +87,21 @@ export default function ToolbarSort({
 								</div>
 							</label>
 						</li>
-						<li>
-							<label>
-								<div className="flex gap-4">
-									<input
-										type="radio"
-										className="radio radio-info"
-										{...form.register("sortingKey")}
-										value={"timeSpent"}
-									/>
-									Time Spent
-								</div>
-							</label>
-						</li>
+						{nodeType == "subject" ? (
+							<li>
+								<label>
+									<div className="flex gap-4">
+										<input
+											type="radio"
+											className="radio radio-info"
+											{...form.register("sortingKey")}
+											value={"timeSpent"}
+										/>
+										Time Spent
+									</div>
+								</label>
+							</li>
+						) : null}
 					</ul>
 				</div>
 

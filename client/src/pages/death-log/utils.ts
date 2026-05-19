@@ -3,6 +3,7 @@ import type {
 	DistinctTreeNode,
 	Tree,
 } from "../../model/tree-node-model/TreeNodeSchema";
+import type { DeathLogViewPrefs } from "../../services/LocalDB";
 import { createDeath } from "../../stores/utils";
 import { assertIsNonNull } from "../../utils/asserts";
 import { dateTimeSTDToISO } from "../../utils/date";
@@ -197,4 +198,26 @@ export function sort(ids: string[], tree: Tree) {
 
 		return Date.parse(nodeB.dateStart) - Date.parse(nodeA.dateStart);
 	});
+}
+
+export type DeathLogViewType = Exclude<DistinctTreeNode["type"], "ROOT_NODE">;
+export function getDeathlogViewType(
+	parent: DistinctTreeNode,
+): DeathLogViewType {
+	switch (parent.type) {
+		case "ROOT_NODE":
+			return "game";
+		case "game":
+			return "profile";
+		default:
+			return "subject";
+	}
+}
+
+export function constructInitPref<T>(defaultSettings: T): DeathLogViewPrefs<T> {
+	return {
+		game: defaultSettings,
+		profile: defaultSettings,
+		subject: defaultSettings,
+	};
 }
