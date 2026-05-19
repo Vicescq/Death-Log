@@ -20,7 +20,6 @@ import ToolbarAdd from "./ToolbarAdd";
 import Modal from "../../../components/Modal";
 import ToolbarFilter from "./ToolbarFilter";
 import ToolbarSort from "./ToolbarSort";
-import useConsoleLogOnStateChange from "../../../hooks/useConsoleLogOnStateChange";
 
 type Props = {
 	parent: DistinctTreeNode;
@@ -120,14 +119,33 @@ export default function Toolbar({
 		sortForm.reset(formData);
 	};
 
-	useConsoleLogOnStateChange(sortSettings, sortSettings)
-
 	const header =
 		modalType == "add"
 			? "Add " + type[0].toUpperCase() + type.slice(1)
 			: modalType == "filter"
 				? "Filter options"
 				: "Sort options";
+
+	const nonCustomFilters = Object.keys(defaultFilters).every((key) => {
+		if (
+			(key as keyof Filters) == "dateRangeEnabled" &&
+			!filters["dateRangeEnabled"]
+		) {
+			return true;
+		} else {
+			return (
+				filters[key as keyof Filters] ===
+				defaultFilters[key as keyof Filters]
+			);
+		}
+	});
+
+	const nonCustomSort = Object.keys(defaultSortSettings).every(
+		(key) =>
+			sortSettings[key as keyof SortSettings] ===
+			defaultSortSettings[key as keyof SortSettings],
+	);
+
 	return (
 		<>
 			<div className="fixed bottom-4 left-1/2 z-5 w-max -translate-x-1/2">
@@ -155,14 +173,14 @@ export default function Toolbar({
 								setModalType("filter");
 								modalRef.current?.showModal();
 							}}
-							className={`btn ${Object.keys(defaultFilters).every((key) => filters[key as keyof Filters] === defaultFilters[key as keyof Filters]) ? "btn-neutral" : ""}`}
+							className={`btn ${nonCustomFilters ? "btn-neutral" : ""}`}
 						>
 							<img src={filter} alt="" />
 						</button>
 					</li>
 					<li>
 						<button
-							className={`btn ${Object.keys(defaultSortSettings).every((key) => sortSettings[key as keyof SortSettings] === defaultSortSettings[key as keyof SortSettings]) ? "btn-neutral" : ""}`}
+							className={`btn ${nonCustomSort ? "btn-neutral" : ""}`}
 							onClick={() => {
 								setModalType("sort");
 								modalRef.current?.showModal();

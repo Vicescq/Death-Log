@@ -1,8 +1,14 @@
-import { type SubmitHandler, type UseFormReturn } from "react-hook-form";
+import {
+	useWatch,
+	type SubmitHandler,
+	type UseFormReturn,
+	type UseFormWatch,
+} from "react-hook-form";
 import { CONSTANTS } from "../../../../shared/constants";
 import type { DistinctTreeNode } from "../../../model/tree-node-model/TreeNodeSchema";
 import { isoToDateSTD } from "../../../utils/date";
 import { type Filters } from "../formSchemas";
+import { useState } from "react";
 
 type Props = {
 	form: UseFormReturn<Filters>;
@@ -17,6 +23,8 @@ export default function ToolbarFilter({
 	onFilter,
 	onReset,
 }: Props) {
+	const dateRangeEnabled = form.watch("dateRangeEnabled");
+
 	return (
 		<form onSubmit={form.handleSubmit(onFilter)}>
 			<div className="flex flex-col gap-1">
@@ -119,29 +127,32 @@ export default function ToolbarFilter({
 							</div>
 						</label>
 					</div>
-					<div className="flex gap-4">
-						<label className="floating-label w-full">
-							<span>From</span>
-							<input
-								type="date"
-								className="input"
-								{...form.register("dateFrom")}
-								disabled={!form.getValues("dateRangeEnabled")}
-							/>
-						</label>
-						<label className="floating-label w-full">
-							<span>To</span>
-							<input
-								type="date"
-								className="input"
-								{...form.register("dateTo")}
-								disabled={!form.getValues("dateRangeEnabled")}
-							/>
-						</label>
-					</div>
-					<div className="text-accent text-sm">
-						{CONSTANTS.INFO.DATE_RANGE}
-					</div>
+
+					{dateRangeEnabled ? (
+						<>
+							<div className="flex gap-4">
+								<label className="floating-label w-full">
+									<span>From</span>
+									<input
+										type="date"
+										className="input"
+										{...form.register("dateFrom")}
+									/>
+								</label>
+								<label className="floating-label w-full">
+									<span>To</span>
+									<input
+										type="date"
+										className="input"
+										{...form.register("dateTo")}
+									/>
+								</label>
+							</div>
+							<div className="text-accent text-sm">
+								{CONSTANTS.INFO.DATE_RANGE}
+							</div>
+						</>
+					) : null}
 				</div>
 
 				<div className="my-1">
