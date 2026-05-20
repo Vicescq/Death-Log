@@ -118,8 +118,10 @@ export default function Toolbar({
 				: "Sort options";
 
 	const nonCustomFilters = Object.keys(defaultFilters).every((key) => {
+		console.log(key);
 		if (
-			(key as keyof Filters) == "dateRangeEnabled" &&
+			((key as keyof Filters) == "dateFrom" ||
+				(key as keyof Filters) == "dateTo") &&
 			!filters["dateRangeEnabled"]
 		) {
 			return true;
@@ -136,6 +138,8 @@ export default function Toolbar({
 			sortSettings[key as keyof SortSettings] ===
 			defaultSortSettings[key as keyof SortSettings],
 	);
+
+	console.log(nonCustomFilters);
 
 	return (
 		<>
