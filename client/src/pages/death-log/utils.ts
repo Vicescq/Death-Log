@@ -153,8 +153,7 @@ export function filter(ids: string[], filters: Filters, tree: Tree): string[] {
 				case "reliable":
 					relFlagBoolVals.push(
 						filters[filterKey] &&
-							node.dateStartRel &&
-							node.dateEndRel,
+							(node.dateStartRel || node.dateEndRel),
 					);
 					break;
 				case "reoccurring":
@@ -170,8 +169,7 @@ export function filter(ids: string[], filters: Filters, tree: Tree): string[] {
 				case "unreliable":
 					relFlagBoolVals.push(
 						filters[filterKey] &&
-							!node.dateStartRel &&
-							!node.dateEndRel,
+							(!node.dateStartRel || !node.dateEndRel),
 					);
 					break;
 			}

@@ -139,8 +139,6 @@ export default function Toolbar({
 			defaultSortSettings[key as keyof SortSettings],
 	);
 
-	console.log(nonCustomFilters);
-
 	return (
 		<>
 			<div className="fixed bottom-4 left-1/2 z-5 w-max -translate-x-1/2">
