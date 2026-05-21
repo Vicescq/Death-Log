@@ -88,7 +88,7 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 		currSort != null ? currSort : defaultSortSettings,
 	);
 
-	const ids = sort(filter(parent.childIDS, filters, tree), tree);
+	const ids = sort(filter(parent.childIDS, filters, tree), tree, sortSettings);
 
 	return (
 		<>

@@ -5,9 +5,9 @@ import type {
 } from "../../model/tree-node-model/TreeNodeSchema";
 import type { DeathLogViewPrefs } from "../../services/LocalDB";
 import { createDeath } from "../../stores/utils";
-import { assertIsNonNull } from "../../utils/asserts";
+import { assertIsNonNull, assertIsSubject } from "../../utils/asserts";
 import { dateTimeSTDToISO } from "../../utils/date";
-import type { Filters } from "./formSchemas";
+import type { Filters, SortSettings } from "./formSchemas";
 
 export function calcDeaths(node: DistinctTreeNode, tree: Tree) {
 	let sum = 0;
@@ -188,7 +188,7 @@ export function filter(ids: string[], filters: Filters, tree: Tree): string[] {
 	});
 }
 
-export function sort(ids: string[], tree: Tree) {
+export function sort(ids: string[], tree: Tree, sortSettings: SortSettings) {
 	return ids.toSorted((a, b) => {
 		const nodeA = tree.get(a);
 		const nodeB = tree.get(b);
@@ -196,7 +196,96 @@ export function sort(ids: string[], tree: Tree) {
 		assertIsNonNull(nodeA);
 		assertIsNonNull(nodeB);
 
-		return Date.parse(nodeB.dateStart) - Date.parse(nodeA.dateStart);
+		function determineSortOrder(x: number, y: number) {
+			if (sortSettings["ascending"]) {
+				return x - y;
+			} else {
+				return y - x;
+			}
+		}
+
+		function handleNullVals<T>(
+			nullableValA: T | null,
+			nullableValB: T | null,
+			bothNonNullCaseCB: () => number,
+		) {
+			if (nullableValA == null && nullableValB == null) {
+				return 0;
+			} else if (nullableValA == null && nullableValB != null) {
+				return 1;
+			} else if (nullableValA != null && nullableValB == null) {
+				return -1;
+			} else {
+				return bothNonNullCaseCB();
+			}
+		}
+
+		switch (sortSettings["sortingKey"]) {
+			case "completed":
+				return handleNullVals(nodeA.dateEnd, nodeB.dateEnd, () => {
+					// guranteed due to the last case being both non nulls. Have to use else because switch case linting gets mad
+					assertIsNonNull(nodeA.dateEnd);
+					assertIsNonNull(nodeB.dateEnd);
+
+					return determineSortOrder(
+						Date.parse(nodeA.dateEnd),
+						Date.parse(nodeB.dateEnd),
+					);
+				});
+			case "created":
+				return determineSortOrder(
+					Date.parse(nodeA.dateStart),
+					Date.parse(nodeB.dateStart),
+				);
+			case "deaths":
+				if (nodeA.type == "subject" && nodeB.type == "subject") {
+					return determineSortOrder(
+						nodeA.log.length,
+						nodeB.log.length,
+					);
+				} else {
+					return determineSortOrder(
+						calcDeaths(nodeA, tree),
+						calcDeaths(nodeB, tree),
+					);
+				}
+			case "name":
+				if (nodeA.name < nodeB.name) {
+					return determineSortOrder(0, 1);
+				} else if (nodeA.name > nodeB.name) {
+					return determineSortOrder(1, 0);
+				} else {
+					// equal case
+					return determineSortOrder(0, 0);
+				}
+			case "timeSpent":
+				assertIsSubject(nodeA);
+				assertIsSubject(nodeB);
+
+				function parseTime(timeSpentSTR: string) {
+					return timeSpentSTR
+						.split(":")
+						.map((str, i) =>
+							i == 0
+								? Number(str) * 60 * 60
+								: i == 1
+									? Number(str) * 60
+									: Number(str),
+						)
+						.reduce((acc, val) => acc + val, 0);
+				}
+
+				return handleNullVals(nodeA.timeSpent, nodeB.timeSpent, () => {
+					// same description as completed sort key case
+					assertIsNonNull(nodeA.timeSpent);
+					assertIsNonNull(nodeB.timeSpent);
+
+					return determineSortOrder(
+						parseTime(nodeA.timeSpent),
+						parseTime(nodeB.timeSpent),
+					);
+				});
+		}
 	});
 }
 
