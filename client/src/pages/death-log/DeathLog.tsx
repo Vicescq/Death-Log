@@ -68,8 +68,10 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 		dateTo: isoToDateSTD(new Date().toISOString()),
 		dateRangeEnabled: false,
 		deathRange: ">=0",
-		reliable: true,
-		unreliable: true,
+		reliableStart: true,
+		unreliableStart: true,
+		reliableEnd: true,
+		unreliableEnd: true,
 		notes: true,
 		noNotes: true,
 	};
@@ -88,7 +90,11 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 		currSort != null ? currSort : defaultSortSettings,
 	);
 
-	const ids = sort(filter(parent.childIDS, filters, tree), tree, sortSettings);
+	const ids = sort(
+		filter(parent.childIDS, filters, tree),
+		tree,
+		sortSettings,
+	);
 
 	return (
 		<>

@@ -175,22 +175,20 @@ export default function DateRangeForm<T extends FieldValues>({
 						/>
 					</div>
 
-					{contextObj.completed ? (
-						<div className="flex">
-							<label
-								htmlFor="completion-date-reliable-toggle"
-								className={`text-[1rem] ${dirtyFields.dateEndRel ? "text-success" : ""}`}
-							>
-								Completion Timestamp
-							</label>
-							<input
-								id="completion-date-reliable-toggle"
-								type="checkbox"
-								className="toggle toggle-primary my-auto ml-auto"
-								{...register(registeredNames.dateEndRel)}
-							/>
-						</div>
-					) : null}
+					<div className="flex">
+						<label
+							htmlFor="completion-date-reliable-toggle"
+							className={`text-[1rem] ${dirtyFields.dateEndRel ? "text-success" : ""}`}
+						>
+							Completion Timestamp
+						</label>
+						<input
+							id="completion-date-reliable-toggle"
+							type="checkbox"
+							className="toggle toggle-primary my-auto ml-auto"
+							{...register(registeredNames.dateEndRel)}
+						/>
+					</div>
 				</div>
 				<div className="divider my-1"></div>
 			</div>

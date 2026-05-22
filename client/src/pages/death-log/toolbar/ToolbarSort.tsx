@@ -15,7 +15,6 @@ export default function ToolbarSort({
 	onSort,
 	nodeType,
 }: Props) {
-	console.log(form.getValues());
 	return (
 		<form onSubmit={form.handleSubmit(onSort)}>
 			<div className="flex flex-col gap-1">

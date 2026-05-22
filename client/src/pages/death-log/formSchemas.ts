@@ -165,8 +165,10 @@ export const FiltersSchema = z.object({
 	deathRange: z.string().regex(/^((=|<|<=|>|>=)\d+|\d+-\d+)$/, {
 		error: CONSTANTS.ERROR.GEN_FORMAT,
 	}),
-	reliable: z.boolean(),
-	unreliable: z.boolean(),
+	reliableStart: z.boolean(),
+	unreliableStart: z.boolean(),
+	reliableEnd: z.boolean(),
+	unreliableEnd: z.boolean(),
 	notes: z.boolean(),
 	noNotes: z.boolean(),
 });

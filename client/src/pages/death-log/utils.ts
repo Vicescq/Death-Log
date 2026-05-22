@@ -150,11 +150,13 @@ export function filter(ids: string[], filters: Filters, tree: Tree): string[] {
 						filters[filterKey] && node.notes.length > 0,
 					);
 					break;
-				case "reliable":
+				case "reliableStart":
 					relFlagBoolVals.push(
-						filters[filterKey] &&
-							(node.dateStartRel || node.dateEndRel),
+						filters[filterKey] && node.dateStartRel,
 					);
+					break;
+				case "reliableEnd":
+					relFlagBoolVals.push(filters[filterKey] && node.dateEndRel);
 					break;
 				case "reoccurring":
 					if (node.type == "subject") {
@@ -166,10 +168,14 @@ export function filter(ids: string[], filters: Filters, tree: Tree): string[] {
 				case "uncompleted":
 					statusBoolVals.push(filters[filterKey] && !node.completed);
 					break;
-				case "unreliable":
+				case "unreliableStart":
 					relFlagBoolVals.push(
-						filters[filterKey] &&
-							(!node.dateStartRel || !node.dateEndRel),
+						filters[filterKey] && !node.dateStartRel,
+					);
+					break;
+				case "unreliableEnd":
+					relFlagBoolVals.push(
+						filters[filterKey] && !node.dateEndRel,
 					);
 					break;
 			}

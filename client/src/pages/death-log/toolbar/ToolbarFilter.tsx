@@ -184,9 +184,10 @@ export default function ToolbarFilter({
 									<input
 										type="checkbox"
 										className="checkbox checkbox-info"
-										{...form.register("reliable")}
+										{...form.register("reliableStart")}
 									/>
-									Show entries flagged as reliable
+									Show entries flagged as reliable (creation
+									date)
 								</div>
 							</label>
 						</li>
@@ -196,9 +197,36 @@ export default function ToolbarFilter({
 									<input
 										type="checkbox"
 										className="checkbox checkbox-info"
-										{...form.register("unreliable")}
+										{...form.register("unreliableStart")}
+									/>
+									Show entries flagged as unreliable (creation
+									date)
+								</div>
+							</label>
+						</li>
+						<li>
+							<label>
+								<div className="flex gap-4">
+									<input
+										type="checkbox"
+										className="checkbox checkbox-info"
+										{...form.register("reliableEnd")}
+									/>
+									Show entries flagged as reliable (completion
+									date)
+								</div>
+							</label>
+						</li>
+						<li>
+							<label>
+								<div className="flex gap-4">
+									<input
+										type="checkbox"
+										className="checkbox checkbox-info"
+										{...form.register("unreliableEnd")}
 									/>
 									Show entries flagged as unreliable
+									(completion date)
 								</div>
 							</label>
 						</li>
@@ -234,6 +262,38 @@ export default function ToolbarFilter({
 						</li>
 					</ul>
 				</div>
+
+				{nodeType == "subject" ? (
+					<div className="my-1">
+						<div className="text-info mb-3">Time Spent Display</div>
+						<ul className="flex flex-col gap-2">
+							<li>
+								<label>
+									<div className="flex gap-4">
+										<input
+											type="checkbox"
+											className="checkbox checkbox-info"
+											{...form.register("notes")}
+										/>
+										Show entries that have time spent
+									</div>
+								</label>
+							</li>
+							<li>
+								<label>
+									<div className="flex gap-4">
+										<input
+											type="checkbox"
+											className="checkbox checkbox-info"
+											{...form.register("noNotes")}
+										/>
+										Show entries that have no time spent
+									</div>
+								</label>
+							</li>
+						</ul>
+					</div>
+				) : null}
 
 				<button
 					type="submit"
