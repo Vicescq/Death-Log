@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
-import useConsoleLogOnStateChange from "./useConsoleLogOnStateChange";
 
-export default function useMediaQuery(breakpoint: string, onBreakpointChange?: () => void) {
+export default function useMediaQuery(
+	breakpoint: string,
+	onBreakpointChange?: () => void,
+) {
 	const [vpMatched, setVPMatched] = useState(matchMedia(breakpoint).matches);
 	useEffect(() => {
 		const mediaQueryList = matchMedia(breakpoint);

@@ -44,7 +44,12 @@ export function stressTestDeathObjects(size: number, subject: Subject) {
 	return Array.from({ length: size }, () => createDeath(subject, null, true));
 }
 
-export function filter(ids: string[], filters: Filters, tree: Tree): string[] {
+export function filter(
+	ids: string[],
+	filters: Filters,
+	tree: Tree,
+	searchQuery: string,
+): string[] {
 	return ids.filter((id) => {
 		const node = tree.get(id);
 		assertIsNonNull(node);
@@ -182,6 +187,7 @@ export function filter(ids: string[], filters: Filters, tree: Tree): string[] {
 		}
 
 		return (
+			node.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
 			statusBoolVals.some((bool) => bool) &&
 			notesBoolVals.some((bool) => bool) &&
 			relFlagBoolVals.some((bool) => bool) &&

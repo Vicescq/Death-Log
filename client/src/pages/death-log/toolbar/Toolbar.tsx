@@ -2,7 +2,8 @@ import add from "../../../assets/add.svg";
 import filter from "../../../assets/filter.svg";
 import sort from "../../../assets/sort.svg";
 import search from "../../../assets/search.svg";
-import { useState, useRef } from "react";
+import close from "../../../assets/close.svg";
+import { useState, useRef, useEffect } from "react";
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, type SubmitHandler } from "react-hook-form";
@@ -21,6 +22,7 @@ import Modal from "../../../components/Modal";
 import ToolbarFilter from "./ToolbarFilter";
 import ToolbarSort from "./ToolbarSort";
 import { getDeathlogViewType } from "../utils";
+import useMediaQuery from "../../../hooks/useMediaQuery";
 
 type Props = {
 	parent: DistinctTreeNode;
@@ -30,6 +32,8 @@ type Props = {
 	defaultSortSettings: SortSettings;
 	onFilterChange: (newFilters: Filters) => void;
 	onSortChange: (newSortSettings: SortSettings) => void;
+	searchQuery: string;
+	onSearch: (query: string) => void;
 };
 
 export default function Toolbar({
@@ -40,6 +44,8 @@ export default function Toolbar({
 	defaultSortSettings,
 	onFilterChange,
 	onSortChange,
+	searchQuery,
+	onSearch,
 }: Props) {
 	const addNode = useDeathLogStore((state) => state.addNode);
 	const [modalType, setModalType] = useState<"add" | "filter" | "sort">(
@@ -118,7 +124,6 @@ export default function Toolbar({
 				: "Sort options";
 
 	const nonCustomFilters = Object.keys(defaultFilters).every((key) => {
-		console.log(key);
 		if (
 			((key as keyof Filters) == "dateFrom" ||
 				(key as keyof Filters) == "dateTo") &&
@@ -139,6 +144,19 @@ export default function Toolbar({
 			defaultSortSettings[key as keyof SortSettings],
 	);
 
+	const [clickedSearchIcon, setClickedSearchIcon] = useState(false);
+	const mdBreakpoint = "(width >= 700px)";
+	useMediaQuery(mdBreakpoint, () => setClickedSearchIcon(false));
+	const searchRef = useRef<HTMLInputElement>(null);
+
+	useEffect(() => {
+		if (clickedSearchIcon) {
+			searchRef.current?.focus();
+		} else {
+			searchRef.current?.blur();
+		}
+	}, [clickedSearchIcon]);
+
 	return (
 		<>
 			<div className="fixed bottom-4 left-1/2 z-5 w-max -translate-x-1/2">
@@ -146,42 +164,78 @@ export default function Toolbar({
 					<li>
 						<button
 							onClick={() => {
-								setModalType("add");
-								modalRef.current?.showModal();
+								if (clickedSearchIcon) {
+									setClickedSearchIcon(false);
+								} else {
+									setModalType("add");
+									modalRef.current?.showModal();
+								}
 							}}
 							className="btn btn-neutral"
 						>
-							<img src={add} alt="" />
+							<img src={clickedSearchIcon ? close : add} alt="" />
 						</button>
 					</li>
 					<div className="divider divider-horizontal mx-0.5"></div>
-					<li>
-						<button className="btn btn-neutral">
+
+					<li
+						className={
+							clickedSearchIcon ? "hidden" : "block md:hidden"
+						}
+					>
+						<button
+							className="btn btn-neutral"
+							onClick={() => setClickedSearchIcon(true)}
+						>
 							<img src={search} alt="" />
 						</button>
 					</li>
-					<li>
-						<button
-							onClick={() => {
-								setModalType("filter");
-								modalRef.current?.showModal();
-							}}
-							className={`btn ${nonCustomFilters ? "btn-neutral" : ""}`}
-						>
-							<img src={filter} alt="" />
-						</button>
+					<li
+						className={
+							clickedSearchIcon ? "" : "hidden md:block md:w-max"
+						}
+					>
+						<input
+							ref={searchRef}
+							type="text"
+							className="input text-lg"
+							placeholder="Search for title"
+							value={searchQuery}
+							onChange={(e) => onSearch(e.currentTarget.value)}
+							onKeyDown={(e) =>
+								e.key == "Escape"
+									? setClickedSearchIcon(false)
+									: null
+							}
+						/>
 					</li>
-					<li>
-						<button
-							className={`btn ${nonCustomSort ? "btn-neutral" : ""}`}
-							onClick={() => {
-								setModalType("sort");
-								modalRef.current?.showModal();
-							}}
-						>
-							<img src={sort} alt="" />
-						</button>
-					</li>
+
+					{!clickedSearchIcon ? (
+						<>
+							<li>
+								<button
+									onClick={() => {
+										setModalType("filter");
+										modalRef.current?.showModal();
+									}}
+									className={`btn ${nonCustomFilters ? "btn-neutral" : ""}`}
+								>
+									<img src={filter} alt="" />
+								</button>
+							</li>
+							<li>
+								<button
+									className={`btn ${nonCustomSort ? "btn-neutral" : ""}`}
+									onClick={() => {
+										setModalType("sort");
+										modalRef.current?.showModal();
+									}}
+								>
+									<img src={sort} alt="" />
+								</button>
+							</li>
+						</>
+					) : null}
 				</ul>
 			</div>
 			<Modal

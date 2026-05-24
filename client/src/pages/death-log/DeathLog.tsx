@@ -1,5 +1,5 @@
 import NavBar from "../../components/nav-bar/NavBar";
-import React, { forwardRef, useEffect, useRef, useState } from "react";
+import React, { forwardRef, useRef, useState } from "react";
 import { Virtuoso, type Components, type VirtuosoHandle } from "react-virtuoso";
 import Breadcrumb from "./breadcrumb/Breadcrumb";
 import { useDeathLogStore } from "../../stores/useDeathLogStore";
@@ -90,8 +90,10 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 		currSort != null ? currSort : defaultSortSettings,
 	);
 
+	const [searchQuery, setSearchQuery] = useState("");
+
 	const ids = sort(
-		filter(parent.childIDS, filters, tree),
+		filter(parent.childIDS, filters, tree, searchQuery),
 		tree,
 		sortSettings,
 	);
@@ -152,6 +154,8 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 						defaultSortSettings,
 					);
 				}}
+				searchQuery={searchQuery}
+				onSearch={(query) => setSearchQuery(query)}
 			/>
 
 			<Modal
