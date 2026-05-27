@@ -41,15 +41,11 @@ export const CONSTANTS = {
 		RESET: "Reset",
 		RETURN: "Return",
 	},
-	DEATH_LOG_FAB: {
-		OPEN_ARIA: "Open FAB",
-		ADD_ARIA: "Add item",
-		ADD_PH: "Type here",
-		ADD_SUBMIT: "+",
-	},
 	DEATH_LOG_CARD: {
 		ENTRY_CHILDREN_ARIA: "Folder Button",
 		EDIT_MODE_ARIA: "Edit Button",
+		COMPLETION_CONFIRM: "Confirm",
+		COMPLETION_CANCEL: "Cancel",
 	},
 	START: {
 		GUEST_BTN: "Continue as guest",
@@ -57,5 +53,17 @@ export const CONSTANTS = {
 	PAGINATION_NAV: {
 		TURN_RIGHT_ARIA: "Turn Right Page",
 		TURN_LEFT_ARIA: "Turn Left Page",
+	},
+	TOOLBAR: {
+		ADD_BTN_ARIA: "Add entry",
+		ADD_MODAL_NAME_LABEL: "Name",
+		ADD_MODAL_CTX_LABEL: "Context",
+		ADD_MODAL_REOCC_LABEL: "Reoccurring",
+		ADD_MODAL_SUBMIT: "+",
+		EXIT_SEARCH_ARIA: "Exit searching",
+		FILTER_BTN_ARIA: "Filter",
+		SORT_BTN_ARIA: "Sort",
+		SEARCH_BTN_ARIA: "Search list",
+		SEARCH_PH: "Search for title",
 	},
 } as const;

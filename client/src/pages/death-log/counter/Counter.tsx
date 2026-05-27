@@ -173,12 +173,17 @@ export default function Counter({ subject }: Props) {
 							onClick={counterForm.handleSubmit(onIncrementDeath)}
 							className="btn btn-ghost m-auto w-fit rounded-xl"
 						>
-							<img src={up} className="m-auto w-8" />
+							<img
+								src={up}
+								alt="Increment Death"
+								className="m-auto w-8"
+							/>
 						</button>
 					) : null}
 
 					<span
 						className={`text-center text-6xl ${subject.completed ? "text-success" : ""}`}
+						data-testid="death-count"
 					>
 						{subject.log.length}
 					</span>
@@ -188,7 +193,11 @@ export default function Counter({ subject }: Props) {
 							onClick={handleDecrementDeath}
 							className="btn btn-ghost m-auto w-fit rounded-xl"
 						>
-							<img src={down} className="m-auto w-8" />
+							<img
+								src={down}
+								alt="Decrement Death"
+								className="m-auto w-8"
+							/>
 						</button>
 					) : null}
 				</div>

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { addLeadingZeroes } from "../../../utils/date";
 import type { Subject } from "../../../model/tree-node-model/SubjectSchema";
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
+import LocalDB from "../../../services/LocalDB";
 
 export default function useTimeTracker(subject: Subject) {
 	const updateNode = useDeathLogStore((state) => state.updateNode);
@@ -11,6 +12,13 @@ export default function useTimeTracker(subject: Subject) {
 		subject.timeSpent != null ? parseFormattedTime(subject.timeSpent) : 0,
 	);
 	const startTimeRef = useRef(0);
+
+	const elapsedTimeRef = useRef(elapsedTime);
+	const subjectRef = useRef(subject);
+	useEffect(() => {
+		elapsedTimeRef.current = elapsedTime;
+		subjectRef.current = subject;
+	});
 
 	function start() {
 		if (!isTracking) {
@@ -36,10 +44,11 @@ export default function useTimeTracker(subject: Subject) {
 		updateNode({ ...subject, timeSpent: null });
 	}
 
-	function formatTime() {
-		const hrs = Math.floor(elapsedTime / (1000 * 60 * 60));
-		const mins = Math.floor((elapsedTime / (1000 * 60)) % 60);
-		const sec = Math.floor((elapsedTime / 1000) % 60);
+	function formatTime(fromRef = false) {
+		const ms = fromRef ? elapsedTimeRef.current : elapsedTime;
+		const hrs = Math.floor(ms / (1000 * 60 * 60));
+		const mins = Math.floor((ms / (1000 * 60)) % 60);
+		const sec = Math.floor((ms / 1000) % 60);
 
 		const result = `${addLeadingZeroes(hrs)}:${addLeadingZeroes(mins)}:${addLeadingZeroes(sec)}`;
 		if (result == "00:00:00") {
@@ -63,6 +72,17 @@ export default function useTimeTracker(subject: Subject) {
 			return () => clearInterval(intervalID);
 		}
 	}, [isTracking]);
+
+	// save time upon navigating away
+	useEffect(() => {
+		return () => {
+			const time = formatTime(true);
+			updateNode({
+				...subjectRef.current,
+				timeSpent: time == "N / A" ? null : time,
+			});
+		};
+	}, []);
 
 	return {
 		onStartTracking: start,

@@ -37,22 +37,27 @@ export default function CounterSettings({ form }: Props) {
 				<div className="ml-auto">
 					<div className="flex gap-2">
 						<div className="flex items-center justify-center gap-1">
-							Yes
+							<label htmlFor="timestampRelYes">Yes</label>
+
 							<input
 								type="radio"
 								className="radio"
 								{...form.register("timestampRel")}
 								value={"T"}
+								id="timestampRelYes"
+								data-testid="timestampRelYes"
 							/>
 						</div>
 
 						<div className="flex items-center justify-center gap-1">
-							No
+							<label htmlFor="timestampRelNo">No</label>
 							<input
 								type="radio"
 								className="radio"
 								{...form.register("timestampRel")}
 								value={"F"}
+								id="timestampRelNo"
+								data-testid="timestampRelNo"
 							/>
 						</div>
 					</div>

@@ -60,13 +60,18 @@ export default function CounterHistory({
 									className="cursor-pointer"
 									onClick={() => onFocusDeath(death.id)}
 								>
-									<img src={edit} className="w-4" alt="" />
+									<img
+										src={edit}
+										className="w-4"
+										alt="Edit Death"
+									/>
 								</button>
 								<button
 									className="cursor-pointer"
 									onClick={() =>
 										onDeleteDeathConfirm(death.id)
 									}
+									aria-label="Delete Death"
 								>
 									✕
 								</button>

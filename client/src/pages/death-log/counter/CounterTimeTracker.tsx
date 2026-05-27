@@ -31,16 +31,6 @@ export default function CounterTimeTracker({ subject }: Props) {
 						<div className="ml-auto">{formattedTime}</div>
 					</div>
 
-					<div>
-						{isTracking ? (
-							<div className="text-info my-2">
-								Please remember to press pause in order to save
-								the tracked time. Not doing so will result in
-								time loss!
-							</div>
-						) : null}
-					</div>
-
 					{!subject.completed ? (
 						<div className="mt-4 flex justify-center">
 							<button
@@ -50,7 +40,7 @@ export default function CounterTimeTracker({ subject }: Props) {
 									onStopTracking();
 								}}
 							>
-								<img src={pause} alt="" />
+								<img src={pause} alt="Pause Timer" />
 							</button>
 							<button
 								className={`btn ${activeMode == "play" ? "btn-neutral" : ""}`}
@@ -59,7 +49,7 @@ export default function CounterTimeTracker({ subject }: Props) {
 									onStartTracking();
 								}}
 							>
-								<img src={play} alt="" />
+								<img src={play} alt="Start Timer" />
 							</button>
 							<div className="divider divider-horizontal m-0.5" />
 							<button
@@ -68,7 +58,7 @@ export default function CounterTimeTracker({ subject }: Props) {
 									modalRef.current?.showModal();
 								}}
 							>
-								<img src={reset} alt="" />
+								<img src={reset} alt="Reset Timer" />
 							</button>
 						</div>
 					) : null}

@@ -12,6 +12,7 @@ import LocalDB from "../../services/LocalDB";
 import type { Filters, SortSettings } from "./formSchemas";
 import { filter, getDeathlogViewType, sort } from "./utils";
 import { isoToDateSTD } from "../../utils/date";
+import { CONSTANTS } from "../../../shared/constants";
 
 export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 	const tree = useDeathLogStore((state) => state.tree);
@@ -172,11 +173,11 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 								handleNodeCompletion(focusedNode);
 							}}
 						>
-							Confirm
+							{CONSTANTS.DEATH_LOG_CARD.COMPLETION_CONFIRM}
 						</button>
 					</div>
 				}
-				closeBtnName="Cancel"
+				closeBtnName={CONSTANTS.DEATH_LOG_CARD.COMPLETION_CANCEL}
 			/>
 
 			<footer className="mb-14"></footer>

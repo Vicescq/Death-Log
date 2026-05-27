@@ -26,7 +26,11 @@ export default function Card({
 				<span className="text-accent line-clamp-1 w-8">{entryNum}</span>
 				<div>
 					{node.type == "subject" && node.reoccurring ? (
-						<img src={loop} alt="" className="w-6" />
+						<img
+							src={loop}
+							alt="Reoccurring Entry"
+							className="w-6"
+						/>
 					) : (
 						<input
 							type="checkbox"

@@ -14,7 +14,7 @@ export default function ToolbarAdd({ type, form, onAdd }: Props) {
 	const addBody: ReactNode = (
 		<>
 			<label className="floating-label">
-				<span>Name</span>
+				<span>{CONSTANTS.TOOLBAR.ADD_MODAL_NAME_LABEL}</span>
 				<div className="join w-full">
 					<input
 						type="search"
@@ -26,7 +26,7 @@ export default function ToolbarAdd({ type, form, onAdd }: Props) {
 						className="btn join-item btn-success"
 						disabled={!form.formState.isValid}
 					>
-						{CONSTANTS.DEATH_LOG_FAB.ADD_SUBMIT}
+						{CONSTANTS.TOOLBAR.ADD_MODAL_SUBMIT}
 					</button>
 				</div>
 			</label>
@@ -46,7 +46,7 @@ export default function ToolbarAdd({ type, form, onAdd }: Props) {
 					{addBody}
 
 					<label className="floating-label mt-4">
-						<span>Context</span>
+						<span>{CONSTANTS.TOOLBAR.ADD_MODAL_CTX_LABEL}</span>
 						<select
 							className="select w-full"
 							{...form.register("context")}
@@ -59,14 +59,16 @@ export default function ToolbarAdd({ type, form, onAdd }: Props) {
 						</select>
 					</label>
 
-					<div className="my-2 flex">
-						<span className="text-[1rem]">Reoccurring</span>
+					<label className="flex">
+						<span className="text-[1rem]">
+							{CONSTANTS.TOOLBAR.ADD_MODAL_REOCC_LABEL}
+						</span>
 						<input
 							type="checkbox"
 							className="toggle toggle-primary ml-auto"
 							{...form.register("reoccurring")}
 						/>
-					</div>
+					</label>
 				</div>
 			) : (
 				<div className="my-4">{addBody}</div>

@@ -98,22 +98,26 @@ export default function CounterHistoryModalBody({
 						<span className="">Is Timestamp Reliable?</span>
 						<div className="ml-auto flex gap-2">
 							<div className="flex items-center justify-center gap-1">
-								Yes
+								<label htmlFor="timestampRelYesEdit">Yes</label>
 								<input
 									type="radio"
 									className="radio"
 									{...form.register("timestampRel")}
 									value={"T"}
+									id="timestampRelYesEdit"
+									data-testid="timestampRelYesEdit"
 								/>
 							</div>
 
 							<div className="flex items-center justify-center gap-1">
-								No
+								<label htmlFor="timestampRelNoEdit">No</label>
 								<input
 									type="radio"
 									className="radio"
 									{...form.register("timestampRel")}
 									value={"F"}
+									id="timestampRelNoEdit"
+									data-testid="timestampRelNoEdit"
 								/>
 							</div>
 						</div>

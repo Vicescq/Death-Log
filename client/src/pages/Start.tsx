@@ -52,10 +52,8 @@ export default function Start() {
 							</SignInButton>
 						</SignedOut>
 
-						<Link to="log">
-							<button className="btn btn-neutral w-full">
-								{CONSTANTS.START.GUEST_BTN}
-							</button>
+						<Link to="log" className="btn btn-neutral w-full">
+							{CONSTANTS.START.GUEST_BTN}
 						</Link>
 
 						<SignedIn>
@@ -65,18 +63,14 @@ export default function Start() {
 								</button>
 							</Link>
 						</SignedIn>
-						<Link to="data-management">
-							<button className="btn btn-neutral w-full">
-								Manage Data
-							</button>
+						<Link
+							to="data-management"
+							className="btn btn-neutral w-full"
+						>
+							Manage Data
 						</Link>
-						<Link to="FAQ">
-							<button
-								className="btn btn-neutral w-full"
-								onClick={() => navigate("FAQ")}
-							>
-								FAQ
-							</button>
+						<Link to="FAQ" className="btn btn-neutral w-full">
+							FAQ
 						</Link>
 					</div>
 				</div>

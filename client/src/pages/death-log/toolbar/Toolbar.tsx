@@ -2,7 +2,7 @@ import add from "../../../assets/add.svg";
 import filter from "../../../assets/filter.svg";
 import sort from "../../../assets/sort.svg";
 import search from "../../../assets/search.svg";
-import close from "../../../assets/close.svg";
+import returnIcon from "../../../assets/return.svg";
 import { useState, useRef, useEffect } from "react";
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -23,6 +23,7 @@ import ToolbarFilter from "./ToolbarFilter";
 import ToolbarSort from "./ToolbarSort";
 import { getDeathlogViewType } from "../utils";
 import useMediaQuery from "../../../hooks/useMediaQuery";
+import { CONSTANTS } from "../../../../shared/constants";
 
 type Props = {
 	parent: DistinctTreeNode;
@@ -172,8 +173,16 @@ export default function Toolbar({
 								}
 							}}
 							className="btn btn-neutral"
+							aria-label={
+								clickedSearchIcon
+									? CONSTANTS.TOOLBAR.EXIT_SEARCH_ARIA
+									: CONSTANTS.TOOLBAR.ADD_BTN_ARIA
+							}
 						>
-							<img src={clickedSearchIcon ? close : add} alt="" />
+							<img
+								src={clickedSearchIcon ? returnIcon : add}
+								alt=""
+							/>
 						</button>
 					</li>
 					<div className="divider divider-horizontal mx-0.5"></div>
@@ -184,8 +193,9 @@ export default function Toolbar({
 						}
 					>
 						<button
-							className="btn btn-neutral"
+							className={`btn ${searchQuery == "" ? "btn-neutral" : ""}`}
 							onClick={() => setClickedSearchIcon(true)}
+							aria-label={CONSTANTS.TOOLBAR.SEARCH_BTN_ARIA}
 						>
 							<img src={search} alt="" />
 						</button>
@@ -199,7 +209,7 @@ export default function Toolbar({
 							ref={searchRef}
 							type="text"
 							className="input text-lg"
-							placeholder="Search for title"
+							placeholder={CONSTANTS.TOOLBAR.SEARCH_PH}
 							value={searchQuery}
 							onChange={(e) => onSearch(e.currentTarget.value)}
 							onKeyDown={(e) =>
@@ -219,6 +229,9 @@ export default function Toolbar({
 										modalRef.current?.showModal();
 									}}
 									className={`btn ${nonCustomFilters ? "btn-neutral" : ""}`}
+									aria-label={
+										CONSTANTS.TOOLBAR.FILTER_BTN_ARIA
+									}
 								>
 									<img src={filter} alt="" />
 								</button>
@@ -230,6 +243,7 @@ export default function Toolbar({
 										setModalType("sort");
 										modalRef.current?.showModal();
 									}}
+									aria-label={CONSTANTS.TOOLBAR.SORT_BTN_ARIA}
 								>
 									<img src={sort} alt="" />
 								</button>
