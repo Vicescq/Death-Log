@@ -8,7 +8,7 @@ type MyFixtures = {
 
 export const test = base.extend<MyFixtures>({
 	guestSetup: async ({ page }, use) => {
-		await page.goto(CONSTANTS.DOMAIN);
+		await page.goto("/");
 		await expect(page).toHaveTitle("Death Log");
 		await expect(
 			page.getByRole("heading", {
