@@ -148,14 +148,11 @@ test("Death Editing", async ({ page }) => {
 	});
 
 	await test.step("Editing: Invalid timestamp", async () => {
-		await modalLoc.getByLabel("Date").focus();
-		await page.keyboard.press("Backspace");
+		await modalLoc.getByLabel("Date").clear();
 		await expect(modalLoc.getByText(CONSTANTS.ERROR.DATE)).toBeVisible();
 		await expect(saveBtnLoc).toBeDisabled();
-
 		await modalLoc.getByLabel("Date").fill("2020-01-01");
-		await modalLoc.getByLabel("Time").focus();
-		await page.keyboard.press("Backspace");
+		await modalLoc.getByLabel("Time").clear();
 		await expect(modalLoc.getByText(CONSTANTS.ERROR.TIME)).toBeVisible();
 		await expect(saveBtnLoc).toBeDisabled();
 	});
