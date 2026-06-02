@@ -23,12 +23,6 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   // retries: 2,
 
-  webServer: {
-    command: "npm run dev",
-    url: CONSTANTS.DOMAIN,
-    reuseExistingServer: !process.env.CI
-  },
-
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
@@ -86,9 +80,9 @@ export default defineConfig({
   ],
 
   /* Run your local dev server before starting the tests */
-  // webServer: {
-  //   command: 'npm run start',
-  //   url: 'http://localhost:3000',
-  //   reuseExistingServer: !process.env.CI,
-  // },
+  webServer: {
+    command: 'npm run dev',
+    url: CONSTANTS.DOMAIN, 
+    reuseExistingServer: !process.env.CI,
+  },
 });
