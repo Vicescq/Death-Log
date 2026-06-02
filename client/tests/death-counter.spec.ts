@@ -158,38 +158,46 @@ test("Death Editing", async ({ page }) => {
 	});
 });
 
-// TOO FLAKY
-// test.describe(() => {
-// 	// decribe with retries=2 due to flaky tests on certain browser envs, where actions are slightly slow
-// 	test.describe.configure({ retries: 2 });
 
-// 	test("Time Tracking", async ({ page }) => {
-// 		const counterPOM = new DeathCounterPageObject(page);
+test.describe(() => {
+	// decribe with retries=2 due to flaky tests on certain browser envs, where actions are slightly slow
+	test.describe.configure({ retries: 2 });
 
-// 		await test.step("Basic Timer usage", async () => {
-// 			await expect(page.getByText("N / A")).toBeVisible();
-// 			await page.clock.install({ time: new Date("2020-01-01T23:59:59") });
-// 			await counterPOM.startTime();
+	test("Time Tracking", async ({ page }) => {
+		const counterPOM = new DeathCounterPageObject(page);
 
-// 			await page.clock.runFor(5000);
-// 			await expect(page.getByText("00:00:05")).toBeVisible();
+		await test.step("Basic Timer usage", async () => {
+			await expect(page.getByText("N / A")).toBeVisible();
+			await page.clock.install({ time: new Date("2020-01-01T23:59:59") });
+			await counterPOM.startTime();
 
-// 			await page.clock.runFor(10_000);
-// 			await expect(page.getByText("00:00:15")).toBeVisible();
+			await page.clock.runFor(5000);
+			await expect(page.getByText("00:00:05")).toBeVisible();
 
-// 			await page.clock.runFor(10_000);
-// 			await expect(page.getByText("00:00:15")).toBeVisible();
+			await page.clock.runFor(10_000);
+			await expect(page.getByText("00:00:15")).toBeVisible();
 
-// 			await counterPOM.resetTime();
-// 			await expect(page.getByText("N / A")).toBeVisible();
-// 		});
+			await counterPOM.pauseTime();
+			await page.clock.runFor(10_000);
+			
+			// range of times due to some browsers being too slow clicking pause, reduce flakiness
+			await expect(
+				page
+					.getByText("00:00:24")
+					.or(page.getByText("00:00:25"))
+					.or(page.getByText("00:00:26")),
+			).not.toBeVisible();
 
-// 		await test.step("Timer Stops when navigating away", async () => {
-// 			await counterPOM.startTime();
-// 			await page.clock.runFor(5000);
-// 			await page.goBack();
-// 			await page.goForward();
-// 			await expect(page.getByText("00:00:05")).toBeVisible();
-// 		});
-// 	});
-// });
+			await counterPOM.resetTime();
+			await expect(page.getByText("N / A")).toBeVisible();
+		});
+
+		await test.step("Timer Stops when navigating away", async () => {
+			await counterPOM.startTime();
+			await page.clock.runFor(5000);
+			await page.goBack();
+			await page.goForward();
+			await expect(page.getByText("00:00:05")).toBeVisible();
+		});
+	});
+});
