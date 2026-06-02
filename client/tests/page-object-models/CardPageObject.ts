@@ -37,16 +37,28 @@ export default class CardPageObject {
 
 		if (isConfirming) {
 			await this.page
+				.getByRole("dialog")
+				.filter({ hasText: "Completion Status" })
 				.getByRole("button", {
 					name: CONSTANTS.DEATH_LOG_CARD.COMPLETION_CONFIRM,
 				})
+
 				.click();
 		} else {
 			await this.page
+				.getByRole("dialog")
+				.filter({ hasText: "Completion Status" })
 				.getByRole("button", {
 					name: CONSTANTS.DEATH_LOG_CARD.COMPLETION_CANCEL,
 				})
 				.click();
 		}
+	}
+
+	selectCard(name: string) {
+		return this.page
+			.getByTestId("virtuoso-item-list")
+			.getByRole("listitem")
+			.filter({ hasText: name });
 	}
 }

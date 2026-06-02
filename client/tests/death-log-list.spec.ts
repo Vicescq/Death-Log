@@ -4,6 +4,8 @@ import { CONSTANTS } from "../shared/constants";
 import ToolbarPageObject from "./page-object-models/ToolbarPageObject";
 import CardPageObject from "./page-object-models/CardPageObject";
 import { test } from "./fixtures";
+import { defaultFilters } from "../shared/defaults";
+import { Filters } from "../src/pages/death-log/formSchemas";
 
 const addedGame = "Elden Ring";
 const addedGame2 = "Silksong";
@@ -265,8 +267,135 @@ test("Search Function", async ({ page, guestSetup }) => {
 	});
 });
 
-test("Filter", async ({ page, guestSetup }) => {});
+test("Filter", async ({ page, guestSetup }) => {
+	const toolbarPOM = new ToolbarPageObject(page);
+	const cardPOM = new CardPageObject(page);
+	let changedFilters: Filters = {
+		...defaultFilters,
+	};
+	const dialog = page
+		.getByRole("dialog")
+		.filter({ hasText: "Filter options" });
 
-test("Sort", async ({ page, guestSetup }) => {});
+	await page.clock.setFixedTime("2020-01-01T00:00:00");
+	await toolbarPOM.add(addedGame);
 
-test("Breadcrumb", async ({ page, guestSetup }) => {});
+	await page.clock.setFixedTime("2020-02-01T00:00:00");
+	await toolbarPOM.add(addedGame2);
+
+	await test.step("Completion Filter", async () => {
+		await cardPOM.toggleCompletion(addedGame, true);
+
+		changedFilters = {
+			...defaultFilters,
+			uncompleted: false,
+		};
+		await toolbarPOM.filter(changedFilters, "game");
+		await expect(cardPOM.selectCard(addedGame2)).toBeHidden();
+		await expect(cardPOM.selectCard(addedGame)).toBeVisible();
+
+		// filter btn col change
+		await expect(
+			page.getByRole("button", {
+				name: CONSTANTS.TOOLBAR.FILTER_BTN_ARIA,
+			}),
+		).not.toHaveClass("btn-neutral");
+
+		changedFilters = {
+			...defaultFilters,
+			completed: false,
+		};
+		await toolbarPOM.filter(changedFilters, "game");
+		await expect(cardPOM.selectCard(addedGame2)).toBeVisible();
+		await expect(cardPOM.selectCard(addedGame)).toBeHidden();
+	});
+
+	await test.step("Resetting filters", async () => {
+		await toolbarPOM.resetFilters();
+		await expect(cardPOM.selectCard(addedGame)).toBeVisible();
+		await expect(cardPOM.selectCard(addedGame2)).toBeVisible();
+
+		await expect(
+			page.getByRole("button", {
+				name: CONSTANTS.TOOLBAR.FILTER_BTN_ARIA,
+			}),
+		).toContainClass("btn-neutral");
+	});
+
+	await test.step("Az Filter", async () => {
+		changedFilters = {
+			...defaultFilters,
+			azRange: "S-Z",
+		};
+		await toolbarPOM.filter(changedFilters, "game");
+		await expect(cardPOM.selectCard(addedGame2)).toBeVisible();
+		await expect(cardPOM.selectCard(addedGame)).toBeHidden();
+
+		await toolbarPOM.resetFilters();
+
+		changedFilters = {
+			...defaultFilters,
+			azRange: "E-e",
+		};
+		await toolbarPOM.filter(changedFilters, "game");
+		await expect(cardPOM.selectCard(addedGame2)).toBeHidden();
+		await expect(cardPOM.selectCard(addedGame)).toBeVisible();
+
+		await page
+			.getByRole("button", {
+				name: CONSTANTS.TOOLBAR.FILTER_BTN_ARIA,
+			})
+			.click();
+
+		await dialog.locator(`[name="azRange"]`).fill("abc");
+		await expect(
+			dialog.getByText(CONSTANTS.ERROR.GEN_FORMAT),
+		).toBeVisible();
+
+		await expect(
+			dialog.getByRole("button", { name: "Confirm" }),
+		).toBeDisabled();
+		await dialog.getByRole("button", { name: "Cancel" }).click();
+		await toolbarPOM.resetFilters();
+	});
+
+	await test.step("Date Range Filter", async () => {
+		await cardPOM.toggleCompletion(addedGame, true); // in order to sort via start date instead
+
+		// under the hood the timestamps for the node is set correctly via setFixedTime call at the top of a test.
+		// however, the timestamp helper functions in defaults.ts gets init BEFORE the mocked clock call, and as such stays in the defaultFilters obj and have to be changed
+		changedFilters = {
+			...defaultFilters,
+			dateRangeEnabled: true,
+			dateFrom: "2020-01-01",
+			dateTo: "2020-01-16",
+		};
+		await toolbarPOM.filter(changedFilters, "game");
+
+		await expect(cardPOM.selectCard(addedGame)).toBeVisible();
+		await expect(cardPOM.selectCard(addedGame2)).toBeHidden();
+		await toolbarPOM.resetFilters();
+	});
+
+	await test.step("Death Range Filter", async () => {});
+
+	await test.step("Reliability Flags Filter", async () => {});
+
+	await test.step("Notes Filter", async () => {});
+});
+
+test("Sort", async ({ page, guestSetup }) => {
+	await test.step("Date Sorting Keys", async () => {});
+
+	await test.step("Name Sorting Key", async () => {});
+
+	await test.step("Death Count Sorting Key", async () => {});
+
+	await test.step("Time Spent Sorting Key", async () => {});
+});
+
+test("Breadcrumb", async ({ page, guestSetup }) => {
+	await test.step("Normal View", async () => {});
+
+	await test.step("Small Viewport", async () => {});
+});

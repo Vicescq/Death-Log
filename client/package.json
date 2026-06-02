@@ -14,7 +14,7 @@
     "test:e2e:5": "playwright test --repeat-each=5",
     "test:e2e:10": "playwright test --repeat-each=10",
     "test:e2e:ui": "playwright test --ui",
-    "test:pwshow": "playwright show-report"
+    "test:e2e:show": "playwright show-report"
   },
   "dependencies": {
     "@clerk/clerk-react": "^5.46.1",

@@ -1,7 +1,8 @@
-import { expect, Page, test } from "@playwright/test";
+import { expect, Locator, Page, test } from "@playwright/test";
 import { CONSTANTS } from "../../shared/constants";
 import { Subject } from "../../src/model/tree-node-model/SubjectSchema";
 import { Filters, SortSettings } from "../../src/pages/death-log/formSchemas";
+import type { DeathLogViewType } from "../../src/pages/death-log/utils";
 
 export default class ToolbarPageObject {
 	readonly page: Page;
@@ -77,44 +78,55 @@ export default class ToolbarPageObject {
 		await this.page.getByPlaceholder(CONSTANTS.TOOLBAR.SEARCH_PH).clear();
 	}
 
-	async filter(wantedFilterPrefs: Filters) {
+	async filter(wantedFilterPrefs: Filters, viewType: DeathLogViewType) {
+		const dialog = this.page
+			.getByRole("dialog")
+			.filter({ hasText: "Filter options" });
+
 		await this.page
-			.getByRole("button", {
-				name: CONSTANTS.TOOLBAR.FILTER_BTN_ARIA,
-			})
+			.getByRole("button", { name: CONSTANTS.TOOLBAR.FILTER_BTN_ARIA })
 			.click();
-		for (let key in wantedFilterPrefs) {
+
+		for (const key in wantedFilterPrefs) {
 			const filterKey = key as keyof Filters;
-			if (
-				typeof wantedFilterPrefs[filterKey] == "boolean" &&
-				wantedFilterPrefs[filterKey] !=
-					(await this.page
-						.getByRole("textbox", { name: filterKey })
-						.isChecked())
-			) {
-				await this.page
-					.getByRole("textbox", { name: filterKey })
-					.setChecked(wantedFilterPrefs[filterKey]);
-			} else if (
-				typeof wantedFilterPrefs[filterKey] == "string" &&
-				wantedFilterPrefs[filterKey] !=
-					(await this.page
-						.getByRole("textbox", { name: filterKey })
-						.textContent())
-			) {
-				await this.page
-					.getByRole("textbox", { name: filterKey })
-					.fill(wantedFilterPrefs[filterKey]);
-			} else {
-				// should not happen, dev error if happens
-				test.fail();
+			const value = wantedFilterPrefs[filterKey];
+			const locator = dialog.locator(`[name="${filterKey}"]`);
+
+			if (filterKey == "dateFrom" || filterKey == "dateTo") {
+				continue;
+			}
+
+			if (filterKey == "reoccurring" && viewType != "subject") {
+				continue;
+			}
+
+			if (typeof value == "boolean") {
+				if (value != (await locator.isChecked())) {
+					await locator.setChecked(value);
+				}
+			} else if (typeof value === "string") {
+				if (value != (await locator.inputValue())) {
+					await locator.fill(value);
+				}
 			}
 		}
 
-		await this.page.getByRole("button", { name: "Confirm" }).click();
+		if (wantedFilterPrefs["dateRangeEnabled"]) {
+			await dialog
+				.locator(`[name="dateFrom"]`)
+				.fill(wantedFilterPrefs["dateFrom"]);
+			await dialog
+				.locator(`[name="dateTo"]`)
+				.fill(wantedFilterPrefs["dateTo"]);
+		}
+
+		await dialog.getByRole("button", { name: "Confirm" }).click();
 	}
 
 	async resetFilters() {
+		await this.page
+			.getByRole("button", { name: CONSTANTS.TOOLBAR.FILTER_BTN_ARIA })
+			.click();
 		await this.page
 			.getByRole("button", { name: "Reset to defaults" })
 			.click();

@@ -11,7 +11,7 @@ import Toolbar from "./toolbar/Toolbar";
 import LocalDB from "../../services/LocalDB";
 import type { Filters, SortSettings } from "./formSchemas";
 import { filter, getDeathlogViewType, sort } from "./utils";
-import { isoToDateSTD } from "../../utils/date";
+import { defaultFilters } from "../../../shared/defaults";
 import { CONSTANTS } from "../../../shared/constants";
 
 export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
@@ -59,24 +59,6 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 	}
 
 	const pageViewType = getDeathlogViewType(parent);
-
-	const defaultFilters: Filters = {
-		uncompleted: true,
-		completed: true,
-		reoccurring: true,
-		azRange: "A-Z",
-		dateFrom: isoToDateSTD(new Date().toISOString()),
-		dateTo: isoToDateSTD(new Date().toISOString()),
-		dateRangeEnabled: false,
-		deathRange: ">=0",
-		reliableStart: true,
-		unreliableStart: true,
-		reliableEnd: true,
-		unreliableEnd: true,
-		notes: true,
-		noNotes: true,
-	};
-
 	const currFilters = LocalDB.getDLFilterPrefs(pageViewType);
 	const [filters, setFilters] = useState<Filters>(
 		currFilters != null ? currFilters : defaultFilters,
