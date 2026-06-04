@@ -16,8 +16,6 @@ export default class DeathEditorPageObject {
 			const value = fields[fieldKey];
 			const locator = form.locator(`[name="${fieldKey}"]`);
 
-			if ((await locator.count()) == 0) continue;
-
 			if (typeof value == "boolean") {
 				if (value != (await locator.isChecked())) {
 					await locator.setChecked(value);

@@ -96,7 +96,12 @@ export default class ToolbarPageObject {
 				continue;
 			}
 
-			if (filterKey == "reoccurring" && viewType != "subject") {
+			if (
+				(filterKey == "reoccurring" ||
+					filterKey == "timeSpent" ||
+					filterKey == "noTimeSpent") &&
+				viewType != "subject"
+			) {
 				continue;
 			}
 
@@ -138,9 +143,31 @@ export default class ToolbarPageObject {
 				name: CONSTANTS.TOOLBAR.SORT_BTN_ARIA,
 			})
 			.click();
+
+		const dialog = this.page.getByRole("dialog");
+		// await dialog.waitFor({ state: "visible" });
+
+		if (wantedSortPrefs.ascending !== undefined) {
+			await dialog
+				.locator('[name="ascending"]')
+				.setChecked(wantedSortPrefs.ascending);
+		}
+
+		if (wantedSortPrefs.sortingKey !== undefined) {
+			await dialog
+				.locator(
+					`[name="sortingKey"][value="${wantedSortPrefs.sortingKey}"]`,
+				)
+				.check();
+		}
+
+		await dialog.getByRole("button", { name: "Confirm" }).click();
 	}
 
 	async resetSort() {
+		await this.page
+			.getByRole("button", { name: CONSTANTS.TOOLBAR.SORT_BTN_ARIA })
+			.click();
 		await this.page
 			.getByRole("button", { name: "Reset to defaults" })
 			.click();

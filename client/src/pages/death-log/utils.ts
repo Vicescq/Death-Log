@@ -58,6 +58,7 @@ export function filter(
 		const relFlagBoolVals: boolean[] = [];
 		const notesBoolVals: boolean[] = [];
 		const dateRangeBoolVals: boolean[] = [];
+		const timeSpentBoolVals: boolean[] = [];
 		let passedDeathRange = false;
 		let passedAzRange = false;
 
@@ -183,6 +184,23 @@ export function filter(
 						filters[filterKey] && !node.dateEndRel,
 					);
 					break;
+				case "timeSpent":
+					if (node.type == "subject") {
+						timeSpentBoolVals.push(
+							filters[filterKey] && node.timeSpent != null,
+						);
+					} else {
+						timeSpentBoolVals.push(true);
+					}
+					break;
+				case "noTimeSpent":
+					if (node.type == "subject") {
+						timeSpentBoolVals.push(
+							filters[filterKey] && node.timeSpent == null,
+						);
+					} else {
+						timeSpentBoolVals.push(true);
+					}
 			}
 		}
 
@@ -192,6 +210,7 @@ export function filter(
 			notesBoolVals.some((bool) => bool) &&
 			relFlagBoolVals.some((bool) => bool) &&
 			dateRangeBoolVals.every((bool) => bool) &&
+			timeSpentBoolVals.some((bool) => bool) &&
 			passedAzRange &&
 			passedDeathRange
 		);

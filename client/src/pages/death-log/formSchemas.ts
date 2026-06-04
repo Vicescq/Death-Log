@@ -171,6 +171,8 @@ export const FiltersSchema = z.object({
 	unreliableEnd: z.boolean(),
 	notes: z.boolean(),
 	noNotes: z.boolean(),
+	timeSpent: z.boolean(),
+	noTimeSpent: z.boolean(),
 });
 
 export type Filters = z.infer<typeof FiltersSchema>;

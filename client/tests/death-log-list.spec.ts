@@ -6,6 +6,8 @@ import CardPageObject from "./page-object-models/CardPageObject";
 import { test } from "./fixtures";
 import { defaultFilters } from "../shared/defaults";
 import { Filters } from "../src/pages/death-log/formSchemas";
+import DeathCounterPageObject from "./page-object-models/DeathCounterPageObject";
+import DeathEditorPageObject from "./page-object-models/DeathEditorPageObject";
 
 const addedGame = "Elden Ring";
 const addedGame2 = "Silksong";
@@ -267,9 +269,13 @@ test("Search Function", async ({ page, guestSetup }) => {
 	});
 });
 
-test("Filter", async ({ page, guestSetup }) => {
+test("Filter", async ({ page, guestSetup, browserName }) => {
+	if (browserName === "webkit") test.setTimeout(100_000); // webkit is particularly very slow in this test
+
 	const toolbarPOM = new ToolbarPageObject(page);
 	const cardPOM = new CardPageObject(page);
+	const counterPOM = new DeathCounterPageObject(page);
+	const editorPOM = new DeathEditorPageObject(page);
 	let changedFilters: Filters = {
 		...defaultFilters,
 	};
@@ -377,25 +383,180 @@ test("Filter", async ({ page, guestSetup }) => {
 		await toolbarPOM.resetFilters();
 	});
 
-	await test.step("Death Range Filter", async () => {});
+	await test.step("Death Range Filter", async () => {
+		await cardPOM.enter(addedGame);
+		await toolbarPOM.add(addedProfile);
+		await cardPOM.enter(addedProfile);
+		await toolbarPOM.add(addedSubject);
+		await cardPOM.enter(addedSubject);
+		for (let i = 0; i < 5; i++) {
+			await counterPOM.incDeath(true);
+		}
+		await page.goBack();
+		await toolbarPOM.add(addedSubject2);
+		await cardPOM.enter(addedSubject2);
+		for (let i = 0; i < 7; i++) {
+			await counterPOM.incDeath(true);
+		}
+		await page.goBack();
+		changedFilters = {
+			...defaultFilters,
+			deathRange: "=5",
+		};
+		await toolbarPOM.filter(changedFilters, "subject");
+		await expect(cardPOM.selectCard(addedSubject)).toBeVisible();
+	});
 
-	await test.step("Reliability Flags Filter", async () => {});
+	await test.step("Reliability Flags Filter", async () => {
+		await toolbarPOM.resetFilters();
 
-	await test.step("Notes Filter", async () => {});
+		await test.step("Show only unreliable (both)", async () => {
+			await cardPOM.edit(addedSubject);
+			await editorPOM.edit({ dateStartRel: false, dateEndRel: false });
+			await page.goBack();
+			changedFilters = {
+				...defaultFilters,
+				reliableStart: false,
+				reliableEnd: false,
+			};
+			await toolbarPOM.filter(changedFilters, "subject");
+			await expect(cardPOM.selectCard(addedSubject2)).toBeHidden();
+		});
+
+		await test.step("Show only reliable (both)", async () => {
+			await toolbarPOM.resetFilters();
+			changedFilters = {
+				...defaultFilters,
+				unreliableStart: false,
+				unreliableEnd: false,
+			};
+			await toolbarPOM.filter(changedFilters, "subject");
+			await expect(cardPOM.selectCard(addedSubject)).toBeHidden();
+		});
+	});
+
+	await test.step("Notes Filter", async () => {
+		await toolbarPOM.resetFilters();
+		await cardPOM.edit(addedSubject);
+		await editorPOM.edit({ notes: "test" });
+		await page.goBack();
+		changedFilters = {
+			...defaultFilters,
+			notes: false,
+		};
+		await toolbarPOM.filter(changedFilters, "subject");
+		await expect(cardPOM.selectCard(addedSubject)).toBeHidden();
+	});
 });
 
 test("Sort", async ({ page, guestSetup }) => {
-	await test.step("Date Sorting Keys", async () => {});
+	const cardPOM = new CardPageObject(page);
+	const toolbarPOM = new ToolbarPageObject(page);
+	const counterPOM = new DeathCounterPageObject(page);
+	const editorPOM = new DeathEditorPageObject(page);
 
-	await test.step("Name Sorting Key", async () => {});
+	await test.step("Date Sorting Keys", async () => {
+		await page.clock.setFixedTime("2020-01-01T00:00:00");
+		await toolbarPOM.add(addedGame);
+		await page.clock.setFixedTime("2020-02-01T00:00:00");
+		await toolbarPOM.add(addedGame2);
+		await toolbarPOM.sort({ ascending: true, sortingKey: "created" });
+		await expect(
+			page
+				.getByTestId("virtuoso-item-list")
+				.locator('[data-item-index="1"]'),
+		).toContainText(addedGame2);
+		await toolbarPOM.resetSort();
+		await expect(
+			page
+				.getByTestId("virtuoso-item-list")
+				.locator('[data-item-index="0"]'),
+		).toContainText(addedGame2);
+	});
 
-	await test.step("Death Count Sorting Key", async () => {});
+	await test.step("Name Sorting Key", async () => {
+		await toolbarPOM.sort({ ascending: true, sortingKey: "name" });
+		await expect(
+			page
+				.getByTestId("virtuoso-item-list")
+				.locator('[data-item-index="0"]'),
+		).toContainText(addedGame);
+		await toolbarPOM.resetSort();
+		await expect(
+			page
+				.getByTestId("virtuoso-item-list")
+				.locator('[data-item-index="1"]'),
+		).toContainText(addedGame);
+	});
 
-	await test.step("Time Spent Sorting Key", async () => {});
-});
+	await test.step("Death Count Sorting Key", async () => {
+		await toolbarPOM.resetSort();
+		await cardPOM.enter(addedGame);
+		await toolbarPOM.add(addedProfile);
+		await cardPOM.enter(addedProfile);
+		await toolbarPOM.add(addedSubject);
+		await cardPOM.enter(addedSubject);
 
-test("Breadcrumb", async ({ page, guestSetup }) => {
-	await test.step("Normal View", async () => {});
+		for (let i = 0; i < 5; i++) {
+			await counterPOM.incDeath(true);
+		}
 
-	await test.step("Small Viewport", async () => {});
+		await page.goBack();
+		await page.clock.setFixedTime("2020-02-02T00:00:00"); // to mimic a more recent` entry
+		await toolbarPOM.add(addedSubject2);
+
+		await expect(
+			page
+				.getByTestId("virtuoso-item-list")
+				.locator('[data-item-index="1"]'),
+		).toContainText(addedSubject);
+		await expect(
+			page
+				.getByTestId("virtuoso-item-list")
+				.locator('[data-item-index="0"]'),
+		).toContainText(addedSubject2);
+
+		await toolbarPOM.sort({ ascending: false, sortingKey: "deaths" });
+		await expect(
+			page
+				.getByTestId("virtuoso-item-list")
+				.locator('[data-item-index="0"]'),
+		).toContainText(addedSubject);
+		await expect(
+			page
+				.getByTestId("virtuoso-item-list")
+				.locator('[data-item-index="1"]'),
+		).toContainText(addedSubject2);
+
+		await toolbarPOM.resetSort();
+	});
+
+	await test.step("Time Spent Sorting Key", async () => {
+		await expect(
+			page
+				.getByTestId("virtuoso-item-list")
+				.locator('[data-item-index="1"]'),
+		).toContainText(addedSubject);
+		await expect(
+			page
+				.getByTestId("virtuoso-item-list")
+				.locator('[data-item-index="0"]'),
+		).toContainText(addedSubject2);
+
+		await cardPOM.edit(addedSubject);
+		await editorPOM.edit({ timeSpent: "00:10:00" });
+		await page.goBack();
+
+		await toolbarPOM.sort({ ascending: false, sortingKey: "timeSpent" });
+		await expect(
+			page
+				.getByTestId("virtuoso-item-list")
+				.locator('[data-item-index="0"]'),
+		).toContainText(addedSubject);
+		await expect(
+			page
+				.getByTestId("virtuoso-item-list")
+				.locator('[data-item-index="1"]'),
+		).toContainText(addedSubject2);
+	});
 });

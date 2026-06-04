@@ -11,7 +11,7 @@ import Toolbar from "./toolbar/Toolbar";
 import LocalDB from "../../services/LocalDB";
 import type { Filters, SortSettings } from "./formSchemas";
 import { filter, getDeathlogViewType, sort } from "./utils";
-import { defaultFilters } from "../../../shared/defaults";
+import { defaultFilters, defaultSortSettings } from "../../../shared/defaults";
 import { CONSTANTS } from "../../../shared/constants";
 
 export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
@@ -64,10 +64,6 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 		currFilters != null ? currFilters : defaultFilters,
 	);
 
-	const defaultSortSettings: SortSettings = {
-		ascending: false,
-		sortingKey: "created",
-	};
 	const currSort = LocalDB.getDLSortPrefs(pageViewType);
 	const [sortSettings, setSortSettings] = useState<SortSettings>(
 		currSort != null ? currSort : defaultSortSettings,

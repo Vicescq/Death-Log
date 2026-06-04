@@ -273,7 +273,7 @@ export default function ToolbarFilter({
 										<input
 											type="checkbox"
 											className="checkbox checkbox-info"
-											{...form.register("notes")}
+											{...form.register("timeSpent")}
 										/>
 										Show entries that have time spent
 									</div>
@@ -285,7 +285,7 @@ export default function ToolbarFilter({
 										<input
 											type="checkbox"
 											className="checkbox checkbox-info"
-											{...form.register("noNotes")}
+											{...form.register("noTimeSpent")}
 										/>
 										Show entries that have no time spent
 									</div>

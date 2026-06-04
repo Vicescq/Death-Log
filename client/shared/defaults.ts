@@ -1,4 +1,4 @@
-import type { Filters } from "../src/pages/death-log/formSchemas";
+import type { Filters, SortSettings } from "../src/pages/death-log/formSchemas";
 import { isoToDateSTD } from "../src/utils/date";
 
 export const defaultFilters: Filters = {
@@ -16,4 +16,11 @@ export const defaultFilters: Filters = {
 	unreliableEnd: true,
 	notes: true,
 	noNotes: true,
+	timeSpent: true,
+	noTimeSpent: true,
+};
+
+export const defaultSortSettings: SortSettings = {
+	ascending: false,
+	sortingKey: "created",
 };
