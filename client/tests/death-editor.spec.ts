@@ -50,7 +50,7 @@ test("Deletion", async ({ page }, testInfo) => {
 			await expect(searchIconLoc).toBeVisible();
 		}
 		await expect(page.getByText(addedGame)).toHaveCount(0);
-		await page.waitForTimeout(1000);
+		await page.waitForTimeout(250);
 	}
 
 	await test.step("Basic Deletion", async () => {
