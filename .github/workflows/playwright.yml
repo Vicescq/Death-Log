@@ -5,7 +5,7 @@ on:
   pull_request:
     branches: [ main, master, exp ]
 jobs:
-  test:
+  e2e:
     defaults:
       run:
         working-directory: client
