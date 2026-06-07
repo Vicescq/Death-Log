@@ -70,7 +70,7 @@ export const DateRangeSchema = z.object({
 	dateEndRel: z.boolean(),
 });
 
-type DateRange = z.infer<typeof DateRangeSchema>;
+export type DateRange = z.infer<typeof DateRangeSchema>;
 
 export function validateDateRange<T extends DateRange>(
 	schema: T,
