@@ -1,4 +1,4 @@
-import z, { boolean } from "zod";
+import z from "zod";
 import { CONSTANTS } from "../../shared/constants";
 import { assertIsNonNull } from "./asserts";
 

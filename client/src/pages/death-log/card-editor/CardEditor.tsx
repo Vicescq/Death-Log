@@ -18,11 +18,7 @@ import useNotifyDateReset from "../hooks/useNotifyDateReset";
 import Container from "../../../components/Container";
 import DateRangeForm from "../../../components/DateRangeForm";
 
-export default function CardEditor({
-	node,
-}: {
-	node: DistinctTreeNode;
-}) {
+export default function CardEditor({ node }: { node: DistinctTreeNode }) {
 	const updateNode = useDeathLogStore((state) => state.updateNode);
 	const deleteNode = useDeathLogStore((state) => state.deleteNode);
 	const navigate = useNavigate();
