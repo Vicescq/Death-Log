@@ -56,34 +56,6 @@ export function dateTimeSTDToISO(
 	return dateObj.toISOString();
 }
 
-/**
- * Resolves a given timestamp, determines the correct ISO string to return, ensuring only dirty timestamp inputs are updated.
- * If not used timestamps may be less precise.
- */
-export function resolveTimestampUpdate(
-	dirtyDate: string | undefined,
-	isDirtyDate: boolean,
-	dirtyTime: string | undefined,
-	isDirtyTime: boolean,
-	ogISOTimestamp: string,
-) {
-	let isoStr: string;
-	if (isDirtyDate && isDirtyTime) {
-		assertIsNonNull(dirtyDate);
-		assertIsNonNull(dirtyTime);
-		isoStr = dateTimeSTDToISO(dirtyDate, dirtyTime);
-	} else if (isDirtyDate && !isDirtyTime) {
-		assertIsNonNull(dirtyDate);
-		isoStr = dateTimeSTDToISO(dirtyDate, isoToTimeSTD(ogISOTimestamp));
-	} else if (!isDirtyDate && isDirtyTime) {
-		assertIsNonNull(dirtyTime);
-		isoStr = dateTimeSTDToISO(isoToDateSTD(ogISOTimestamp), dirtyTime);
-	} else {
-		isoStr = ogISOTimestamp;
-	}
-	return isoStr;
-}
-
 export const DateRangeSchema = z.object({
 	dateStart: z.iso.date({ error: CONSTANTS.ERROR.DATE }),
 	timeStart: z.iso.time({

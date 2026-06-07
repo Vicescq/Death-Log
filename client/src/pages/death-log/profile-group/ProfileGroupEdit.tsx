@@ -14,9 +14,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import useNotifyDateReset from "../hooks/useNotifyDateReset";
 import type { Subject } from "../../../model/tree-node-model/SubjectSchema";
 import {
+	dateTimeSTDToISO,
 	isoToDateSTD,
 	isoToTimeSTD,
-	resolveTimestampUpdate,
 } from "../../../utils/date";
 import { assertIsNonNull } from "../../../utils/asserts";
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
@@ -96,12 +96,9 @@ export default function ProfileGroupEdit({
 	});
 
 	const onSubmit: SubmitHandler<PGFormEdit> = (formData) => {
-		const dateStart = resolveTimestampUpdate(
+		const dateStart = dateTimeSTDToISO(
 			formData.dateStart,
-			Boolean(form.formState.dirtyFields.dateStart),
 			formData.timeStart,
-			Boolean(form.formState.dirtyFields.timeStart),
-			currGroup.dateStart,
 		);
 
 		let dateEnd: string | null = null;
@@ -109,13 +106,7 @@ export default function ProfileGroupEdit({
 			assertIsNonNull(currGroup.dateEnd);
 			assertIsNonNull(formData.dateEnd);
 			assertIsNonNull(formData.timeEnd);
-			dateEnd = resolveTimestampUpdate(
-				formData.dateEnd,
-				Boolean(form.formState.dirtyFields.dateEnd),
-				formData.timeEnd,
-				Boolean(form.formState.dirtyFields.timeEnd),
-				currGroup.dateEnd,
-			);
+			dateEnd = dateTimeSTDToISO(formData.dateEnd, formData.timeEnd);
 		}
 
 		updateNode({

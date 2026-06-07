@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { dateTimeSTDToISO, isoToDateSTD, isoToTimeSTD, resolveTimestampUpdate } from "./date";
+import { dateTimeSTDToISO, isoToDateSTD, isoToTimeSTD } from "./date";
 
 /**
  * Note that the timezone in vitest cfg is set to Mountain time.
@@ -27,9 +27,3 @@ test("dateTimeSTDToISO outputs correctly", () => {
 		"2100-03-15T03:30:00.000Z",
 	);
 });
-
-// test("resolveTimestampUpdate outputs correctly", () => {
-// 	expect(resolveTimestampUpdate("2019-12-31", "17:00:00")).toBe(
-// 		"2020-01-01T00:00:00.000Z",
-// 	);
-// });

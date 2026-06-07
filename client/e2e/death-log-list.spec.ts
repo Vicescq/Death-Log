@@ -270,7 +270,7 @@ test("Search Function", async ({ page, guestSetup }) => {
 });
 
 test("Filter", async ({ page, guestSetup, browserName }) => {
-	if (browserName === "webkit") test.setTimeout(125_000); // webkit is particularly very slow in this test
+	if (browserName === "webkit") test.setTimeout(75_000); // webkit is particularly very slow in this test
 
 	const toolbarPOM = new ToolbarPageObject(page);
 	const cardPOM = new CardPageObject(page);

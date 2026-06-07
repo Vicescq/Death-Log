@@ -4,7 +4,7 @@ import CardEditorDel from "./CardEditorDel";
 import CardEditorSubject from "./CardEditorSubject";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
-import { resolveTimestampUpdate } from "../../../utils/date";
+import { dateTimeSTDToISO } from "../../../utils/date";
 import { isoToDateSTD, isoToTimeSTD } from "../../../utils/date";
 import { CONSTANTS } from "../../../../shared/constants";
 import { delay } from "../../../utils/general";
@@ -77,12 +77,9 @@ export default function CardEditor({ node }: { node: DistinctTreeNode }) {
 	const { isValid, isDirty } = form.formState; // because of RHF's proxy subscription implementaion, https://github.com/Vicescq/Death-Log/issues/36
 
 	const onSubmit: SubmitHandler<NodeFormEdit> = (formData) => {
-		const dateStart = resolveTimestampUpdate(
+		const dateStart = dateTimeSTDToISO(
 			formData.dateStart,
-			Boolean(form.formState.dirtyFields.dateStart),
 			formData.timeStart,
-			Boolean(form.formState.dirtyFields.timeStart),
-			node.dateStart,
 		);
 
 		let dateEnd: string | null = null;
@@ -90,13 +87,7 @@ export default function CardEditor({ node }: { node: DistinctTreeNode }) {
 			assertIsNonNull(node.dateEnd);
 			assertIsNonNull(formData.dateEnd);
 			assertIsNonNull(formData.timeEnd);
-			dateEnd = resolveTimestampUpdate(
-				formData.dateEnd,
-				Boolean(form.formState.dirtyFields.dateEnd),
-				formData.timeEnd,
-				Boolean(form.formState.dirtyFields.timeEnd),
-				node.dateEnd,
-			);
+			dateEnd = dateTimeSTDToISO(formData.dateEnd, formData.timeEnd);
 		}
 
 		if (node.type == "game") {

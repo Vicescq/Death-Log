@@ -3,8 +3,11 @@ import up from "../../../assets/up.svg";
 import down from "../../../assets/down.svg";
 import Breadcrumb from "../breadcrumb/Breadcrumb";
 import { useRef, useState } from "react";
-import { isoToDateSTD, isoToTimeSTD } from "../../../utils/date";
-import { resolveTimestampUpdate } from "../../../utils/date";
+import {
+	dateTimeSTDToISO,
+	isoToDateSTD,
+	isoToTimeSTD,
+} from "../../../utils/date";
 import Modal from "../../../components/Modal";
 import { useForm } from "react-hook-form";
 import { type SubmitHandler } from "react-hook-form";
@@ -100,13 +103,7 @@ export default function Counter({ subject }: Props) {
 			(death) => death.id == focusedDeathID,
 		);
 		assertIsNonNull(focusedDeath);
-		const isoStr = resolveTimestampUpdate(
-			formData.date,
-			Boolean(modalForm.formState.dirtyFields.date),
-			formData.time,
-			Boolean(modalForm.formState.dirtyFields.time),
-			focusedDeath.timestamp,
-		);
+		const isoStr = dateTimeSTDToISO(formData.date, formData.time);
 
 		updateNode({
 			...subject,
