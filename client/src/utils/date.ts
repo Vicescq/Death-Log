@@ -1,6 +1,5 @@
 import z from "zod";
 import { CONSTANTS } from "../../shared/constants";
-import { assertIsNonNull } from "./asserts";
 
 /**
  * ISO string to standard date format
@@ -146,15 +145,6 @@ export function validateDateRange<T extends DateRange>(
 	} catch {
 		return;
 	}
-}
-
-export function formatDLExportFile(date: Date) {
-	const year = date.getFullYear();
-	const month = date.getMonth() + 1;
-	const day = date.getDate();
-
-	const fileName = `Death Log ${year}_${addLeadingZeroes(month)}_${addLeadingZeroes(day)} ${date.toTimeString()}`;
-	return fileName;
 }
 
 export function addLeadingZeroes(quantity: number): string {

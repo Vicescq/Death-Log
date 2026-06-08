@@ -15,7 +15,7 @@ import type {
 	DistinctTreeNode,
 } from "../model/tree-node-model/TreeNodeSchema";
 
-type DeathLogState = {
+export type DeathLogState = {
 	tree: Tree;
 
 	initTree: (nodes: DistinctTreeNode[]) => void;

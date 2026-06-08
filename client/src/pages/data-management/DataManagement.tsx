@@ -6,22 +6,10 @@ import { useDeathLogStore } from "../../stores/useDeathLogStore";
 import skull from "../../assets/skull.svg";
 import { db } from "../../model/LocalDBSchema";
 import NavBar from "../../components/nav-bar/NavBar";
-import type {
-	DistinctTreeNode,
-	TreeNode,
-} from "../../model/tree-node-model/TreeNodeSchema";
-import { formatDLExportFile } from "../../utils/date";
 import DataManagementModalBody from "./DataManagementModalBody";
 import type { FeedbackToastState } from "../../components/FeedbackToast";
 import FeedbackToast from "../../components/FeedbackToast";
-
-type DeathLogBackup = {
-	type: "DEATH-LOG Backup";
-	version: number;
-	details: "Please do not edit this JSON in a significant way. Doing so might corrupt the data and importing this file in the site will no longer work.";
-	date: string;
-	data: DistinctTreeNode[];
-};
+import { createDeathLogBackup, processImportedFile } from "./utils";
 
 export type DataManagementAction = "import" | "delete" | "migrate" | "reset";
 
@@ -37,57 +25,7 @@ export default function DataManagement() {
 		css: "success",
 	});
 
-	function validateJSON(parsedJSON: any) {
-		const deathLogBackupKeys = [
-			"type",
-			"version",
-			"details",
-			"date",
-			"data",
-		];
-		const keys = Object.keys(parsedJSON);
-		if (keys.length != deathLogBackupKeys.length) {
-			throw new Error("Invalid JSON");
-		}
-		keys.forEach((key) => {
-			if (!deathLogBackupKeys.includes(key)) {
-				throw new Error("Invalid JSON");
-			}
-		});
-
-		if (parsedJSON.type != "DEATH-LOG Backup") {
-			throw new Error("Invalid JSON");
-		}
-
-		if (
-			parsedJSON.details !=
-			"Please do not edit this JSON in a significant way. Doing so might corrupt the data and importing this file in the site will no longer work."
-		) {
-			throw new Error("Invalid JSON");
-		}
-
-		// light validation!
-		if (parsedJSON.data.length > 0) {
-			parsedJSON.data.forEach((supposedNode: TreeNode) => {
-				if (
-					!(supposedNode.type && supposedNode.id && supposedNode.name)
-				)
-					throw new Error("Invalid JSON");
-			});
-		}
-
-		if (parsedJSON.version != db.verno) {
-			throw new Error("Invalid JSON"); // temp
-			// implement migrations
-		}
-	}
-
-	function handleImport() {
-		importRef.current?.click();
-		modalRef.current?.close();
-	}
-
-	async function importDL() {
+	async function handleImport() {
 		// cant condense into handleXYZ naming pattern because have to invoke click(), 2 steps
 		if (
 			importRef.current &&
@@ -96,13 +34,9 @@ export default function DataManagement() {
 		) {
 			try {
 				const importedFile = importRef.current.files[0];
-				importRef.current.value = ""; // refire input tag onChange, edge case: user imports same invalid file multiple times
-				const importedFileTxt = await importedFile.text();
-				const importedFileFinal = JSON.parse(importedFileTxt);
+				importRef.current.value = ""; // refire input tag onChange, edge case: user imports same invalid file multiple times => import a.json -> closes err msg -> import a.json again -> err msg wont appear if this line is commented out
 
-				validateJSON(importedFileFinal);
-
-				await LocalDB.clearAndInsertData(importedFileFinal.data);
+				await processImportedFile(importedFile);
 				await refreshTree(initTree);
 
 				setFeedbackToast({
@@ -124,28 +58,16 @@ export default function DataManagement() {
 
 	async function handleExport() {
 		try {
-			const date = new Date();
-			const iso = date.toISOString();
-			const nodes = await LocalDB.getNodes();
-			const finalJSON: DeathLogBackup = {
-				type: "DEATH-LOG Backup",
-				version: db.verno,
-				details:
-					"Please do not edit this JSON in a significant way. Doing so might corrupt the data and importing this file in the site will no longer work.",
-				date: iso,
-				data: nodes,
-			};
+			const deathLogBackup = await createDeathLogBackup();
 
-			const blob = new Blob([JSON.stringify(finalJSON)], {
+			const blob = new Blob([JSON.stringify(deathLogBackup.json)], {
 				type: "application/json",
 			});
 			const url = URL.createObjectURL(blob);
 			const a = document.createElement("a");
 			a.href = url;
 
-			const fileName = formatDLExportFile(date);
-
-			a.download = `${fileName}.json`;
+			a.download = `${deathLogBackup.name}.json`;
 			document.body.appendChild(a);
 			a.click();
 			document.body.removeChild(a);
@@ -247,7 +169,10 @@ export default function DataManagement() {
 				content={
 					<DataManagementModalBody
 						action={action}
-						onImport={handleImport}
+						onImport={() => {
+							importRef.current?.click();
+							modalRef.current?.close();
+						}}
 						onDelete={handleDelete}
 						onMigrate={handleMigration}
 						onReset={handleReset}
@@ -316,7 +241,7 @@ export default function DataManagement() {
 				type="file"
 				className="hidden"
 				ref={importRef}
-				onChange={importDL}
+				onChange={handleImport}
 				accept="application/json"
 			/>
 		</>
