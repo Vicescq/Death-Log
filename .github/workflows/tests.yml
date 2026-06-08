@@ -5,7 +5,23 @@ on:
   pull_request:
     branches: [ main, master, exp ]
 jobs:
+  unit-and-integration:
+    defaults:
+      run:
+        working-directory: client    
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v5
+    - uses: actions/setup-node@v5
+      with:
+        node-version: lts/*
+    - name: Install dependencies
+      run: npm ci
+    - name: Run Unit and integration tests
+      run: npx vitest run
   e2e:
+    needs: unit-and-integration
     defaults:
       run:
         working-directory: client
