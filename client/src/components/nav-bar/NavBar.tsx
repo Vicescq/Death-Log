@@ -3,6 +3,7 @@ import home from "../../assets/home.svg";
 import save from "../../assets/save.svg";
 import dl from "../../assets/death-log.svg";
 import faq from "../../assets/faq.svg";
+import graph from "../../assets/graph.svg";
 import { SignedIn, UserButton } from "@clerk/clerk-react";
 import NavBarDrawer from "./NavBarDrawer";
 import { useActiveNavBarCSS } from "./useActiveNavBarCSS";
@@ -40,6 +41,13 @@ export default function NavBar({
 							<img src={dl} alt="" className="h-5 w-5" />
 						</Link>
 					</li>
+
+					<li>
+						<Link to={{ pathname: "/stats" }}>
+							<img src={graph} alt="" className="h-5 w-5" />
+						</Link>
+					</li>
+
 					<li>
 						<Link
 							className={activeDMCSS}
@@ -48,6 +56,7 @@ export default function NavBar({
 							<img src={save} alt="" className="h-5 w-5" />
 						</Link>
 					</li>
+
 					<li>
 						<Link
 							className={activeFAQCSS}
@@ -56,6 +65,7 @@ export default function NavBar({
 							<img src={faq} alt="" className="h-5 w-5" />
 						</Link>
 					</li>
+
 					<SignedIn>
 						<li>
 							<button>

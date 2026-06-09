@@ -16,6 +16,7 @@ import useConsoleLogOnStateChange from "./hooks/useConsoleLogOnStateChange.ts";
 import useMultipleTabsWarning from "./hooks/useMultipleTabsWarning.ts";
 import { CONSTANTS } from "../shared/constants.ts";
 import DeathLogRouter from "./pages/death-log/DeathLogRouter.tsx";
+import StatsDashboard from "./pages/stats/StatsDashboard.tsx";
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 if (!PUBLISHABLE_KEY) {
@@ -57,6 +58,8 @@ function AppRoot() {
 					<Route index element={<DeathLog parent={root} />} />
 					<Route path=":id" element={<DeathLogRouter />} />
 				</Route>
+
+				<Route path="stats" element={<StatsDashboard />} />
 
 				<Route path="data-management" element={<DataManagement />} />
 

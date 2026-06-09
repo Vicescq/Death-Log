@@ -3,6 +3,7 @@ import save from "../../assets/save.svg";
 import dl from "../../assets/death-log.svg";
 import navPanel from "../../assets/nav_panel.svg";
 import faq from "../../assets/faq.svg";
+import graph from "../../assets/graph.svg";
 import { Link } from "react-router";
 import { useActiveNavBarCSS } from "./useActiveNavBarCSS";
 import { SignedIn, UserButton } from "@clerk/clerk-react";
@@ -16,7 +17,10 @@ export default function NavBarDrawer() {
 		<div className="drawer z-[1000] lg:hidden">
 			<input id="my-drawer-1" type="checkbox" className="drawer-toggle" />
 			<div className="drawer-content">
-				<label htmlFor="my-drawer-1" className="btn btn-ghost drawer-button">
+				<label
+					htmlFor="my-drawer-1"
+					className="btn btn-ghost drawer-button"
+				>
 					<img src={navPanel} alt="" className="h-5 w-5" />
 				</label>
 			</div>
@@ -39,6 +43,14 @@ export default function NavBarDrawer() {
 							to={{ pathname: "/log" }}
 						>
 							<img src={dl} alt="" className="h-5 w-5" />
+						</Link>
+					</li>
+					<li>
+						<Link
+							className={`btn ${activeFAQCSS}`}
+							to={{ pathname: "/stats" }}
+						>
+							<img src={graph} alt="" className="h-5 w-5" />
 						</Link>
 					</li>
 					<li>
