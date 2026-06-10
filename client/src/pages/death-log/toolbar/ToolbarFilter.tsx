@@ -264,35 +264,112 @@ export default function ToolbarFilter({
 				</div>
 
 				{nodeType == "subject" ? (
-					<div className="my-1">
-						<div className="text-info mb-3">Time Spent Display</div>
-						<ul className="flex flex-col gap-2">
-							<li>
-								<label>
-									<div className="flex gap-4">
-										<input
-											type="checkbox"
-											className="checkbox checkbox-info"
-											{...form.register("timeSpent")}
-										/>
-										Show entries that have time spent
-									</div>
-								</label>
-							</li>
-							<li>
-								<label>
-									<div className="flex gap-4">
-										<input
-											type="checkbox"
-											className="checkbox checkbox-info"
-											{...form.register("noTimeSpent")}
-										/>
-										Show entries that have no time spent
-									</div>
-								</label>
-							</li>
-						</ul>
-					</div>
+					<>
+						<div className="my-1">
+							<div className="text-info mb-3">
+								Subject Contexts
+							</div>
+
+							<ul className="flex flex-col gap-2">
+								<li>
+									<label>
+										<div className="flex gap-4">
+											<input
+												type="checkbox"
+												className="checkbox checkbox-info"
+												{...form.register("boss")}
+											/>
+											Show bosses
+										</div>
+									</label>
+								</li>
+								<li>
+									<label>
+										<div className="flex gap-4">
+											<input
+												type="checkbox"
+												className="checkbox checkbox-info"
+												{...form.register("location")}
+											/>
+											Show locations
+										</div>
+									</label>
+								</li>
+								<li>
+									<label>
+										<div className="flex gap-4">
+											<input
+												type="checkbox"
+												className="checkbox checkbox-info"
+												{...form.register(
+													"genericEnemy",
+												)}
+											/>
+											Show generic enemies
+										</div>
+									</label>
+								</li>
+								<li>
+									<label>
+										<div className="flex gap-4">
+											<input
+												type="checkbox"
+												className="checkbox checkbox-info"
+												{...form.register("miniBoss")}
+											/>
+											Show mini bosses
+										</div>
+									</label>
+								</li>
+								<li>
+									<label>
+										<div className="flex gap-4">
+											<input
+												type="checkbox"
+												className="checkbox checkbox-info"
+												{...form.register("other")}
+											/>
+											Show subjects classified as `other`
+										</div>
+									</label>
+								</li>
+							</ul>
+						</div>
+						<div className="my-1">
+							<div className="text-info mb-3">
+								Time Spent Display
+							</div>
+
+							<ul className="flex flex-col gap-2">
+								<li>
+									<label>
+										<div className="flex gap-4">
+											<input
+												type="checkbox"
+												className="checkbox checkbox-info"
+												{...form.register("timeSpent")}
+											/>
+											Show entries that have time spent
+										</div>
+									</label>
+								</li>
+								<li>
+									<label>
+										<div className="flex gap-4">
+											<input
+												type="checkbox"
+												className="checkbox checkbox-info"
+												{...form.register(
+													"noTimeSpent",
+												)}
+											/>
+											Show entries that have no time spent
+										</div>
+									</label>
+								</li>
+							</ul>
+						</div>
+					</>
 				) : null}
 
 				<button

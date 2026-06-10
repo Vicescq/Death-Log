@@ -2,10 +2,10 @@ import { Link, useLocation } from "react-router";
 
 export default function StatsNav() {
 	const location = useLocation();
-	const isActive = (path: string) => location.pathname === path;
-
+	const isActive = (path: string) =>
+		new RegExp(`${path}/*$`).test(location.pathname);
 	return (
-		<div className="border-b border-base-300">
+		<div className="border-base-300 border-b">
 			<div className="tabs tabs-bordered">
 				<Link
 					to="/stats"

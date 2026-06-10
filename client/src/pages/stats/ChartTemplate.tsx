@@ -12,7 +12,7 @@ export default function ChartTemplate({ option }: Props) {
 	option = useChartAnimation(option);
 
 	return (
-		<div className="border-base-300 bg-base-200 rounded-2xl border p-4 shadow-sm">
+		<div className="border-base-300 bg-base-200 rounded-2xl border p-2 shadow-lg">
 			<EChartsReact
 				option={option}
 				theme={chalk}

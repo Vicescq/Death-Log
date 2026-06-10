@@ -173,6 +173,11 @@ export const FiltersSchema = z.object({
 	noNotes: z.boolean(),
 	timeSpent: z.boolean(),
 	noTimeSpent: z.boolean(),
+	boss: z.boolean(),
+	location: z.boolean(),
+	other: z.boolean(),
+	genericEnemy: z.boolean(),
+	miniBoss: z.boolean(),
 });
 
 export type Filters = z.infer<typeof FiltersSchema>;

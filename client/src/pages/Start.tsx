@@ -63,6 +63,9 @@ export default function Start() {
 								</button>
 							</Link>
 						</SignedIn>
+						<Link to="stats" className="btn btn-neutral w-full">
+							Statistics
+						</Link>
 						<Link
 							to="data-management"
 							className="btn btn-neutral w-full"

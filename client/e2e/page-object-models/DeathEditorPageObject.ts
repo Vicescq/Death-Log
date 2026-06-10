@@ -22,7 +22,11 @@ export default class DeathEditorPageObject {
 				}
 			} else if (typeof value == "string") {
 				if (value != (await locator.inputValue())) {
-					await locator.fill(value);
+					if (fieldKey == "context") {
+						await locator.selectOption(value);
+					} else {
+						await locator.fill(value);
+					}
 				}
 			} else if (value == null) {
 				continue;

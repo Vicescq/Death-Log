@@ -183,3 +183,226 @@ test("filter | death range", () => {
 
 	expect(filter(idsToTest, filterPrefs, tree, "")).toHaveLength(2);
 });
+
+test("filter | notes", () => {
+	let filterPrefs: Filters = {
+		...defaultFilters,
+		notes: true,
+		noNotes: false,
+	};
+	const ids = setUpFullTreeLineage(useDeathLogStore);
+	const idsToTest = [ids.subjectID];
+
+	const subjectToBeUpdated = useDeathLogStore
+		.getState()
+		.tree.get(ids.subjectID);
+	assertIsNonNull(subjectToBeUpdated);
+	useDeathLogStore
+		.getState()
+		.updateNode({ ...subjectToBeUpdated, notes: "test note" });
+
+	const tree = useDeathLogStore.getState().tree;
+
+	expect(filter(idsToTest, filterPrefs, tree, "")).toHaveLength(1);
+
+	filterPrefs = { ...defaultFilters, notes: false, noNotes: true };
+
+	expect(filter(idsToTest, filterPrefs, tree, "")).toHaveLength(0);
+});
+
+test("filter | reliability flags", () => {
+	let filterPrefs: Filters = {
+		...defaultFilters,
+		reliableStart: true,
+		unreliableStart: false,
+		reliableEnd: false,
+		unreliableEnd: false,
+	};
+	const ids = setUpFullTreeLineage(useDeathLogStore);
+	const idsToTest = [ids.subjectID];
+
+	const tree = useDeathLogStore.getState().tree;
+
+	expect(filter(idsToTest, filterPrefs, tree, "")).toHaveLength(1);
+
+	filterPrefs = {
+		...defaultFilters,
+		reliableStart: false,
+		unreliableStart: true,
+		reliableEnd: false,
+		unreliableEnd: false,
+	};
+
+	expect(filter(idsToTest, filterPrefs, tree, "")).toHaveLength(0);
+});
+
+test("filter | timeSpent", () => {
+	let filterPrefs: Filters = {
+		...defaultFilters,
+		timeSpent: true,
+		noTimeSpent: false,
+	};
+	const ids = setUpFullTreeLineage(useDeathLogStore);
+	const idsToTest = [ids.subjectID];
+
+	const tree = useDeathLogStore.getState().tree;
+
+	// Subject has no timeSpent by default
+	expect(filter(idsToTest, filterPrefs, tree, "")).toHaveLength(0);
+
+	const subjectToBeUpdated = useDeathLogStore
+		.getState()
+		.tree.get(ids.subjectID);
+	assertIsNonNull(subjectToBeUpdated);
+	assertIsSubject(subjectToBeUpdated);
+	useDeathLogStore.getState().updateNode({
+		...subjectToBeUpdated,
+		timeSpent: "01:30:00",
+	});
+
+	const updatedTree = useDeathLogStore.getState().tree;
+
+	expect(filter(idsToTest, filterPrefs, updatedTree, "")).toHaveLength(1);
+
+	filterPrefs = { ...defaultFilters, timeSpent: false, noTimeSpent: true };
+
+	expect(filter(idsToTest, filterPrefs, updatedTree, "")).toHaveLength(0);
+});
+
+test("filter | subject context - boss", () => {
+	let filterPrefs: Filters = {
+		...defaultFilters,
+		boss: true,
+		location: false,
+		other: false,
+		genericEnemy: false,
+		miniBoss: false,
+	};
+	const ids = setUpFullTreeLineage(useDeathLogStore);
+	const idsToTest = [ids.subjectID];
+
+	const subjectToBeUpdated = useDeathLogStore
+		.getState()
+		.tree.get(ids.subjectID);
+	assertIsNonNull(subjectToBeUpdated);
+	assertIsSubject(subjectToBeUpdated);
+	useDeathLogStore.getState().updateNode({
+		...subjectToBeUpdated,
+		context: "Boss",
+	});
+
+	const tree = useDeathLogStore.getState().tree;
+
+	expect(filter(idsToTest, filterPrefs, tree, "")).toHaveLength(1);
+
+	filterPrefs = {
+		...defaultFilters,
+		boss: false,
+		location: false,
+		other: false,
+		genericEnemy: false,
+		miniBoss: false,
+	};
+
+	expect(filter(idsToTest, filterPrefs, tree, "")).toHaveLength(0);
+});
+
+test("filter | subject context - location", () => {
+	let filterPrefs: Filters = {
+		...defaultFilters,
+		boss: false,
+		location: true,
+		other: false,
+		genericEnemy: false,
+		miniBoss: false,
+	};
+	const ids = setUpFullTreeLineage(useDeathLogStore);
+	const idsToTest = [ids.subjectID];
+
+	const subjectToBeUpdated = useDeathLogStore
+		.getState()
+		.tree.get(ids.subjectID);
+	assertIsNonNull(subjectToBeUpdated);
+	assertIsSubject(subjectToBeUpdated);
+	useDeathLogStore.getState().updateNode({
+		...subjectToBeUpdated,
+		context: "Location",
+	});
+
+	const tree = useDeathLogStore.getState().tree;
+
+	expect(filter(idsToTest, filterPrefs, tree, "")).toHaveLength(1);
+});
+
+test("filter | subject context - multiple enabled filters (OR logic)", () => {
+	let filterPrefs: Filters = {
+		...defaultFilters,
+		boss: true,
+		location: true,
+		other: false,
+		genericEnemy: false,
+		miniBoss: false,
+	};
+	const ids = setUpFullTreeLineage(useDeathLogStore);
+
+	const subject1 = useDeathLogStore.getState().tree.get(ids.subjectID);
+	assertIsNonNull(subject1);
+	assertIsSubject(subject1);
+	useDeathLogStore.getState().updateNode({
+		...subject1,
+		context: "Boss",
+	});
+
+	useDeathLogStore
+		.getState()
+		.addNode("subject", "TestLocation", ids.profileID);
+	const subjectID2 = useDeathLogStore.getState().tree.get(ids.profileID)
+		?.childIDS[1];
+	assertIsNonNull(subjectID2);
+
+	const subject2 = useDeathLogStore.getState().tree.get(subjectID2);
+	assertIsNonNull(subject2);
+	assertIsSubject(subject2);
+	useDeathLogStore.getState().updateNode({
+		...subject2,
+		context: "Location",
+	});
+
+	const tree = useDeathLogStore.getState().tree;
+	const idsToTest = [ids.subjectID, subjectID2];
+
+	expect(filter(idsToTest, filterPrefs, tree, "")).toHaveLength(2);
+
+	filterPrefs = {
+		...defaultFilters,
+		boss: false,
+		location: false,
+		other: false,
+		genericEnemy: false,
+		miniBoss: false,
+	};
+
+	expect(filter(idsToTest, filterPrefs, tree, "")).toHaveLength(0);
+});
+
+test("filter | search query", () => {
+	const filterPrefs: Filters = defaultFilters;
+	const ids = setUpFullTreeLineage(useDeathLogStore);
+	const idsToTest = [ids.subjectID];
+
+	const tree = useDeathLogStore.getState().tree;
+	const subject = tree.get(ids.subjectID);
+	assertIsNonNull(subject);
+
+	const subjectName = subject.name;
+
+	expect(
+		filter(idsToTest, filterPrefs, tree, subjectName.slice(0, 2)),
+	).toHaveLength(1);
+
+	expect(
+		filter(idsToTest, filterPrefs, tree, subjectName.toUpperCase()),
+	).toHaveLength(1);
+
+	expect(filter(idsToTest, filterPrefs, tree, "cxzcxzcxczx")).toHaveLength(0);
+});

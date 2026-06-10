@@ -269,8 +269,11 @@ test("Search Function", async ({ page, guestSetup }) => {
 	});
 });
 
-test("Filter", async ({ page, guestSetup, browserName }) => {
-	if (browserName === "webkit") test.setTimeout(75_000); // webkit is particularly very slow in this test
+test("Filter", async ({ page, guestSetup, browserName, isMobile }) => {
+	// the following are particularly very slow in this test
+	if (browserName === "webkit") test.setTimeout(200_000); 
+	if (browserName === "webkit" && isMobile) test.setTimeout(100_000); 
+
 
 	const toolbarPOM = new ToolbarPageObject(page);
 	const cardPOM = new CardPageObject(page);
@@ -393,7 +396,7 @@ test("Filter", async ({ page, guestSetup, browserName }) => {
 			await counterPOM.incDeath(true);
 		}
 		await page.goBack();
-		await toolbarPOM.add(addedSubject2);
+		await toolbarPOM.add(addedSubject2, true, "Location");
 		await cardPOM.enter(addedSubject2);
 		for (let i = 0; i < 7; i++) {
 			await counterPOM.incDeath(true);
@@ -446,6 +449,123 @@ test("Filter", async ({ page, guestSetup, browserName }) => {
 		};
 		await toolbarPOM.filter(changedFilters, "subject");
 		await expect(cardPOM.selectCard(addedSubject)).toBeHidden();
+	});
+
+	await test.step("Subject Context Filter - Boss", async () => {
+		await toolbarPOM.resetFilters();
+
+		changedFilters = {
+			...defaultFilters,
+			boss: true,
+			location: false,
+			other: false,
+			genericEnemy: false,
+			miniBoss: false,
+		};
+		await toolbarPOM.filter(changedFilters, "subject");
+		await expect(cardPOM.selectCard(addedSubject)).toBeVisible();
+		await expect(cardPOM.selectCard(addedSubject2)).toBeHidden();
+	});
+
+	await test.step("Subject Context Filter - Location", async () => {
+		await toolbarPOM.resetFilters();
+
+		changedFilters = {
+			...defaultFilters,
+			boss: false,
+			location: true,
+			other: false,
+			genericEnemy: false,
+			miniBoss: false,
+		};
+		await toolbarPOM.filter(changedFilters, "subject");
+		await expect(cardPOM.selectCard(addedSubject2)).toBeVisible();
+		await expect(cardPOM.selectCard(addedSubject)).toBeHidden();
+	});
+
+	await test.step("Subject Context Filter - Generic Enemy", async () => {
+		await toolbarPOM.resetFilters();
+		await cardPOM.edit(addedSubject);
+		await editorPOM.edit({ context: "Generic Enemy" });
+		await page.goBack();
+
+		changedFilters = {
+			...defaultFilters,
+			boss: false,
+			location: false,
+			other: false,
+			genericEnemy: true,
+			miniBoss: false,
+		};
+		await toolbarPOM.filter(changedFilters, "subject");
+		await expect(cardPOM.selectCard(addedSubject)).toBeVisible();
+		await expect(cardPOM.selectCard(addedSubject2)).toBeHidden();
+	});
+
+	await test.step("Subject Context Filter - Mini Boss", async () => {
+		await toolbarPOM.resetFilters();
+		await cardPOM.edit(addedSubject2);
+		await editorPOM.edit({ context: "Mini Boss" });
+		await page.goBack();
+
+		changedFilters = {
+			...defaultFilters,
+			boss: false,
+			location: false,
+			other: false,
+			genericEnemy: false,
+			miniBoss: true,
+		};
+		await toolbarPOM.filter(changedFilters, "subject");
+		await expect(cardPOM.selectCard(addedSubject2)).toBeVisible();
+		await expect(cardPOM.selectCard(addedSubject)).toBeHidden();
+	});
+
+	await test.step("Subject Context Filter - Other", async () => {
+		await toolbarPOM.resetFilters();
+		await cardPOM.edit(addedSubject);
+		await editorPOM.edit({ context: "Other" });
+		await page.goBack();
+
+		changedFilters = {
+			...defaultFilters,
+			boss: false,
+			location: false,
+			other: true,
+			genericEnemy: false,
+			miniBoss: false,
+		};
+		await toolbarPOM.filter(changedFilters, "subject");
+		await expect(cardPOM.selectCard(addedSubject)).toBeVisible();
+		await expect(cardPOM.selectCard(addedSubject2)).toBeHidden();
+	});
+
+	await test.step("Subject Context Filter - Multiple Contexts (OR Logic)", async () => {
+		changedFilters = {
+			...defaultFilters,
+			boss: false,
+			location: false,
+			other: true,
+			genericEnemy: false,
+			miniBoss: true,
+		};
+		await toolbarPOM.filter(changedFilters, "subject");
+		await expect(cardPOM.selectCard(addedSubject)).toBeVisible();
+		await expect(cardPOM.selectCard(addedSubject2)).toBeVisible();
+	});
+
+	await test.step("Subject Context Filter - All Disabled (Filters Out All)", async () => {
+		changedFilters = {
+			...defaultFilters,
+			boss: false,
+			location: false,
+			other: false,
+			genericEnemy: false,
+			miniBoss: false,
+		};
+		await toolbarPOM.filter(changedFilters, "subject");
+		await expect(cardPOM.selectCard(addedSubject)).toBeHidden();
+		await expect(cardPOM.selectCard(addedSubject2)).toBeHidden();
 	});
 });
 

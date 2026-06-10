@@ -27,18 +27,22 @@ export default class ToolbarPageObject {
 			.getByLabel(CONSTANTS.TOOLBAR.ADD_MODAL_NAME_LABEL)
 			.fill(name);
 
-		if (isSubject && ctx != undefined && reocc != undefined) {
-			await this.page
-				.getByLabel(CONSTANTS.TOOLBAR.ADD_MODAL_CTX_LABEL)
-				.selectOption(ctx);
+		if (isSubject) {
+			if (ctx !== undefined) {
+				await this.page
+					.getByLabel(CONSTANTS.TOOLBAR.ADD_MODAL_CTX_LABEL)
+					.selectOption(ctx);
+			}
 
-			reocc
-				? await this.page
-						.getByLabel(CONSTANTS.TOOLBAR.ADD_MODAL_REOCC_LABEL)
-						.check()
-				: await this.page
-						.getByLabel(CONSTANTS.TOOLBAR.ADD_MODAL_REOCC_LABEL)
-						.uncheck();
+			if (reocc !== undefined) {
+				reocc
+					? await this.page
+							.getByLabel(CONSTANTS.TOOLBAR.ADD_MODAL_REOCC_LABEL)
+							.check()
+					: await this.page
+							.getByLabel(CONSTANTS.TOOLBAR.ADD_MODAL_REOCC_LABEL)
+							.uncheck();
+			}
 		}
 
 		await this.page.getByText(CONSTANTS.TOOLBAR.ADD_MODAL_SUBMIT).click();
@@ -99,7 +103,12 @@ export default class ToolbarPageObject {
 			if (
 				(filterKey == "reoccurring" ||
 					filterKey == "timeSpent" ||
-					filterKey == "noTimeSpent") &&
+					filterKey == "noTimeSpent" ||
+					filterKey == "boss" ||
+					filterKey == "location" ||
+					filterKey == "other" ||
+					filterKey == "genericEnemy" ||
+					filterKey == "miniBoss") &&
 				viewType != "subject"
 			) {
 				continue;

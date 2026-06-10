@@ -17,6 +17,7 @@ import useMultipleTabsWarning from "./hooks/useMultipleTabsWarning.ts";
 import { CONSTANTS } from "../shared/constants.ts";
 import DeathLogRouter from "./pages/death-log/DeathLogRouter.tsx";
 import StatsDashboard from "./pages/stats/StatsDashboard.tsx";
+import StatsOverview from "./pages/stats/StatsOverview.tsx";
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 if (!PUBLISHABLE_KEY) {
@@ -59,7 +60,10 @@ function AppRoot() {
 					<Route path=":id" element={<DeathLogRouter />} />
 				</Route>
 
-				<Route path="stats" element={<StatsDashboard />} />
+				<Route path="stats" element={<StatsDashboard />}>
+					<Route index element={<StatsOverview />} />
+					<Route path="build" element={<div>sdas</div>} />
+				</Route>
 
 				<Route path="data-management" element={<DataManagement />} />
 

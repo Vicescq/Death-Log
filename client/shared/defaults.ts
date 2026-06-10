@@ -18,6 +18,11 @@ export const defaultFilters: Filters = {
 	noNotes: true,
 	timeSpent: true,
 	noTimeSpent: true,
+	boss: true,
+	location: true,
+	other: true,
+	genericEnemy: true,
+	miniBoss: true,
 };
 
 export const defaultSortSettings: SortSettings = {

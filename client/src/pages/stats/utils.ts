@@ -1,8 +1,13 @@
 import type { EChartsOption } from "echarts";
 import { useDeathLogStore } from "../../stores/useDeathLogStore";
 import { assertIsGame, assertIsNonNull } from "../../utils/asserts";
-import { calcDeaths, sort } from "../death-log/utils";
-import type { SortSettings } from "../death-log/formSchemas";
+import {
+	calcDeaths,
+	filter,
+	sort,
+	type DeathLogViewType,
+} from "../death-log/utils";
+import type { Filters, SortSettings } from "../death-log/formSchemas";
 import type { DistinctTreeNode } from "../../model/tree-node-model/TreeNodeSchema";
 
 type BarChartData = {
@@ -12,16 +17,23 @@ type BarChartData = {
 
 /**
  * Collects some type of node (game, profile, subject) from a specific parent, and filters and sorts them
- * @param sortSettings
- * @returns
  */
-export function collectNodes(sortSettings: SortSettings): DistinctTreeNode[] {
+export function collectNodes(
+	sortSettings: SortSettings,
+	filterSettings: Filters,
+	nodeType: DeathLogViewType,
+): DistinctTreeNode[] {
 	const tree = useDeathLogStore.getState().tree;
 	const gameIDs = tree.get("ROOT_NODE")?.childIDS.map((id) => id);
 	assertIsNonNull(gameIDs);
-	const sortedGameIDs = sort(gameIDs, tree, sortSettings);
 
-	const games = sortedGameIDs.map((id) => {
+	const processedGameIDs = sort(
+		filter(gameIDs, filterSettings, tree, ""),
+		tree,
+		sortSettings,
+	);
+
+	const games = processedGameIDs.map((id) => {
 		const game = tree.get(id);
 		assertIsNonNull(game);
 		assertIsGame(game);

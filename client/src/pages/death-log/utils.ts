@@ -1,4 +1,7 @@
-import type { Subject } from "../../model/tree-node-model/SubjectSchema";
+import type {
+	Subject,
+	SubjectContext,
+} from "../../model/tree-node-model/SubjectSchema";
 import type {
 	DistinctTreeNode,
 	Tree,
@@ -59,6 +62,7 @@ export function filter(
 		const notesBoolVals: boolean[] = [];
 		const dateRangeBoolVals: boolean[] = [];
 		const timeSpentBoolVals: boolean[] = [];
+		const subjectContextBoolVals: boolean[] = [];
 		let passedDeathRange = false;
 		let passedAzRange = false;
 
@@ -201,6 +205,53 @@ export function filter(
 					} else {
 						timeSpentBoolVals.push(true);
 					}
+					break;
+				case "boss":
+					if (node.type == "subject") {
+						subjectContextBoolVals.push(
+							filters[filterKey] && node.context == "Boss",
+						);
+					} else {
+						subjectContextBoolVals.push(true);
+					}
+					break;
+				case "location":
+					if (node.type == "subject") {
+						subjectContextBoolVals.push(
+							filters[filterKey] && node.context == "Location",
+						);
+					} else {
+						subjectContextBoolVals.push(true);
+					}
+					break;
+				case "other":
+					if (node.type == "subject") {
+						subjectContextBoolVals.push(
+							filters[filterKey] && node.context == "Other",
+						);
+					} else {
+						subjectContextBoolVals.push(true);
+					}
+					break;
+				case "genericEnemy":
+					if (node.type == "subject") {
+						subjectContextBoolVals.push(
+							filters[filterKey] &&
+								node.context == "Generic Enemy",
+						);
+					} else {
+						subjectContextBoolVals.push(true);
+					}
+					break;
+				case "miniBoss":
+					if (node.type == "subject") {
+						subjectContextBoolVals.push(
+							filters[filterKey] && node.context == "Mini Boss",
+						);
+					} else {
+						subjectContextBoolVals.push(true);
+					}
+					break;
 			}
 		}
 
@@ -211,6 +262,7 @@ export function filter(
 			relFlagBoolVals.some((bool) => bool) &&
 			dateRangeBoolVals.every((bool) => bool) &&
 			timeSpentBoolVals.some((bool) => bool) &&
+			subjectContextBoolVals.some((bool) => bool) &&
 			passedAzRange &&
 			passedDeathRange
 		);
