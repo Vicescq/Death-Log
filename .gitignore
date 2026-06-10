@@ -23,11 +23,8 @@ dist-ssr
 *.sln
 *.sw?
 
-app.db
 .env
 dev-dist
-backups/*
-serviceAccountKey.json
 *.bat
 
 # Playwright

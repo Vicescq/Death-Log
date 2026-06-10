@@ -1,6 +1,6 @@
 import EChartsReact from "react-echarts-library";
 import useChartAnimation from "./hooks/useChartAnimation";
-import chalk from "../../../shared/chalk.json";
+import darkerChalk from "../../../shared/darker_chalk.json";
 import type { EChartsOption } from "echarts";
 
 type Props = {
@@ -15,7 +15,7 @@ export default function ChartTemplate({ option }: Props) {
 		<div className="border-base-300 bg-base-200 rounded-2xl border p-2 shadow-lg">
 			<EChartsReact
 				option={option}
-				theme={chalk}
+				theme={darkerChalk}
 				style={{ height: "350px" }}
 			/>
 		</div>

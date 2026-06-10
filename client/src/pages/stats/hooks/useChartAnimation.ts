@@ -1,5 +1,5 @@
 import type { EChartsOption } from "echarts";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { delay } from "../../../utils/general";
 
 export default function useChartAnimation(optionToSet: EChartsOption) {

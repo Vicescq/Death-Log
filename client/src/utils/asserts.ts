@@ -9,6 +9,20 @@ export function assertIsNonNull<T>(value: T): asserts value is NonNullable<T> {
 	}
 }
 
+export function assertIsDistinctTreeNode(
+	value: any,
+): asserts value is DistinctTreeNode {
+	if (
+		value.type != "game" &&
+		value.type != "profile" &&
+		value.type != "subject"
+	) {
+		throw new Error(
+			"DEV ERROR! Expected DistinctTreeNode type is non DistinctTreeNode!",
+		);
+	}
+}
+
 export function assertIsGame(value: DistinctTreeNode): asserts value is Game {
 	if (value.type != "game") {
 		throw new Error("DEV ERROR! Expected game type is non game!");

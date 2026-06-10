@@ -1,4 +1,8 @@
 import type { Filters, SortSettings } from "../src/pages/death-log/formSchemas";
+import type {
+	DeathFilters,
+	DeathSortSettings,
+} from "../src/services/stats-query/StatsQuery";
 import { isoToDateSTD } from "../src/utils/date";
 
 export const defaultFilters: Filters = {
@@ -28,4 +32,14 @@ export const defaultFilters: Filters = {
 export const defaultSortSettings: SortSettings = {
 	ascending: false,
 	sortingKey: "created",
+};
+
+export const defaultDeathFilters: DeathFilters = {
+	timestampRel: true,
+	unreliableTimestamp: true,
+};
+
+export const defaultDeathSortSettings: DeathSortSettings = {
+	ascending: false,
+	sortingKey: "timestamp",
 };
