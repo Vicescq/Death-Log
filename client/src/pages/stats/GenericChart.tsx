@@ -2,13 +2,13 @@ import EChartsReact from "react-echarts-library";
 import useChartAnimation from "./hooks/useChartAnimation";
 import darkerChalk from "../../../shared/darker_chalk.json";
 import type { EChartsOption } from "echarts";
+import {defaultEchartStyling} from "../../../shared/defaults";
 
 type Props = {
 	option: EChartsOption;
-	height?: number;
 };
 
-export default function ChartTemplate({ option }: Props) {
+export default function GenericChart({ option }: Props) {
 	option = useChartAnimation(option);
 
 	return (
@@ -16,7 +16,7 @@ export default function ChartTemplate({ option }: Props) {
 			<EChartsReact
 				option={option}
 				theme={darkerChalk}
-				style={{ height: "350px" }}
+				style={defaultEchartStyling}
 			/>
 		</div>
 	);

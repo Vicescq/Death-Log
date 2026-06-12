@@ -27,7 +27,7 @@ test.describe("NodeFilterStage and NodeSortStage", () => {
 			ascending: true,
 		});
 
-		const chartOptions = chartStage.toBarChart();
+		const chartOptions = chartStage.toBarChart({ title: "Test Subjects" });
 		expect(chartOptions).toBeDefined();
 		expect(chartOptions.series).toBeDefined();
 	});
@@ -45,7 +45,7 @@ test.describe("NodeFilterStage and NodeSortStage", () => {
 			ascending: true,
 		});
 
-		const chartOptions = chartStage.toBarChart();
+		const chartOptions = chartStage.toBarChart({ title: "Filtered Subjects" });
 		expect(chartOptions).toBeDefined();
 		expect((chartOptions.xAxis as any).data).toBeDefined();
 	});
@@ -65,7 +65,7 @@ test.describe("NodeFilterStage and NodeSortStage", () => {
 			})
 			.limit(2);
 
-		const chartOptions = limitedStage.toBarChart();
+		const chartOptions = limitedStage.toBarChart({ title: "Limited Subjects" });
 		expect(chartOptions).toBeDefined();
 	});
 });

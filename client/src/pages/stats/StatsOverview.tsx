@@ -1,13 +1,8 @@
-import ChartTemplate from "./ChartTemplate";
+import GenericChart from "./GenericChart";
 import { StatsQuery } from "../../services/stats-query/StatsQuery";
 import useMediaQuery from "../../hooks/useMediaQuery";
-import {
-	defaultDeathFilters,
-	defaultDeathSortSettings,
-	defaultFilters,
-	defaultSortSettings,
-} from "../../../shared/defaults";
-import { useState } from "react";
+import { defaultFilters } from "../../../shared/defaults";
+import HeatMapCalendar from "./HeatMapCalendar";
 
 export default function StatsOverview() {
 	const barOption = StatsQuery.fetching("subjects")
@@ -15,24 +10,19 @@ export default function StatsOverview() {
 		.filter(defaultFilters)
 		.sort({ sortingKey: "deaths", ascending: false })
 		.limit(10)
-		.toBarChart();
-
-	const calendarDeaths = StatsQuery.fetching("deaths")
-		.scopedGlobally()
-		.filter(defaultDeathFilters)
-		.sort(defaultDeathSortSettings);
+		.toBarChart({ title: "Test" });
 
 	function GridLayout() {
 		return (
 			<>
 				<div className="grid gap-6 lg:grid-cols-2">
-					<ChartTemplate option={barOption} />
-					<ChartTemplate option={barOption} />
+					<HeatMapCalendar title="Deaths" />
+					<GenericChart option={barOption} />
 				</div>
 
 				<div className="grid gap-6 lg:grid-cols-2">
-					<ChartTemplate option={barOption} height={300} />
-					<ChartTemplate option={barOption} height={300} />
+					<GenericChart option={barOption} />
+					<GenericChart option={barOption} />
 				</div>
 			</>
 		);
@@ -41,10 +31,10 @@ export default function StatsOverview() {
 	function LinearLayout() {
 		return (
 			<>
-				<ChartTemplate option={barOption} />
-				<ChartTemplate option={barOption} />
-				<ChartTemplate option={barOption} height={300} />
-				<ChartTemplate option={barOption} height={300} />
+				<HeatMapCalendar title="Deaths" />{" "}
+				<GenericChart option={barOption} />
+				<GenericChart option={barOption} />
+				<GenericChart option={barOption} />
 			</>
 		);
 	}
@@ -54,9 +44,7 @@ export default function StatsOverview() {
 		return (
 			<>
 				<div className="space-y-6">
-					<ChartTemplate option={barOption} />
 					{vpMatched ? <GridLayout /> : <LinearLayout />}
-					<ChartTemplate option={barOption} />
 				</div>
 			</>
 		);

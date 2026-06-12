@@ -43,3 +43,9 @@ export const defaultDeathSortSettings: DeathSortSettings = {
 	ascending: false,
 	sortingKey: "timestamp",
 };
+
+export const defaultEchartStyling: React.CSSProperties = {
+	minHeight: "350px",
+	height: "100%",
+	width: "100%",
+};
