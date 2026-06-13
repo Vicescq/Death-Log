@@ -1,66 +1,43 @@
-import { useDeathLogStore } from "../../stores/useDeathLogStore";
 import { sort as deathLogSort } from "../../pages/death-log/utils";
-import type { SortSettings } from "../../pages/death-log/formSchemas";
-import type { DistinctTreeNode } from "../../model/tree-node-model/TreeNodeSchema";
+import type { DistinctTreeNode, Tree } from "../../model/tree-node-model/TreeNodeSchema";
 import type { Death } from "../../model/tree-node-model/SubjectSchema";
-import { NodeChartStage, DeathChartStage } from "./ChartStage";
-import type { DeathSortSettings } from "./StatsQuery";
+import type { NodeQuery } from "./types/node-query";
+import type { DeathQuery } from "./types/death-query";
 
-export class NodeSortStage {
-	private data: DistinctTreeNode[];
-
-	constructor(data: DistinctTreeNode[]) {
-		this.data = data;
-	}
-
-	sort(sortSettings: SortSettings): NodeChartStage {
-		const tree = useDeathLogStore.getState().tree;
-		const nodeIDs = this.data.map((n) => n.id);
-		const sortedIDs = deathLogSort(nodeIDs, tree, sortSettings);
-		const nodeMap = new Map(this.data.map((n) => [n.id, n]));
-		const sortedData = sortedIDs
-			.map((id) => nodeMap.get(id))
-			.filter((node): node is DistinctTreeNode => node !== undefined);
-		return new NodeChartStage(sortedData);
-	}
+export function sortNodes(
+	nodes: DistinctTreeNode[],
+	q: NodeQuery,
+	tree: Tree,
+): DistinctTreeNode[] {
+	const nodeIDs = nodes.map((n) => n.id);
+	const sortedIDs = deathLogSort(nodeIDs, tree, q.sort);
+	const nodeMap = new Map(nodes.map((n) => [n.id, n]));
+	return sortedIDs
+		.map((id) => nodeMap.get(id))
+		.filter((node): node is DistinctTreeNode => node !== undefined);
 }
 
-export class DeathSortStage {
-	private data: Death[];
+export function sortDeaths(deaths: Death[], q: DeathQuery): Death[] {
+	const { sortingKey, ascending } = q.sort;
 
-	constructor(data: Death[]) {
-		this.data = data;
+	function order(x: number, y: number): number {
+		return ascending ? x - y : y - x;
 	}
 
-	sort(sortSettings: DeathSortSettings): DeathChartStage {
-		function determineSortOrder(x: number, y: number): number {
-			if (sortSettings.ascending) {
-				return x - y;
-			} else {
-				return y - x;
+	return deaths.toSorted((a, b) => {
+		switch (sortingKey) {
+			case "timestamp":
+				return order(
+					new Date(a.timestamp).getTime(),
+					new Date(b.timestamp).getTime(),
+				);
+			case "remark": {
+				const ra = a.remark ?? "";
+				const rb = b.remark ?? "";
+				if (ra < rb) return order(0, 1);
+				if (ra > rb) return order(1, 0);
+				return 0;
 			}
 		}
-
-		const sortedData = this.data.toSorted((a, b) => {
-			switch (sortSettings.sortingKey) {
-				case "timestamp":
-					return determineSortOrder(
-						new Date(a.timestamp).getTime(),
-						new Date(b.timestamp).getTime(),
-					);
-				case "remark":
-					const remarkA = a.remark || "";
-					const remarkB = b.remark || "";
-					if (remarkA < remarkB) {
-						return determineSortOrder(0, 1);
-					} else if (remarkA > remarkB) {
-						return determineSortOrder(1, 0);
-					} else {
-						return determineSortOrder(0, 0);
-					}
-			}
-		});
-
-		return new DeathChartStage(sortedData);
-	}
+	});
 }

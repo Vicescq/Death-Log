@@ -1,13 +1,12 @@
-import { useDeathLogStore } from "../../stores/useDeathLogStore";
+import { useDeathLogStore } from "../../../stores/useDeathLogStore";
 import {
-	createRootNode,
 	createGame,
 	createProfile,
 	createSubject,
 	createDeath,
 	createProfileGroup,
-} from "../../stores/utils";
-import type { Tree } from "../../model/tree-node-model/TreeNodeSchema";
+} from "../../../stores/utils";
+import type { Tree } from "../../../model/tree-node-model/TreeNodeSchema";
 
 export interface TestTreeFixture {
 	gameID: string;
@@ -21,7 +20,6 @@ export function setupTestTree(): TestTreeFixture {
 	useDeathLogStore.setState({ tree: new Map() });
 	const store = useDeathLogStore.getState();
 
-	const root = createRootNode();
 	const game = createGame("Test Game", store.tree);
 	const profile = createProfile("Test Profile", game.id, store.tree);
 
@@ -53,15 +51,19 @@ export function setupTestTree(): TestTreeFixture {
 	const profileGroup = createProfileGroup(profile, groupInfo);
 	profile.groupings.push(profileGroup);
 
-	// Initialize store with complete tree
-	store.initTree([root, game, profile, subject1, subject2, subject3]);
+	// Set parent-child links — createGame/createProfile only use the tree for ID generation
+	game.childIDS = [profile.id];
+	profile.childIDS = [subject1.id, subject2.id, subject3.id];
+
+	// initTree builds ROOT_NODE automatically from game nodes — don't pass a stale root object
+	store.initTree([game, profile, subject1, subject2, subject3]);
 
 	return {
 		gameID: game.id,
 		profileID: profile.id,
 		subjectIDs: [subject1.id, subject2.id, subject3.id],
 		profileGroupID: profileGroup.id,
-		tree: store.tree,
+		tree: useDeathLogStore.getState().tree,
 	};
 }
 

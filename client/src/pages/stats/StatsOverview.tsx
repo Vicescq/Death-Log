@@ -1,7 +1,7 @@
 import GenericChart from "./GenericChart";
 import HeatMapCalendar from "./HeatMapCalendar";
-import { allDeathsOnCalendarQuery } from "../../../shared/defaults";
-import { top10SubjectsMostDeathsQuery } from "../../../shared/defaults";
+import { allDeathsOnCalendarQuery, allSubjectDeathsOverTimeQuery } from "../../services/stats-query/preset-queries";
+import { top10SubjectsMostDeathsQuery } from "../../services/stats-query/preset-queries";
 
 export default function StatsOverview() {
 	{
@@ -13,7 +13,7 @@ export default function StatsOverview() {
 							title="Deaths"
 							query={allDeathsOnCalendarQuery}
 						/>
-						<GenericChart query={top10SubjectsMostDeathsQuery} />
+						<GenericChart query={allSubjectDeathsOverTimeQuery} />
 						<GenericChart query={top10SubjectsMostDeathsQuery} />
 						<GenericChart query={top10SubjectsMostDeathsQuery} />
 					</div>

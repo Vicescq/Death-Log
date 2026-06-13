@@ -1,23 +1,9 @@
 import type { EChartsOption } from "echarts";
 
-export type ChartMetaData = {
-	title?: string;
-	range?: string;
-	visualMap?: {
-		min?: number;
-		max?: number;
-	};
-};
-
-export type BarChartData = {
-	y: number;
-	x: string;
-};
-
-export type HeatMapCalendarChartData = [string, number];
+import type { ChartMetaData, SimpleChartData, TimeChartData } from "./types/chart";
 
 export function createBarChartOptions(
-	data: BarChartData[],
+	data: SimpleChartData[],
 	metaData: ChartMetaData,
 ): EChartsOption {
 	return {
@@ -44,7 +30,7 @@ export function createBarChartOptions(
 }
 
 export function createHeatMapCalendarOptions(
-	data: HeatMapCalendarChartData[],
+	data: TimeChartData[],
 	metaData: ChartMetaData,
 ): EChartsOption {
 	return {
@@ -85,5 +71,58 @@ export function createHeatMapCalendarOptions(
 			left: "center",
 		},
 		tooltip: { trigger: "item" },
+	};
+}
+
+export function createLineChartOptions(
+	data: SimpleChartData[],
+	metaData: ChartMetaData,
+): EChartsOption {
+	return {
+		xAxis: {
+			type: "category",
+			data: data.map((obj) => obj.x),
+		},
+		yAxis: {
+			type: "value",
+		},
+		series: [
+			{
+				data: data.map((obj) => obj.y),
+				type: "line",
+			},
+		],
+		title: { text: metaData.title },
+		tooltip: {
+			trigger: "axis",
+			axisPointer: { type: "shadow" },
+			renderMode: "richText",
+		},
+	};
+}
+
+export function createLineTimeChartOptions(
+	data: TimeChartData[],
+	metaData: ChartMetaData,
+): EChartsOption {
+	return {
+		xAxis: {
+			type: "time",
+		},
+		yAxis: {
+			type: "value",
+		},
+		series: [
+			{
+				data: data,
+				type: "line",
+			},
+		],
+		title: { text: metaData.title },
+		tooltip: {
+			trigger: "axis",
+			axisPointer: { type: "shadow" },
+			renderMode: "richText",
+		},
 	};
 }

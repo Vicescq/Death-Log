@@ -1,4 +1,3 @@
-import { useDeathLogStore } from "../../stores/useDeathLogStore";
 import {
 	assertIsGame,
 	assertIsNonNull,
@@ -9,16 +8,9 @@ import type {
 	DistinctTreeNode,
 	Tree,
 } from "../../model/tree-node-model/TreeNodeSchema";
-import { NodeFilterStage } from "./FilterStage";
-import type { QueryNodeType } from "./StatsQuery";
-import { DeathFilterStage } from "./FilterStage";
-
-type ScopeType = "game" | "profile" | "group" | "subject";
-
-type ScopeConfig = {
-	type: ScopeType;
-	ids: string[];
-};
+import type { Death } from "../../model/tree-node-model/SubjectSchema";
+import type { NodeQuery } from "./types/node-query";
+import type { DeathQuery } from "./types/death-query";
 
 function getChildIDs(parentIDs: string[], tree: Tree): string[] {
 	return parentIDs
@@ -31,167 +23,126 @@ function getChildIDs(parentIDs: string[], tree: Tree): string[] {
 }
 
 /**
- * Scoping stage for node data (games, profiles, subjects)
+ * Group ids are aggregated with their parent profile id (<profileId>&<groupId>)
+ * because group id uniqueness is only local to a profile.
  */
-export class NodeScopingStage {
-	private nodeType: QueryNodeType;
+function resolveProfileGroupsToSubjects(
+	groupAggregatedWithProfileIds: string[],
+	tree: Tree,
+): string[] {
+	const parsedProfileIDs = groupAggregatedWithProfileIds.map(
+		(id) => id.split("&")[0],
+	);
+	const parsedGroupIDs = groupAggregatedWithProfileIds.map(
+		(id) => id.split("&")[1],
+	);
+	const profileIdSet = new Set(parsedProfileIDs);
+	const groupIdSet = new Set(parsedGroupIDs);
+	const resolvedMembers: string[] = [];
 
-	constructor(nodeType: "games" | "profiles" | "subjects") {
-		this.nodeType = nodeType;
-	}
-
-	scope(scope?: ScopeConfig): NodeFilterStage {
-		const tree = useDeathLogStore.getState().tree;
-		const actualScope = scope?.ids ?? "global";
-
-		let data: DistinctTreeNode[];
-
-		if (actualScope === "global") {
-			const gameIDs = tree.get("ROOT_NODE")?.childIDS;
-			assertIsNonNull(gameIDs);
-
-			if (this.nodeType === "games") {
-				data = gameIDs.map((id) => {
-					const node = tree.get(id);
-					assertIsNonNull(node);
-					assertIsGame(node);
-					return node;
-				});
-			} else {
-				const profileIDs = getChildIDs(gameIDs, tree);
-
-				if (this.nodeType === "profiles") {
-					data = profileIDs.map((id) => {
-						const node = tree.get(id);
-						assertIsNonNull(node);
-						assertIsProfile(node);
-						return node;
-					});
-				} else {
-					const subjectIDs = getChildIDs(profileIDs, tree);
-					data = subjectIDs.map((id) => {
-						const node = tree.get(id);
-						assertIsNonNull(node);
-						assertIsSubject(node);
-						return node;
-					});
-				}
-			}
-		} else {
-			// certain nodeType cases not due to impossiblity becasue of the methods that are available to invoke, see fetch stage
-
-			if (this.nodeType === "profiles") {
-				const profileIDs = getChildIDs(actualScope, tree);
-				data = profileIDs.map((id) => {
-					const node = tree.get(id);
-					assertIsNonNull(node);
-					assertIsProfile(node);
-					return node;
-				});
-			} else {
-				// nodeType === subject case only from here on out on this block
-				let subjectIDs: string[];
-
-				if (scope?.type == "game") {
-					const profileIDs = getChildIDs(actualScope, tree);
-					subjectIDs = getChildIDs(profileIDs, tree);
-				} else if (scope?.type == "profile") {
-					subjectIDs = getChildIDs(actualScope, tree);
-				} else if (scope?.type == "group") {
-					subjectIDs = this.resolveProfileGroupsToSubjects(
-						scope.ids,
-						tree,
-					);
-				} else {
-					throw new Error("DEV ERROR! impossible case to reach!");
-				}
-
-				data = subjectIDs.map((id) => {
-					const node = tree.get(id);
-					assertIsNonNull(node);
-					assertIsSubject(node);
-					return node;
-				});
-			}
-		}
-
-		return new NodeFilterStage(data);
-	}
-
-	/**
-	 * Have to aggregate group ids alongside their parent because of a chance of duplicate group ids and returning the group members. Group id uniqueness is localized
-	 * @param groupAggregatedWithProfileIds
-	 * @param tree
-	 * @returns
-	 */
-	private resolveProfileGroupsToSubjects(
-		groupAggregatedWithProfileIds: string[],
-		tree: Tree,
-	): string[] {
-		// groupAggregatedWithProfileIds == <profile id>&<group id>
-		const parsedProfileIDs = groupAggregatedWithProfileIds.map(
-			(id) => id.split("&")[0],
-		);
-		const parsedGroupIDs = groupAggregatedWithProfileIds.map(
-			(id) => id.split("&")[1],
-		);
-		const profileIdSet = new Set(parsedProfileIDs);
-		const groupIdSet = new Set(parsedGroupIDs);
-		const resolvedMembers: string[] = [];
-
-		const allNodes = Array.from(tree.values());
-		for (const node of allNodes) {
-			if (node.type === "profile" && profileIdSet.has(node.id)) {
-				for (const group of node.groupings) {
-					if (groupIdSet.has(group.id)) {
-						resolvedMembers.push(...group.members);
-					}
+	for (const node of tree.values()) {
+		if (node.type === "profile" && profileIdSet.has(node.id)) {
+			for (const group of node.groupings) {
+				if (groupIdSet.has(group.id)) {
+					resolvedMembers.push(...group.members);
 				}
 			}
 		}
-
-		return resolvedMembers;
 	}
+
+	return resolvedMembers;
 }
 
-/**
- * Scoping stage for death data
- */
-export class DeathScopingStage {
-	scope(scope?: ScopeConfig): DeathFilterStage {
-		const tree = useDeathLogStore.getState().tree;
+export function scopeNodes(q: NodeQuery, tree: Tree): DistinctTreeNode[] {
+	const scope = q.scope;
 
-		let subjectIDs: string[];
+	if (scope.type === "global") {
+		const gameIDs = tree.get("ROOT_NODE")?.childIDS;
+		assertIsNonNull(gameIDs);
 
-		// transform in terms of subject ids
-		if (scope != undefined) {
-			if (scope.type === "subject") {
-				subjectIDs = scope.ids;
-			} else if (scope.type === "profile") {
-				subjectIDs = getChildIDs(scope.ids, tree);
-			} else if (scope.type === "game") {
-				const profileIDs = getChildIDs(scope.ids, tree);
-				subjectIDs = getChildIDs(profileIDs, tree);
-			} else {
-				// profile group case, dont have to do anything, resolver called in fetch stage does the job
-				subjectIDs = scope.ids;
-			}
-		} else {
-			const gameIDs = tree.get("ROOT_NODE")?.childIDS;
-			assertIsNonNull(gameIDs);
-			const allProfileIDs = getChildIDs(gameIDs, tree);
-			subjectIDs = getChildIDs(allProfileIDs, tree);
+		if (q.fetch === "games") {
+			return gameIDs.map((id) => {
+				const node = tree.get(id);
+				assertIsNonNull(node);
+				assertIsGame(node);
+				return node;
+			});
 		}
 
-		const data = subjectIDs
-			.map((subjectID) => {
-				const subject = tree.get(subjectID);
-				assertIsNonNull(subject);
-				assertIsSubject(subject);
-				return subject.log;
-			})
-			.flat();
+		const profileIDs = getChildIDs(gameIDs, tree);
 
-		return new DeathFilterStage(data);
+		if (q.fetch === "profiles") {
+			return profileIDs.map((id) => {
+				const node = tree.get(id);
+				assertIsNonNull(node);
+				assertIsProfile(node);
+				return node;
+			});
+		}
+
+		const subjectIDs = getChildIDs(profileIDs, tree);
+		return subjectIDs.map((id) => {
+			const node = tree.get(id);
+			assertIsNonNull(node);
+			assertIsSubject(node);
+			return node;
+		});
 	}
+
+	if (q.fetch === "profiles") {
+		const profileIDs = getChildIDs(scope.ids, tree);
+		return profileIDs.map((id) => {
+			const node = tree.get(id);
+			assertIsNonNull(node);
+			assertIsProfile(node);
+			return node;
+		});
+	}
+
+	// subjects — scoped by game, profile, or group
+	let subjectIDs: string[];
+	if (scope.type === "game") {
+		const profileIDs = getChildIDs(scope.ids, tree);
+		subjectIDs = getChildIDs(profileIDs, tree);
+	} else if (scope.type === "profile") {
+		subjectIDs = getChildIDs(scope.ids, tree);
+	} else {
+		subjectIDs = resolveProfileGroupsToSubjects(scope.ids, tree);
+	}
+
+	return subjectIDs.map((id) => {
+		const node = tree.get(id);
+		assertIsNonNull(node);
+		assertIsSubject(node);
+		return node;
+	});
+}
+
+export function scopeDeaths(q: DeathQuery, tree: Tree): Death[] {
+	const scope = q.scope;
+	let subjectIDs: string[];
+
+	if (scope.type === "global") {
+		const gameIDs = tree.get("ROOT_NODE")?.childIDS;
+		assertIsNonNull(gameIDs);
+		const allProfileIDs = getChildIDs(gameIDs, tree);
+		subjectIDs = getChildIDs(allProfileIDs, tree);
+	} else if (scope.type === "subject") {
+		subjectIDs = scope.ids;
+	} else if (scope.type === "profile") {
+		subjectIDs = getChildIDs(scope.ids, tree);
+	} else if (scope.type === "game") {
+		const profileIDs = getChildIDs(scope.ids, tree);
+		subjectIDs = getChildIDs(profileIDs, tree);
+	} else {
+		// group — ids are already resolved to subject ids by the caller
+		subjectIDs = scope.ids;
+	}
+
+	return subjectIDs.flatMap((subjectID) => {
+		const subject = tree.get(subjectID);
+		assertIsNonNull(subject);
+		assertIsSubject(subject);
+		return subject.log;
+	});
 }

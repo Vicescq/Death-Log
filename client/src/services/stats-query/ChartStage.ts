@@ -1,78 +1,84 @@
 import type { EChartsOption } from "echarts";
-import { useDeathLogStore } from "../../stores/useDeathLogStore";
 import { calcDeaths } from "../../pages/death-log/utils";
-import type { DistinctTreeNode } from "../../model/tree-node-model/TreeNodeSchema";
+import type {
+	DistinctTreeNode,
+	Tree,
+} from "../../model/tree-node-model/TreeNodeSchema";
 import type { Death } from "../../model/tree-node-model/SubjectSchema";
+import type { SimpleChartData, TimeChartData } from "./types/chart";
+import type { BarNodeQuery, LineNodeQuery, TimeLineNodeQuery } from "./types/node-query";
+import type { HmcDeathQuery } from "./types/death-query";
 import {
 	createBarChartOptions,
 	createHeatMapCalendarOptions,
-	type BarChartData,
-	type ChartMetaData,
-	type HeatMapCalendarChartData,
+	createLineChartOptions,
+	createLineTimeChartOptions,
 } from "./options";
 import { isoToDateSTD } from "../../utils/date";
+import { assertIsNonNull } from "../../utils/asserts";
 
-export class NodeChartStage {
-	private data: DistinctTreeNode[];
-
-	constructor(data: DistinctTreeNode[]) {
-		this.data = data;
-	}
-
-	limit(count: number): NodeChartStage {
-		const limitedData = count < 0 ? this.data : this.data.slice(0, count);
-		return new NodeChartStage(limitedData);
-	}
-
-	toBarChart(metaData: ChartMetaData): EChartsOption {
-		const tree = useDeathLogStore.getState().tree;
-		const chartData: BarChartData[] = this.data.map((node) => ({
-			x: node.name,
-			y: calcDeaths(node, tree),
-		}));
-		return createBarChartOptions(chartData, metaData);
-	}
+export function toBarChart(
+	nodes: DistinctTreeNode[],
+	q: BarNodeQuery,
+	tree: Tree,
+): EChartsOption {
+	const chartData: SimpleChartData[] = nodes.map((node) => ({
+		x: node.name,
+		y: calcDeaths(node, tree),
+	}));
+	return createBarChartOptions(chartData, q.chartMetaData);
 }
 
-export class DeathChartStage {
-	private data: Death[];
-
-	constructor(data: Death[]) {
-		this.data = data;
+export function toHeatMapCalendar(
+	deaths: Death[],
+	q: HmcDeathQuery,
+): EChartsOption {
+	const dayToDeathCountMap: Record<string, number> = {};
+	for (const death of deaths) {
+		const date = isoToDateSTD(death.timestamp);
+		dayToDeathCountMap[date] = (dayToDeathCountMap[date] ?? 0) + 1;
 	}
 
-	limit(count: number): DeathChartStage {
-		const limitedData = count < 0 ? this.data : this.data.slice(0, count);
-		return new DeathChartStage(limitedData);
-	}
+	const dataset: TimeChartData[] = Object.entries(dayToDeathCountMap).map(
+		([date, count]) => [date, count],
+	);
 
-	/**
-	 * Requires range meta data
-	 * @param metaData
-	 * @returns
-	 */
-	toHeatMapCalendar(metaData: ChartMetaData): EChartsOption {
-		const dayToDeathCountMap: Record<string, number> = {};
-		for (let i = 0; i < this.data.length; i++) {
-			const death = this.data[i];
-			const date = isoToDateSTD(death.timestamp);
-			if (Object.hasOwn(dayToDeathCountMap, date)) {
-				dayToDeathCountMap[date] += 1;
-			} else {
-				dayToDeathCountMap[date] = 1;
-			}
-		}
-		const heatMapCalendarDataset: HeatMapCalendarChartData[] = [];
-		for (const key of Object.keys(dayToDeathCountMap)) {
-			heatMapCalendarDataset.push([key, dayToDeathCountMap[key]]);
-		}
+	const values = dataset.map((item) => item[1]);
+	const dataMin = values.length > 0 ? Math.min(...values) : 0;
+	const dataMax = values.length > 0 ? Math.max(...values) : 1;
 
-		const values = heatMapCalendarDataset.map((item) => item[1]);
-		const dataMin = values.length > 0 ? Math.min(...values) : 0;
-		const dataMax = values.length > 0 ? Math.max(...values) : 1;
-		return createHeatMapCalendarOptions(heatMapCalendarDataset, {
-			...metaData,
-			visualMap: { min: dataMin, max: dataMax },
-		});
-	}
+	return createHeatMapCalendarOptions(dataset, {
+		...q.chartMetaData,
+		visualMap: { min: dataMin, max: dataMax },
+	});
+}
+
+export function toLineChart(
+	nodes: DistinctTreeNode[],
+	q: LineNodeQuery,
+	tree: Tree,
+): EChartsOption {
+	const chartData: SimpleChartData[] = nodes.map((node) => ({
+		x: node.name,
+		y: calcDeaths(node, tree),
+	}));
+	return createLineChartOptions(chartData, q.chartMetaData);
+}
+
+export function toTimeLineChart(
+	nodes: DistinctTreeNode[],
+	q: TimeLineNodeQuery,
+	tree: Tree,
+): EChartsOption {
+	const chartData: TimeChartData[] =
+		q.dateExtract === "start"
+			? nodes.map((node) => [
+					isoToDateSTD(node.dateStart),
+					calcDeaths(node, tree),
+				])
+			: nodes.map((node) => {
+					assertIsNonNull(node.dateEnd); // precondition that filter settings only lets completet entries through
+					return [isoToDateSTD(node.dateEnd), calcDeaths(node, tree)];
+				});
+	return createLineTimeChartOptions(chartData, q.chartMetaData);
 }

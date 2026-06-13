@@ -1,196 +1,87 @@
-import {
-	GamesFetchStage,
-	ProfilesFetchStage,
-	SubjectsFetchStage,
-	DeathsFetchStage,
-} from "./FetchStage";
-import { NodeFilterStage } from "./FilterStage";
-import type { Filters } from "../../pages/death-log/formSchemas";
-import type { SortSettings } from "../../pages/death-log/formSchemas";
 import type { EChartsOption } from "echarts";
-import type { ChartMetaData } from "./options";
+import type { Query } from "./types/query";
+import { useDeathLogStore } from "../../stores/useDeathLogStore";
+import { scopeNodes, scopeDeaths } from "./ScopingStage";
+import { filterNodes, filterDeaths, applyLimit } from "./FilterStage";
+import { sortNodes, sortDeaths } from "./SortStage";
+import { toBarChart, toHeatMapCalendar, toTimeLineChart } from "./ChartStage";
 
-export type StatsQueryProcessType = "node" | "death";
-
-export type QueryNodeType = "games" | "profiles" | "subjects" | "deaths";
-
-export type NodeTypeToProcessType<T extends QueryNodeType> = T extends "deaths"
-	? "death"
-	: "node";
-
-export type DeathFilters = {
-	timestampRel: boolean;
-	unreliableTimestamp: boolean;
-};
-
-export type DeathSortSettings = {
-	sortingKey: "timestamp" | "remark";
-	ascending: boolean;
-};
-
-export type ProcessTypeToFilterType<T extends StatsQueryProcessType> =
-	T extends "death" ? DeathFilters : Filters;
-
-export type ProcessTypeToSortSettingsType<T extends StatsQueryProcessType> =
-	T extends "death" ? DeathSortSettings : SortSettings;
-
-export type NodeQueryScope =
-	| { type: "global" }
-	| { type: "game"; ids: string[] }
-	| { type: "profile"; ids: string[] }
-	| { type: "group"; ids: string[] };
-
-export type DeathQueryScope =
-	| NodeQueryScope
-	| { type: "subject"; ids: string[] };
-
-type NodeQueryBase = {
-	filter: Filters;
-	searchQuery?: string;
-	sort: SortSettings;
-	limit?: number;
-	chartMetaData: ChartMetaData;
-};
-
-export type GamesQuery = NodeQueryBase & {
-	fetch: "games";
-	scope: { type: "global" };
-};
-
-export type ProfilesQuery = NodeQueryBase & {
-	fetch: "profiles";
-	scope: { type: "global" } | { type: "game"; ids: string[] };
-};
-
-export type SubjectsQuery = NodeQueryBase & {
-	fetch: "subjects";
-	scope: NodeQueryScope;
-};
-
-export type NodeQuery = GamesQuery | ProfilesQuery | SubjectsQuery;
-
-export type DeathQuery = {
-	fetch: "deaths";
-	scope: DeathQueryScope;
-	filter: DeathFilters;
-	searchQuery?: string;
-	sort: DeathSortSettings;
-	limit?: number;
-	chartMetaData: ChartMetaData;
-};
-
-export type Query = NodeQuery | DeathQuery;
+export type { ChartMetaData, SimpleChartData, TimeChartData } from "./types/chart";
+export type { NodeQueryScope, DeathQueryScope } from "./types/scope";
+export type {
+	GamesQuery,
+	ProfilesQuery,
+	SubjectsQuery,
+	NodeQuery,
+	BarNodeQuery,
+	LineNodeQuery,
+	TimeLineNodeQuery,
+} from "./types/node-query";
+export type {
+	DeathFilters,
+	DeathSortSettings,
+	DeathQuery,
+	HmcDeathQuery,
+	LineDeathQuery,
+} from "./types/death-query";
+export type { Query } from "./types/query";
 
 /**
- * Entry point for building stats queries
+ * Entry point for the stats query pipeline.
  *
- * Type-safe pipeline with restricted scope methods per node type:
- * - fetching("games") → GamesFetchStage (scopedGlobally or scopedByNone)
- * - fetching("profiles") → ProfilesFetchStage (scopedByGame or scopedGlobally)
- * - fetching("subjects") → SubjectsFetchStage (scopedByGame/Profile/Group or scopedGlobally)
- * - fetching("deaths") → DeathsFetchStage (scopedByGame/Profile/Group/Subject or scopedGlobally)
- *
- * Pipeline stages: Fetch → Scope → Filter → Sort → Chart
- * - Scoping is mandatory (use .scopedGlobally() for all data)
- * - Optional: call .limit(n) on ChartStage to limit results (-1 means no limit)
+ * Preferred usage — pass a Query object to query():
+ * @example
+ * StatsQuery.query({
+ *   fetch: "subjects",
+ *   scope: { type: "game", ids: ["game1"] },
+ *   filter: defaultFilters,
+ *   sort: { sortingKey: "deaths", ascending: false },
+ *   limit: 10,
+ *   chartMetaData: { title: "Top Deaths" },
+ * })
  *
  * @example
- * // All subjects in a game, rendered as bar chart
- * StatsQuery.fetching("subjects")
- *   .scopedByGame(["game1"])
- *   .filter(filters)
- *   .sort(sortSettings)
- *   .toBarChart()
- *
- * @example
- * // Top 10 subjects by deaths
- * StatsQuery.fetching("subjects")
- *   .scopedByGame(["game1"])
- *   .filter(filters)
- *   .sort(sortSettings)
- *   .limit(10)
- *   .toBarChart()
- *
- * @example
- * // All games globally
- * StatsQuery.fetching("games")
- *   .scopedGlobally()
- *   .filter(filters)
- *   .sort(sortSettings)
- *   .toBarChart()
+ * StatsQuery.query({
+ *   fetch: "deaths",
+ *   scope: { type: "global" },
+ *   filter: defaultDeathFilters,
+ *   sort: { sortingKey: "timestamp", ascending: true },
+ *   chartMetaData: { range: "2024-06" },
+ * })
  */
 export class StatsQuery {
-	static fetching(nodeType: "games"): GamesFetchStage;
-	static fetching(nodeType: "profiles"): ProfilesFetchStage;
-	static fetching(nodeType: "subjects"): SubjectsFetchStage;
-	static fetching(nodeType: "deaths"): DeathsFetchStage;
-	static fetching(
-		nodeType: "games" | "profiles" | "subjects" | "deaths",
-	):
-		| GamesFetchStage
-		| ProfilesFetchStage
-		| SubjectsFetchStage
-		| DeathsFetchStage {
-		switch (nodeType) {
-			case "games":
-				return new GamesFetchStage();
-			case "profiles":
-				return new ProfilesFetchStage();
-			case "subjects":
-				return new SubjectsFetchStage();
-			case "deaths":
-				return new DeathsFetchStage();
-		}
-	}
-
 	static query(q: Query): EChartsOption {
+		const tree = useDeathLogStore.getState().tree;
+
 		if (q.fetch === "deaths") {
-			const fetch = StatsQuery.fetching("deaths");
-			const scope = q.scope;
-			const filterStage =
-				scope.type === "global"
-					? fetch.scopedGlobally()
-					: scope.type === "game"
-						? fetch.scopedByGame(scope.ids)
-						: scope.type === "profile"
-							? fetch.scopedByProfile(scope.ids)
-							: scope.type === "group"
-								? fetch.scopedByGroup(scope.ids)
-								: fetch.scopedBySubject(scope.ids);
-			const sortStage = filterStage.filter(q.filter, q.searchQuery);
-			const chartStage = sortStage.sort(q.sort);
-			const limited =
-				q.limit !== undefined ? chartStage.limit(q.limit) : chartStage;
-			return limited.toHeatMapCalendar(q.chartMetaData);
-		} else {
-			const scope = q.scope;
-			let filterStage: NodeFilterStage;
+			const scoped = scopeDeaths(q, tree);
+			const filtered = filterDeaths(scoped, q);
+			const sorted = sortDeaths(filtered, q);
+			const limited = applyLimit(sorted, q.limit);
+			switch (q.chartType) {
+				case "hmc":
+					return toHeatMapCalendar(limited, q);
 
-			if (q.fetch === "games") {
-				filterStage = StatsQuery.fetching("games").scopedGlobally();
-			} else if (q.fetch === "profiles") {
-				const fetch = StatsQuery.fetching("profiles");
-				filterStage =
-					scope.type === "game"
-						? fetch.scopedByGame(scope.ids)
-						: fetch.scopedGlobally();
-			} else {
-				const fetch = StatsQuery.fetching("subjects");
-				filterStage =
-					scope.type === "global"
-						? fetch.scopedGlobally()
-						: scope.type === "game"
-							? fetch.scopedByGame(scope.ids)
-							: scope.type === "profile"
-								? fetch.scopedByProfile(scope.ids)
-								: fetch.scopedByGroup(scope.ids);
+				default:
+					throw new Error(
+						`DEV ERROR: chart type "${q.chartType}" not yet implemented`,
+					);
 			}
-
-			const sortStage = filterStage.filter(q.filter, q.searchQuery);
-			const chartStage = sortStage.sort(q.sort);
-			const limited =
-				q.limit !== undefined ? chartStage.limit(q.limit) : chartStage;
-			return limited.toBarChart(q.chartMetaData);
+		} else {
+			const scoped = scopeNodes(q, tree);
+			const filtered = filterNodes(scoped, q, tree);
+			const sorted = sortNodes(filtered, q, tree);
+			const limited = applyLimit(sorted, q.limit);
+			switch (q.chartType) {
+				case "bar":
+					return toBarChart(limited, q, tree);
+				case "time-line":
+					return toTimeLineChart(limited, q, tree);
+				default:
+					throw new Error(
+						`DEV ERROR: chart type "${q.chartType}" not yet implemented`,
+					);
+			}
 		}
 	}
 }
