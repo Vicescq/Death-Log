@@ -1,38 +1,36 @@
 import { useState, useMemo } from "react";
 import EChartsReact from "react-echarts-library";
 import darkerChalk from "../../../shared/darker_chalk.json";
+import { defaultEchartStyling } from "../../../shared/defaults";
 import {
-	defaultDeathFilters,
-	defaultDeathSortSettings,
-	defaultEchartStyling,
-} from "../../../shared/defaults";
-import { StatsQuery } from "../../services/stats-query/StatsQuery";
+	StatsQuery,
+	type DeathQuery,
+} from "../../services/stats-query/StatsQuery";
 
 type Props = {
 	title: string;
 	baseYear?: number;
+	query: DeathQuery;
 };
 
 export default function HeatMapCalendar({
 	title,
 	baseYear = new Date().getFullYear(),
+	query,
 }: Props) {
-	const [currentDate, setCurrentYear] = useState(new Date("2026-05-10"));
+	const [currentDate, setCurrentYear] = useState(new Date());
 
 	const chartOption = useMemo(() => {
 		const year = currentDate.getFullYear();
 		const month = String(currentDate.getMonth() + 1).padStart(2, "0");
-		const monthRange = `${year}-${month}`;
-
-		const query = StatsQuery.fetching("deaths")
-			.scopedGlobally()
-			.filter(defaultDeathFilters)
-			.sort(defaultDeathSortSettings)
-			.toHeatMapCalendar({
-				range: monthRange,
-			});
-		return query;
-	}, [currentDate, title]);
+		return StatsQuery.query({
+			...query,
+			chartMetaData: {
+				...query.chartMetaData,
+				range: `${year}-${month}`,
+			},
+		});
+	}, [currentDate, query]);
 
 	const years = Array.from({ length: 5 }, (_, i) => baseYear - 2 + i);
 

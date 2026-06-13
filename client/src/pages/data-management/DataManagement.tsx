@@ -92,6 +92,12 @@ export default function DataManagement() {
 	async function handleDelete() {
 		try {
 			await LocalDB.clearData();
+
+			const email = LocalDB.getUserEmail();
+			localStorage.removeItem(`filters-${email}`);
+			localStorage.removeItem(`sort_settings-${email}`);
+			// TODO: decide whether to also clear DEATHLOG_CRUD_COUNTER-${email}
+
 			await refreshTree(initTree);
 			modalRef.current?.close();
 
@@ -117,6 +123,14 @@ export default function DataManagement() {
 		try {
 			await db.delete();
 			await db.open();
+
+			for (const key of Object.keys(localStorage)) {
+				if (key.startsWith("filters-") || key.startsWith("sort_settings-")) {
+					localStorage.removeItem(key);
+				}
+			}
+			// TODO: decide whether to also clear all DEATHLOG_CRUD_COUNTER-${email} keys
+
 			await refreshTree(initTree);
 			modalRef.current?.close();
 

@@ -1,7 +1,9 @@
 import type { Filters, SortSettings } from "../src/pages/death-log/formSchemas";
 import type {
 	DeathFilters,
+	DeathQuery,
 	DeathSortSettings,
+	NodeQuery,
 } from "../src/services/stats-query/StatsQuery";
 import { isoToDateSTD } from "../src/utils/date";
 
@@ -48,4 +50,21 @@ export const defaultEchartStyling: React.CSSProperties = {
 	minHeight: "350px",
 	height: "100%",
 	width: "100%",
+};
+
+export const top10SubjectsMostDeathsQuery: NodeQuery = {
+	fetch: "subjects",
+	scope: { type: "global" },
+	filter: defaultFilters,
+	sort: { sortingKey: "deaths", ascending: false },
+	limit: 10,
+	chartMetaData: { title: "Top Deaths" },
+};
+
+export const allDeathsOnCalendarQuery: DeathQuery = {
+	fetch: "deaths",
+	scope: { type: "global" },
+	filter: defaultDeathFilters,
+	sort: defaultDeathSortSettings,
+	chartMetaData: {},
 };

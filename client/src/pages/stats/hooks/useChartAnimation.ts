@@ -7,7 +7,7 @@ export default function useChartAnimation(optionToSet: EChartsOption) {
 
 	useEffect(() => {
 		delay(25).then(() => setOption(optionToSet));
-	}, []);
+	}, [optionToSet]);
 
 	return option;
 }

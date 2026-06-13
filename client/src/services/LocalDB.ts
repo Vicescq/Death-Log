@@ -124,12 +124,10 @@ export default class LocalDB {
 		});
 	}
 
-	static getPrefs(pref: "filters" | "sort") {
-		return localStorage.getItem;
-	}
-
 	static getDLFilterPrefs(type: DeathLogViewType): Filters | null {
-		const filtersSTR = localStorage.getItem(`filters`);
+		const filtersSTR = localStorage.getItem(
+			`filters-${LocalDB.getUserEmail()}`,
+		);
 
 		if (filtersSTR == null) {
 			return null;
@@ -144,21 +142,24 @@ export default class LocalDB {
 		type: DeathLogViewType,
 		defaultFilters: Filters,
 	) {
-		const filtersSTR = localStorage.getItem(`filters`);
+		const key = `filters-${LocalDB.getUserEmail()}`;
+		const filtersSTR = localStorage.getItem(key);
 		if (filtersSTR == null) {
 			localStorage.setItem(
-				"filters",
+				key,
 				JSON.stringify(constructInitPref(defaultFilters)),
 			);
 		} else {
 			const obj: DeathLogViewPrefs<Filters> = JSON.parse(filtersSTR);
 			obj[type] = filters;
-			localStorage.setItem("filters", JSON.stringify(obj));
+			localStorage.setItem(key, JSON.stringify(obj));
 		}
 	}
 
 	static getDLSortPrefs(type: DeathLogViewType): SortSettings | null {
-		const sortSettingsSTR = localStorage.getItem("sort_settings");
+		const sortSettingsSTR = localStorage.getItem(
+			`sort_settings-${LocalDB.getUserEmail()}`,
+		);
 
 		if (sortSettingsSTR == null) {
 			return null;
@@ -174,51 +175,19 @@ export default class LocalDB {
 		type: DeathLogViewType,
 		defaultSortSettings: SortSettings,
 	) {
-		const sortSettingsSTR = localStorage.getItem("sort_settings");
+		const key = `sort_settings-${LocalDB.getUserEmail()}`;
+		const sortSettingsSTR = localStorage.getItem(key);
 
 		if (sortSettingsSTR == null) {
 			localStorage.setItem(
-				"sort_settings",
+				key,
 				JSON.stringify(constructInitPref(defaultSortSettings)),
 			);
 		} else {
 			const obj: DeathLogViewPrefs<SortSettings> =
 				JSON.parse(sortSettingsSTR);
 			obj[type] = sortSettings;
-			localStorage.setItem("sort_settings", JSON.stringify(obj));
+			localStorage.setItem(key, JSON.stringify(obj));
 		}
 	}
-
-	// static getDLFilterPrefs(type: DeathLogViewType): Filters | null {
-	// 	const filtersSTR = localStorage.getItem(`${type}s_view_filters`);
-
-	// 	if (filtersSTR == null) {
-	// 		return null;
-	// 	} else {
-	// 		return JSON.parse(filtersSTR);
-	// 	}
-	// }
-
-	// static setDLFilterPrefs(filters: Filters, type: DeathLogViewType) {
-	// 	localStorage.setItem(`${type}s_view_filters`, JSON.stringify(filters));
-	// }
-
-	// static getDLSortPrefs(type: DeathLogViewType): SortSettings | null {
-	// 	const sortSettingsSTR = localStorage.getItem(
-	// 		`${type}s_view_sort_settings`,
-	// 	);
-
-	// 	if (sortSettingsSTR == null) {
-	// 		return null;
-	// 	} else {
-	// 		return JSON.parse(sortSettingsSTR);
-	// 	}
-	// }
-
-	// static setDLSortPrefs(sortSettings: SortSettings, type: DeathLogViewType) {
-	// 	localStorage.setItem(
-	// 		`${type}s_view_sort_settings`,
-	// 		JSON.stringify(sortSettings),
-	// 	);
-	// }
 }

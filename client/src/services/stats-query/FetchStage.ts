@@ -44,9 +44,7 @@ export class SubjectsFetchStage {
 		});
 	}
 
-	scopedByGroup(
-		groupAggregatedWithProfileIds: string[],
-	): NodeFilterStage {
+	scopedByGroup(groupAggregatedWithProfileIds: string[]): NodeFilterStage {
 		return new NodeScopingStage("subjects").scope({
 			type: "group",
 			ids: groupAggregatedWithProfileIds,
@@ -76,9 +74,7 @@ export class DeathsFetchStage {
 		});
 	}
 
-	scopedByGroup(
-		groupAggregatedWithProfileIds: string[],
-	): DeathFilterStage {
+	scopedByGroup(groupAggregatedWithProfileIds: string[]): DeathFilterStage {
 		return new DeathScopingStage().scope({
 			type: "subject",
 			ids: groupAggregatedWithProfileIds,
