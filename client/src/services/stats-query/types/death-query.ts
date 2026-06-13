@@ -1,5 +1,6 @@
-import type { ChartMetaData } from "./chart";
+import type { EChartsConfig } from "./chart";
 import type { DeathQueryScope } from "./scope";
+import type { QueryLimit } from "./limit";
 
 export type DeathFilters = {
 	timestampRel: boolean;
@@ -13,17 +14,20 @@ export type DeathSortSettings = {
 
 type DeathQueryBase = {
 	fetch: "deaths";
+	title: string;
 	scope: DeathQueryScope;
 	filter: DeathFilters;
 	searchQuery?: string;
 	sort: DeathSortSettings;
-	limit?: number;
-	chartMetaData: ChartMetaData;
+	limit?: QueryLimit;
+	echartsConfig: EChartsConfig;
 };
 
-export type DeathQuery =
-	| (DeathQueryBase & { chartType: "hmc" })
-	| (DeathQueryBase & { chartType: "line" });
+type DeathQueryChartConfig =
+	| { extract: "deathsByDay"; chartType: "hmc" }
+	| { extract: "deathsCumulative"; chartType: "time-line" };
+
+export type DeathQuery = DeathQueryBase & DeathQueryChartConfig;
 
 export type HmcDeathQuery = Extract<DeathQuery, { chartType: "hmc" }>;
-export type LineDeathQuery = Extract<DeathQuery, { chartType: "line" }>;
+export type TimeLineDeathQuery = Extract<DeathQuery, { chartType: "time-line" }>;

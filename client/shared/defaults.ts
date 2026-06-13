@@ -44,6 +44,27 @@ export const defaultDeathSortSettings: DeathSortSettings = {
 	sortingKey: "timestamp",
 };
 
+export const defaultStatsFilters: Filters = {
+	...defaultFilters,
+	unreliableStart: false,
+	unreliableEnd: false,
+};
+
+export const defaultStatsDeathFilters: DeathFilters = {
+	...defaultDeathFilters,
+	unreliableTimestamp: false,
+};
+
+export const defaultStatsSortSettings: SortSettings = {
+	sortingKey: "deaths",
+	ascending: true,
+};
+
+export const defaultStatsDeathSortSettings: DeathSortSettings = {
+	sortingKey: "timestamp",
+	ascending: true,
+};
+
 export const defaultEchartStyling: React.CSSProperties = {
 	minHeight: "350px",
 	height: "100%",

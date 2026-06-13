@@ -10,17 +10,21 @@ import type { BarNodeQuery } from "../types/node-query";
 import type { HmcDeathQuery } from "../types/death-query";
 
 const baseNodeQ: Omit<BarNodeQuery, "fetch" | "scope"> = {
+	title: "Test",
 	filter: defaultFilters,
 	sort: { sortingKey: "name", ascending: true },
-	chartMetaData: {},
+	echartsConfig: {},
+	extract: "nodeDeaths",
 	chartType: "bar",
 };
 
 const baseDeathQ: Omit<HmcDeathQuery, "scope"> = {
 	fetch: "deaths",
+	title: "Test",
 	filter: defaultDeathFilters,
 	sort: { sortingKey: "timestamp", ascending: true },
-	chartMetaData: {},
+	echartsConfig: {},
+	extract: "deathsByDay",
 	chartType: "hmc",
 };
 

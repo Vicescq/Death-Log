@@ -1,18 +1,27 @@
-import type { Filters, SortSettings } from "../../../pages/death-log/formSchemas";
-import type { ChartMetaData } from "./chart";
+import type {
+	Filters,
+	SortSettings,
+} from "../../../pages/death-log/formSchemas";
+import type { EChartsConfig } from "./chart";
 import type { NodeQueryScope } from "./scope";
+import type { QueryLimit } from "./limit";
 
 type NodeQueryChartConfig =
-	| { chartType: "bar" }
-	| { chartType: "line" }
-	| { chartType: "time-line"; dateExtract: "start" | "end" };
+	| { extract: "nodeDeaths"; chartType: "bar" | "pie" }
+	| { extract: "nodeDeaths"; chartType: "line" }
+	| {
+			extract: "nodeTimeline";
+			dateExtract: "start" | "end";
+			chartType: "time-line";
+	  };
 
 type NodeQueryBase = {
+	title: string;
 	filter: Filters;
 	searchQuery?: string;
 	sort: SortSettings;
-	limit?: number;
-	chartMetaData: ChartMetaData;
+	limit?: QueryLimit;
+	echartsConfig: EChartsConfig;
 } & NodeQueryChartConfig;
 
 export type GamesQuery = NodeQueryBase & {

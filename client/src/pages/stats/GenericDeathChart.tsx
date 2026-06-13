@@ -3,16 +3,16 @@ import useChartAnimation from "./hooks/useChartAnimation";
 import darkerChalk from "../../../shared/darker_chalk.json";
 import { defaultEchartStyling } from "../../../shared/defaults";
 import { StatsQuery } from "../../services/stats-query/StatsQuery";
-import type { NodeQuery } from "../../services/stats-query/types/node-query";
+import type { DeathQuery } from "../../services/stats-query/types/death-query";
 import { useMemo, useState } from "react";
 import ChartCard from "./ChartCard";
 import ReliabilityToggle, { type ReliabilityFlag } from "./ReliabilityToggle";
 
 type Props = {
-	query: NodeQuery;
+	query: DeathQuery;
 };
 
-export default function GenericChart({ query: initialQuery }: Props) {
+export default function GenericDeathChart({ query: initialQuery }: Props) {
 	const [query, setQuery] = useState(initialQuery);
 	const option = useMemo(() => StatsQuery.query(query), [query]);
 	const animatedOption = useChartAnimation(option);
@@ -20,19 +20,15 @@ export default function GenericChart({ query: initialQuery }: Props) {
 	const flags: ReliabilityFlag[] = [
 		{
 			label: "Unreliable data",
-			value: query.filter.unreliableStart && query.filter.unreliableEnd,
+			value: query.filter.unreliableTimestamp,
 			onToggle: () =>
-				setQuery((q) => {
-					const next = !(q.filter.unreliableStart && q.filter.unreliableEnd);
-					return {
-						...q,
-						filter: {
-							...q.filter,
-							unreliableStart: next,
-							unreliableEnd: next,
-						},
-					};
-				}),
+				setQuery((q) => ({
+					...q,
+					filter: {
+						...q.filter,
+						unreliableTimestamp: !q.filter.unreliableTimestamp,
+					},
+				})),
 		},
 	];
 

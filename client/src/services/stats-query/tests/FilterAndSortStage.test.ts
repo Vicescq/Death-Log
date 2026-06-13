@@ -1,9 +1,10 @@
 import { expect, test, beforeEach, afterEach } from "vitest";
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
 import { scopeNodes, scopeDeaths } from "../ScopingStage";
-import { filterNodes, filterDeaths } from "../FilterStage";
+import { filterNodes, filterDeaths, applyLimit } from "../FilterStage";
 import { sortNodes, sortDeaths } from "../SortStage";
 import { toBarChart } from "../ChartStage";
+import { extractNodeDeaths } from "../ExtractionStage";
 import {
 	defaultFilters,
 	defaultDeathFilters,
@@ -15,15 +16,19 @@ import type { HmcDeathQuery } from "../types/death-query";
 const baseNodeQ: Omit<BarNodeQuery, "fetch" | "scope"> = {
 	filter: defaultFilters,
 	sort: { sortingKey: "name", ascending: true },
-	chartMetaData: { title: "Test" },
+	title: "Test",
+	echartsConfig: {},
+	extract: "nodeDeaths",
 	chartType: "bar",
 };
 
 const baseDeathQ: Omit<HmcDeathQuery, "scope"> = {
 	fetch: "deaths",
+	title: "Test",
 	filter: defaultDeathFilters,
 	sort: { sortingKey: "timestamp", ascending: true },
-	chartMetaData: {},
+	echartsConfig: {},
+	extract: "deathsByDay",
 	chartType: "hmc",
 };
 
@@ -45,9 +50,14 @@ test.describe("node pipeline (scope → filter → sort → chart)", () => {
 			scope: { type: "profile", ids: [fixture.profileID] },
 		};
 		const scoped = scopeNodes(q, useDeathLogStore.getState().tree);
-		const filtered = filterNodes(scoped, q, useDeathLogStore.getState().tree);
+		const filtered = filterNodes(
+			scoped,
+			q,
+			useDeathLogStore.getState().tree,
+		);
 		const sorted = sortNodes(filtered, q, useDeathLogStore.getState().tree);
-		const chart = toBarChart(sorted, q, useDeathLogStore.getState().tree);
+		const tree = useDeathLogStore.getState().tree;
+		const chart = toBarChart(extractNodeDeaths(sorted, tree));
 		expect(chart).toBeDefined();
 		expect(chart.series).toBeDefined();
 	});
@@ -60,9 +70,14 @@ test.describe("node pipeline (scope → filter → sort → chart)", () => {
 			searchQuery: "Subject 1",
 		};
 		const scoped = scopeNodes(q, useDeathLogStore.getState().tree);
-		const filtered = filterNodes(scoped, q, useDeathLogStore.getState().tree);
+		const filtered = filterNodes(
+			scoped,
+			q,
+			useDeathLogStore.getState().tree,
+		);
 		const sorted = sortNodes(filtered, q, useDeathLogStore.getState().tree);
-		const chart = toBarChart(sorted, q, useDeathLogStore.getState().tree);
+		const tree = useDeathLogStore.getState().tree;
+		const chart = toBarChart(extractNodeDeaths(sorted, tree));
 		expect(chart).toBeDefined();
 		expect((chart.xAxis as { data: unknown[] }).data).toBeDefined();
 	});
@@ -72,15 +87,22 @@ test.describe("node pipeline (scope → filter → sort → chart)", () => {
 			...baseNodeQ,
 			fetch: "subjects",
 			scope: { type: "profile", ids: [fixture.profileID] },
-			limit: 2,
+			limit: { count: 2, dir: "start" },
 		};
 		const scoped = scopeNodes(q, useDeathLogStore.getState().tree);
-		const filtered = filterNodes(scoped, q, useDeathLogStore.getState().tree);
+		const filtered = filterNodes(
+			scoped,
+			q,
+			useDeathLogStore.getState().tree,
+		);
 		const sorted = sortNodes(filtered, q, useDeathLogStore.getState().tree);
-		const limited = sorted.slice(0, q.limit);
-		const chart = toBarChart(limited, q, useDeathLogStore.getState().tree);
+		const limited = applyLimit(sorted, q.limit);
+		const tree = useDeathLogStore.getState().tree;
+		const chart = toBarChart(extractNodeDeaths(limited, tree));
 		expect(chart).toBeDefined();
-		expect((chart.xAxis as { data: unknown[] }).data.length).toBeLessThanOrEqual(2);
+		expect(
+			(chart.xAxis as { data: unknown[] }).data.length,
+		).toBeLessThanOrEqual(2);
 	});
 });
 
@@ -138,4 +160,9 @@ test.describe("death pipeline (scope → filter → sort)", () => {
 		const sorted = sortDeaths(filtered, q);
 		expect(sorted).toBeDefined();
 	});
+});
+
+test("applyLimit | dir: 'end' returns last N items", () => {
+	const result = applyLimit([1, 2, 3, 4, 5], { count: 2, dir: "end" });
+	expect(result).toEqual([4, 5]);
 });

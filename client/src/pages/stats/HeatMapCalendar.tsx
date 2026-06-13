@@ -1,36 +1,48 @@
 import { useState, useMemo } from "react";
+import ChartCard from "./ChartCard";
 import EChartsReact from "react-echarts-library";
 import darkerChalk from "../../../shared/darker_chalk.json";
 import { defaultEchartStyling } from "../../../shared/defaults";
-import {
-	StatsQuery,
-	type DeathQuery,
-} from "../../services/stats-query/StatsQuery";
+import { StatsQuery } from "../../services/stats-query/StatsQuery";
+import type { DeathQuery } from "../../services/stats-query/types/death-query";
+import ReliabilityToggle, { type ReliabilityFlag } from "./ReliabilityToggle";
 
 type Props = {
-	title: string;
-	baseYear?: number;
 	query: DeathQuery;
 };
 
-export default function HeatMapCalendar({
-	title,
-	baseYear = new Date().getFullYear(),
-	query,
-}: Props) {
+export default function HeatMapCalendar({ query: initialQuery }: Props) {
 	const [currentDate, setCurrentYear] = useState(new Date());
+	const [query, setQuery] = useState(initialQuery);
+
+	const baseYear = new Date().getFullYear();
 
 	const chartOption = useMemo(() => {
 		const year = currentDate.getFullYear();
 		const month = String(currentDate.getMonth() + 1).padStart(2, "0");
 		return StatsQuery.query({
 			...query,
-			chartMetaData: {
-				...query.chartMetaData,
+			echartsConfig: {
+				...query.echartsConfig,
 				range: `${year}-${month}`,
 			},
 		});
 	}, [currentDate, query]);
+
+	const flags: ReliabilityFlag[] = [
+		{
+			label: "Unreliable data",
+			value: query.filter.unreliableTimestamp,
+			onToggle: () =>
+				setQuery((q) => ({
+					...q,
+					filter: {
+						...q.filter,
+						unreliableTimestamp: !q.filter.unreliableTimestamp,
+					},
+				})),
+		},
+	];
 
 	const years = Array.from({ length: 5 }, (_, i) => baseYear - 2 + i);
 
@@ -67,8 +79,10 @@ export default function HeatMapCalendar({
 	}
 
 	return (
-		<div className="border-base-300 bg-base-200 flex h-full flex-col rounded-2xl border p-4 shadow-lg">
-			<h2 className="mb-3 text-lg font-semibold">{title}</h2>
+		<ChartCard
+			title={query.title}
+			actions={<ReliabilityToggle flags={flags} />}
+		>
 			<div className="mb-4 flex gap-2">
 				<button
 					onClick={handlePrevMonth}
@@ -175,6 +189,6 @@ export default function HeatMapCalendar({
 					<span className="hidden sm:inline">Today</span>
 				</button>
 			</div>
-		</div>
+		</ChartCard>
 	);
 }

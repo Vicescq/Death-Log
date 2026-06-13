@@ -1,37 +1,72 @@
 import {
-	defaultFilters,
-	defaultDeathFilters,
-	defaultDeathSortSettings,
-	defaultSortSettings,
+	defaultStatsFilters,
+	defaultStatsDeathFilters,
+	defaultStatsSortSettings,
+	defaultStatsDeathSortSettings,
 } from "../../../shared/defaults";
 import type { NodeQuery, TimeLineNodeQuery } from "./types/node-query";
-import type { HmcDeathQuery } from "./types/death-query";
+import type { DeathQuery, HmcDeathQuery } from "./types/death-query";
 
 export const top10SubjectsMostDeathsQuery: NodeQuery = {
 	fetch: "subjects",
+	title: "Top 10 Subject Deaths",
 	scope: { type: "global" },
-	filter: defaultFilters,
-	sort: { sortingKey: "deaths", ascending: false },
-	limit: 10,
-	chartMetaData: { title: "Top Deaths" },
+	filter: defaultStatsFilters,
+	sort: defaultStatsSortSettings,
+	limit: { count: 10, dir: "end" },
+	echartsConfig: {},
+	extract: "nodeDeaths",
 	chartType: "bar",
 };
 
 export const allDeathsOnCalendarQuery: HmcDeathQuery = {
 	fetch: "deaths",
+	title: "Death Calendar",
 	scope: { type: "global" },
-	filter: defaultDeathFilters,
-	sort: defaultDeathSortSettings,
-	chartMetaData: {},
+	filter: defaultStatsDeathFilters,
+	sort: defaultStatsDeathSortSettings,
+	echartsConfig: {},
+	extract: "deathsByDay",
 	chartType: "hmc",
 };
 
-export const allSubjectDeathsOverTimeQuery: TimeLineNodeQuery = {
-	fetch: "subjects",
+export const top10GamesMostDeathsQuery: NodeQuery = {
+	fetch: "games",
+	title: "Games with the most Deaths",
 	scope: { type: "global" },
-	filter: defaultFilters,
-	sort: { ...defaultSortSettings, ascending: true },
-	chartMetaData: { title: "Subject Deaths Over Time" },
+	filter: defaultStatsFilters,
+	sort: defaultStatsSortSettings,
+	limit: { count: 10, dir: "end" },
+	echartsConfig: {},
+	extract: "nodeDeaths",
+	chartType: "bar",
+};
+
+export const cumulationDeathsOverTimeQuery: DeathQuery = {
+	fetch: "deaths",
+	title: "Cumulation of Deaths Over Time",
+	scope: { type: "global" },
+	filter: defaultStatsDeathFilters,
+	sort: { sortingKey: "timestamp", ascending: true },
+	echartsConfig: {},
+	extract: "deathsCumulative",
 	chartType: "time-line",
-	dateExtract: "start",
+};
+
+export const top5BossesMostDeathsQuery: NodeQuery = {
+	fetch: "subjects",
+	title: "Top 5 Bosses with the most Deaths",
+	scope: { type: "global" },
+	filter: {
+		...defaultStatsFilters,
+		location: false,
+		genericEnemy: false,
+		other: false,
+		miniBoss: false,
+	},
+	sort: defaultStatsSortSettings,
+	limit: { count: 5, dir: "end" },
+	echartsConfig: {},
+	extract: "nodeDeaths",
+	chartType: "pie",
 };

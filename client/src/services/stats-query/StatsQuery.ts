@@ -4,51 +4,21 @@ import { useDeathLogStore } from "../../stores/useDeathLogStore";
 import { scopeNodes, scopeDeaths } from "./ScopingStage";
 import { filterNodes, filterDeaths, applyLimit } from "./FilterStage";
 import { sortNodes, sortDeaths } from "./SortStage";
-import { toBarChart, toHeatMapCalendar, toTimeLineChart } from "./ChartStage";
+import {
+	extractNodeDeaths,
+	extractNodeTimeline,
+	extractDeathsByDay,
+	extractDeathsCumulative,
+} from "./ExtractionStage";
+import {
+	toBarChart,
+	toLineChart,
+	toTimeLineChart,
+	toHeatMapCalendar,
+	toPieChart,
+} from "./ChartStage";
+import type { CategoryPoint } from "./types/chart";
 
-export type { ChartMetaData, SimpleChartData, TimeChartData } from "./types/chart";
-export type { NodeQueryScope, DeathQueryScope } from "./types/scope";
-export type {
-	GamesQuery,
-	ProfilesQuery,
-	SubjectsQuery,
-	NodeQuery,
-	BarNodeQuery,
-	LineNodeQuery,
-	TimeLineNodeQuery,
-} from "./types/node-query";
-export type {
-	DeathFilters,
-	DeathSortSettings,
-	DeathQuery,
-	HmcDeathQuery,
-	LineDeathQuery,
-} from "./types/death-query";
-export type { Query } from "./types/query";
-
-/**
- * Entry point for the stats query pipeline.
- *
- * Preferred usage — pass a Query object to query():
- * @example
- * StatsQuery.query({
- *   fetch: "subjects",
- *   scope: { type: "game", ids: ["game1"] },
- *   filter: defaultFilters,
- *   sort: { sortingKey: "deaths", ascending: false },
- *   limit: 10,
- *   chartMetaData: { title: "Top Deaths" },
- * })
- *
- * @example
- * StatsQuery.query({
- *   fetch: "deaths",
- *   scope: { type: "global" },
- *   filter: defaultDeathFilters,
- *   sort: { sortingKey: "timestamp", ascending: true },
- *   chartMetaData: { range: "2024-06" },
- * })
- */
 export class StatsQuery {
 	static query(q: Query): EChartsOption {
 		const tree = useDeathLogStore.getState().tree;
@@ -58,13 +28,18 @@ export class StatsQuery {
 			const filtered = filterDeaths(scoped, q);
 			const sorted = sortDeaths(filtered, q);
 			const limited = applyLimit(sorted, q.limit);
+			const data =
+				q.extract === "deathsByDay"
+					? extractDeathsByDay(limited)
+					: extractDeathsCumulative(limited);
 			switch (q.chartType) {
 				case "hmc":
-					return toHeatMapCalendar(limited, q);
-
+					return toHeatMapCalendar(data, q.echartsConfig);
+				case "time-line":
+					return toTimeLineChart(data);
 				default:
 					throw new Error(
-						`DEV ERROR: chart type "${q.chartType}" not yet implemented`,
+						`DEV ERROR: chart type  not yet implemented`,
 					);
 			}
 		} else {
@@ -72,14 +47,31 @@ export class StatsQuery {
 			const filtered = filterNodes(scoped, q, tree);
 			const sorted = sortNodes(filtered, q, tree);
 			const limited = applyLimit(sorted, q.limit);
+
+			let data: CategoryPoint[];
+			switch (q.extract) {
+				case "nodeDeaths":
+					data = extractNodeDeaths(limited, tree);
+					break;
+				case "nodeTimeline":
+					data = extractNodeTimeline(limited, q.dateExtract, tree);
+					break;
+				default:
+					throw new Error("DEV ERROR! Not yet implemented yet!");
+			}
+
 			switch (q.chartType) {
 				case "bar":
-					return toBarChart(limited, q, tree);
+					return toBarChart(data);
+				case "line":
+					return toLineChart(data);
 				case "time-line":
-					return toTimeLineChart(limited, q, tree);
+					return toTimeLineChart(data);
+				case "pie":
+					return toPieChart(data);
 				default:
 					throw new Error(
-						`DEV ERROR: chart type "${q.chartType}" not yet implemented`,
+						`DEV ERROR: chart type  not yet implemented`,
 					);
 			}
 		}

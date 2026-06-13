@@ -1,5 +1,4 @@
-export type ChartMetaData = {
-	title?: string;
+export type EChartsConfig = {
 	range?: string;
 	visualMap?: {
 		min?: number;
@@ -7,9 +6,7 @@ export type ChartMetaData = {
 	};
 };
 
-export type SimpleChartData = {
+export type CategoryPoint = {
 	x: string;
 	y: number;
 };
-
-export type TimeChartData = [string, number];

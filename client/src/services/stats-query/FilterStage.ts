@@ -3,6 +3,7 @@ import type { DistinctTreeNode, Tree } from "../../model/tree-node-model/TreeNod
 import type { Death } from "../../model/tree-node-model/SubjectSchema";
 import type { NodeQuery } from "./types/node-query";
 import type { DeathQuery, DeathFilters } from "./types/death-query";
+import type { QueryLimit } from "./types/limit";
 
 export function filterNodes(
 	nodes: DistinctTreeNode[],
@@ -14,11 +15,9 @@ export function filterNodes(
 	return nodes.filter((n) => filteredIDs.includes(n.id));
 }
 
-// limit: positive N = keep first N (sever end), negative N = keep last N (sever beginning), undefined = keep all
-export function applyLimit<T>(data: T[], limit?: number): T[] {
+export function applyLimit<T>(data: T[], limit?: QueryLimit): T[] {
 	if (limit === undefined) return data;
-	if (limit >= 0) return data.slice(0, limit);
-	return data.slice(limit);
+	return limit.dir === "start" ? data.slice(0, limit.count) : data.slice(-limit.count);
 }
 
 export function filterDeaths(deaths: Death[], q: DeathQuery): Death[] {
