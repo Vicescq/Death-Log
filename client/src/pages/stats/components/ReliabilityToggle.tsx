@@ -10,7 +10,7 @@ type Props = {
 
 export default function ReliabilityToggle({ flags }: Props) {
 	return (
-		<div className="flex items-center gap-3">
+		<li className="flex items-center gap-3">
 			{flags.map((flag) => (
 				<label
 					key={flag.label}
@@ -25,6 +25,6 @@ export default function ReliabilityToggle({ flags }: Props) {
 					{flag.label}
 				</label>
 			))}
-		</div>
+		</li>
 	);
 }

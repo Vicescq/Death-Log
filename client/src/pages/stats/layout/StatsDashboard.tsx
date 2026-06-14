@@ -1,4 +1,4 @@
-import NavBar from "../../components/nav-bar/NavBar";
+import NavBar from "../../../components/nav-bar/NavBar";
 import ProfileHeader from "./ProfileHeader";
 import StatsNav from "./StatsNav";
 import { Outlet } from "react-router";
@@ -13,7 +13,8 @@ export default function StatsDashboard() {
 					<div className="border-base-300 bg-accent/5 rounded-lg border px-4 py-3">
 						<span className="text-sm opacity-80">
 							Best viewed on desktop for optimal chart
-							visualization.
+							visualization. Fullscreen view of a chart is also
+							available!
 						</span>
 					</div>
 

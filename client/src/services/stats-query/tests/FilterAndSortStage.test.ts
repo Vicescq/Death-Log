@@ -57,7 +57,7 @@ test.describe("node pipeline (scope → filter → sort → chart)", () => {
 		);
 		const sorted = sortNodes(filtered, q, useDeathLogStore.getState().tree);
 		const tree = useDeathLogStore.getState().tree;
-		const chart = toBarChart(extractNodeDeaths(sorted, tree));
+		const chart = toBarChart(extractNodeDeaths(sorted, tree), q.echartsConfig);
 		expect(chart).toBeDefined();
 		expect(chart.series).toBeDefined();
 	});
@@ -77,7 +77,7 @@ test.describe("node pipeline (scope → filter → sort → chart)", () => {
 		);
 		const sorted = sortNodes(filtered, q, useDeathLogStore.getState().tree);
 		const tree = useDeathLogStore.getState().tree;
-		const chart = toBarChart(extractNodeDeaths(sorted, tree));
+		const chart = toBarChart(extractNodeDeaths(sorted, tree), q.echartsConfig);
 		expect(chart).toBeDefined();
 		expect((chart.xAxis as { data: unknown[] }).data).toBeDefined();
 	});
@@ -98,7 +98,7 @@ test.describe("node pipeline (scope → filter → sort → chart)", () => {
 		const sorted = sortNodes(filtered, q, useDeathLogStore.getState().tree);
 		const limited = applyLimit(sorted, q.limit);
 		const tree = useDeathLogStore.getState().tree;
-		const chart = toBarChart(extractNodeDeaths(limited, tree));
+		const chart = toBarChart(extractNodeDeaths(limited, tree), q.echartsConfig);
 		expect(chart).toBeDefined();
 		expect(
 			(chart.xAxis as { data: unknown[] }).data.length,

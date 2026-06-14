@@ -16,8 +16,8 @@ import useConsoleLogOnStateChange from "./hooks/useConsoleLogOnStateChange.ts";
 import useMultipleTabsWarning from "./hooks/useMultipleTabsWarning.ts";
 import { CONSTANTS } from "../shared/constants.ts";
 import DeathLogRouter from "./pages/death-log/DeathLogRouter.tsx";
-import StatsDashboard from "./pages/stats/StatsDashboard.tsx";
-import StatsOverview from "./pages/stats/StatsOverview.tsx";
+import StatsDashboard from "./pages/stats/layout/StatsDashboard.tsx";
+import StatsOverview from "./pages/stats/layout/StatsOverview.tsx";
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 if (!PUBLISHABLE_KEY) {
@@ -43,7 +43,6 @@ function AppRoot() {
 	useInitApp();
 
 	if (!root) {
-		// wait for app to hydrate
 		return <></>;
 	}
 

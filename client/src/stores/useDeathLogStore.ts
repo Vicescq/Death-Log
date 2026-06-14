@@ -44,7 +44,7 @@ export const useDeathLogStore = create<DeathLogState>((set) => ({
 				}
 			});
 
-			return { tree: tree, root: rootNode };
+			return { tree };
 		});
 	},
 

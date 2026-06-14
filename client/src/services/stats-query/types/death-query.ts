@@ -21,6 +21,8 @@ type DeathQueryBase = {
 	sort: DeathSortSettings;
 	limit?: QueryLimit;
 	echartsConfig: EChartsConfig;
+	/** Minimum number of scoped deaths required before filters run. Charts below this threshold show "Not enough data." */
+	minDataPoints?: number;
 };
 
 type DeathQueryChartConfig =

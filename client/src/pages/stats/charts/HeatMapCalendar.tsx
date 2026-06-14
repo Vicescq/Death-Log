@@ -1,11 +1,16 @@
 import { useState, useMemo } from "react";
-import ChartCard from "./ChartCard";
+import ChartCard from "../components/ChartCard";
+import ChartEmpty from "../components/ChartEmpty";
+import ChartHideButton from "../components/ChartHideButton";
 import EChartsReact from "react-echarts-library";
-import darkerChalk from "../../../shared/darker_chalk.json";
-import { defaultEchartStyling } from "../../../shared/defaults";
-import { StatsQuery } from "../../services/stats-query/StatsQuery";
-import type { DeathQuery } from "../../services/stats-query/types/death-query";
-import ReliabilityToggle, { type ReliabilityFlag } from "./ReliabilityToggle";
+import darkerChalk from "../../../../shared/darker_chalk.json";
+import { defaultEchartStyling } from "../../../../shared/defaults";
+import { StatsQuery } from "../../../services/stats-query/StatsQuery";
+import type { DeathQuery } from "../../../services/stats-query/types/death-query";
+import ReliabilityToggle, {
+	type ReliabilityFlag,
+} from "../components/ReliabilityToggle";
+import { useDeathLogStore } from "../../../stores/useDeathLogStore";
 
 type Props = {
 	query: DeathQuery;
@@ -14,20 +19,25 @@ type Props = {
 export default function HeatMapCalendar({ query: initialQuery }: Props) {
 	const [currentDate, setCurrentYear] = useState(new Date());
 	const [query, setQuery] = useState(initialQuery);
+	const [showAnyway, setShowAnyway] = useState(false);
+	const tree = useDeathLogStore((state) => state.tree);
 
 	const baseYear = new Date().getFullYear();
 
-	const chartOption = useMemo(() => {
+	const result = useMemo(() => {
 		const year = currentDate.getFullYear();
 		const month = String(currentDate.getMonth() + 1).padStart(2, "0");
-		return StatsQuery.query({
-			...query,
-			echartsConfig: {
-				...query.echartsConfig,
-				range: `${year}-${month}`,
+		return StatsQuery.query(
+			{
+				...query,
+				echartsConfig: {
+					...query.echartsConfig,
+					range: `${year}-${month}`,
+				},
 			},
-		});
-	}, [currentDate, query]);
+			tree,
+		);
+	}, [currentDate, query, tree]);
 
 	const flags: ReliabilityFlag[] = [
 		{
@@ -81,7 +91,15 @@ export default function HeatMapCalendar({ query: initialQuery }: Props) {
 	return (
 		<ChartCard
 			title={query.title}
-			actions={<ReliabilityToggle flags={flags} />}
+			settings={
+				<>
+					<ReliabilityToggle flags={flags} />
+					<ChartHideButton
+						visible={result.status === "insufficient" && showAnyway}
+						onHide={() => setShowAnyway(false)}
+					/>
+				</>
+			}
 		>
 			<div className="mb-4 flex gap-2">
 				<button
@@ -161,34 +179,44 @@ export default function HeatMapCalendar({ query: initialQuery }: Props) {
 				</button>
 			</div>
 
-			<div className="relative">
-				<EChartsReact
-					option={chartOption}
-					theme={darkerChalk}
-					style={defaultEchartStyling}
+			{result.status === "no-data" ? (
+				<ChartEmpty status="no-data" />
+			) : result.status === "insufficient" && !showAnyway ? (
+				<ChartEmpty
+					status="insufficient"
+					minDataPoints={result.minDataPoints}
+					onShowAnyway={() => setShowAnyway(true)}
 				/>
-				<button
-					onClick={handleReset}
-					className="btn btn-sm btn-ghost absolute right-4 bottom-4 gap-1"
-					aria-label="Reset to current month"
-					title="Reset to current month"
-				>
-					<svg
-						className="h-4 w-4"
-						fill="none"
-						stroke="currentColor"
-						viewBox="0 0 24 24"
+			) : (
+				<div className="relative">
+					<EChartsReact
+						option={result.option}
+						theme={darkerChalk}
+						style={defaultEchartStyling}
+					/>
+					<button
+						onClick={handleReset}
+						className="btn btn-sm btn-ghost absolute right-4 bottom-4 gap-1"
+						aria-label="Reset to current month"
+						title="Reset to current month"
 					>
-						<path
-							strokeLinecap="round"
-							strokeLinejoin="round"
-							strokeWidth={2}
-							d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-						/>
-					</svg>
-					<span className="hidden sm:inline">Today</span>
-				</button>
-			</div>
+						<svg
+							className="h-4 w-4"
+							fill="none"
+							stroke="currentColor"
+							viewBox="0 0 24 24"
+						>
+							<path
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								strokeWidth={2}
+								d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+							/>
+						</svg>
+						<span className="hidden sm:inline">Today</span>
+					</button>
+				</div>
+			)}
 		</ChartCard>
 	);
 }

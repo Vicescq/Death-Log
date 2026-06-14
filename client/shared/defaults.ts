@@ -1,8 +1,5 @@
 import type { Filters, SortSettings } from "../src/pages/death-log/formSchemas";
-import type {
-	DeathFilters,
-	DeathSortSettings,
-} from "../src/services/stats-query/StatsQuery";
+import type { DeathFilters, DeathSortSettings } from "../src/services/stats-query/types/death-query";
 import { isoToDateSTD } from "../src/utils/date";
 
 export const defaultFilters: Filters = {

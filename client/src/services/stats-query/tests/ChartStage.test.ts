@@ -53,7 +53,7 @@ test("toBarChart | bar series with category xAxis", () => {
 		chartType: "bar",
 	};
 	const nodes = scopeNodes(q, tree);
-	const chart = toBarChart(extractNodeDeaths(nodes, tree));
+	const chart = toBarChart(extractNodeDeaths(nodes, tree), q.echartsConfig);
 	expect((chart.series as Array<{ type: string }>)[0].type).toBe("bar");
 	expect((chart.xAxis as { type: string }).type).toBe("category");
 });
@@ -114,8 +114,9 @@ test("toHeatMapCalendar | heatmap series, calendar range from echartsConfig", ()
 		scope: { type: "global" },
 		echartsConfig: { range: "2024-06" },
 	};
-	const deaths = scopeDeaths(q, useDeathLogStore.getState().tree);
-	const chart = toHeatMapCalendar(extractDeathsByDay(deaths), q.echartsConfig);
+	const tree = useDeathLogStore.getState().tree;
+	const deaths = scopeDeaths(q, tree);
+	const chart = toHeatMapCalendar(extractDeathsByDay(deaths, tree), q.echartsConfig);
 	expect((chart.series as { type: string }).type).toBe("heatmap");
 	expect((chart.calendar as { range: string }).range).toBe("2024-06");
 	expect(chart.visualMap).toBeDefined();
@@ -123,7 +124,8 @@ test("toHeatMapCalendar | heatmap series, calendar range from echartsConfig", ()
 
 test("toHeatMapCalendar | defaults calendar range to '2020-01' when none in config", () => {
 	const q: HmcDeathQuery = { ...baseDeathQ, scope: { type: "global" } };
-	const deaths = scopeDeaths(q, useDeathLogStore.getState().tree);
-	const chart = toHeatMapCalendar(extractDeathsByDay(deaths), q.echartsConfig);
+	const tree = useDeathLogStore.getState().tree;
+	const deaths = scopeDeaths(q, tree);
+	const chart = toHeatMapCalendar(extractDeathsByDay(deaths, tree), q.echartsConfig);
 	expect((chart.calendar as { range: string }).range).toBe("2020-01");
 });

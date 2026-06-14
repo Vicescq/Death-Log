@@ -1,18 +1,38 @@
 import type { EChartsOption } from "echarts";
-import type { CategoryPoint, EChartsConfig } from "./types/chart";
+import type {
+	CategoryPoint,
+	EChartsConfig,
+	ScatterPoint,
+	SunburstNode,
+} from "./types/chart";
 
-export function toBarChart(data: CategoryPoint[]): EChartsOption {
+export function toBarChart(
+	data: CategoryPoint[],
+	config: EChartsConfig,
+): EChartsOption {
+	const isInverted = config.xAxis?.type === "value";
 	return {
-		xAxis: {
-			type: "category",
-			data: data.map((p) => p.x),
-		},
-		yAxis: { type: "value" },
+		xAxis: isInverted
+			? { type: "value" }
+			: {
+					type: "category",
+					data: data.map((p) => p.x),
+					axisLabel: { show: false },
+				},
+		yAxis: isInverted
+			? {
+					type: "category",
+					data: data.map((p) => p.x),
+					axisLabel: { show: false },
+				}
+			: { type: "value" },
 		series: [
 			{
 				type: "bar",
 				data: data.map((p) => p.y),
-				itemStyle: { borderRadius: [15, 15, 0, 0] },
+				itemStyle: {
+					borderRadius: isInverted ? [0, 15, 15, 0] : [15, 15, 0, 0],
+				},
 			},
 		],
 		tooltip: {
@@ -20,7 +40,7 @@ export function toBarChart(data: CategoryPoint[]): EChartsOption {
 			axisPointer: { type: "shadow" },
 			renderMode: "richText",
 		},
-		dataZoom: { type: "slider", top: "90%" },
+		dataZoom: { type: "slider", bottom: 0 },
 	};
 }
 
@@ -62,7 +82,7 @@ export function toTimeLineChart(data: CategoryPoint[]): EChartsOption {
 			axisPointer: { type: "shadow" },
 			renderMode: "richText",
 		},
-		dataZoom: [{ type: "inside" }, { type: "slider", top: "90%" }],
+		dataZoom: [{ type: "inside" }, { type: "slider", bottom: 0 }],
 	};
 }
 
@@ -88,7 +108,10 @@ export function toHeatMapCalendar(
 		series: {
 			type: "heatmap",
 			coordinateSystem: "calendar",
-			data: data.map((p) => [p.x, p.y]),
+			data: data.map((p) => ({
+				value: [p.x, p.y],
+				name: p.meta ?? "",
+			})),
 		},
 		visualMap: {
 			min: dataMin,
@@ -102,7 +125,70 @@ export function toHeatMapCalendar(
 			handleStyle: { borderColor: "#000000" },
 			left: "center",
 		},
-		tooltip: { trigger: "item" },
+		tooltip: {
+			trigger: "item",
+			renderMode: "richText",
+			formatter: (params: unknown) => {
+				const p = params as {
+					value: [string, number];
+					name: string;
+				};
+				const lines = p.name ? p.name.split(", ").join("\n") : "";
+				return `${p.value[0]}\nDeaths: ${p.value[1]}${lines ? "\n" + lines : ""}`;
+			},
+		},
+	};
+}
+
+export function toSunburstChart(data: SunburstNode[]): EChartsOption {
+	return {
+		series: [
+			{
+				type: "sunburst",
+				data,
+				radius: ["0%", "90%"],
+				label: { show: false },
+				emphasis: { focus: "ancestor" },
+				itemStyle: {
+					borderRadius: 6,
+					borderColor: "#000000",
+					borderWidth: 3,
+				},
+			},
+		],
+		tooltip: { trigger: "item", renderMode: "richText" },
+	};
+}
+
+export function toScatterChart(data: ScatterPoint[]): EChartsOption {
+	return {
+		xAxis: {
+			type: "value",
+			name: "Deaths",
+			nameLocation: "center",
+			nameGap: 30,
+		},
+		yAxis: {
+			type: "value",
+			name: "Minutes",
+			nameLocation: "center",
+			nameGap: 40,
+		},
+		series: [
+			{
+				type: "scatter",
+				data: data.map((p) => ({ value: [p.x, p.y], name: p.name })),
+				symbolSize: 12,
+			},
+		],
+		tooltip: {
+			trigger: "item",
+			renderMode: "richText",
+			formatter: (params: unknown) => {
+				const p = params as { name: string; value: [number, number] };
+				return `${p.name}\nDeaths: ${p.value[0]}\nMinutes: ${p.value[1]}`;
+			},
+		},
 	};
 }
 
@@ -110,6 +196,7 @@ export function toPieChart(data: CategoryPoint[]): EChartsOption {
 	return {
 		tooltip: {
 			trigger: "item",
+			renderMode: "richText",
 		},
 		legend: {
 			top: "7%",
