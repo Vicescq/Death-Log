@@ -7,7 +7,7 @@ import type {
 import { CONSTANTS } from "../../../../shared/constants";
 import type { Subject } from "../../../model/tree-node-model/SubjectSchema";
 import { assertIsNonNull } from "../../../utils/asserts";
-import type { PGFormMember } from "../formSchemas";
+import type { PGFormMember } from "../../../model/formSchemas";
 
 type Props<T extends FieldValues> = {
 	register: UseFormRegister<T>;

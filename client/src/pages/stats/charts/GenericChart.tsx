@@ -3,7 +3,7 @@ import useChartAnimation from "../hooks/useChartAnimation";
 import darkerChalk from "../../../../shared/darker_chalk.json";
 import { defaultEchartStyling } from "../../../../shared/defaults";
 import { StatsQuery } from "../../../services/stats-query/StatsQuery";
-import type { NodeQuery } from "../../../services/stats-query/types/node-query";
+import type { NodeQuery } from "../../../model/stats-query-model/node-query";
 import { useMemo, useState } from "react";
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
 import ChartCard from "../components/ChartCard";
@@ -83,7 +83,7 @@ export default function GenericChart({ query: initialQuery }: Props) {
 			) : (
 				<ChartEmpty
 					status="insufficient"
-					minDataPoints={result.minDataPoints}
+
 					onShowAnyway={() => setShowAnyway(true)}
 				/>
 			)}

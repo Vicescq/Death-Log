@@ -1,9 +1,9 @@
 import { filter as deathLogFilter } from "../../pages/death-log/utils";
 import type { DistinctTreeNode, Tree } from "../../model/tree-node-model/TreeNodeSchema";
 import type { Death } from "../../model/tree-node-model/SubjectSchema";
-import type { NodeQuery } from "./types/node-query";
-import type { DeathQuery, DeathFilters } from "./types/death-query";
-import type { QueryLimit } from "./types/limit";
+import type { NodeQuery } from "../../model/stats-query-model/node-query";
+import type { DeathQuery, DeathFilters } from "../../model/stats-query-model/death-query";
+import type { QueryLimit } from "../../model/stats-query-model/limit";
 
 export function filterNodes(
 	nodes: DistinctTreeNode[],

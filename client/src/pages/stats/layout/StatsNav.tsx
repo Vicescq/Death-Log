@@ -22,6 +22,13 @@ export default function StatsNav() {
 				>
 					Build Your Own Chart
 				</Link>
+				<Link
+					to="/stats/manage"
+					className={`tab ${isActive("/stats/manage") ? "tab-active" : ""}`}
+					role="tab"
+				>
+					Manage
+				</Link>
 			</div>
 		</div>
 	);

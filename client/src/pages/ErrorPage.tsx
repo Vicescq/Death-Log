@@ -18,16 +18,24 @@ export default function ErrorPage({
 			<div className="hero-content text-center">
 				<div className="max-w-md">
 					<h1 className="text-5xl font-bold">{icon}</h1>
-					<button
-						className="btn btn-accent mt-12"
-						onClick={() =>
-							resetErrorBoundary
-								? resetErrorBoundary()
-								: navigate("/")
-						}
-					>
-						{CONSTANTS.ERROR.HOME}
-					</button>
+					<div className="mt-12 flex flex-col justify-center gap-3">
+						<button
+							className="btn btn-accent"
+							onClick={() =>
+								resetErrorBoundary
+									? resetErrorBoundary()
+									: navigate("/")
+							}
+						>
+							{CONSTANTS.ERROR.HOME}
+						</button>
+						<button
+							className="btn btn-info"
+							onClick={() => navigate("/data-management")}
+						>
+							Data Management
+						</button>
+					</div>
 					<div className="divider"></div>
 					<p className="text-xl sm:text-3xl">{msg}</p>
 				</div>

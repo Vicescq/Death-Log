@@ -16,7 +16,7 @@ import {
 	type Filters,
 	type NodeFormAdd,
 	type SortSettings,
-} from "../formSchemas";
+} from "../../../model/formSchemas";
 import ToolbarAdd from "./ToolbarAdd";
 import Modal from "../../../components/Modal";
 import ToolbarFilter from "./ToolbarFilter";

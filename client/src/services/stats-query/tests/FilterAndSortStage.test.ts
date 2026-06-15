@@ -10,8 +10,8 @@ import {
 	defaultDeathFilters,
 } from "../../../../shared/defaults";
 import { setupTestTree, cleanupTestTree } from "./fixtures";
-import type { BarNodeQuery } from "../types/node-query";
-import type { HmcDeathQuery } from "../types/death-query";
+import type { BarNodeQuery } from "../../../model/stats-query-model/node-query";
+import type { HmcDeathQuery } from "../../../model/stats-query-model/death-query";
 
 const baseNodeQ: Omit<BarNodeQuery, "fetch" | "scope"> = {
 	filter: defaultFilters,

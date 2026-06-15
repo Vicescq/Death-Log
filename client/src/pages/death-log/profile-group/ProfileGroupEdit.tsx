@@ -8,7 +8,7 @@ import {
 	useWatch,
 	type SubmitHandler,
 } from "react-hook-form";
-import { createPGFormEditSchema, type PGFormEdit } from "../formSchemas";
+import { createPGFormEditSchema, type PGFormEdit } from "../../../model/formSchemas";
 import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import useNotifyDateReset from "../hooks/useNotifyDateReset";

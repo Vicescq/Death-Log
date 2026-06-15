@@ -1,5 +1,5 @@
 import type { UseFormReturn } from "react-hook-form";
-import type { DeathCounterForm } from "../formSchemas";
+import type { DeathCounterForm } from "../../../model/formSchemas";
 import { CONSTANTS } from "../../../../shared/constants";
 import TooltipButton from "../../../components/TooltipButton";
 

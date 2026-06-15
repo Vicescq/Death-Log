@@ -6,7 +6,7 @@ import EChartsReact from "react-echarts-library";
 import darkerChalk from "../../../../shared/darker_chalk.json";
 import { defaultEchartStyling } from "../../../../shared/defaults";
 import { StatsQuery } from "../../../services/stats-query/StatsQuery";
-import type { DeathQuery } from "../../../services/stats-query/types/death-query";
+import type { DeathQuery } from "../../../model/stats-query-model/death-query";
 import ReliabilityToggle, {
 	type ReliabilityFlag,
 } from "../components/ReliabilityToggle";
@@ -184,7 +184,7 @@ export default function HeatMapCalendar({ query: initialQuery }: Props) {
 			) : result.status === "insufficient" && !showAnyway ? (
 				<ChartEmpty
 					status="insufficient"
-					minDataPoints={result.minDataPoints}
+
 					onShowAnyway={() => setShowAnyway(true)}
 				/>
 			) : (

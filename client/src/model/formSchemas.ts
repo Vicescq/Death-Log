@@ -3,15 +3,15 @@ import {
 	DateRangeSchema,
 	dateTimeSTDToISO,
 	validateDateRange,
-} from "../../utils/date";
-import { createTreeNodeSchema } from "../../model/tree-node-model/TreeNodeSchema";
+} from "../utils/date";
+import { createTreeNodeSchema } from "./tree-node-model/TreeNodeSchema";
 import {
 	createSubjectSchema,
 	TimeSpentEditFormSchema,
-} from "../../model/tree-node-model/SubjectSchema";
-import { CONSTANTS } from "../../../shared/constants";
-import { formatString } from "../../utils/general";
-import { createProfileGroupSchema } from "../../model/tree-node-model/ProfileSchema";
+} from "./tree-node-model/SubjectSchema";
+import { CONSTANTS } from "../../shared/constants";
+import { formatString } from "../utils/general";
+import { createProfileGroupSchema } from "./tree-node-model/ProfileSchema";
 
 const createBaseNodeFormSchema = (
 	siblingNames: string[],

@@ -8,8 +8,8 @@ import type {
 	NodeQuery,
 	ScatterNodeQuery,
 	SunburstNodeQuery,
-} from "./types/node-query";
-import type { DeathQuery, HmcDeathQuery } from "./types/death-query";
+} from "../../model/stats-query-model/node-query";
+import type { DeathQuery, HmcDeathQuery } from "../../model/stats-query-model/death-query";
 
 export const top10SubjectsMostDeathsQuery: NodeQuery = {
 	fetch: "subjects",

@@ -10,7 +10,7 @@ import type { DeathLogViewPrefs } from "../../services/LocalDB";
 import { createDeath } from "../../stores/utils";
 import { assertIsNonNull, assertIsSubject } from "../../utils/asserts";
 import { dateTimeSTDToISO } from "../../utils/date";
-import type { Filters, SortSettings } from "./formSchemas";
+import type { Filters, SortSettings } from "../../model/formSchemas";
 
 export function calcDeaths(node: DistinctTreeNode, tree: Tree) {
 	let sum = 0;

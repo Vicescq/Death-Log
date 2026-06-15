@@ -4,7 +4,7 @@ import type {
 	EChartsConfig,
 	ScatterPoint,
 	SunburstNode,
-} from "./types/chart";
+} from "../../model/stats-query-model/chart";
 
 export function toBarChart(
 	data: CategoryPoint[],

@@ -9,7 +9,7 @@ import Card from "./card/Card";
 import type { DistinctTreeNode } from "../../model/tree-node-model/TreeNodeSchema";
 import Toolbar from "./toolbar/Toolbar";
 import LocalDB from "../../services/LocalDB";
-import type { Filters, SortSettings } from "./formSchemas";
+import type { Filters, SortSettings } from "../../model/formSchemas";
 import { filter, getDeathlogViewType, sort } from "./utils";
 import { defaultFilters, defaultSortSettings } from "../../../shared/defaults";
 import { CONSTANTS } from "../../../shared/constants";
@@ -59,14 +59,11 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 	}
 
 	const pageViewType = getDeathlogViewType(parent);
-	const currFilters = LocalDB.getDLFilterPrefs(pageViewType);
 	const [filters, setFilters] = useState<Filters>(
-		currFilters != null ? currFilters : defaultFilters,
+		LocalDB.getDLFilterPrefs(pageViewType, defaultFilters),
 	);
-
-	const currSort = LocalDB.getDLSortPrefs(pageViewType);
 	const [sortSettings, setSortSettings] = useState<SortSettings>(
-		currSort != null ? currSort : defaultSortSettings,
+		LocalDB.getDLSortPrefs(pageViewType, defaultSortSettings),
 	);
 
 	const [searchQuery, setSearchQuery] = useState("");

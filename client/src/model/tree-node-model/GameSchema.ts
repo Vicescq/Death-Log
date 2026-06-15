@@ -1,5 +1,9 @@
-import { createTreeNodeSchema } from "./TreeNodeSchema";
+import { createTreeNodeSchema, TreeNodeShapeSchema } from "./TreeNodeSchema";
 import z from "zod";
+
+export const GameShapeSchema = TreeNodeShapeSchema.extend({
+	type: z.literal("game"),
+});
 
 export const createGameSchema = (
 	siblingNames: string[],

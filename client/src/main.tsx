@@ -18,6 +18,11 @@ import { CONSTANTS } from "../shared/constants.ts";
 import DeathLogRouter from "./pages/death-log/DeathLogRouter.tsx";
 import StatsDashboard from "./pages/stats/layout/StatsDashboard.tsx";
 import StatsOverview from "./pages/stats/layout/StatsOverview.tsx";
+import StatsManage from "./pages/stats/layout/StatsManage.tsx";
+
+function ThrowError(): never {
+	throw new Error("Deliberate test error from /throw route");
+}
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 if (!PUBLISHABLE_KEY) {
@@ -62,9 +67,12 @@ function AppRoot() {
 				<Route path="stats" element={<StatsDashboard />}>
 					<Route index element={<StatsOverview />} />
 					<Route path="build" element={<div>sdas</div>} />
+					<Route path="manage" element={<StatsManage />} />
 				</Route>
 
 				<Route path="data-management" element={<DataManagement />} />
+
+				<Route path="throw" element={<ThrowError />} />
 
 				<Route path="FAQ" element={<FAQ />} />
 

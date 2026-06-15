@@ -1,5 +1,5 @@
 import type { UseFormReturn, SubmitHandler } from "react-hook-form";
-import type { SortSettings } from "../formSchemas";
+import type { SortSettings } from "../../../model/formSchemas";
 import type { DistinctTreeNode } from "../../../model/tree-node-model/TreeNodeSchema";
 
 type Props = {

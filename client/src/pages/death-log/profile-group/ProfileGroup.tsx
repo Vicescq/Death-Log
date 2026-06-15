@@ -8,7 +8,7 @@ import { assertIsNonNull, assertIsSubject } from "../../../utils/asserts";
 import Breadcrumb from "../breadcrumb/Breadcrumb";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createProfileGroup } from "../../../stores/utils";
-import { createPGFormAddSchema, type PGFormAdd } from "../formSchemas";
+import { createPGFormAddSchema, type PGFormAdd } from "../../../model/formSchemas";
 import Modal from "../../../components/Modal";
 import { useRef, useState } from "react";
 import ProfileGroupModalBody from "./ProfileGroupModalBody";

@@ -1,8 +1,8 @@
 import { sort as deathLogSort } from "../../pages/death-log/utils";
 import type { DistinctTreeNode, Tree } from "../../model/tree-node-model/TreeNodeSchema";
 import type { Death } from "../../model/tree-node-model/SubjectSchema";
-import type { NodeQuery } from "./types/node-query";
-import type { DeathQuery } from "./types/death-query";
+import type { NodeQuery } from "../../model/stats-query-model/node-query";
+import type { DeathQuery } from "../../model/stats-query-model/death-query";
 
 export function sortNodes(
 	nodes: DistinctTreeNode[],

@@ -9,8 +9,8 @@ import type {
 	Tree,
 } from "../../model/tree-node-model/TreeNodeSchema";
 import type { Death } from "../../model/tree-node-model/SubjectSchema";
-import type { NodeQuery } from "./types/node-query";
-import type { DeathQuery } from "./types/death-query";
+import type { NodeQuery } from "../../model/stats-query-model/node-query";
+import type { DeathQuery } from "../../model/stats-query-model/death-query";
 
 function getChildIDs(parentIDs: string[], tree: Tree): string[] {
 	return parentIDs

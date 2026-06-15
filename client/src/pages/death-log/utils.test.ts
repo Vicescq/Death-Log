@@ -6,7 +6,7 @@ import type { Tree } from "../../model/tree-node-model/TreeNodeSchema";
 import { useDeathLogStore } from "../../stores/useDeathLogStore";
 import { assertIsNonNull, assertIsSubject } from "../../utils/asserts";
 import { setUpFullTreeLineage } from "../../utils/test-helpers";
-import type { Filters } from "./formSchemas";
+import type { Filters } from "../../model/formSchemas";
 import { defaultFilters } from "../../../shared/defaults";
 
 vi.mock("../../services/LocalDB", () => {

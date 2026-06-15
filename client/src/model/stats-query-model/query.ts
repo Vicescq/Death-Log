@@ -1,10 +1,13 @@
-import type { NodeQuery } from "./node-query";
-import type { DeathQuery } from "./death-query";
+import { z } from "zod";
+import { NodeQuerySchema } from "./node-query";
+import { DeathQuerySchema } from "./death-query";
 import type { EChartsOption } from "echarts";
 
 export type { QueryLimit } from "./limit";
 
-export type Query = NodeQuery | DeathQuery;
+export const QuerySchema = z.union([NodeQuerySchema, DeathQuerySchema]);
+
+export type Query = z.infer<typeof QuerySchema>;
 
 export type QueryResult =
     | { status: "ok"; option: EChartsOption }

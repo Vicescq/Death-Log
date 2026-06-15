@@ -1,5 +1,5 @@
 import type { UseFormReturn } from "react-hook-form";
-import type { NodeFormEdit } from "../formSchemas";
+import type { NodeFormEdit } from "../../../model/formSchemas";
 import type { Subject } from "../../../model/tree-node-model/SubjectSchema";
 import { CONSTANTS } from "../../../../shared/constants";
 

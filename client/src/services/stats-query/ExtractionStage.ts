@@ -4,7 +4,7 @@ import type {
 	Tree,
 } from "../../model/tree-node-model/TreeNodeSchema";
 import type { Death } from "../../model/tree-node-model/SubjectSchema";
-import type { CategoryPoint, ScatterPoint, SunburstNode } from "./types/chart";
+import type { CategoryPoint, ScatterPoint, SunburstNode } from "../../model/stats-query-model/chart";
 import { isoToDateSTD, isoToTimeSTD } from "../../utils/date";
 import { assertIsNonNull, assertIsSubject } from "../../utils/asserts";
 

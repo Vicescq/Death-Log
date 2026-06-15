@@ -6,15 +6,34 @@ import type { Profile } from "./ProfileSchema";
 import type { RootNode } from "./RootNodeSchema";
 import type { Subject } from "./SubjectSchema";
 
+export const TreeNodeShapeSchema = z.object({
+	type: z.literal(["game", "profile", "subject", "ROOT_NODE"]),
+	id: z.string().length(8), // add validation?
+	parentID: z.string(),
+	childIDS: z.array(z.string()),
+	name: z
+		.string()
+		.max(CONSTANTS.NUMS.INPUT_MAX, {
+			error: CONSTANTS.ERROR.MAX_LENGTH,
+		})
+		.min(1, {
+			error: CONSTANTS.ERROR.EMPTY,
+		}),
+	completed: z.boolean(),
+	notes: z.string().max(CONSTANTS.NUMS.TEXTAREA_MAX, {
+		error: CONSTANTS.ERROR.MAX_LENGTH,
+	}),
+	dateStart: z.iso.datetime({ error: CONSTANTS.ERROR.DATE }),
+	dateEnd: z.iso.datetime({ error: CONSTANTS.ERROR.DATE }).nullable(),
+	dateStartRel: z.boolean(),
+	dateEndRel: z.boolean(),
+});
+
 export const createTreeNodeSchema = (
 	siblingNames: string[],
 	currEditingName: string | null,
 ) => {
-	return z.object({
-		type: z.literal(["game", "profile", "subject", "ROOT_NODE"]),
-		id: z.string().length(8), // add validation?
-		parentID: z.string(),
-		childIDS: z.array(z.string()),
+	return TreeNodeShapeSchema.extend({
 		name: z
 			.string()
 			.transform((name) => formatString(name))
@@ -39,15 +58,6 @@ export const createTreeNodeSchema = (
 						},
 					),
 			),
-
-		completed: z.boolean(),
-		notes: z.string().max(CONSTANTS.NUMS.TEXTAREA_MAX, {
-			error: CONSTANTS.ERROR.MAX_LENGTH,
-		}),
-		dateStart: z.iso.datetime({ error: CONSTANTS.ERROR.DATE }),
-		dateEnd: z.iso.datetime({ error: CONSTANTS.ERROR.DATE }).nullable(),
-		dateStartRel: z.boolean(),
-		dateEndRel: z.boolean(),
 	});
 };
 

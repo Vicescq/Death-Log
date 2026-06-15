@@ -1,4 +1,4 @@
-import type { Query, QueryResult } from "./types/query";
+import type { Query, QueryResult } from "../../model/stats-query-model/query";
 import type { Tree } from "../../model/tree-node-model/TreeNodeSchema";
 import { scopeNodes, scopeDeaths } from "./ScopingStage";
 import { filterNodes, filterDeaths, applyLimit } from "./FilterStage";
@@ -20,7 +20,7 @@ import {
 	toSunburstChart,
 	toScatterChart,
 } from "./ChartStage";
-import type { CategoryPoint } from "./types/chart";
+import type { CategoryPoint } from "../../model/stats-query-model/chart";
 
 export class StatsQuery {
 	static query(q: Query, tree: Tree): QueryResult {

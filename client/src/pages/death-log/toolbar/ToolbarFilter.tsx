@@ -7,7 +7,7 @@ import {
 import { CONSTANTS } from "../../../../shared/constants";
 import type { DistinctTreeNode } from "../../../model/tree-node-model/TreeNodeSchema";
 import { isoToDateSTD } from "../../../utils/date";
-import { type Filters } from "../formSchemas";
+import { type Filters } from "../../../model/formSchemas";
 import { useState } from "react";
 
 type Props = {

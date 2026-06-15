@@ -3,11 +3,7 @@ import { defaultEchartStyling } from "../../../../shared/defaults";
 
 type Props =
 	| { status: "no-data"; onShowAnyway?: never }
-	| {
-			status: "insufficient";
-			minDataPoints: number;
-			onShowAnyway: () => void;
-	  };
+	| { status: "insufficient"; onShowAnyway: () => void };
 
 function getContent(props: Props) {
 	switch (props.status) {
@@ -66,15 +62,13 @@ export default function ChartEmpty(props: Props) {
 				viewBox="0 0 24 24"
 				strokeWidth={1.5}
 				stroke="currentColor"
-				className="text-base-content/30 h-10 w-10"
+				className="h-10 w-10"
 			>
 				{icon}
 			</svg>
 			<div className="text-center">
-				<p className="text-base-content/60 text-base font-semibold">
-					{heading}
-				</p>
-				<p className="text-base-content/40 mt-1 text-sm">{subtext}</p>
+				<p className="font-semibold">{heading}</p>
+				<p className="mt-1 text-sm">{subtext}</p>
 			</div>
 			{cta}
 		</div>

@@ -1,6 +1,6 @@
 import { CONSTANTS } from "../../../../shared/constants";
 import { type SubmitHandler, type UseFormReturn } from "react-hook-form";
-import type { EditDeathForm } from "../formSchemas";
+import type { EditDeathForm } from "../../../model/formSchemas";
 
 type Props = {
 	type: "edit" | "delete";

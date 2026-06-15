@@ -14,8 +14,8 @@ import {
 } from "../ExtractionStage";
 import { defaultFilters, defaultDeathFilters } from "../../../../shared/defaults";
 import { setupTestTree, cleanupTestTree } from "./fixtures";
-import type { BarNodeQuery, LineNodeQuery, TimeLineNodeQuery } from "../types/node-query";
-import type { HmcDeathQuery } from "../types/death-query";
+import type { BarNodeQuery, LineNodeQuery, TimeLineNodeQuery } from "../../../model/stats-query-model/node-query";
+import type { HmcDeathQuery } from "../../../model/stats-query-model/death-query";
 import type { DistinctTreeNode } from "../../../model/tree-node-model/TreeNodeSchema";
 
 const baseNodeQ = {

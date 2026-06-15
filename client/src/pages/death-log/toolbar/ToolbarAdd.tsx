@@ -1,6 +1,6 @@
 import type { UseFormReturn, SubmitHandler } from "react-hook-form";
 import type { DistinctTreeNode } from "../../../model/tree-node-model/TreeNodeSchema";
-import type { NodeFormAdd } from "../formSchemas";
+import type { NodeFormAdd } from "../../../model/formSchemas";
 import { CONSTANTS } from "../../../../shared/constants";
 import type { ReactNode } from "react";
 

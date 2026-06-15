@@ -1,6 +1,13 @@
 import { db } from "../model/LocalDBSchema";
 import type { DistinctTreeNode } from "../model/tree-node-model/TreeNodeSchema";
-import type { Filters, SortSettings } from "../pages/death-log/formSchemas";
+import { DistinctTreeNodeShapeSchema } from "../model/tree-node-model/DistinctTreeNodeShapeSchema";
+import { assertIsDistinctTreeNode } from "../utils/asserts";
+import {
+	FiltersSchema,
+	SortSchema,
+	type Filters,
+	type SortSettings,
+} from "../model/formSchemas";
 import {
 	constructInitPref,
 	type DeathLogViewType,
@@ -65,10 +72,20 @@ export default class LocalDB {
 			.where("email")
 			.equals(LocalDB.getUserEmail())
 			.toArray();
-		const nodes = rows.map((node) => {
-			return node.node;
+		return rows.map((row) => {
+			const result = DistinctTreeNodeShapeSchema.safeParse(row.node);
+			if (!result.success) {
+				console.error(
+					`[LocalDB] Failed to parse node ${row.node_id}:`,
+					result.error,
+				);
+				throw new Error(
+					`Failed to load node "${row.node_id}". Your local data may be corrupted or out of date. Visit Data Management to reset your local data.`,
+				);
+			}
+			assertIsDistinctTreeNode(result.data);
+			return result.data;
 		});
-		return nodes;
 	}
 
 	static incrementCRUDCounter() {
@@ -124,16 +141,20 @@ export default class LocalDB {
 		});
 	}
 
-	static getDLFilterPrefs(type: DeathLogViewType): Filters | null {
+	static getDLFilterPrefs(
+		type: DeathLogViewType,
+		defaultFilters: Filters,
+	): Filters {
 		const filtersSTR = localStorage.getItem(
 			`filters-${LocalDB.getUserEmail()}`,
 		);
-
-		if (filtersSTR == null) {
-			return null;
-		} else {
-			const obj: DeathLogViewPrefs<Filters> = JSON.parse(filtersSTR);
-			return obj[type];
+		if (filtersSTR == null) return defaultFilters;
+		try {
+			const obj = JSON.parse(filtersSTR);
+			const result = FiltersSchema.safeParse(obj[type]);
+			return result.success ? result.data : defaultFilters;
+		} catch {
+			return defaultFilters;
 		}
 	}
 
@@ -150,23 +171,33 @@ export default class LocalDB {
 				JSON.stringify(constructInitPref(defaultFilters)),
 			);
 		} else {
-			const obj: DeathLogViewPrefs<Filters> = JSON.parse(filtersSTR);
-			obj[type] = filters;
-			localStorage.setItem(key, JSON.stringify(obj));
+			try {
+				const obj: DeathLogViewPrefs<Filters> = JSON.parse(filtersSTR);
+				obj[type] = filters;
+				localStorage.setItem(key, JSON.stringify(obj));
+			} catch {
+				localStorage.setItem(
+					key,
+					JSON.stringify(constructInitPref(defaultFilters)),
+				);
+			}
 		}
 	}
 
-	static getDLSortPrefs(type: DeathLogViewType): SortSettings | null {
+	static getDLSortPrefs(
+		type: DeathLogViewType,
+		defaultSortSettings: SortSettings,
+	): SortSettings {
 		const sortSettingsSTR = localStorage.getItem(
 			`sort_settings-${LocalDB.getUserEmail()}`,
 		);
-
-		if (sortSettingsSTR == null) {
-			return null;
-		} else {
-			const obj: DeathLogViewPrefs<SortSettings> =
-				JSON.parse(sortSettingsSTR);
-			return obj[type];
+		if (sortSettingsSTR == null) return defaultSortSettings;
+		try {
+			const obj = JSON.parse(sortSettingsSTR);
+			const result = SortSchema.safeParse(obj[type]);
+			return result.success ? result.data : defaultSortSettings;
+		} catch {
+			return defaultSortSettings;
 		}
 	}
 
@@ -177,17 +208,23 @@ export default class LocalDB {
 	) {
 		const key = `sort_settings-${LocalDB.getUserEmail()}`;
 		const sortSettingsSTR = localStorage.getItem(key);
-
 		if (sortSettingsSTR == null) {
 			localStorage.setItem(
 				key,
 				JSON.stringify(constructInitPref(defaultSortSettings)),
 			);
 		} else {
-			const obj: DeathLogViewPrefs<SortSettings> =
-				JSON.parse(sortSettingsSTR);
-			obj[type] = sortSettings;
-			localStorage.setItem(key, JSON.stringify(obj));
+			try {
+				const obj: DeathLogViewPrefs<SortSettings> =
+					JSON.parse(sortSettingsSTR);
+				obj[type] = sortSettings;
+				localStorage.setItem(key, JSON.stringify(obj));
+			} catch {
+				localStorage.setItem(
+					key,
+					JSON.stringify(constructInitPref(defaultSortSettings)),
+				);
+			}
 		}
 	}
 }

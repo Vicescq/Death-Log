@@ -1,5 +1,10 @@
-import { createTreeNodeSchema } from "./TreeNodeSchema";
+import { createTreeNodeSchema, TreeNodeShapeSchema } from "./TreeNodeSchema";
 import z from "zod";
+
+export const RootNodeShapeSchema = TreeNodeShapeSchema.extend({
+	type: z.literal("ROOT_NODE"),
+	parentID: z.literal("ROOT_NODE"),
+});
 
 export const createRootNodeSchema = (
 	siblingNames: string[],
