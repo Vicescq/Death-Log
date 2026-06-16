@@ -5,7 +5,7 @@ import ToolbarPageObject from "./page-object-models/ToolbarPageObject";
 import CardPageObject from "./page-object-models/CardPageObject";
 import { test } from "./fixtures";
 import { defaultFilters } from "../shared/defaults";
-import { Filters } from "../src/pages/death-log/formSchemas";
+import { Filters } from "../src/model/formSchemas";
 import DeathCounterPageObject from "./page-object-models/DeathCounterPageObject";
 import DeathEditorPageObject from "./page-object-models/DeathEditorPageObject";
 

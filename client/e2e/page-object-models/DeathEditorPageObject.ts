@@ -1,5 +1,5 @@
 import { Page } from "@playwright/test";
-import { NodeFormEdit } from "../../src/pages/death-log/formSchemas";
+import { NodeFormEdit } from "../../src/model/formSchemas";
 
 export default class DeathEditorPageObject {
 	readonly page: Page;

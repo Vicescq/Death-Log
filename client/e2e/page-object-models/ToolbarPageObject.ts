@@ -1,7 +1,7 @@
 import { expect, Locator, Page, test } from "@playwright/test";
 import { CONSTANTS } from "../../shared/constants";
 import { Subject } from "../../src/model/tree-node-model/SubjectSchema";
-import { Filters, SortSettings } from "../../src/pages/death-log/formSchemas";
+import { Filters, SortSettings } from "../../src/model/formSchemas";
 import type { DeathLogViewType } from "../../src/pages/death-log/utils";
 
 export default class ToolbarPageObject {
