@@ -1,6 +1,5 @@
 import { useRef, useState } from "react";
 import LocalDB from "../../services/LocalDB";
-import { refreshTree } from "../../stores/utils";
 import Modal from "../../components/Modal";
 import { useDeathLogStore } from "../../stores/useDeathLogStore";
 import skull from "../../assets/skull.svg";
@@ -14,7 +13,7 @@ import { createDeathLogBackup, processImportedFile } from "./utils";
 export type DataManagementAction = "import" | "delete" | "migrate" | "reset";
 
 export default function DataManagement() {
-	const initTree = useDeathLogStore((state) => state.initTree);
+	const hydrate = useDeathLogStore((state) => state.hydrate);
 	const importRef = useRef<HTMLInputElement>(null);
 	const modalRef = useRef<HTMLDialogElement>(null);
 
@@ -37,7 +36,7 @@ export default function DataManagement() {
 				importRef.current.value = ""; // refire input tag onChange, edge case: user imports same invalid file multiple times => import a.json -> closes err msg -> import a.json again -> err msg wont appear if this line is commented out
 
 				await processImportedFile(importedFile);
-				await refreshTree(initTree);
+				await hydrate(LocalDB.getUserEmail());
 
 				setFeedbackToast({
 					displayed: true,
@@ -91,14 +90,14 @@ export default function DataManagement() {
 
 	async function handleDelete() {
 		try {
-			await LocalDB.clearData();
-
 			const email = LocalDB.getUserEmail();
+			await LocalDB.clearData(email);
+
 			localStorage.removeItem(`filters-${email}`);
 			localStorage.removeItem(`sort_settings-${email}`);
 			// TODO: decide whether to also clear DEATHLOG_CRUD_COUNTER-${email}
 
-			await refreshTree(initTree);
+			await hydrate(email);
 			modalRef.current?.close();
 
 			setFeedbackToast({
@@ -131,7 +130,7 @@ export default function DataManagement() {
 			}
 			// TODO: decide whether to also clear all DEATHLOG_CRUD_COUNTER-${email} keys
 
-			await refreshTree(initTree);
+			await hydrate(LocalDB.getUserEmail());
 			modalRef.current?.close();
 
 			setFeedbackToast({

@@ -12,9 +12,10 @@ import { defaultFilters } from "../../../shared/defaults";
 vi.mock("../../services/LocalDB", () => {
 	return {
 		default: {
-			addNode: vi.fn(),
-			deleteNode: vi.fn(),
-			updateNode: vi.fn(),
+			// write methods return a promise the store attaches .catch to
+			addNode: vi.fn().mockResolvedValue(undefined),
+			deleteNode: vi.fn().mockResolvedValue(undefined),
+			updateNode: vi.fn().mockResolvedValue(undefined),
 			incrementCRUDCounter: vi.fn(),
 		},
 	};

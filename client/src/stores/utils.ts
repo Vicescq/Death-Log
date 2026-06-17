@@ -1,4 +1,3 @@
-import LocalDB from "../services/LocalDB";
 import { nanoid } from "nanoid";
 import { assertIsNonNull } from "../utils/asserts";
 import { type Game } from "../model/tree-node-model/GameSchema";
@@ -186,9 +185,3 @@ export function generateAndValidateID(context: GenerateIDContext) {
 	return id;
 }
 
-export async function refreshTree(
-	initTree: (nodes: DistinctTreeNode[]) => void,
-) {
-	const nodes = await LocalDB.getNodes();
-	initTree(nodes);
-}

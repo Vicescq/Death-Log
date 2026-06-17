@@ -1,6 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter, Routes, Route, useNavigate } from "react-router";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router";
 import "./index.css";
 import { ErrorBoundary } from "react-error-boundary";
 import ErrorPage from "./pages/ErrorPage.tsx";
@@ -40,12 +40,42 @@ createRoot(document.getElementById("root")!).render(
 );
 
 function AppRoot() {
-	let navigate = useNavigate();
+	const location = useLocation();
 	const tree = useDeathLogStore((state) => state.tree);
 	useMultipleTabsWarning();
 	useConsoleLogOnStateChange(tree, "TREE:", tree);
+	const status = useDeathLogStore((state) => state.status);
+	const loadError = useDeathLogStore((state) => state.loadError);
 	const root = useDeathLogStore((state) => state.tree.get("ROOT_NODE"));
 	useInitApp();
+	
+	if (status === "error") {
+		return (
+			<ErrorBoundary
+				FallbackComponent={ErrorPage}
+				resetKeys={[location.pathname]}
+			>
+				<Routes>
+					<Route path="/" element={<Start />} />
+					<Route
+						path="data-management"
+						element={<DataManagement />}
+					/>
+					<Route
+						path="*"
+						element={
+							<ErrorPage
+								error={
+									loadError ??
+									new Error("Failed to load your data.")
+								}
+							/>
+						}
+					/>
+				</Routes>
+			</ErrorBoundary>
+		);
+	}
 
 	if (!root) {
 		return <></>;
@@ -54,7 +84,7 @@ function AppRoot() {
 	return (
 		<ErrorBoundary
 			FallbackComponent={ErrorPage}
-			onReset={() => navigate("/")}
+			resetKeys={[location.pathname]}
 		>
 			<Routes>
 				<Route path="/" element={<Start />} />

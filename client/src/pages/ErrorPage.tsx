@@ -1,18 +1,17 @@
+import { useState } from "react";
 import { useNavigate } from "react-router";
 import { CONSTANTS } from "../../shared/constants";
 
-export default function ErrorPage({
-	error,
-	resetErrorBoundary,
-}: {
-	error: Error;
-	resetErrorBoundary?: any;
-}) {
-	let navigate = useNavigate();
-	const msg = resetErrorBoundary
-		? "Something unexpected happened"
-		: error.message;
-	const icon = resetErrorBoundary ? "(ಠ_ಠ)" : "(˃̣̣̥﹏˂̣̣̥)";
+export default function ErrorPage({ error }: { error: Error }) {
+	const navigate = useNavigate();
+
+	// picked once per mount — a 50/50 coin flip, stable across re-renders
+	const ICONS = ["(ಠ_ಠ)", "(˃̣̣̥﹏˂̣̣̥)"];
+	const [icon] = useState(
+		() => ICONS[Math.floor(Math.random() * ICONS.length)],
+	);
+	const msg = error.message || "Something unexpected happened";
+
 	return (
 		<div className="hero bg-base-200 min-h-screen">
 			<div className="hero-content text-center">
@@ -21,11 +20,7 @@ export default function ErrorPage({
 					<div className="mt-12 flex flex-col justify-center gap-3">
 						<button
 							className="btn btn-accent"
-							onClick={() =>
-								resetErrorBoundary
-									? resetErrorBoundary()
-									: navigate("/")
-							}
+							onClick={() => navigate("/")}
 						>
 							{CONSTANTS.ERROR.HOME}
 						</button>
@@ -37,7 +32,13 @@ export default function ErrorPage({
 						</button>
 					</div>
 					<div className="divider"></div>
-					<p className="text-xl sm:text-3xl">{msg}</p>
+					<div className="mockup-code w-full text-left">
+						<pre data-prefix="✗" className="text-error">
+							<code className="break-words whitespace-pre-wrap">
+								{msg}
+							</code>
+						</pre>
+					</div>
 				</div>
 			</div>
 		</div>
