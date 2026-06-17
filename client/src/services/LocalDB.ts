@@ -58,10 +58,7 @@ export default class LocalDB {
 		});
 	}
 
-	static async updateNode(
-		node: DistinctTreeNode,
-		parentNode?: DistinctTreeNode,
-	) {
+	static async updateNode(node: DistinctTreeNode) {
 		// email omitted: see addNode — preserves the existing partition key
 		await db.nodes.update(node.id, {
 			node_id: node.id,
@@ -71,10 +68,7 @@ export default class LocalDB {
 	}
 
 	static async getNodes(email: string = LocalDB.getUserEmail()) {
-		const rows = await db.nodes
-			.where("email")
-			.equals(email)
-			.toArray();
+		const rows = await db.nodes.where("email").equals(email).toArray();
 		return rows.map((row) => {
 			const result = DistinctTreeNodeShapeSchema.safeParse(row.node);
 			if (!result.success) {
