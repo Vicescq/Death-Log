@@ -1,7 +1,7 @@
 import { expect, test, vi } from "vitest";
-import { createGame, generateAndValidateID } from "./utils";
-import type { Tree } from "../model/tree-node-model/TreeNodeSchema";
-import type { Game } from "../model/tree-node-model/GameSchema";
+import { createGame, generateAndValidateID } from "../utils";
+import type { Tree } from "../../model/tree-node-model/TreeNodeSchema";
+import type { Game } from "../../model/tree-node-model/GameSchema";
 
 vi.mock("nanoid", () => ({ nanoid: vi.fn(() => "test-id") }));
 const tree: Tree = new Map();

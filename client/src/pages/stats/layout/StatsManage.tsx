@@ -1,18 +1,17 @@
+import { useState } from "react";
+import { ChartSlotSchema } from "../../../model/stats-query-model/chart-slot";
+import { baseDefaultView } from "../../../services/stats-query/preset-views";
 import GridPositionKey from "../components/GridPositionKey";
-import GripIcon from "../components/GripIcon";
 import ViewList from "../components/ViewList";
-
-const PLACEHOLDER_CHARTS = [
-	{ title: "Death Calendar", type: "hmc" },
-	{ title: "Top 10 Games (Deaths)", type: "bar" },
-	{ title: "Top 10 Subjects (Deaths)", type: "bar" },
-	{ title: "Deaths Over Time", type: "time-line" },
-	{ title: "Top 5 Bosses (Deaths)", type: "pie" },
-	{ title: "Top Death Sources", type: "sunburst" },
-	{ title: "Deaths vs Time Spent", type: "scatter" },
-];
+import ViewListChart from "../components/ViewListChart";
+import { DragDropProvider } from "@dnd-kit/react";
+import { move } from "@dnd-kit/helpers";
 
 export default function StatsManage() {
+	ChartSlotSchema.parse(baseDefaultView.charts[0]); // for dev errors
+
+	const [chartSlots, setChartSlots] = useState(baseDefaultView.charts);
+
 	return (
 		<div className="space-y-6">
 			<div className="space-y-1">
@@ -28,30 +27,24 @@ export default function StatsManage() {
 			<GridPositionKey />
 
 			<div className="border-base-300 bg-base-200 divide-base-300 divide-y rounded-lg border">
-				{PLACEHOLDER_CHARTS.map((chart, i) => (
-					<div
-						key={chart.title}
-						className="flex items-center gap-3 px-4 py-3"
-					>
-						<GripIcon />
-						<span className="text-base-content/40 w-5 text-center text-xs tabular-nums">
-							{i + 1}
-						</span>
-						<span className="flex-1 text-sm">{chart.title}</span>
-						<span className="badge badge-accent badge-sm font-mono">
-							{chart.type}
-						</span>
-						<input
-							type="checkbox"
-							className="checkbox checkbox-sm"
-							defaultChecked
-						/>
-					</div>
-				))}
+				<DragDropProvider
+					onDragEnd={(e) => {
+						setChartSlots((chartSlots) => move(chartSlots, e));
+					}}
+				>
+					{chartSlots.map((slot, i) => (
+						<ViewListChart key={slot.id} index={i} slot={slot} />
+					))}
+				</DragDropProvider>
 			</div>
 
 			<div className="flex justify-end gap-2">
-				<button className="btn">Reset to default</button>
+				<button
+					className="btn btn-error"
+					onClick={() => setChartSlots(baseDefaultView.charts)}
+				>
+					Reset Ordering
+				</button>
 				<button className="btn btn-primary">Save</button>
 			</div>
 		</div>

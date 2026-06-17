@@ -1,9 +1,22 @@
+import { useState } from "react";
 import NavBar from "../../../components/nav-bar/NavBar";
 import ProfileHeader from "./ProfileHeader";
 import StatsNav from "./StatsNav";
 import { Outlet } from "react-router";
+import {
+	baseDefaultView,
+	customViewTest,
+} from "../../../services/stats-query/preset-views";
+import type { StatsViewState } from "../hooks/useStatsViews";
+
+
 
 export default function StatsDashboard() {
+	const context = useState<StatsViewState>({
+		defaultViews: [baseDefaultView],
+		customViews: [customViewTest],
+		currEditingView: null,
+	});
 	return (
 		<>
 			<NavBar />
@@ -22,7 +35,7 @@ export default function StatsDashboard() {
 
 					<StatsNav />
 
-					<Outlet />
+					<Outlet context={context} />
 				</div>
 			</div>
 		</>

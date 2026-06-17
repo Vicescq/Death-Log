@@ -32,11 +32,11 @@ export default function ErrorPage({ error }: { error: Error }) {
 						</button>
 					</div>
 					<div className="divider"></div>
+					<div className="text-xl">An error occured!</div>
+					<div className="divider"></div>
 					<div className="mockup-code w-full text-left">
 						<pre data-prefix="✗" className="text-error">
-							<code className="break-words whitespace-pre-wrap">
-								{msg}
-							</code>
+							<code>{msg}</code>
 						</pre>
 					</div>
 				</div>

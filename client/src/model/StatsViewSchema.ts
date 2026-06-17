@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { CONSTANTS } from "../../shared/constants";
-import { QuerySchema } from "./stats-query-model/query";
+import { ChartSlotSchema } from "./stats-query-model/chart-slot";
 
 export const StatsViewSchema = z.object({
 	id: z.string().length(8),
@@ -10,8 +10,10 @@ export const StatsViewSchema = z.object({
 		.min(1, { error: CONSTANTS.ERROR.EMPTY }),
 	description: z
 		.string()
-		.max(CONSTANTS.NUMS.TEXTAREA_MAX, { error: CONSTANTS.ERROR.MAX_LENGTH }),
-	charts: z.array(QuerySchema).min(1).max(15),
+		.max(CONSTANTS.NUMS.TEXTAREA_MAX, {
+			error: CONSTANTS.ERROR.MAX_LENGTH,
+		}),
+	charts: z.array(ChartSlotSchema).min(1),
 	source: z.literal(["default", "custom"]),
 });
 

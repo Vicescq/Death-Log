@@ -67,7 +67,7 @@ export function toLineChart(data: CategoryPoint[]): EChartsOption {
 
 export function toTimeLineChart(data: CategoryPoint[]): EChartsOption {
 	return {
-		xAxis: { type: "time" },
+		xAxis: { type: "time", axisLabel: { show: false } },
 		yAxis: { type: "value" },
 		series: [
 			{

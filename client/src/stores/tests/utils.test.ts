@@ -5,12 +5,12 @@ import {
 	createSubject,
 	generateAndValidateID,
 	identifyDeletedSelfAndChildrenIDS,
-} from "./utils";
-import type { Tree } from "../model/tree-node-model/TreeNodeSchema";
-import type { Game } from "../model/tree-node-model/GameSchema";
-import type { Profile } from "../model/tree-node-model/ProfileSchema";
-import type { Subject } from "../model/tree-node-model/SubjectSchema";
-import { assertIsNonNull } from "../utils/asserts";
+} from "../utils";
+import type { Tree } from "../../model/tree-node-model/TreeNodeSchema";
+import type { Game } from "../../model/tree-node-model/GameSchema";
+import type { Profile } from "../../model/tree-node-model/ProfileSchema";
+import type { Subject } from "../../model/tree-node-model/SubjectSchema";
+import { assertIsNonNull } from "../../utils/asserts";
 
 const tree: Tree = new Map();
 const game: Game = createGame("Elden Ring", tree);

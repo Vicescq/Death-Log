@@ -1,4 +1,5 @@
 import { useState } from "react";
+import ChevronIcon from "../../../components/icons/ChevronIcon";
 
 export default function GridPositionKey() {
 	const [open, setOpen] = useState(false);
@@ -11,18 +12,9 @@ export default function GridPositionKey() {
 				<span className="text-base-content/60 text-xs font-medium tracking-wide uppercase">
 					How does ordering work?
 				</span>
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					width="14"
-					height="14"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					strokeWidth="2"
-					className={`text-base-content/40 transition-transform ${open ? "rotate-180" : ""}`}
-				>
-					<polyline points="6 9 12 15 18 9" />
-				</svg>
+				<span className={`text-base-content/40 transition-transform ${open ? "rotate-180" : ""}`}>
+					<ChevronIcon />
+				</span>
 			</button>
 
 			{open && (

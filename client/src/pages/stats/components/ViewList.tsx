@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 const PLACEHOLDER_VIEWS = [
 	{
 		id: "default",
@@ -7,52 +9,55 @@ const PLACEHOLDER_VIEWS = [
 	},
 	{
 		id: "my-view",
-		label: "My View",
+		label: "My Views",
 		description: "Last saved Jun 12",
 		locked: false,
 	},
 ];
 
-const LOADED_VIEW_ID = "my-view";
-
 export default function ViewList() {
+	const [loadedView, setLoadedView] = useState("default");
+
 	return (
 		<div className="space-y-2">
 			{PLACEHOLDER_VIEWS.map((view) => {
-				const isLoaded = view.id === LOADED_VIEW_ID;
+				const isLoadedT = view.id === loadedView;
 				const isDeletable = !view.locked;
-				const canLoad = !isLoaded;
+				const canLoad = !isLoadedT;
 				return (
 					<div
 						key={view.id}
-						className={`border-base-300 flex items-center gap-3 rounded-lg border px-4 py-3 ${isLoaded ? "bg-primary/10 border-primary" : "bg-base-200"}`}
+						className={`border-base-300 flex items-center gap-3 rounded-lg border px-4 py-3 ${isLoadedT ? "bg-primary text-black" : "bg-base-200"}`}
 					>
-						<div className="flex-1 space-y-0.5">
+						<div className="flex-1 flex-wrap space-y-0.5">
 							<div className="flex items-center gap-2">
-								<span className="text-lg font-medium">
+								<span className="text-lg font-bold break-all">
 									{view.label}
 								</span>
 								{view.locked && (
-									<span className="badge badge-neutral badge-xs">
+									<span className="badge badge-neutral badge-sm">
 										default
 									</span>
 								)}
-								{isLoaded && (
-									<span className="badge badge-primary badge-xs">
+								{isLoadedT && (
+									<span className="badge badge-sm">
 										loaded
 									</span>
 								)}
 							</div>
-							<p className="text-base-content text-xs">
+							<p className="text-xs break-all">
 								{view.description}
 							</p>
 						</div>
 
-						{isDeletable && (
-							<button className="btn btn-disabled">Delete</button>
-						)}
+						{isDeletable && <button className="btn">Delete</button>}
 						{canLoad && (
-							<button className="btn btn-ghost">Load</button>
+							<button
+								className="btn"
+								onClick={() => setLoadedView(view.id)}
+							>
+								Load
+							</button>
 						)}
 					</div>
 				);

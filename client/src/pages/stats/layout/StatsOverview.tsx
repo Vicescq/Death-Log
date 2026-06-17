@@ -1,41 +1,14 @@
-import GenericChart from "../charts/GenericChart";
-import GenericDeathChart from "../charts/GenericDeathChart";
-import HeatMapCalendar from "../charts/HeatMapCalendar";
-import {
-	allDeathsOnCalendarQuery,
-	cumulationDeathsOverTimeQuery,
-	deathHierarchyQuery,
-	subjectsDeathsVsTimeQuery,
-	testNoDataQuery,
-	top10GamesMostDeathsQuery,
-	top10SubjectsMostDeathsQuery,
-	top5BossesMostDeathsQuery,
-} from "../../../services/stats-query/preset-queries";
+import { baseDefaultView } from "../../../services/stats-query/preset-views";
+import ChartSlotRenderer from "../components/ChartSlotRenderer";
+import useStatsViews from "../hooks/useStatsViews";
 
 export default function StatsOverview() {
-	function Charts() {
-		return (
-			<>
-				<HeatMapCalendar query={allDeathsOnCalendarQuery} />
-				<GenericChart query={top10GamesMostDeathsQuery} />
-				<GenericChart query={top10SubjectsMostDeathsQuery} />
-				<GenericDeathChart query={cumulationDeathsOverTimeQuery} />
-				<GenericChart query={top5BossesMostDeathsQuery} />
-				<GenericChart query={deathHierarchyQuery} />
-				<GenericChart query={subjectsDeathsVsTimeQuery} />
-				<GenericChart query={testNoDataQuery} />
-			</>
-		);
-	}
-
+	const [viewsContext, setViewsContext] = useStatsViews();
 	return (
-		<div className="space-y-6">
-			<div className="hidden gap-6 lg:grid lg:grid-cols-2">
-				<Charts />
-			</div>
-			<div className="flex flex-col gap-4 lg:hidden">
-				<Charts />
-			</div>
+		<div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-6">
+			{baseDefaultView.charts.map((slot) => (
+				<ChartSlotRenderer key={slot.id} slot={slot} />
+			))}
 		</div>
 	);
 }

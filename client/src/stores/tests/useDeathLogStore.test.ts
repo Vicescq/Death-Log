@@ -1,11 +1,11 @@
 import { expect, test, vi } from "vitest";
-import { useDeathLogStore } from "./useDeathLogStore";
-import { createGame, createRootNode } from "./utils";
-import LocalDB from "../services/LocalDB";
-import type { Tree } from "../model/tree-node-model/TreeNodeSchema";
-import { assertIsNonNull } from "../utils/asserts";
+import { useDeathLogStore } from "../useDeathLogStore";
+import { createGame, createRootNode } from "../utils";
+import LocalDB from "../../services/LocalDB";
+import type { Tree } from "../../model/tree-node-model/TreeNodeSchema";
+import { assertIsNonNull } from "../../utils/asserts";
 
-vi.mock("../services/LocalDB", () => {
+vi.mock("../../services/LocalDB", () => {
 	return {
 		default: {
 			// write methods return a promise the store attaches .catch to

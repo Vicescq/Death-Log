@@ -110,14 +110,14 @@ export default function Breadcrumb() {
 										condensedMembersModalRef.current?.showModal();
 									}}
 									className="btn btn-xs btn-ghost"
-									key={i}
+									key={member.link || "condensed"}
 								>
 									{member.name}
 								</li>
 							);
 						}
 						return (
-							<li key={i}>
+							<li key={member.link}>
 								{i == formattedBreadcrumbMembers.length - 1 ? (
 									<div className="status status-primary mr-2 animate-bounce"></div>
 								) : null}
