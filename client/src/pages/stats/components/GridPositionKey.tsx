@@ -12,7 +12,9 @@ export default function GridPositionKey() {
 				<span className="text-base-content/60 text-xs font-medium tracking-wide uppercase">
 					How does ordering work?
 				</span>
-				<span className={`text-base-content/40 transition-transform ${open ? "rotate-180" : ""}`}>
+				<span
+					className={`text-base-content/40 transition-transform ${open ? "rotate-180" : ""}`}
+				>
 					<ChevronIcon />
 				</span>
 			</button>

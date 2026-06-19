@@ -5,6 +5,7 @@ export type StatsViewState = {
 	defaultViews: StatsView[];
 	customViews: StatsView[];
 	currEditingView: StatsView | null;
+	activeViewId: string;
 };
 
 type StatsViewContext = [

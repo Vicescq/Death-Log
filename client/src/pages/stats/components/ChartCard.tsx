@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 import fullscreen from "../../../assets/fullscreen.svg";
-import notes from "../../../assets/notes.svg";
 import gear from "../../../assets/settings.svg";
 import Dropdown from "../../../components/Dropdown";
 import ChevronIcon from "../../../components/icons/ChevronIcon";
@@ -39,16 +38,6 @@ export default function ChartCard({ title, children, settings }: Props) {
 								alt=""
 							/>
 							Fullscreen
-						</button>
-					</li>
-					<li>
-						<button>
-							<img
-								src={notes}
-								className="h-4 w-4 shrink-0"
-								alt=""
-							/>
-							Notes
 						</button>
 					</li>
 					{settings}

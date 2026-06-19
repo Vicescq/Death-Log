@@ -1,4 +1,4 @@
-import type { Query } from "../../model/stats-query-model/sql";
+import type { Query } from "../../model/stats-query-model/query";
 
 export const top10SubjectsMostDeathsQuery: Query = {
 	case: "flat",
@@ -25,8 +25,11 @@ export const top5BossesMostDeathsQuery: Query = {
 };
 
 export const allDeathsOnCalendarQuery: Query = {
-	case: "calendar",
+	case: "flat",
 	title: "Death Calendar",
+	chartType: "calendar",
+	transform: "calendar",
+	sql: "SELECT date as x, COUNT(*) as y FROM ? GROUP BY date",
 	echartsConfig: {},
 	includeUnreliableTimestamp: false,
 };
@@ -45,17 +48,8 @@ export const deathHierarchyQuery: Query = {
 	case: "hierarchy",
 	title: "Top Death Sources",
 	echartsConfig: {},
+	chartType: "sunburst",
 	topN: 3,
 	threshold: 0.5,
 	maxDepth: 3,
-};
-
-export const abcdef: Query = {
-	case: "flat",
-	title: "subject count over time",
-	chartType: "time-line",
-	transform: "cumulative",
-	sql: "SELECT datetime as x, COUNT(*) as y FROM ? GROUP BY datetime ORDER BY x",
-	echartsConfig: {},
-	includeUnreliableTimestamp: false,
 };

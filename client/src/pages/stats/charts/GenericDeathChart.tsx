@@ -3,7 +3,7 @@ import useChartAnimation from "../hooks/useChartAnimation";
 import darkerChalk from "../../../../shared/darker_chalk.json";
 import { defaultEchartStyling } from "../../../../shared/defaults";
 import { StatsQuery } from "../../../services/stats-query/StatsQuery";
-import type { Query } from "../../../model/stats-query-model/sql";
+import type { Query } from "../../../model/stats-query-model/query";
 import { useMemo, useState } from "react";
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
 import ChartCard from "../components/ChartCard";
@@ -14,14 +14,14 @@ import ReliabilityToggle, {
 } from "../components/ReliabilityToggle";
 
 type Props = {
-	query: Extract<Query, { case: "flat" }>;
+	initQuery: Extract<Query, { case: "flat" }>;
 };
 
-export default function GenericDeathChart({ query }: Props) {
-	const [preset, setPreset] = useState(query);
+export default function GenericDeathChart({ initQuery }: Props) {
+	const [query, setQuery] = useState(initQuery);
 	const [showAnyway, setShowAnyway] = useState(false);
 	const tree = useDeathLogStore((state) => state.tree);
-	const result = useMemo(() => StatsQuery.run(preset, tree), [preset, tree]);
+	const result = useMemo(() => StatsQuery.run(query, tree), [query, tree]);
 	const animatedOption = useChartAnimation(
 		result.status !== "no-data" ? result.option : {},
 	);
@@ -33,9 +33,9 @@ export default function GenericDeathChart({ query }: Props) {
 	const flags: ReliabilityFlag[] = [
 		{
 			label: "Unreliable data",
-			value: preset.includeUnreliableTimestamp ?? true,
+			value: query.includeUnreliableTimestamp ?? true,
 			onToggle: () =>
-				setPreset((p) => ({
+				setQuery((p) => ({
 					...p,
 					includeUnreliableTimestamp: !(
 						p.includeUnreliableTimestamp ?? true
@@ -46,7 +46,7 @@ export default function GenericDeathChart({ query }: Props) {
 
 	return (
 		<ChartCard
-			title={preset.title}
+			title={query.title}
 			settings={
 				<>
 					<ReliabilityToggle flags={flags} />

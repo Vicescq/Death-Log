@@ -4,10 +4,11 @@ import GenericDeathChart from "../charts/GenericDeathChart";
 import HeatMapCalendar from "../charts/HeatMapCalendar";
 
 export default function ChartSlotRenderer({ slot }: { slot: ChartSlot }) {
-	const { preset } = slot;
+	const { query } = slot;
 
-	if (preset.case === "calendar") return <HeatMapCalendar preset={preset} />;
-	if (preset.case === "flat" && preset.transform === "cumulative")
-		return <GenericDeathChart query={preset} />;
-	return <GenericChart preset={preset} />;
+	if (query.case === "flat" && query.chartType === "calendar")
+		return <HeatMapCalendar initQuery={query} />;
+	if (query.case === "flat" && query.transform === "cumulative")
+		return <GenericDeathChart initQuery={query} />;
+	return <GenericChart initQuery={query} />;
 }

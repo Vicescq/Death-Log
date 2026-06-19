@@ -8,15 +8,22 @@ import {
 	customViewTest,
 } from "../../../services/stats-query/preset-views";
 import type { StatsViewState } from "../hooks/useStatsViews";
-
-
+import useConsoleLogOnStateChange from "../../../hooks/useConsoleLogOnStateChange";
 
 export default function StatsDashboard() {
 	const context = useState<StatsViewState>({
 		defaultViews: [baseDefaultView],
 		customViews: [customViewTest],
 		currEditingView: null,
+		activeViewId: baseDefaultView.id,
 	});
+	const [viewsState, setViewsState] = context;
+	const allViews = [...viewsState.defaultViews, ...viewsState.customViews];
+
+	function handleActiveViewChange(id: string) {
+		setViewsState((prev) => ({ ...prev, activeViewId: id }));
+	}
+
 	return (
 		<>
 			<NavBar />
@@ -33,7 +40,11 @@ export default function StatsDashboard() {
 
 					<ProfileHeader />
 
-					<StatsNav />
+					<StatsNav
+						allViews={allViews}
+						activeViewId={viewsState.activeViewId}
+						onViewChange={handleActiveViewChange}
+					/>
 
 					<Outlet context={context} />
 				</div>

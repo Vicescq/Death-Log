@@ -8,11 +8,9 @@ export const StatsViewSchema = z.object({
 		.string()
 		.max(CONSTANTS.NUMS.INPUT_MAX, { error: CONSTANTS.ERROR.MAX_LENGTH })
 		.min(1, { error: CONSTANTS.ERROR.EMPTY }),
-	description: z
-		.string()
-		.max(CONSTANTS.NUMS.TEXTAREA_MAX, {
-			error: CONSTANTS.ERROR.MAX_LENGTH,
-		}),
+	description: z.string().max(CONSTANTS.NUMS.INPUT_MAX, {
+		error: CONSTANTS.ERROR.MAX_LENGTH,
+	}),
 	charts: z.array(ChartSlotSchema).min(1),
 	source: z.literal(["default", "custom"]),
 });

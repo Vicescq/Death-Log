@@ -6,7 +6,7 @@ import EChartsReact from "react-echarts-library";
 import darkerChalk from "../../../../shared/darker_chalk.json";
 import { defaultEchartStyling } from "../../../../shared/defaults";
 import { StatsQuery } from "../../../services/stats-query/StatsQuery";
-import type { Query } from "../../../model/stats-query-model/sql";
+import type { Query } from "../../../model/stats-query-model/query";
 import ReliabilityToggle, {
 	type ReliabilityFlag,
 } from "../components/ReliabilityToggle";
@@ -16,12 +16,12 @@ import ArrowRightIcon from "../../../components/icons/ArrowRightIcon";
 import RefreshIcon from "../../../components/icons/RefreshIcon";
 
 type Props = {
-	preset: Extract<Query, { case: "calendar" }>;
+	initQuery: Extract<Query, { case: "flat" }>;
 };
 
-export default function HeatMapCalendar({ preset: initialPreset }: Props) {
+export default function HeatMapCalendar({ initQuery }: Props) {
 	const [currentDate, setCurrentYear] = useState(new Date());
-	const [preset, setPreset] = useState(initialPreset);
+	const [query, setQuery] = useState(initQuery);
 	const [showAnyway, setShowAnyway] = useState(false);
 	const tree = useDeathLogStore((state) => state.tree);
 
@@ -32,24 +32,26 @@ export default function HeatMapCalendar({ preset: initialPreset }: Props) {
 		const month = String(currentDate.getMonth() + 1).padStart(2, "0");
 		return StatsQuery.run(
 			{
-				...preset,
+				...query,
 				echartsConfig: {
-					...preset.echartsConfig,
+					...query.echartsConfig,
 					range: `${year}-${month}`,
 				},
 			},
 			tree,
 		);
-	}, [currentDate, preset, tree]);
+	}, [currentDate, query, tree]);
 
 	const flags: ReliabilityFlag[] = [
 		{
 			label: "Unreliable data",
-			value: preset.includeUnreliableTimestamp ?? true,
+			value: query.includeUnreliableTimestamp ?? true,
 			onToggle: () =>
-				setPreset((p) => ({
+				setQuery((p) => ({
 					...p,
-					includeUnreliableTimestamp: !(p.includeUnreliableTimestamp ?? true),
+					includeUnreliableTimestamp: !(
+						p.includeUnreliableTimestamp ?? true
+					),
 				})),
 		},
 	];
@@ -90,7 +92,7 @@ export default function HeatMapCalendar({ preset: initialPreset }: Props) {
 
 	return (
 		<ChartCard
-			title={preset.title}
+			title={query.title}
 			settings={
 				<>
 					<ReliabilityToggle flags={flags} />
