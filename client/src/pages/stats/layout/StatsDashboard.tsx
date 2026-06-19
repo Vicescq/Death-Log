@@ -3,19 +3,16 @@ import NavBar from "../../../components/nav-bar/NavBar";
 import ProfileHeader from "./ProfileHeader";
 import StatsNav from "./StatsNav";
 import { Outlet } from "react-router";
-import {
-	baseDefaultView,
-	customViewTest,
-} from "../../../services/stats-query/preset-views";
+import { BASE_DEFAULT_VIEW } from "../../../services/stats-query/preset-views";
 import type { StatsViewState } from "../hooks/useStatsViews";
 import useConsoleLogOnStateChange from "../../../hooks/useConsoleLogOnStateChange";
 
 export default function StatsDashboard() {
 	const context = useState<StatsViewState>({
-		defaultViews: [baseDefaultView],
-		customViews: [customViewTest],
+		defaultViews: [BASE_DEFAULT_VIEW],
+		customViews: [],
 		currEditingView: null,
-		activeViewId: baseDefaultView.id,
+		activeViewId: BASE_DEFAULT_VIEW.id,
 	});
 	const [viewsState, setViewsState] = context;
 	const allViews = [...viewsState.defaultViews, ...viewsState.customViews];

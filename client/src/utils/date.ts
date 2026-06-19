@@ -150,3 +150,10 @@ export function validateDateRange<T extends DateRange>(
 export function addLeadingZeroes(quantity: number): string {
 	return quantity >= 10 ? String(quantity) : `0${quantity}`;
 }
+
+export function isoToLocalISO(isoSTR: string): string {
+	const datePart = isoToDateSTD(isoSTR); // "YYYY-MM-DD"
+	const timePart = isoToTimeSTD(isoSTR); // "HH:mm:ss"
+
+	return `${datePart}T${timePart}`;
+}

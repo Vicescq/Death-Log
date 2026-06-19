@@ -1,19 +1,19 @@
 import { useRef, useState } from "react";
 import { ChartSlotSchema } from "../../../model/stats-query-model/chart-slot";
-import { baseDefaultView } from "../../../services/stats-query/preset-views";
-import GridPositionKey from "../components/GridPositionKey";
-import ViewList from "../components/ViewList";
-import ViewListChart from "../components/ViewListChart";
+import { BASE_DEFAULT_VIEW } from "../../../services/stats-query/preset-views";
+import GridPositionKey from "../manage/GridPositionKey";
+import ViewList from "../manage/ViewList";
+import ViewListChart from "../manage/ViewListChart";
 import { DragDropProvider } from "@dnd-kit/react";
 import { move } from "@dnd-kit/helpers";
 import useStatsViews from "../hooks/useStatsViews";
 import type { StatsView } from "../../../model/StatsViewSchema";
 import Modal from "../../../components/Modal";
 import FeedbackToast from "../../../components/FeedbackToast";
-import CreateViewCard from "../components/CreateViewCard";
+import CreateViewCard from "../manage/CreateViewCard";
 
 export default function StatsManage() {
-	ChartSlotSchema.parse(baseDefaultView.charts[0]); // for dev errors
+	ChartSlotSchema.parse(BASE_DEFAULT_VIEW.charts[0]); // for dev errors
 	const [statsViews, setStatsViews] = useStatsViews();
 
 	const views: StatsView[] = [
@@ -51,6 +51,8 @@ export default function StatsManage() {
 	}
 
 	const modalRef = useRef<HTMLDialogElement>(null);
+	const [alertMode, setAlertMode] = useState<"save" | "reset" | null>(null);
+	const [toBeDeleted, setToBeDeleted] = useState<StatsView | null>(null);
 
 	function handleSave() {
 		const modifiedLoadedStatsView = { ...loadedStatsView };
@@ -92,7 +94,23 @@ export default function StatsManage() {
 		if (isDirty) setAlertMode("reset");
 	}
 
-	const [alertMode, setAlertMode] = useState<"save" | "reset" | null>(null);
+	function handleDelete() {
+		if (toBeDeleted?.source === "custom") {
+			setStatsViews((prev) => ({
+				...prev,
+				customViews: prev.customViews.filter(
+					(view) => view.id !== toBeDeleted.id,
+				),
+			}));
+		} else {
+			throw new Error("DEV Error! Impossible case!");
+		}
+
+		const fallback = statsViews.defaultViews[0];
+		setLoadedStatsView(fallback);
+		setChartSlotsTemp(fallback.charts);
+		modalRef.current?.close();
+	}
 
 	return (
 		<>
@@ -112,7 +130,10 @@ export default function StatsManage() {
 						setLoadedStatsView(view);
 						setChartSlotsTemp(view.charts);
 					}}
-					onDelete={() => modalRef.current?.showModal()}
+					onDelete={(view) => {
+						setToBeDeleted(view);
+						modalRef.current?.showModal();
+					}}
 				/>
 
 				<CreateViewCard />
@@ -167,11 +188,17 @@ export default function StatsManage() {
 				content={
 					<>
 						<div className="mb-4" />
-						<button className="btn btn-error w-full">Delete</button>
+						<button
+							className="btn btn-error w-full"
+							onClick={handleDelete}
+						>
+							Delete
+						</button>
 					</>
 				}
 				header={"Confirm deletion"}
 				ref={modalRef}
+				onClose={() => setToBeDeleted(null)}
 			/>
 			<FeedbackToast
 				bgCSS={alertMode && alertMode === "save" ? "success" : "error"}

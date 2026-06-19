@@ -1,9 +1,9 @@
 import { z } from "zod";
-import { QuerySchema } from "./query";
+import { ChartSpecSchema } from "./chart-spec";
 
 export const ChartSlotSchema = z.object({
 	id: z.string().length(8),
-	query: QuerySchema,
+	spec: ChartSpecSchema,
 	displayed: z.boolean(),
 });
 

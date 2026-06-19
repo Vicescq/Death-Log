@@ -1,5 +1,4 @@
 import type { Filters, SortSettings } from "../src/model/formSchemas";
-import type { DeathFilters, DeathSortSettings } from "../src/model/stats-query-model/death-query";
 import { isoToDateSTD } from "../src/utils/date";
 
 export const defaultFilters: Filters = {
@@ -31,39 +30,8 @@ export const defaultSortSettings: SortSettings = {
 	sortingKey: "created",
 };
 
-export const defaultDeathFilters: DeathFilters = {
-	timestampRel: true,
-	unreliableTimestamp: true,
-};
-
-export const defaultDeathSortSettings: DeathSortSettings = {
-	ascending: false,
-	sortingKey: "timestamp",
-};
-
-export const defaultStatsFilters: Filters = {
-	...defaultFilters,
-	unreliableStart: false,
-	unreliableEnd: false,
-};
-
-export const defaultStatsDeathFilters: DeathFilters = {
-	...defaultDeathFilters,
-	unreliableTimestamp: false,
-};
-
-export const defaultStatsSortSettings: SortSettings = {
-	sortingKey: "deaths",
-	ascending: true,
-};
-
-export const defaultStatsDeathSortSettings: DeathSortSettings = {
-	sortingKey: "timestamp",
-	ascending: true,
-};
-
 export const defaultEchartStyling: React.CSSProperties = {
-	minHeight: "350px",
+	minHeight: "400px",
 	height: "100%",
 	width: "100%",
 };

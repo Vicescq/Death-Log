@@ -27,6 +27,12 @@ dist-ssr
 dev-dist
 *.bat
 
+# .NET
+bin/
+obj/
+*.user
+.vs/
+
 # Playwright
 client/test-results/
 client/playwright-report/

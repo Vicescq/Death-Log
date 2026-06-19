@@ -5,7 +5,7 @@ type Props = {
 	views: StatsView[];
 	loadedViewID: string;
 	onLoadView: (view: StatsView) => void;
-	onDelete: () => void;
+	onDelete: (view: StatsView) => void;
 };
 
 export default function ViewList({
@@ -42,7 +42,10 @@ export default function ViewList({
 						</div>
 
 						{isDeletable && (
-							<button className="btn" onClick={onDelete}>
+							<button
+								className="btn"
+								onClick={() => onDelete(view)}
+							>
 								Delete
 							</button>
 						)}

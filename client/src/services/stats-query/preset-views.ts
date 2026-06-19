@@ -1,48 +1,39 @@
 import type { StatsView } from "../../model/StatsViewSchema";
-import {
-	allDeathsOnCalendarQuery,
-	top10GamesMostDeathsQuery,
-	top10SubjectsMostDeathsQuery,
-	cumulationDeathsOverTimeQuery,
-	top5BossesMostDeathsQuery,
-	deathHierarchyQuery,
-} from "./preset-queries";
+import type { ChartSpec } from "../../model/stats-query-model/chart-spec";
 
-export const customViewTest: StatsView = {
-	id: "custom_0",
-	charts: [
-		{
-			id: "default3",
-			query: top10SubjectsMostDeathsQuery,
-			displayed: true,
-		},
-		{ id: "default5", query: deathHierarchyQuery, displayed: true },
-		{ id: "default1", query: top10GamesMostDeathsQuery, displayed: true },
-	],
-	name: "Test Custom View",
-	description: "Hard coded custom view",
-	source: "custom",
+const TOP_5_GAMES_BY_DEATHS: ChartSpec = {
+	type: "pie",
+	dimension: "games",
+	measure: { measure: "deaths", aggregate: "count" },
+	sort: { axis: "y", dir: "desc" },
+	lim: 5,
+	title: "Top 5 Games by Deaths",
 };
 
-export const baseDefaultView: StatsView = {
+const DEATH_CALENDAR: ChartSpec = {
+	type: "calendar",
+	dimension: "timestampDeath",
+	measure: { measure: "deaths", aggregate: "count" },
+	sort: { axis: "y", dir: "asc" },
+	title: "Death Calendar",
+};
+
+const INSUFFICIENT_PROBE: ChartSpec = {
+	type: "bar",
+	dimension: "games",
+	measure: { measure: "deaths", aggregate: "count" },
+	sort: { axis: "y", dir: "desc" },
+	title: "Insufficient Probe (minDataPoints 9999)",
+	minDataPoints: 9999,
+};
+
+export const BASE_DEFAULT_VIEW: StatsView = {
 	id: "default0",
 	charts: [
-		{ id: "default0", query: allDeathsOnCalendarQuery, displayed: true },
-		{ id: "default1", query: top10GamesMostDeathsQuery, displayed: true },
-		{
-			id: "default2",
-			query: top10SubjectsMostDeathsQuery,
-			displayed: true,
-		},
-		{
-			id: "default3",
-			query: cumulationDeathsOverTimeQuery,
-			displayed: true,
-		},
-		{ id: "default4", query: top5BossesMostDeathsQuery, displayed: true },
-		{ id: "default5", query: deathHierarchyQuery, displayed: true },
+		{ id: "default0", spec: TOP_5_GAMES_BY_DEATHS, displayed: true },
+		{ id: "default1", spec: INSUFFICIENT_PROBE, displayed: true },
+		{ id: "default2", spec: DEATH_CALENDAR, displayed: true },
 	],
-
 	name: "General View",
 	description: "The default, general case charts to be displayed.",
 	source: "default",

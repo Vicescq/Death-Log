@@ -53,7 +53,7 @@ export default function StatsNav({ allViews, activeViewId, onViewChange }: Props
 
 				<Link
 					to="/stats/build"
-					className={`tab ${isActive("/stats/build") ? "tab-active" : ""}`}
+					className={`tab ${location.pathname.startsWith("/stats/build") ? "tab-active" : ""}`}
 					role="tab"
 				>
 					Build Your Own Chart

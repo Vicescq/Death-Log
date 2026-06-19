@@ -41,12 +41,12 @@ export default function ViewListChart({
 				{index + 1}
 			</span>
 			<span className={`${isDirty ? "text-primary" : ""} flex-1 text-sm`}>
-				{slot.query.title}
+				{slot.spec.title}
 			</span>
 
 			<div className="flex gap-2">
 				<span className="badge badge-accent badge-sm font-mono">
-					{slot.query.chartType}
+					{slot.spec.type}
 				</span>
 
 				<input
