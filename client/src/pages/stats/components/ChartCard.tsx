@@ -8,9 +8,15 @@ type Props = {
 	title: string;
 	children: ReactNode;
 	settings?: ReactNode;
+	onSettings?: () => void;
 };
 
-export default function ChartCard({ title, children, settings }: Props) {
+export default function ChartCard({
+	title,
+	children,
+	settings,
+	onSettings,
+}: Props) {
 	return (
 		<div className="border-base-300 bg-base-200 flex h-full flex-col rounded-2xl border p-4 shadow-lg">
 			<div className="mb-3 flex items-center justify-between">
@@ -21,7 +27,7 @@ export default function ChartCard({ title, children, settings }: Props) {
 					contentClassName="menu border-base-300 bg-neutral z-10 mt-1 w-max rounded-lg border p-1 shadow-lg right-0"
 				>
 					<li>
-						<button>
+						<button onClick={onSettings}>
 							<img
 								src={gear}
 								className="h-4 w-4 shrink-0"

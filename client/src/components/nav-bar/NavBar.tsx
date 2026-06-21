@@ -4,8 +4,9 @@ import save from "../../assets/save.svg";
 import dl from "../../assets/death-log.svg";
 import faq from "../../assets/faq.svg";
 import graph from "../../assets/graph.svg";
-import { SignedIn, UserButton } from "@clerk/clerk-react";
+import { SignedIn } from "@clerk/clerk-react";
 import NavBarDrawer from "./NavBarDrawer";
+import ProfileButton from "./ProfileButton";
 import { useActiveNavBarCSS } from "./useActiveNavBarCSS";
 
 type Props = {
@@ -68,9 +69,7 @@ export default function NavBar({
 
 					<SignedIn>
 						<li>
-							<button>
-								<UserButton />
-							</button>
+							<ProfileButton />
 						</li>
 					</SignedIn>
 				</ul>

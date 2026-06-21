@@ -3,7 +3,6 @@ import LocalDB from "../../services/LocalDB";
 import Modal from "../../components/Modal";
 import { useDeathLogStore } from "../../stores/useDeathLogStore";
 import skull from "../../assets/skull.svg";
-import { db } from "../../model/LocalDBSchema";
 import NavBar from "../../components/nav-bar/NavBar";
 import DataManagementModalBody from "./DataManagementModalBody";
 import type { FeedbackToastState } from "../../components/FeedbackToast";
@@ -13,7 +12,7 @@ import { createDeathLogBackup, processImportedFile } from "./utils";
 export type DataManagementAction = "import" | "delete" | "migrate" | "reset";
 
 export default function DataManagement() {
-	const hydrate = useDeathLogStore((state) => state.hydrate);
+	const refreshTree = useDeathLogStore((state) => state.refreshTree);
 	const importRef = useRef<HTMLInputElement>(null);
 	const modalRef = useRef<HTMLDialogElement>(null);
 
@@ -36,7 +35,7 @@ export default function DataManagement() {
 				importRef.current.value = ""; // refire input tag onChange, edge case: user imports same invalid file multiple times => import a.json -> closes err msg -> import a.json again -> err msg wont appear if this line is commented out
 
 				await processImportedFile(importedFile);
-				await hydrate(LocalDB.getUserEmail());
+				await refreshTree();
 
 				setFeedbackToast({
 					displayed: true,
@@ -92,12 +91,10 @@ export default function DataManagement() {
 		try {
 			const email = LocalDB.getUserEmail();
 			await LocalDB.clearData(email);
-
-			localStorage.removeItem(`filters-${email}`);
-			localStorage.removeItem(`sort_settings-${email}`);
+			LocalDB.clearLocalPrefsForUser(email);
 			// TODO: decide whether to also clear DEATHLOG_CRUD_COUNTER-${email}
 
-			await hydrate(email);
+			await refreshTree();
 			modalRef.current?.close();
 
 			setFeedbackToast({
@@ -120,17 +117,11 @@ export default function DataManagement() {
 
 	async function handleReset() {
 		try {
-			await db.delete();
-			await db.open();
-
-			for (const key of Object.keys(localStorage)) {
-				if (key.startsWith("filters-") || key.startsWith("sort_settings-")) {
-					localStorage.removeItem(key);
-				}
-			}
+			await LocalDB.resetDatabase();
+			LocalDB.clearAllLocalPrefs();
 			// TODO: decide whether to also clear all DEATHLOG_CRUD_COUNTER-${email} keys
 
-			await hydrate(LocalDB.getUserEmail());
+			await refreshTree();
 			modalRef.current?.close();
 
 			setFeedbackToast({

@@ -1,4 +1,3 @@
-import { db } from "../../model/LocalDBSchema";
 import type {
 	DistinctTreeNode,
 	TreeNode,
@@ -53,7 +52,7 @@ export async function processImportedFile(importedFile: File) {
 		});
 	}
 
-	if (parsedJSON.version != db.verno) {
+	if (parsedJSON.version != LocalDB.dbVersion()) {
 		throw new Error("Invalid JSON"); // temp
 		// implement migrations
 	}
@@ -67,7 +66,7 @@ export async function createDeathLogBackup(): Promise<DeathLogBackupWrapper> {
 	const nodes = await LocalDB.getNodes();
 	const finalJSON: DeathLogBackup = {
 		type: "DEATH-LOG Backup",
-		version: db.verno,
+		version: LocalDB.dbVersion(),
 		details:
 			"Please do not edit this JSON in a significant way. Doing so might corrupt the data and importing this file in the site will no longer work.",
 		date: iso,

@@ -17,27 +17,12 @@ import type {
 
 export type HydrationStatus = "loading" | "ready" | "error";
 
-/**
- * Handler for a failed optimistic write. The in-memory tree was already updated,
- * but the IndexedDB write rejected — so re-hydrate from durable storage to snap
- * the tree back to what actually persisted (drops the phantom add/edit/delete),
- * and log so the failure isn't silent. Defined here (not per-LocalDB-method) so
- * error handling lives at the one layer that can act: the store. Invoked at
- * reject-time, after the store singleton is initialised.
- */
-function reconcileOnPersistError(label: string) {
-	return (e: unknown) => {
-		console.error(`[store] ${label} failed to persist:`, e);
-		useDeathLogStore.getState().hydrate(LocalDB.getUserEmail());
-	};
-}
-
 export type DeathLogState = {
 	tree: Tree;
 	status: HydrationStatus;
 	loadError: Error | null;
 
-	hydrate: (email: string, shouldCancel?: () => boolean) => Promise<void>;
+	refreshTree: () => Promise<void>;
 	initTree: (nodes: DistinctTreeNode[]) => void;
 	addNode: (
 		type: "game" | "profile" | "subject",
@@ -54,16 +39,14 @@ export const useDeathLogStore = create<DeathLogState>((set, get) => ({
 	status: "loading",
 	loadError: null,
 
-	hydrate: async (email, shouldCancel) => {
-		LocalDB.setUserEmail(email); // identity + load are one operation
+	refreshTree: async () => {
+		const email = LocalDB.getUserEmail();
 		set({ status: "loading" });
 		try {
 			const nodes = await LocalDB.getNodes(email);
-			if (shouldCancel && shouldCancel()) return; // superseded by a newer run
 			get().initTree(nodes);
 			set({ status: "ready", loadError: null });
 		} catch (e) {
-			if (shouldCancel && shouldCancel()) return;
 			set({
 				status: "error",
 				loadError: e instanceof Error ? e : new Error(String(e)),
@@ -114,11 +97,11 @@ export const useDeathLogStore = create<DeathLogState>((set, get) => ({
 			};
 			updatedTree.set(parentID, parentNodeCopy);
 
-			const persist =
-				parentNodeCopy.id == "ROOT_NODE"
-					? LocalDB.addNode(node)
-					: LocalDB.addNode(node, parentNodeCopy);
-			persist.catch(reconcileOnPersistError("addNode"));
+			if (parentNodeCopy.id == "ROOT_NODE") {
+				LocalDB.addNode(node);
+			} else {
+				LocalDB.addNode(node, parentNodeCopy);
+			}
 			LocalDB.incrementCRUDCounter();
 
 			return { tree: updatedTree };
@@ -142,20 +125,15 @@ export const useDeathLogStore = create<DeathLogState>((set, get) => ({
 			};
 			updatedTree.set(parentNodeCopy.id, parentNodeCopy);
 
-			let persist: Promise<void> = Promise.resolve();
 			switch (parentNode.type) {
 				case "ROOT_NODE":
-					persist = LocalDB.deleteNode(nodeIDSToBeDeleted);
+					LocalDB.deleteNode(nodeIDSToBeDeleted);
 					break;
 				case "game":
 				case "profile":
-					persist = LocalDB.deleteNode(
-						nodeIDSToBeDeleted,
-						parentNodeCopy,
-					);
+					LocalDB.deleteNode(nodeIDSToBeDeleted, parentNodeCopy);
 					break;
 			}
-			persist.catch(reconcileOnPersistError("deleteNode"));
 
 			LocalDB.incrementCRUDCounter();
 			return { tree: updatedTree };
@@ -163,17 +141,12 @@ export const useDeathLogStore = create<DeathLogState>((set, get) => ({
 	},
 
 	updateNode: (node) => {
-		/**
-		 * Updates a node field
-		 */
 		set((state) => {
 			const updatedTree = new Map(state.tree);
 			const updatedNode: DistinctTreeNode = { ...node };
 			updatedTree.set(updatedNode.id, updatedNode);
 
-			LocalDB.updateNode(updatedNode).catch(
-				reconcileOnPersistError("updateNode"),
-			);
+			LocalDB.updateNode(updatedNode);
 			LocalDB.incrementCRUDCounter();
 
 			return { tree: updatedTree };

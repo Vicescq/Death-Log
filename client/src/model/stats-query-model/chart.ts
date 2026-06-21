@@ -6,7 +6,7 @@ export type CategoryPoint = {
 export type SunburstNode = {
 	name: string;
 	value: number;
-	children?: SunburstNode[];
+	children: SunburstNode[];
 };
 
 export type ScatterPoint = {

@@ -1,10 +1,11 @@
-import { z } from "zod";
-import { ChartSpecSchema } from "./chart-spec";
+import type { ChartSpec } from "./chart-spec";
 
-export const ChartSlotSchema = z.object({
-	id: z.string().length(8),
-	spec: ChartSpecSchema,
-	displayed: z.boolean(),
-});
+export const STATS_TABS = ["overview", "specialized"] as const;
 
-export type ChartSlot = z.infer<typeof ChartSlotSchema>;
+export type StatsTab = (typeof STATS_TABS)[number];
+
+export type ChartSlot = {
+	id: string;
+	tab: StatsTab;
+	spec: ChartSpec;
+};

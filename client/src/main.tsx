@@ -17,11 +17,8 @@ import useMultipleTabsWarning from "./hooks/useMultipleTabsWarning.ts";
 import { CONSTANTS } from "../shared/constants.ts";
 import DeathLogRouter from "./pages/death-log/DeathLogRouter.tsx";
 import StatsDashboard from "./pages/stats/layout/StatsDashboard.tsx";
-import StatsOverview from "./pages/stats/layout/StatsOverview.tsx";
+import ChartGrid from "./pages/stats/components/ChartGrid.tsx";
 import StatsManage from "./pages/stats/layout/StatsManage.tsx";
-import StatsBuild from "./pages/stats/build/StatsBuild.tsx";
-import PickTemplate from "./pages/stats/build/PickTemplate.tsx";
-import PickChartType from "./pages/stats/build/PickChartType.tsx";
 
 function ThrowError(): never {
 	throw new Error("Deliberate test error from /throw route");
@@ -98,11 +95,11 @@ function AppRoot() {
 				</Route>
 
 				<Route path="stats" element={<StatsDashboard />}>
-					<Route index element={<StatsOverview />} />
-					<Route path="build" element={<StatsBuild />}>
-						<Route index element={<PickTemplate />} />
-						<Route path="chart" element={<PickChartType />} />
-					</Route>
+					<Route index element={<ChartGrid tab="overview" />} />
+					<Route
+						path="specialized"
+						element={<ChartGrid tab="specialized" />}
+					/>
 					<Route path="manage" element={<StatsManage />} />
 				</Route>
 

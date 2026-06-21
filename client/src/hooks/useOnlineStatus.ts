@@ -9,10 +9,6 @@ function subscribe(callback: () => void) {
 	};
 }
 
-/**
- * Reactive connectivity status — re-renders on the window online/offline events.
- * Backed by `useSyncExternalStore` for a tear-safe, effect-free subscription.
- */
 export default function useOnlineStatus() {
 	return useSyncExternalStore(subscribe, () => navigator.onLine);
 }

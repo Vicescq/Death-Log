@@ -6,7 +6,8 @@ import faq from "../../assets/faq.svg";
 import graph from "../../assets/graph.svg";
 import { Link } from "react-router";
 import { useActiveNavBarCSS } from "./useActiveNavBarCSS";
-import { SignedIn, UserButton } from "@clerk/clerk-react";
+import { SignedIn } from "@clerk/clerk-react";
+import ProfileButton from "./ProfileButton";
 
 export default function NavBarDrawer() {
 	const { activeDLCSS, activeDMCSS, activeFAQCSS } =
@@ -71,9 +72,7 @@ export default function NavBarDrawer() {
 					</li>
 					<SignedIn>
 						<li>
-							<button className="btn">
-								<UserButton />
-							</button>
+							<ProfileButton className="btn" />
 						</li>
 					</SignedIn>
 				</ul>

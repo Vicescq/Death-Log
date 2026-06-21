@@ -8,14 +8,7 @@ vi.mock("../../services/LocalDB", () => {
 	return {
 		default: {
 			clearAndInsertData: vi.fn().mockResolvedValue(undefined),
-		},
-	};
-});
-
-vi.mock("../../model/LocalDBSchema", () => {
-	return {
-		db: {
-			verno: 1,
+			dbVersion: vi.fn(() => 1),
 		},
 	};
 });

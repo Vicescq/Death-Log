@@ -1,26 +1,9 @@
-import { useState } from "react";
 import NavBar from "../../../components/nav-bar/NavBar";
 import ProfileHeader from "./ProfileHeader";
 import StatsNav from "./StatsNav";
 import { Outlet } from "react-router";
-import { BASE_DEFAULT_VIEW } from "../../../services/stats-query/preset-views";
-import type { StatsViewState } from "../hooks/useStatsViews";
-import useConsoleLogOnStateChange from "../../../hooks/useConsoleLogOnStateChange";
 
 export default function StatsDashboard() {
-	const context = useState<StatsViewState>({
-		defaultViews: [BASE_DEFAULT_VIEW],
-		customViews: [],
-		currEditingView: null,
-		activeViewId: BASE_DEFAULT_VIEW.id,
-	});
-	const [viewsState, setViewsState] = context;
-	const allViews = [...viewsState.defaultViews, ...viewsState.customViews];
-
-	function handleActiveViewChange(id: string) {
-		setViewsState((prev) => ({ ...prev, activeViewId: id }));
-	}
-
 	return (
 		<>
 			<NavBar />
@@ -37,13 +20,9 @@ export default function StatsDashboard() {
 
 					<ProfileHeader />
 
-					<StatsNav
-						allViews={allViews}
-						activeViewId={viewsState.activeViewId}
-						onViewChange={handleActiveViewChange}
-					/>
+					<StatsNav />
 
-					<Outlet context={context} />
+					<Outlet />
 				</div>
 			</div>
 		</>

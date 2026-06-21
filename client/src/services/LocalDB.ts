@@ -2,7 +2,6 @@ import { db } from "../model/LocalDBSchema";
 import type { DistinctTreeNode } from "../model/tree-node-model/TreeNodeSchema";
 import { DistinctTreeNodeShapeSchema } from "../model/tree-node-model/DistinctTreeNodeShapeSchema";
 import { assertIsDistinctTreeNode } from "../utils/asserts";
-import { StatsViewSchema, type StatsView } from "../model/StatsViewSchema";
 import {
 	FiltersSchema,
 	SortSchema,
@@ -15,6 +14,13 @@ import {
 } from "../pages/death-log/utils";
 
 export type DeathLogViewPrefs<T> = Record<DeathLogViewType, T>;
+
+export type ChartOverride = {
+	title?: string;
+	showUnreliable?: boolean;
+};
+
+type ChartOverrideMap = Record<string, ChartOverride>;
 
 export default class LocalDB {
 	constructor() {}
@@ -33,8 +39,6 @@ export default class LocalDB {
 				edited_at: new Date().toISOString(),
 			});
 			if (node.type != "game" && parentNode) {
-				// email omitted: .update is a partial merge, so the existing
-				// partition key is preserved (an edit never changes ownership)
 				await db.nodes.update(parentNode.id, {
 					node_id: parentNode.id,
 					node: parentNode,
@@ -48,7 +52,6 @@ export default class LocalDB {
 		return db.transaction("rw", db.nodes, async () => {
 			await db.nodes.bulkDelete(ids);
 			if (parentNode) {
-				// email omitted: see addNode — preserves the existing partition key
 				await db.nodes.update(parentNode.id, {
 					node_id: parentNode.id,
 					node: parentNode,
@@ -59,7 +62,6 @@ export default class LocalDB {
 	}
 
 	static async updateNode(node: DistinctTreeNode) {
-		// email omitted: see addNode — preserves the existing partition key
 		await db.nodes.update(node.id, {
 			node_id: node.id,
 			node: node,
@@ -85,69 +87,16 @@ export default class LocalDB {
 		});
 	}
 
-	static async getViews() {
-		const rows = await db.views
-			.where("email")
-			.equals(LocalDB.getUserEmail())
-			.toArray();
-		return rows.map((row) => {
-			const result = StatsViewSchema.safeParse(row.view);
-			if (!result.success) {
-				console.error(
-					`[LocalDB] Failed to parse view ${row.view_id}:`,
-					result.error,
-				);
-				throw new Error(
-					`Failed to load view "${row.view_id}". Your local data may be corrupted or out of date. Visit Data Management to reset your local data.`,
-				);
-			}
-			return result.data;
-		});
-	}
-
-	static async addView(view: StatsView) {
-		if (view.source != "custom") {
-			throw new Error("Cannot persist a default StatsView.");
-		}
-		await db.views.add({
-			view_id: view.id,
-			view: view,
-			email: LocalDB.getUserEmail(),
-			created_at: new Date().toISOString(),
-			edited_at: new Date().toISOString(),
-		});
-	}
-
-	static async updateView(view: StatsView) {
-		if (view.source != "custom") {
-			throw new Error("Cannot persist a default StatsView.");
-		}
-		await db.views.update(view.id, {
-			view_id: view.id,
-			view: view,
-			edited_at: new Date().toISOString(),
-			email: LocalDB.getUserEmail(),
-		});
-	}
-
-	static async deleteView(id: string) {
-		await db.views.delete(id);
-	}
-
 	static incrementCRUDCounter() {
-		const prev = localStorage.getItem(
-			`DEATHLOG_CRUD_COUNTER-${LocalDB.getUserEmail()}`,
-		);
+		const email = LocalDB.getUserEmail();
+		const prev = localStorage.getItem(`DEATHLOG_CRUD_COUNTER-${email}`);
 		let current;
 		if (prev) {
 			current = Number(prev) + 1;
 		} else {
 			current = 1;
 		}
-		localStorage.setItem(
-			`DEATHLOG_CRUD_COUNTER-${LocalDB.getUserEmail()}`,
-			String(current),
-		);
+		localStorage.setItem(`DEATHLOG_CRUD_COUNTER-${email}`, String(current));
 	}
 
 	static getUserEmail() {
@@ -160,18 +109,12 @@ export default class LocalDB {
 		}
 	}
 
-	/** Read-only variant of getUserEmail — no `__LOCAL__` write-fallback, safe to call during render. */
-	static peekUserEmail() {
-		return localStorage.getItem("email") ?? "__LOCAL__";
-	}
-
 	static setUserEmail(email: string) {
 		localStorage.setItem("email", email);
 	}
 
 	static async clearData(email: string) {
 		await db.nodes.where("email").equals(email).delete();
-		await db.views.where("email").equals(email).delete();
 	}
 
 	static async insertData(nodes: DistinctTreeNode[], email: string) {
@@ -188,7 +131,7 @@ export default class LocalDB {
 
 	static async clearAndInsertData(nodes: DistinctTreeNode[]) {
 		const email = LocalDB.getUserEmail();
-		await db.transaction("rw", db.nodes, db.views, async () => {
+		await db.transaction("rw", db.nodes, async () => {
 			await LocalDB.clearData(email);
 			await LocalDB.insertData(nodes, email);
 		});
@@ -277,6 +220,74 @@ export default class LocalDB {
 					key,
 					JSON.stringify(constructInitPref(defaultSortSettings)),
 				);
+			}
+		}
+	}
+
+	private static chartOverridesKey(email: string): string {
+		return `chart-overrides-${email}`;
+	}
+
+	private static readChartOverrides(email: string): ChartOverrideMap {
+		const raw = localStorage.getItem(LocalDB.chartOverridesKey(email));
+		if (!raw) return {};
+		try {
+			const parsed = JSON.parse(raw);
+			return typeof parsed === "object" && parsed !== null ? parsed : {};
+		} catch {
+			return {};
+		}
+	}
+
+	private static writeChartOverrides(email: string, map: ChartOverrideMap) {
+		localStorage.setItem(
+			LocalDB.chartOverridesKey(email),
+			JSON.stringify(map),
+		);
+	}
+
+	static getChartOverride(id: string): ChartOverride {
+		return LocalDB.readChartOverrides(LocalDB.getUserEmail())[id] ?? {};
+	}
+
+	static setChartOverride(id: string, patch: ChartOverride) {
+		const email = LocalDB.getUserEmail();
+		const map = LocalDB.readChartOverrides(email);
+		map[id] = { ...map[id], ...patch };
+		LocalDB.writeChartOverrides(email, map);
+	}
+
+	static clearChartOverride(id: string) {
+		const email = LocalDB.getUserEmail();
+		const map = LocalDB.readChartOverrides(email);
+		delete map[id];
+		LocalDB.writeChartOverrides(email, map);
+	}
+
+	static clearChartOverridesForUser(email: string) {
+		localStorage.removeItem(LocalDB.chartOverridesKey(email));
+	}
+
+	static clearLocalPrefsForUser(email: string) {
+		localStorage.removeItem(`filters-${email}`);
+		localStorage.removeItem(`sort_settings-${email}`);
+		LocalDB.clearChartOverridesForUser(email);
+	}
+
+	static dbVersion(): number {
+		return db.verno;
+	}
+
+	static async resetDatabase() {
+		await db.delete();
+		await db.open();
+	}
+
+	static clearAllLocalPrefs() {
+		const prefixes = ["filters-", "sort_settings-", "chart-overrides-"];
+		for (const key of Object.keys(localStorage)) {
+			if (prefixes.some((prefix) => key.startsWith(prefix))) {
+				localStorage.removeItem(key);
 			}
 		}
 	}
