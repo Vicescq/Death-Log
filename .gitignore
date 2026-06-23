@@ -32,6 +32,7 @@ bin/
 obj/
 *.user
 .vs/
+server/publish
 
 # Playwright
 client/test-results/

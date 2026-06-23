@@ -19,7 +19,7 @@ import {
 	toTimeLineChart,
 } from "./ChartStage";
 
-export type CompileResult =
+export type QueryResult =
 	| { status: "ok"; option: EChartsOption }
 	| { status: "no-data" }
 	| { status: "insufficient"; minDataPoints: number; option: EChartsOption };
@@ -28,15 +28,15 @@ export type RunOptions = {
 	calendarRange: string;
 };
 
-export function runSpec(
+export function query(
 	spec: ChartSpec,
 	tables: Tables,
 	opts: RunOptions,
-): CompileResult {
+): QueryResult {
 	const rows = tables[spec.table];
 	if (rows.length === 0) return { status: "no-data" };
 
-	if (spec.type === "sunburst") return runSunburst(spec, rows);
+	if (spec.type === "sunburst") return querySunburst(spec, rows);
 
 	const raw = alasql(spec.sql, [rows]) as { x: unknown; y: unknown }[];
 	if (raw.length === 0) return { status: "no-data" };
@@ -83,7 +83,7 @@ function render(
 	}
 }
 
-function runSunburst(spec: ChartSpec, rows: unknown[]): CompileResult {
+function querySunburst(spec: ChartSpec, rows: unknown[]): QueryResult {
 	const levels = spec.levels;
 	if (!levels || levels.length === 0)
 		throw new Error(

@@ -6,7 +6,6 @@ export type NodeEntry = {
 	node: DistinctTreeNode;
 	created_at: string;
 	edited_at: string;
-	email: string;
 };
 
 export const db = new Dexie("DeathLogDB") as Dexie & {
@@ -14,15 +13,5 @@ export const db = new Dexie("DeathLogDB") as Dexie & {
 };
 
 db.version(1).stores({
-	nodes: "&node_id, created_at, edited_at, email",
-});
-
-db.version(2).stores({
-	nodes: "&node_id, created_at, edited_at, email",
-	views: "&view_id, created_at, edited_at, email",
-});
-
-db.version(3).stores({
-	nodes: "&node_id, created_at, edited_at, email",
-	views: null,
+	nodes: "&node_id, created_at, edited_at",
 });

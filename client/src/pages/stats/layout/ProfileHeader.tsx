@@ -6,7 +6,10 @@ export default function ProfileHeader() {
 					<h1 className="text-3xl font-bold">abcdefg</h1>
 				</div>
 
-				<button className="btn btn-primary">Follow</button>
+				<div className="flex gap-2">
+					<button className="btn btn-primary">Follow</button>
+					<button className="btn btn-info">Share</button>
+				</div>
 			</div>
 
 			<div className="mt-6">

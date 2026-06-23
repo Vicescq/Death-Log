@@ -1,10 +1,8 @@
-import { SignedOut, SignInButton, SignedIn } from "@clerk/clerk-react";
-import { Link, useNavigate } from "react-router";
+import { SignedOut, SignInButton, SignedIn, useAuth } from "@clerk/clerk-react";
+import { Link } from "react-router";
 import { CONSTANTS } from "../../shared/constants";
 
 export default function Start() {
-	const navigate = useNavigate();
-
 	return (
 		<div className="hero bg-base-200 min-h-screen">
 			<div className="hero-content text-center">
@@ -50,17 +48,23 @@ export default function Start() {
 									Login with Google
 								</button>
 							</SignInButton>
-						</SignedOut>
 
-						<Link to="log" className="btn btn-neutral w-full">
-							{CONSTANTS.START.GUEST_BTN}
-						</Link>
+							<Link to="log" className="btn btn-neutral w-full">
+								{CONSTANTS.START.GUEST_BTN}
+							</Link>
+						</SignedOut>
 
 						<SignedIn>
 							<Link to="log">
 								<button className="btn btn-neutral w-full">
-									Continue with Account
+									Continue
 								</button>
+							</Link>
+							<Link
+								to="user-settings"
+								className="btn btn-neutral w-full"
+							>
+								User Settings
 							</Link>
 						</SignedIn>
 						<Link to="stats" className="btn btn-neutral w-full">

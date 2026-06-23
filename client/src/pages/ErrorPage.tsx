@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import { CONSTANTS } from "../../shared/constants";
 
-export default function ErrorPage({ error }: { error: Error }) {
+export default function ErrorPage({ error }: { error: unknown }) {
 	const navigate = useNavigate();
 
 	// picked once per mount — a 50/50 coin flip, stable across re-renders
@@ -10,7 +10,10 @@ export default function ErrorPage({ error }: { error: Error }) {
 	const [icon] = useState(
 		() => ICONS[Math.floor(Math.random() * ICONS.length)],
 	);
-	const msg = error.message || "Something unexpected happened";
+	const msg =
+		error instanceof Error
+			? error.message || "Something unexpected happened"
+			: String(error);
 
 	return (
 		<div className="hero bg-base-200 min-h-screen">

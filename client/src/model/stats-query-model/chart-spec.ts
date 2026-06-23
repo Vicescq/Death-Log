@@ -1,3 +1,5 @@
+import type { CategoryPoint, ScatterPoint, SunburstNode } from "./chart";
+
 export const CHART_TYPES = [
 	"bar",
 	"pie",

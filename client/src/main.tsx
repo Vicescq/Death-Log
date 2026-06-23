@@ -1,15 +1,23 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router";
+import {
+	BrowserRouter,
+	Routes,
+	Route,
+	Navigate,
+	useLocation,
+} from "react-router";
 import "./index.css";
 import { ErrorBoundary } from "react-error-boundary";
 import ErrorPage from "./pages/ErrorPage.tsx";
 import Start from "./pages/Start.tsx";
 import DataManagement from "./pages/data-management/DataManagement.tsx";
 import MultipleTabs from "./pages/MultipleTabs.tsx";
-import { ClerkProvider } from "@clerk/clerk-react";
+import { ClerkProvider, SignedIn, SignedOut } from "@clerk/clerk-react";
+import ClerkStatusBanner from "./components/ClerkStatusBanner.tsx";
 import DeathLog from "./pages/death-log/DeathLog.tsx";
 import FAQ from "./pages/FAQ.tsx";
+import UserSettings from "./pages/UserSettings.tsx";
 import { useDeathLogStore } from "./stores/useDeathLogStore.ts";
 import useInitApp from "./hooks/useInitApp.ts";
 import useConsoleLogOnStateChange from "./hooks/useConsoleLogOnStateChange.ts";
@@ -33,6 +41,7 @@ createRoot(document.getElementById("root")!).render(
 	<StrictMode>
 		<ClerkProvider publishableKey={PUBLISHABLE_KEY}>
 			<BrowserRouter>
+				<ClerkStatusBanner />
 				<AppRoot />
 			</BrowserRouter>
 		</ClerkProvider>
@@ -48,7 +57,7 @@ function AppRoot() {
 	const loadError = useDeathLogStore((state) => state.loadError);
 	const root = useDeathLogStore((state) => state.tree.get("ROOT_NODE"));
 	useInitApp();
-	
+
 	if (status === "error") {
 		return (
 			<ErrorBoundary
@@ -104,6 +113,20 @@ function AppRoot() {
 				</Route>
 
 				<Route path="data-management" element={<DataManagement />} />
+
+				<Route
+					path="user-settings"
+					element={
+						<>
+							<SignedIn>
+								<UserSettings />
+							</SignedIn>
+							<SignedOut>
+								<Navigate to="/" replace />
+							</SignedOut>
+						</>
+					}
+				/>
 
 				<Route path="throw" element={<ThrowError />} />
 

@@ -41,13 +41,18 @@ export default function StatsManage() {
 		<div className="space-y-8">
 			{STATS_TABS.map((tab) => (
 				<section key={tab} className="space-y-3">
-					<div className="space-y-1">
-						<h2 className="text-base font-semibold">
-							Manage {TAB_LABELS[tab]}
-						</h2>
-						<p className="text-sm opacity-60">
-							Drag to reorder; toggle to show or hide a chart.
-						</p>
+					<div className="flex">
+						<div className="flex-1 space-y-1">
+							<h2 className="text-base font-semibold">
+								Manage {TAB_LABELS[tab]}
+							</h2>
+							<p className="text-sm opacity-60">
+								Drag to reorder; toggle to show or hide a chart.
+							</p>
+						</div>
+						<button className="btn btn-accent">
+							Reset to defaults
+						</button>
 					</div>
 
 					{byTab[tab].length === 0 ? (

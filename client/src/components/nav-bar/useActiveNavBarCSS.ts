@@ -6,7 +6,9 @@ export function useActiveNavBarCSS(cssType: "btn" | "bg") {
     const currRoute = location.pathname.split("/")[1];
 
     const activeDLCSS = currRoute == "log" ? activeCSS : "";
+    const activeStatsCSS = currRoute == "stats" ? activeCSS : "";
     const activeDMCSS = currRoute == "data-management" ? activeCSS : "";
     const activeFAQCSS = currRoute == "FAQ" ? activeCSS : "";
-    return { activeDLCSS, activeDMCSS, activeFAQCSS }
+    const activeUserSettingsCSS = currRoute == "user-settings" ? activeCSS : "";
+    return { activeDLCSS, activeStatsCSS, activeDMCSS, activeFAQCSS, activeUserSettingsCSS }
 }

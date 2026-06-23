@@ -1,0 +1,122 @@
+using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
+
+public class DTOConstants
+{
+    public const int MaxLen = 60;
+}
+
+[JsonConverter(typeof(JsonStringEnumConverter))]
+public enum ChartType
+{
+    BAR,
+
+    PIE,
+
+    LINE,
+
+    [JsonStringEnumMemberName("time-line")]
+    TIMELINE,
+
+    CALENDAR,
+
+    SUNBURST,
+}
+
+[JsonConverter(typeof(JsonStringEnumConverter))]
+public enum StatsTab
+{
+    Overview,
+    Specialized,
+}
+
+public record CategoryPoint(
+    [Required, MaxLength(DTOConstants.MaxLen), MinLength(1)] string X,
+    [Required] decimal Y
+);
+
+public record SunburstNode(
+    [Required, MaxLength(DTOConstants.MaxLen), MinLength(1)] string Name,
+    [Required] decimal Value,
+    [Required] List<SunburstNode> Children
+);
+
+public record ScatterPoint(
+    [Required, MaxLength(DTOConstants.MaxLen), MinLength(1)] string Name,
+    [Required] decimal X,
+    [Required] decimal Y
+);
+
+public record SharedChartSpec(
+    [Required] ChartType Type,
+    [Required, MaxLength(DTOConstants.MaxLen), MinLength(1)] string Title,
+    [Required] SharedChartSpecData Data
+);
+
+public record SharedChartSpecData(
+    List<CategoryPoint>? Category = null,
+    List<SunburstNode>? Sunburst = null,
+    List<ScatterPoint>? Scatter = null
+);
+
+public record SharedChartSlot(
+    [Required, MinLength(1)] string ID,
+    [Required] StatsTab Tab,
+    [Required] SharedChartSpec Spec
+);
+
+public record SharedProfile
+{
+    [Required]
+    public required List<SharedChartSlot> ChartSlots { get; init; }
+
+    public bool Validate()
+    {
+        List<bool> flags = [];
+        for (int i = 0; i < ChartSlots.Count; i++)
+        {
+            SharedChartSpec spec = ChartSlots[i].Spec;
+
+            bool isValidCategoryPoint =
+                spec.Data.Category != null
+                && spec.Data.Category.Count >= 1
+                && spec.Data.Scatter == null
+                && spec.Data.Sunburst == null;
+
+            bool isValidSunburstNode =
+                spec.Data.Sunburst != null
+                && spec.Data.Sunburst.Count >= 1
+                && spec.Data.Scatter == null
+                && spec.Data.Category == null;
+
+            bool isValidScatterPoint =
+                spec.Data.Scatter != null
+                && spec.Data.Scatter.Count >= 1
+                && spec.Data.Category == null
+                && spec.Data.Sunburst == null;
+
+            switch (spec.Type)
+            {
+                case ChartType.BAR:
+                    flags.Add(isValidCategoryPoint);
+                    break;
+                case ChartType.PIE:
+                    flags.Add(isValidCategoryPoint);
+                    break;
+                case ChartType.LINE:
+                    flags.Add(isValidCategoryPoint);
+                    break;
+                case ChartType.TIMELINE:
+                    flags.Add(isValidCategoryPoint);
+                    break;
+                case ChartType.CALENDAR:
+                    flags.Add(isValidCategoryPoint);
+                    break;
+                case ChartType.SUNBURST:
+                    flags.Add(isValidSunburstNode);
+                    break;
+            }
+        }
+        return flags.All(flag => flag);
+    }
+}

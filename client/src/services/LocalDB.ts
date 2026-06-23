@@ -22,6 +22,11 @@ export type ChartOverride = {
 
 type ChartOverrideMap = Record<string, ChartOverride>;
 
+const FILTER_PREF_KEY = "filters";
+const SORT_PREF_KEY = "sort-settings";
+const CHART_OVERRIDES_KEY = "chart-overrides";
+const CRUD_COUNTER_KEY = "crud-counter";
+
 export default class LocalDB {
 	constructor() {}
 
@@ -29,12 +34,10 @@ export default class LocalDB {
 		node: DistinctTreeNode,
 		parentNode?: DistinctTreeNode,
 	) {
-		const email = LocalDB.getUserEmail();
 		return db.transaction("rw", db.nodes, async () => {
 			await db.nodes.add({
 				node_id: node.id,
 				node: node,
-				email: email,
 				created_at: new Date().toISOString(),
 				edited_at: new Date().toISOString(),
 			});
@@ -69,8 +72,8 @@ export default class LocalDB {
 		});
 	}
 
-	static async getNodes(email: string = LocalDB.getUserEmail()) {
-		const rows = await db.nodes.where("email").equals(email).toArray();
+	static async getNodes() {
+		const rows = await db.nodes.toArray();
 		return rows.map((row) => {
 			const result = DistinctTreeNodeShapeSchema.safeParse(row.node);
 			if (!result.success) {
@@ -88,40 +91,24 @@ export default class LocalDB {
 	}
 
 	static incrementCRUDCounter() {
-		const email = LocalDB.getUserEmail();
-		const prev = localStorage.getItem(`DEATHLOG_CRUD_COUNTER-${email}`);
+		const prev = localStorage.getItem(CRUD_COUNTER_KEY);
 		let current;
 		if (prev) {
 			current = Number(prev) + 1;
 		} else {
 			current = 1;
 		}
-		localStorage.setItem(`DEATHLOG_CRUD_COUNTER-${email}`, String(current));
+		localStorage.setItem(CRUD_COUNTER_KEY, String(current));
 	}
 
-	static getUserEmail() {
-		const email = localStorage.getItem("email");
-		if (email == null) {
-			LocalDB.setUserEmail("__LOCAL__");
-			return "__LOCAL__";
-		} else {
-			return email;
-		}
+	static async clearData() {
+		await db.nodes.clear();
 	}
 
-	static setUserEmail(email: string) {
-		localStorage.setItem("email", email);
-	}
-
-	static async clearData(email: string) {
-		await db.nodes.where("email").equals(email).delete();
-	}
-
-	static async insertData(nodes: DistinctTreeNode[], email: string) {
+	static async insertData(nodes: DistinctTreeNode[]) {
 		for (let node of nodes) {
 			await db.nodes.add({
 				node_id: node.id,
-				email: email,
 				node: node,
 				created_at: new Date().toISOString(),
 				edited_at: new Date().toISOString(),
@@ -130,10 +117,9 @@ export default class LocalDB {
 	}
 
 	static async clearAndInsertData(nodes: DistinctTreeNode[]) {
-		const email = LocalDB.getUserEmail();
 		await db.transaction("rw", db.nodes, async () => {
-			await LocalDB.clearData(email);
-			await LocalDB.insertData(nodes, email);
+			await LocalDB.clearData();
+			await LocalDB.insertData(nodes);
 		});
 	}
 
@@ -141,9 +127,7 @@ export default class LocalDB {
 		type: DeathLogViewType,
 		defaultFilters: Filters,
 	): Filters {
-		const filtersSTR = localStorage.getItem(
-			`filters-${LocalDB.getUserEmail()}`,
-		);
+		const filtersSTR = localStorage.getItem(FILTER_PREF_KEY);
 		if (filtersSTR == null) return defaultFilters;
 		try {
 			const obj = JSON.parse(filtersSTR);
@@ -159,21 +143,20 @@ export default class LocalDB {
 		type: DeathLogViewType,
 		defaultFilters: Filters,
 	) {
-		const key = `filters-${LocalDB.getUserEmail()}`;
-		const filtersSTR = localStorage.getItem(key);
+		const filtersSTR = localStorage.getItem(FILTER_PREF_KEY);
 		if (filtersSTR == null) {
 			localStorage.setItem(
-				key,
+				FILTER_PREF_KEY,
 				JSON.stringify(constructInitPref(defaultFilters)),
 			);
 		} else {
 			try {
 				const obj: DeathLogViewPrefs<Filters> = JSON.parse(filtersSTR);
 				obj[type] = filters;
-				localStorage.setItem(key, JSON.stringify(obj));
+				localStorage.setItem(FILTER_PREF_KEY, JSON.stringify(obj));
 			} catch {
 				localStorage.setItem(
-					key,
+					FILTER_PREF_KEY,
 					JSON.stringify(constructInitPref(defaultFilters)),
 				);
 			}
@@ -184,9 +167,7 @@ export default class LocalDB {
 		type: DeathLogViewType,
 		defaultSortSettings: SortSettings,
 	): SortSettings {
-		const sortSettingsSTR = localStorage.getItem(
-			`sort_settings-${LocalDB.getUserEmail()}`,
-		);
+		const sortSettingsSTR = localStorage.getItem(SORT_PREF_KEY);
 		if (sortSettingsSTR == null) return defaultSortSettings;
 		try {
 			const obj = JSON.parse(sortSettingsSTR);
@@ -202,11 +183,10 @@ export default class LocalDB {
 		type: DeathLogViewType,
 		defaultSortSettings: SortSettings,
 	) {
-		const key = `sort_settings-${LocalDB.getUserEmail()}`;
-		const sortSettingsSTR = localStorage.getItem(key);
+		const sortSettingsSTR = localStorage.getItem(SORT_PREF_KEY);
 		if (sortSettingsSTR == null) {
 			localStorage.setItem(
-				key,
+				SORT_PREF_KEY,
 				JSON.stringify(constructInitPref(defaultSortSettings)),
 			);
 		} else {
@@ -214,22 +194,18 @@ export default class LocalDB {
 				const obj: DeathLogViewPrefs<SortSettings> =
 					JSON.parse(sortSettingsSTR);
 				obj[type] = sortSettings;
-				localStorage.setItem(key, JSON.stringify(obj));
+				localStorage.setItem(SORT_PREF_KEY, JSON.stringify(obj));
 			} catch {
 				localStorage.setItem(
-					key,
+					SORT_PREF_KEY,
 					JSON.stringify(constructInitPref(defaultSortSettings)),
 				);
 			}
 		}
 	}
 
-	private static chartOverridesKey(email: string): string {
-		return `chart-overrides-${email}`;
-	}
-
-	private static readChartOverrides(email: string): ChartOverrideMap {
-		const raw = localStorage.getItem(LocalDB.chartOverridesKey(email));
+	private static readChartOverrides(): ChartOverrideMap {
+		const raw = localStorage.getItem(CHART_OVERRIDES_KEY);
 		if (!raw) return {};
 		try {
 			const parsed = JSON.parse(raw);
@@ -239,39 +215,34 @@ export default class LocalDB {
 		}
 	}
 
-	private static writeChartOverrides(email: string, map: ChartOverrideMap) {
-		localStorage.setItem(
-			LocalDB.chartOverridesKey(email),
-			JSON.stringify(map),
-		);
+	private static writeChartOverrides(map: ChartOverrideMap) {
+		localStorage.setItem(CHART_OVERRIDES_KEY, JSON.stringify(map));
 	}
 
 	static getChartOverride(id: string): ChartOverride {
-		return LocalDB.readChartOverrides(LocalDB.getUserEmail())[id] ?? {};
+		return LocalDB.readChartOverrides()[id] ?? {};
 	}
 
 	static setChartOverride(id: string, patch: ChartOverride) {
-		const email = LocalDB.getUserEmail();
-		const map = LocalDB.readChartOverrides(email);
+		const map = LocalDB.readChartOverrides();
 		map[id] = { ...map[id], ...patch };
-		LocalDB.writeChartOverrides(email, map);
+		LocalDB.writeChartOverrides(map);
 	}
 
 	static clearChartOverride(id: string) {
-		const email = LocalDB.getUserEmail();
-		const map = LocalDB.readChartOverrides(email);
+		const map = LocalDB.readChartOverrides();
 		delete map[id];
-		LocalDB.writeChartOverrides(email, map);
+		LocalDB.writeChartOverrides(map);
 	}
 
-	static clearChartOverridesForUser(email: string) {
-		localStorage.removeItem(LocalDB.chartOverridesKey(email));
+	static clearChartOverridesForUser() {
+		localStorage.removeItem(CHART_OVERRIDES_KEY);
 	}
 
-	static clearLocalPrefsForUser(email: string) {
-		localStorage.removeItem(`filters-${email}`);
-		localStorage.removeItem(`sort_settings-${email}`);
-		LocalDB.clearChartOverridesForUser(email);
+	static clearLocalPrefsForUser() {
+		localStorage.removeItem(FILTER_PREF_KEY);
+		localStorage.removeItem(SORT_PREF_KEY);
+		LocalDB.clearChartOverridesForUser();
 	}
 
 	static dbVersion(): number {
@@ -284,7 +255,9 @@ export default class LocalDB {
 	}
 
 	static clearAllLocalPrefs() {
-		const prefixes = ["filters-", "sort_settings-", "chart-overrides-"];
+		// TODO: decide whether to also clear crud-counter keys
+
+		const prefixes = [FILTER_PREF_KEY, SORT_PREF_KEY, CHART_OVERRIDES_KEY];
 		for (const key of Object.keys(localStorage)) {
 			if (prefixes.some((prefix) => key.startsWith(prefix))) {
 				localStorage.removeItem(key);

@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { Link } from "react-router";
 import LocalDB from "../../services/LocalDB";
 import Modal from "../../components/Modal";
 import { useDeathLogStore } from "../../stores/useDeathLogStore";
@@ -89,10 +90,8 @@ export default function DataManagement() {
 
 	async function handleDelete() {
 		try {
-			const email = LocalDB.getUserEmail();
-			await LocalDB.clearData(email);
-			LocalDB.clearLocalPrefsForUser(email);
-			// TODO: decide whether to also clear DEATHLOG_CRUD_COUNTER-${email}
+			await LocalDB.clearData();
+			LocalDB.clearLocalPrefsForUser();
 
 			await refreshTree();
 			modalRef.current?.close();
@@ -119,7 +118,6 @@ export default function DataManagement() {
 		try {
 			await LocalDB.resetDatabase();
 			LocalDB.clearAllLocalPrefs();
-			// TODO: decide whether to also clear all DEATHLOG_CRUD_COUNTER-${email} keys
 
 			await refreshTree();
 			modalRef.current?.close();
@@ -186,10 +184,11 @@ export default function DataManagement() {
 				closeBtnName={"CANCEL"}
 			/>
 			<div className="bg-base-100 mt-14 flex items-center justify-center">
-				<div className="w-[19rem] sm:w-md">
+				<div className="w-76 sm:w-md">
 					<h1 className="mb-10 text-5xl font-bold underline sm:text-center">
 						Data Management
 					</h1>
+
 					<div className="flex flex-col gap-4">
 						<button
 							className="btn btn-success text-xl"
@@ -216,9 +215,11 @@ export default function DataManagement() {
 						>
 							MIGRATE TO ACCOUNT
 						</button>
+
 						<div className="divider">
 							<img src={skull} alt="" />
 						</div>
+
 						<button
 							className="btn btn-error text-xl"
 							onClick={() => {
@@ -226,7 +227,7 @@ export default function DataManagement() {
 								modalRef.current?.showModal();
 							}}
 						>
-							DELETE
+							DELETE LOCAL DATA
 						</button>
 						<button
 							className="btn btn-error text-xl"
@@ -235,9 +236,21 @@ export default function DataManagement() {
 								modalRef.current?.showModal();
 							}}
 						>
-							RESET
+							RESET APP
 						</button>
 					</div>
+
+					<div className="divider"></div>
+					<p className="mb-3 text-sm opacity-70 sm:text-center">
+						Looking to manage your account or remote data (sign out,
+						delete account)?
+					</p>
+					<Link
+						to={{ pathname: "/user-settings" }}
+						className="btn btn-outline w-full"
+					>
+						GO TO USER SETTINGS
+					</Link>
 				</div>
 			</div>
 

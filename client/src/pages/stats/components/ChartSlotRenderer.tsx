@@ -4,7 +4,7 @@ import darkerChalk from "../../../../shared/darker_chalk.json";
 import { defaultEchartStyling } from "../../../../shared/defaults";
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
 import { flattenTree } from "../../../services/stats-query/FlattenStage";
-import { runSpec } from "../../../services/stats-query/runSpec";
+import { query } from "../../../services/stats-query/QueryStage";
 import {
 	overrideSpec,
 	effectiveShowUnreliable,
@@ -35,7 +35,7 @@ export default function ChartSlotRenderer({ slot }: { slot: ChartSlot }) {
 
 	const result = useMemo(
 		() =>
-			runSpec(spec, flattenTree(tree), {
+			query(spec, flattenTree(tree), {
 				calendarRange: `${year}-${month}`,
 			}),
 		[spec, tree, year, month],

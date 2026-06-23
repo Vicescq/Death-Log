@@ -10,12 +10,17 @@ import { SignedIn } from "@clerk/clerk-react";
 import ProfileButton from "./ProfileButton";
 
 export default function NavBarDrawer() {
-	const { activeDLCSS, activeDMCSS, activeFAQCSS } =
-		useActiveNavBarCSS("btn");
+	const {
+		activeDLCSS,
+		activeStatsCSS,
+		activeDMCSS,
+		activeFAQCSS,
+		activeUserSettingsCSS,
+	} = useActiveNavBarCSS("btn");
 
 	// z index of 1000 due to death log FAB has a z index of 999
 	return (
-		<div className="drawer z-[1000] lg:hidden">
+		<div className="drawer z-1000 lg:hidden">
 			<input id="my-drawer-1" type="checkbox" className="drawer-toggle" />
 			<div className="drawer-content">
 				<label
@@ -48,7 +53,7 @@ export default function NavBarDrawer() {
 					</li>
 					<li>
 						<Link
-							className={`btn ${activeFAQCSS}`}
+							className={`btn ${activeStatsCSS}`}
 							to={{ pathname: "/stats" }}
 						>
 							<img src={graph} alt="" className="h-5 w-5" />
@@ -72,7 +77,9 @@ export default function NavBarDrawer() {
 					</li>
 					<SignedIn>
 						<li>
-							<ProfileButton className="btn" />
+							<ProfileButton
+								className={`btn ${activeUserSettingsCSS}`}
+							/>
 						</li>
 					</SignedIn>
 				</ul>

@@ -40,10 +40,9 @@ export const useDeathLogStore = create<DeathLogState>((set, get) => ({
 	loadError: null,
 
 	refreshTree: async () => {
-		const email = LocalDB.getUserEmail();
 		set({ status: "loading" });
 		try {
-			const nodes = await LocalDB.getNodes(email);
+			const nodes = await LocalDB.getNodes();
 			get().initTree(nodes);
 			set({ status: "ready", loadError: null });
 		} catch (e) {

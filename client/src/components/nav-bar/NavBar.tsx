@@ -22,7 +22,13 @@ export default function NavBar({
 	endNavContentCSS,
 	startNavContentCSS,
 }: Props) {
-	const { activeDLCSS, activeDMCSS, activeFAQCSS } = useActiveNavBarCSS("bg");
+	const {
+		activeDLCSS,
+		activeStatsCSS,
+		activeDMCSS,
+		activeFAQCSS,
+		activeUserSettingsCSS,
+	} = useActiveNavBarCSS("bg");
 	return (
 		<div className="navbar bg-base-100 sticky top-0 z-10">
 			<div className={`navbar-start ${startNavContentCSS}`}>
@@ -44,7 +50,7 @@ export default function NavBar({
 					</li>
 
 					<li>
-						<Link to={{ pathname: "/stats" }}>
+						<Link className={activeStatsCSS} to={{ pathname: "/stats" }}>
 							<img src={graph} alt="" className="h-5 w-5" />
 						</Link>
 					</li>
@@ -69,7 +75,7 @@ export default function NavBar({
 
 					<SignedIn>
 						<li>
-							<ProfileButton />
+							<ProfileButton className={activeUserSettingsCSS} />
 						</li>
 					</SignedIn>
 				</ul>

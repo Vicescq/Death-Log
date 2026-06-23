@@ -30,7 +30,7 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 				<ul
 					ref={ref as React.Ref<HTMLUListElement>} // no other workaround ?
 					{...props}
-					className={`list rounded-box m-auto max-w-[900px]`}
+					className={`list rounded-box m-auto max-w-225`}
 				>
 					{props.children}
 				</ul>
