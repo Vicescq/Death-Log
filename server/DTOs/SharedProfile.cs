@@ -9,18 +9,23 @@ public class DTOConstants
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum ChartType
 {
-    BAR,
+    [JsonStringEnumMemberName("bar")]
+    Bar,
 
-    PIE,
+    [JsonStringEnumMemberName("pie")]
+    Pie,
 
-    LINE,
+    [JsonStringEnumMemberName("line")]
+    Line,
 
     [JsonStringEnumMemberName("time-line")]
-    TIMELINE,
+    Timeline,
 
-    CALENDAR,
+    [JsonStringEnumMemberName("calendar")]
+    Calendar,
 
-    SUNBURST,
+    [JsonStringEnumMemberName("sunburst")]
+    Sunburst,
 }
 
 [JsonConverter(typeof(JsonStringEnumConverter))]
@@ -60,7 +65,7 @@ public record SharedChartSpecData(
 );
 
 public record SharedChartSlot(
-    [Required, MinLength(1)] string ID,
+    [Required, MinLength(1)] string Id,
     [Required] StatsTab Tab,
     [Required] SharedChartSpec Spec
 );
@@ -70,7 +75,7 @@ public record SharedProfile
     [Required]
     public required List<SharedChartSlot> ChartSlots { get; init; }
 
-    public bool Validate()
+    public bool ValidateSpecRules()
     {
         List<bool> flags = [];
         for (int i = 0; i < ChartSlots.Count; i++)
@@ -97,22 +102,22 @@ public record SharedProfile
 
             switch (spec.Type)
             {
-                case ChartType.BAR:
+                case ChartType.Bar:
                     flags.Add(isValidCategoryPoint);
                     break;
-                case ChartType.PIE:
+                case ChartType.Pie:
                     flags.Add(isValidCategoryPoint);
                     break;
-                case ChartType.LINE:
+                case ChartType.Line:
                     flags.Add(isValidCategoryPoint);
                     break;
-                case ChartType.TIMELINE:
+                case ChartType.Timeline:
                     flags.Add(isValidCategoryPoint);
                     break;
-                case ChartType.CALENDAR:
+                case ChartType.Calendar:
                     flags.Add(isValidCategoryPoint);
                     break;
-                case ChartType.SUNBURST:
+                case ChartType.Sunburst:
                     flags.Add(isValidSunburstNode);
                     break;
             }

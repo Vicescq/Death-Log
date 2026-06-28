@@ -1,11 +1,12 @@
 import type { CategoryPoint, SunburstNode, ScatterPoint } from "./chart";
-import type { StatsTab } from "./chart-slot";
 import type { ChartType } from "./chart-spec";
+import type { ChartTab } from "./tabs";
 
 // all listed due to C# typing system
 export type SharedChartSpec = {
 	type: ChartType;
-	title: string;
+	title: string; // owner's timezone is baked in for temporal charts
+	calendarRange?: string;
 	data: {
 		category?: CategoryPoint[];
 		sunburst?: SunburstNode[];
@@ -15,7 +16,7 @@ export type SharedChartSpec = {
 
 export type SharedChartSlot = {
 	id: string;
-	tab: StatsTab;
+	tab: ChartTab;
 	spec: SharedChartSpec;
 };
 

@@ -1,6 +1,10 @@
 import { expect, test } from "vitest";
-import { query } from "../QueryStage";
-import type { Tables, DeathRow, SubjectRow } from "../FlattenStage";
+import { StatsPipeline } from "../StatsPipeline";
+import type {
+	Tables,
+	DeathRow,
+	SubjectRow,
+} from "../../../model/stats-query-model/chart";
 import type { ChartSpec } from "../../../model/stats-query-model/chart-spec";
 
 function death(overrides: Partial<DeathRow> = {}): DeathRow {
@@ -42,33 +46,32 @@ function subject(overrides: Partial<SubjectRow> = {}): SubjectRow {
 	};
 }
 
-const OPTS = { calendarRange: "2024-03" };
-
-type BarOption = { xAxis: { data: string[] }; series: [{ data: number[] }] };
-type TimeLineOption = { series: [{ data: [string, number][] }] };
-
-test("empty table → no-data", () => {
+test("empty table → empty category points", () => {
 	const spec: ChartSpec = {
 		type: "bar",
 		title: "T",
 		table: "deaths",
 		sql: "SELECT subjectName AS x, COUNT(*) AS y FROM ? GROUP BY subjectName",
 	};
-	expect(query(spec, { deaths: [], subjects: [] }, OPTS).status).toBe(
-		"no-data",
-	);
+	const result = StatsPipeline.Query(spec, { deaths: [], subjects: [] });
+	expect(result.kind).toBe("category");
+	if (result.kind !== "category") return;
+	expect(result.points).toEqual([]);
 });
 
-test("sql returning zero rows → no-data", () => {
+test("sql returning zero rows → empty category points", () => {
 	const spec: ChartSpec = {
 		type: "bar",
 		title: "T",
 		table: "deaths",
 		sql: "SELECT subjectName AS x, COUNT(*) AS y FROM ? WHERE subjectContext = 'Minion' GROUP BY subjectName",
 	};
-	expect(
-		query(spec, { deaths: [death()], subjects: [] }, OPTS).status,
-	).toBe("no-data");
+	const result = StatsPipeline.Query(spec, {
+		deaths: [death()],
+		subjects: [],
+	});
+	if (result.kind !== "category") throw new Error("expected category");
+	expect(result.points).toEqual([]);
 });
 
 test("bar spec groups and counts correctly", () => {
@@ -86,12 +89,12 @@ test("bar spec groups and counts correctly", () => {
 		table: "deaths",
 		sql: "SELECT subjectName AS x, COUNT(*) AS y FROM ? GROUP BY subjectName ORDER BY y DESC",
 	};
-	const result = query(spec, tables, OPTS);
-	expect(result.status).toBe("ok");
-	if (result.status !== "ok") return;
-	const option = result.option as BarOption;
-	expect(option.xAxis.data).toEqual(["Boss A", "Boss B"]);
-	expect(option.series[0].data).toEqual([2, 1]);
+	const result = StatsPipeline.Query(spec, tables);
+	if (result.kind !== "category") throw new Error("expected category");
+	expect(result.points).toEqual([
+		{ x: "Boss A", y: 2 },
+		{ x: "Boss B", y: 1 },
+	]);
 });
 
 test("subjects table query", () => {
@@ -108,37 +111,9 @@ test("subjects table query", () => {
 		table: "subjects",
 		sql: "SELECT name AS x, deaths AS y FROM ? ORDER BY deaths DESC",
 	};
-	const result = query(spec, tables, OPTS);
-	expect(result.status).toBe("ok");
-	if (result.status !== "ok") return;
-	expect((result.option as BarOption).series[0].data).toEqual([10, 3]);
-});
-
-test("below minDataPoints → insufficient with option still present", () => {
-	const spec: ChartSpec = {
-		type: "bar",
-		title: "T",
-		table: "deaths",
-		sql: "SELECT subjectName AS x, COUNT(*) AS y FROM ? GROUP BY subjectName",
-		minDataPoints: 5,
-	};
-	const result = query(spec, { deaths: [death()], subjects: [] }, OPTS);
-	expect(result.status).toBe("insufficient");
-	if (result.status !== "insufficient") return;
-	expect(result.minDataPoints).toBe(5);
-	expect(result.option).toBeDefined();
-});
-
-test("meeting minDataPoints → ok", () => {
-	const spec: ChartSpec = {
-		type: "bar",
-		title: "T",
-		table: "deaths",
-		sql: "SELECT subjectName AS x, COUNT(*) AS y FROM ? GROUP BY subjectName",
-		minDataPoints: 1,
-	};
-	const result = query(spec, { deaths: [death()], subjects: [] }, OPTS);
-	expect(result.status).toBe("ok");
+	const result = StatsPipeline.Query(spec, tables);
+	if (result.kind !== "category") throw new Error("expected category");
+	expect(result.points.map((p) => p.y)).toEqual([10, 3]);
 });
 
 test("cumulative applies running sum over daily counts", () => {
@@ -157,13 +132,9 @@ test("cumulative applies running sum over daily counts", () => {
 		sql: "SELECT SUBSTRING(timestampLocal,1,10) AS x, COUNT(*) AS y FROM ? GROUP BY SUBSTRING(timestampLocal,1,10) ORDER BY x ASC",
 		cumulative: true,
 	};
-	const result = query(spec, tables, OPTS);
-	expect(result.status).toBe("ok");
-	if (result.status !== "ok") return;
-	const ys = (result.option as TimeLineOption).series[0].data.map(
-		(p) => p[1],
-	);
-	expect(ys).toEqual([1, 2, 3]);
+	const result = StatsPipeline.Query(spec, tables);
+	if (result.kind !== "category") throw new Error("expected category");
+	expect(result.points.map((p) => p.y)).toEqual([1, 2, 3]);
 });
 
 test("without cumulative flag each day has its raw count", () => {
@@ -181,33 +152,13 @@ test("without cumulative flag each day has its raw count", () => {
 		table: "deaths",
 		sql: "SELECT SUBSTRING(timestampLocal,1,10) AS x, COUNT(*) AS y FROM ? GROUP BY SUBSTRING(timestampLocal,1,10) ORDER BY x ASC",
 	};
-	const result = query(spec, tables, OPTS);
-	expect(result.status).toBe("ok");
-	if (result.status !== "ok") return;
-	const ys = (result.option as TimeLineOption).series[0].data.map(
-		(p) => p[1],
-	);
-	expect(ys).toEqual([1, 1, 1]);
+	const result = StatsPipeline.Query(spec, tables);
+	if (result.kind !== "category") throw new Error("expected category");
+	expect(result.points.map((p) => p.y)).toEqual([1, 1, 1]);
 });
 
 const SUNBURST_SQL =
 	"SELECT gameName AS l0, profileName AS l1, subjectName AS l2, COUNT(*) AS y FROM ? GROUP BY gameName, profileName, subjectName";
-
-type SunburstOption = {
-	series: [
-		{
-			data: Array<{
-				name: string;
-				value: number;
-				children: Array<{
-					name: string;
-					value: number;
-					children: Array<{ name: string; value: number }>;
-				}>;
-			}>;
-		},
-	];
-};
 
 test("sunburst builds nested tree and aggregates values", () => {
 	const tables: Tables = {
@@ -250,10 +201,9 @@ test("sunburst builds nested tree and aggregates values", () => {
 			{ prune: undefined },
 		],
 	};
-	const result = query(spec, tables, OPTS);
-	expect(result.status).toBe("ok");
-	if (result.status !== "ok") return;
-	const roots = (result.option as SunburstOption).series[0].data;
+	const result = StatsPipeline.Query(spec, tables);
+	if (result.kind !== "sunburst") throw new Error("expected sunburst");
+	const roots = result.nodes;
 	expect(roots).toHaveLength(2);
 	expect(roots.find((n) => n.name === "Game A")?.value).toBe(3);
 	expect(roots.find((n) => n.name === "Game B")?.value).toBe(1);
@@ -283,11 +233,9 @@ test("sunburst topN prune keeps top N, showOther:true adds Other", () => {
 			{ prune: { mode: "topN", topN: 2, threshold: 1, showOther: true } },
 		],
 	};
-	const result = query(spec, tables, OPTS);
-	expect(result.status).toBe("ok");
-	if (result.status !== "ok") return;
-	const subjects = (result.option as SunburstOption).series[0].data[0]
-		.children[0].children;
+	const result = StatsPipeline.Query(spec, tables);
+	if (result.kind !== "sunburst") throw new Error("expected sunburst");
+	const subjects = result.nodes[0].children[0].children;
 	expect(subjects.map((n) => n.name)).toContain("Other");
 	// 2 kept + 1 Other
 	expect(subjects).toHaveLength(3);
@@ -323,16 +271,14 @@ test("sunburst showOther:false omits Other node", () => {
 			},
 		],
 	};
-	const result = query(spec, tables, OPTS);
-	expect(result.status).toBe("ok");
-	if (result.status !== "ok") return;
-	const subjects = (result.option as SunburstOption).series[0].data[0]
-		.children[0].children;
+	const result = StatsPipeline.Query(spec, tables);
+	if (result.kind !== "sunburst") throw new Error("expected sunburst");
+	const subjects = result.nodes[0].children[0].children;
 	expect(subjects.map((n) => n.name)).not.toContain("Other");
 	expect(subjects).toHaveLength(1);
 });
 
-test("sunburst → no-data when sql returns zero rows", () => {
+test("sunburst → empty nodes when sql returns zero rows", () => {
 	const spec: ChartSpec = {
 		type: "sunburst",
 		title: "T",
@@ -340,7 +286,10 @@ test("sunburst → no-data when sql returns zero rows", () => {
 		sql: SUNBURST_SQL + " HAVING COUNT(*) > 100",
 		levels: [{ prune: undefined }],
 	};
-	expect(
-		query(spec, { deaths: [death()], subjects: [] }, OPTS).status,
-	).toBe("no-data");
+	const result = StatsPipeline.Query(spec, {
+		deaths: [death()],
+		subjects: [],
+	});
+	if (result.kind !== "sunburst") throw new Error("expected sunburst");
+	expect(result.nodes).toEqual([]);
 });

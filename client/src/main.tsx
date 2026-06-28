@@ -1,23 +1,17 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import {
-	BrowserRouter,
-	Routes,
-	Route,
-	Navigate,
-	useLocation,
-} from "react-router";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router";
 import "./index.css";
 import { ErrorBoundary } from "react-error-boundary";
 import ErrorPage from "./pages/ErrorPage.tsx";
 import Start from "./pages/Start.tsx";
 import DataManagement from "./pages/data-management/DataManagement.tsx";
 import MultipleTabs from "./pages/MultipleTabs.tsx";
-import { ClerkProvider, SignedIn, SignedOut } from "@clerk/clerk-react";
+import { ClerkProvider } from "@clerk/clerk-react";
 import ClerkStatusBanner from "./components/ClerkStatusBanner.tsx";
 import DeathLog from "./pages/death-log/DeathLog.tsx";
 import FAQ from "./pages/FAQ.tsx";
-import UserSettings from "./pages/UserSettings.tsx";
+import UserSettings from "./pages/user-settings/UserSettings.tsx";
 import { useDeathLogStore } from "./stores/useDeathLogStore.ts";
 import useInitApp from "./hooks/useInitApp.ts";
 import useConsoleLogOnStateChange from "./hooks/useConsoleLogOnStateChange.ts";
@@ -26,7 +20,7 @@ import { CONSTANTS } from "../shared/constants.ts";
 import DeathLogRouter from "./pages/death-log/DeathLogRouter.tsx";
 import StatsDashboard from "./pages/stats/layout/StatsDashboard.tsx";
 import ChartGrid from "./pages/stats/components/ChartGrid.tsx";
-import StatsManage from "./pages/stats/layout/StatsManage.tsx";
+import BrowseProfiles from "./pages/stats/layout/BrowseProfiles.tsx";
 
 function ThrowError(): never {
 	throw new Error("Deliberate test error from /throw route");
@@ -104,29 +98,35 @@ function AppRoot() {
 				</Route>
 
 				<Route path="stats" element={<StatsDashboard />}>
-					<Route index element={<ChartGrid tab="overview" />} />
+					<Route index element={<ChartGrid tab="Overview" />} />
 					<Route
 						path="specialized"
-						element={<ChartGrid tab="specialized" />}
+						element={<ChartGrid tab="Specialized" />}
 					/>
-					<Route path="manage" element={<StatsManage />} />
+					<Route
+						path="browse-profiles"
+						element={<BrowseProfiles />}
+					/>
+				</Route>
+
+				<Route
+					path="profiles/:username/stats"
+					element={<StatsDashboard isSharedPage />}
+				>
+					<Route index element={<ChartGrid tab="Overview" />} />
+					<Route
+						path="specialized"
+						element={<ChartGrid tab="Specialized" />}
+					/>
+					<Route
+						path="browse-profiles"
+						element={<BrowseProfiles />}
+					/>
 				</Route>
 
 				<Route path="data-management" element={<DataManagement />} />
 
-				<Route
-					path="user-settings"
-					element={
-						<>
-							<SignedIn>
-								<UserSettings />
-							</SignedIn>
-							<SignedOut>
-								<Navigate to="/" replace />
-							</SignedOut>
-						</>
-					}
-				/>
+				<Route path="user-settings" element={<UserSettings />} />
 
 				<Route path="throw" element={<ThrowError />} />
 

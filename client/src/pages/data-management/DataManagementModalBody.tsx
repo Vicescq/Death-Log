@@ -4,16 +4,12 @@ type Props = {
 	action: DataManagementAction;
 	onImport: () => void;
 	onDelete: () => void;
-	onReset: () => void;
-	onMigrate: () => void;
 };
 
 export default function DataManagementModalBody({
 	action,
 	onImport,
 	onDelete,
-	onReset,
-	onMigrate,
 }: Props) {
 	if (action == "import") {
 		return (
@@ -31,40 +27,17 @@ export default function DataManagementModalBody({
 		return (
 			<>
 				<div className="my-2">
-					Are you sure you want to clear all your data for the current
-					account? Guest data will be deleted if no account is logged
-					in.
+					This deletes ALL Death Log data stored on this device and
+					resets the app to a clean state, including any account that
+					logged in here. Use this to remove your data or as a factory
+					reset if the app isn't working. This cannot be undone.
 				</div>
 				<button onClick={onDelete} className="btn btn-error w-full">
 					DELETE
 				</button>
 			</>
 		);
-	} else if (action == "reset") {
-		return (
-			<>
-				<div className="my-2">
-					Resetting data will delete ALL Death Log data that was
-					stored in this device. This includes any Death Log account
-					that logged on this device, this acts as factory reset if
-					the app does not work.
-				</div>
-				<button onClick={onReset} className="btn btn-error w-full">
-					RESET
-				</button>
-			</>
-		);
 	} else {
-		return (
-			<>
-				<div className="my-2">
-					Do you want to migrate this guest account to a another (new
-					or existing) account?
-				</div>
-				<button onClick={onMigrate} className="btn btn-info w-full">
-					MIGRATE
-				</button>
-			</>
-		);
+		return <div className="my-2">__DEV_ERROR__</div>;
 	}
 }

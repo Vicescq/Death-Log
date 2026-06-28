@@ -6,7 +6,6 @@ import faq from "../../assets/faq.svg";
 import graph from "../../assets/graph.svg";
 import { Link } from "react-router";
 import { useActiveNavBarCSS } from "./useActiveNavBarCSS";
-import { SignedIn } from "@clerk/clerk-react";
 import ProfileButton from "./ProfileButton";
 
 export default function NavBarDrawer() {
@@ -75,13 +74,11 @@ export default function NavBarDrawer() {
 							<img src={faq} alt="" className="h-5 w-5" />
 						</Link>
 					</li>
-					<SignedIn>
-						<li>
-							<ProfileButton
-								className={`btn ${activeUserSettingsCSS}`}
-							/>
-						</li>
-					</SignedIn>
+					<li>
+						<ProfileButton
+							className={`btn ${activeUserSettingsCSS}`}
+						/>
+					</li>
 				</ul>
 			</div>
 		</div>

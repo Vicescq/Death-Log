@@ -1,3 +1,4 @@
+import z from "zod";
 import { db } from "../model/LocalDBSchema";
 import type { DistinctTreeNode } from "../model/tree-node-model/TreeNodeSchema";
 import { DistinctTreeNodeShapeSchema } from "../model/tree-node-model/DistinctTreeNodeShapeSchema";
@@ -15,12 +16,15 @@ import {
 
 export type DeathLogViewPrefs<T> = Record<DeathLogViewType, T>;
 
-export type ChartOverride = {
-	title?: string;
-	showUnreliable?: boolean;
-};
+const ChartOverrideSchema = z.object({
+	showUnreliable: z.boolean().optional(),
+});
 
-type ChartOverrideMap = Record<string, ChartOverride>;
+const ChartOverrideMapSchema = z.record(z.string(), ChartOverrideSchema);
+
+export type ChartOverride = z.infer<typeof ChartOverrideSchema>;
+
+type ChartOverrideMap = z.infer<typeof ChartOverrideMapSchema>;
 
 const FILTER_PREF_KEY = "filters";
 const SORT_PREF_KEY = "sort-settings";
@@ -82,7 +86,7 @@ export default class LocalDB {
 					result.error,
 				);
 				throw new Error(
-					`Failed to load node "${row.node_id}". Your local data may be corrupted or out of date. Visit Data Management to reset your local data.`,
+					`Failed to load node "${row.node_id}". Your local data may be corrupted or out of date. Visit Data Management and use Delete Local Data to reset it.`,
 				);
 			}
 			assertIsDistinctTreeNode(result.data);
@@ -101,25 +105,17 @@ export default class LocalDB {
 		localStorage.setItem(CRUD_COUNTER_KEY, String(current));
 	}
 
-	static async clearData() {
-		await db.nodes.clear();
-	}
-
-	static async insertData(nodes: DistinctTreeNode[]) {
-		for (let node of nodes) {
-			await db.nodes.add({
-				node_id: node.id,
-				node: node,
-				created_at: new Date().toISOString(),
-				edited_at: new Date().toISOString(),
-			});
-		}
-	}
-
 	static async clearAndInsertData(nodes: DistinctTreeNode[]) {
 		await db.transaction("rw", db.nodes, async () => {
-			await LocalDB.clearData();
-			await LocalDB.insertData(nodes);
+			await db.nodes.clear();
+			for (let node of nodes) {
+				await db.nodes.add({
+					node_id: node.id,
+					node: node,
+					created_at: new Date().toISOString(),
+					edited_at: new Date().toISOString(),
+				});
+			}
 		});
 	}
 
@@ -208,15 +204,11 @@ export default class LocalDB {
 		const raw = localStorage.getItem(CHART_OVERRIDES_KEY);
 		if (!raw) return {};
 		try {
-			const parsed = JSON.parse(raw);
-			return typeof parsed === "object" && parsed !== null ? parsed : {};
+			const result = ChartOverrideMapSchema.safeParse(JSON.parse(raw));
+			return result.success ? result.data : {};
 		} catch {
 			return {};
 		}
-	}
-
-	private static writeChartOverrides(map: ChartOverrideMap) {
-		localStorage.setItem(CHART_OVERRIDES_KEY, JSON.stringify(map));
 	}
 
 	static getChartOverride(id: string): ChartOverride {
@@ -226,23 +218,13 @@ export default class LocalDB {
 	static setChartOverride(id: string, patch: ChartOverride) {
 		const map = LocalDB.readChartOverrides();
 		map[id] = { ...map[id], ...patch };
-		LocalDB.writeChartOverrides(map);
+		localStorage.setItem(CHART_OVERRIDES_KEY, JSON.stringify(map));
 	}
 
 	static clearChartOverride(id: string) {
 		const map = LocalDB.readChartOverrides();
 		delete map[id];
-		LocalDB.writeChartOverrides(map);
-	}
-
-	static clearChartOverridesForUser() {
-		localStorage.removeItem(CHART_OVERRIDES_KEY);
-	}
-
-	static clearLocalPrefsForUser() {
-		localStorage.removeItem(FILTER_PREF_KEY);
-		localStorage.removeItem(SORT_PREF_KEY);
-		LocalDB.clearChartOverridesForUser();
+		localStorage.setItem(CHART_OVERRIDES_KEY, JSON.stringify(map));
 	}
 
 	static dbVersion(): number {

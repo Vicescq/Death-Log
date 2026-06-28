@@ -1,14 +1,24 @@
-import type {
-	DistinctTreeNode,
-	TreeNode,
-} from "../../model/tree-node-model/TreeNodeSchema";
+import z from "zod";
+import type { DistinctTreeNode } from "../../model/tree-node-model/TreeNodeSchema";
+import { DistinctTreeNodeShapeSchema } from "../../model/tree-node-model/DistinctTreeNodeShapeSchema";
 import LocalDB from "../../services/LocalDB";
 import { addLeadingZeroes } from "../../utils/date";
+
+const BACKUP_DETAILS =
+	"Please do not edit this JSON in a significant way. Doing so might corrupt the data and importing this file in the site will no longer work.";
+
+const DeathLogBackupSchema = z.strictObject({
+	type: z.literal("DEATH-LOG Backup"),
+	version: z.number(),
+	details: z.literal(BACKUP_DETAILS),
+	date: z.string(),
+	data: z.array(DistinctTreeNodeShapeSchema),
+});
 
 type DeathLogBackup = {
 	type: "DEATH-LOG Backup";
 	version: number;
-	details: "Please do not edit this JSON in a significant way. Doing so might corrupt the data and importing this file in the site will no longer work.";
+	details: typeof BACKUP_DETAILS;
 	date: string;
 	data: DistinctTreeNode[];
 };
@@ -19,45 +29,20 @@ type DeathLogBackupWrapper = {
 };
 
 export async function processImportedFile(importedFile: File) {
-	const importedFileTxt = await importedFile.text();
-	const parsedJSON = JSON.parse(importedFileTxt);
-
-	const deathLogBackupKeys = ["type", "version", "details", "date", "data"];
-	const keys = Object.keys(parsedJSON);
-	if (keys.length != deathLogBackupKeys.length) {
-		throw new Error("Invalid JSON");
-	}
-	keys.forEach((key) => {
-		if (!deathLogBackupKeys.includes(key)) {
-			throw new Error("Invalid JSON");
-		}
-	});
-
-	if (parsedJSON.type != "DEATH-LOG Backup") {
+	const parsed = DeathLogBackupSchema.safeParse(
+		JSON.parse(await importedFile.text()),
+	);
+	if (!parsed.success) {
 		throw new Error("Invalid JSON");
 	}
 
-	if (
-		parsedJSON.details !=
-		"Please do not edit this JSON in a significant way. Doing so might corrupt the data and importing this file in the site will no longer work."
-	) {
+	if (parsed.data.version !== LocalDB.dbVersion()) {
+		// TODO: run indexedb or any other migrations here
+
 		throw new Error("Invalid JSON");
 	}
 
-	// light validation!
-	if (parsedJSON.data.length > 0) {
-		parsedJSON.data.forEach((supposedNode: TreeNode) => {
-			if (!(supposedNode.type && supposedNode.id && supposedNode.name))
-				throw new Error("Invalid JSON");
-		});
-	}
-
-	if (parsedJSON.version != LocalDB.dbVersion()) {
-		throw new Error("Invalid JSON"); // temp
-		// implement migrations
-	}
-
-	await LocalDB.clearAndInsertData(parsedJSON.data);
+	await LocalDB.clearAndInsertData(parsed.data.data);
 }
 
 export async function createDeathLogBackup(): Promise<DeathLogBackupWrapper> {

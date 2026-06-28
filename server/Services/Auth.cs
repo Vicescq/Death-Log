@@ -31,7 +31,7 @@ public class AuthMiddleware
 
     public async Task InvokeAsync(HttpContext ctx)
     {
-        if (ctx.Request.Path == "/users")
+        if (IsPublicRoute(ctx.Request))
         {
             await _next(ctx);
             return;
@@ -46,6 +46,17 @@ public class AuthMiddleware
             await ctx.Response.WriteAsync("Bad request");
         }
         return;
+    }
+
+    private static bool IsPublicRoute(HttpRequest request)
+    {
+        if (request.Path == "/users")
+            return true;
+
+        if (HttpMethods.IsGet(request.Method) && request.Path.StartsWithSegments("/profiles"))
+            return true;
+
+        return false;
     }
 }
 

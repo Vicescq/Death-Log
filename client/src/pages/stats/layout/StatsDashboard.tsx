@@ -1,9 +1,24 @@
+import { useMemo } from "react";
+import { Outlet } from "react-router";
 import NavBar from "../../../components/nav-bar/NavBar";
 import ProfileHeader from "./ProfileHeader";
 import StatsNav from "./StatsNav";
-import { Outlet } from "react-router";
+import { useDeathLogStore } from "../../../stores/useDeathLogStore";
+import { StatsPipeline } from "../../../services/stats-query/StatsPipeline";
+import { StatsContext, type StatsContextState } from "../hooks/useStatsContext";
 
-export default function StatsDashboard() {
+type Props = {
+	isSharedPage?: boolean;
+};
+
+export default function StatsDashboard({ isSharedPage }: Props) {
+	const tree = useDeathLogStore((state) => state.tree);
+	const tables = useMemo(() => StatsPipeline.Flatten(tree), [tree]);
+	const statsContextState = useMemo<StatsContextState>(
+		() => ({ tables, isSharedPage }),
+		[tables, isSharedPage],
+	);
+
 	return (
 		<>
 			<NavBar />
@@ -18,11 +33,13 @@ export default function StatsDashboard() {
 						</span>
 					</div>
 
-					<ProfileHeader />
+					<StatsContext.Provider value={statsContextState}>
+						<ProfileHeader />
 
-					<StatsNav />
+						<StatsNav />
 
-					<Outlet />
+						<Outlet />
+					</StatsContext.Provider>
 				</div>
 			</div>
 		</>

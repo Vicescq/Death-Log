@@ -25,10 +25,7 @@ export default function CounterHistory({
 	return (
 		<fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-full rounded-2xl border p-4">
 			<legend className="fieldset-legend">Death History</legend>
-			<ul
-				className="list max-h-[40rem] overflow-auto"
-				ref={deathHistoryRef}
-			>
+			<ul className="list max-h-160 overflow-auto" ref={deathHistoryRef}>
 				{sortedDeaths.map((death) => (
 					<li
 						className={`list-row flex ${focusedDeathID == death.id ? "bg-neutral" : ""}`}

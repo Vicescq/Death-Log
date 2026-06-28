@@ -8,10 +8,14 @@ import { delay } from "../../../utils/general";
  * @param optionToSet
  * @returns
  */
-export default function useChartAnimation(optionToSet: EChartsOption) {
-	const [option, setOption] = useState<EChartsOption>({});
+export default function useChartAnimation(optionToSet: EChartsOption | null) {
+	const [option, setOption] = useState<EChartsOption | null>({});
 
 	useEffect(() => {
+		if (optionToSet === null) {
+			setOption(null);
+			return;
+		}
 		delay(25).then(() => setOption(optionToSet));
 	}, [optionToSet]);
 

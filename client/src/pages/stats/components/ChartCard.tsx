@@ -26,16 +26,18 @@ export default function ChartCard({
 					triggerClassName="btn btn-xs btn-ghost"
 					contentClassName="menu border-base-300 bg-neutral z-10 mt-1 w-max rounded-lg border p-1 shadow-lg right-0"
 				>
-					<li>
-						<button onClick={onSettings}>
-							<img
-								src={gear}
-								className="h-4 w-4 shrink-0"
-								alt=""
-							/>
-							Settings
-						</button>
-					</li>
+					{onSettings && (
+						<li>
+							<button onClick={onSettings}>
+								<img
+									src={gear}
+									className="h-4 w-4 shrink-0"
+									alt=""
+								/>
+								Settings
+							</button>
+						</li>
+					)}
 					<li>
 						<button>
 							<img

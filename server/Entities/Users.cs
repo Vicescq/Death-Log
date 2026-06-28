@@ -11,12 +11,6 @@ public class User : IAuditable
     public required UserRole Role { get; set; }
 }
 
-public interface IAuditable
-{
-    DateTime CreatedAt { get; set; }
-    DateTime EditedAt { get; set; }
-}
-
 public enum UserRole
 {
     User,

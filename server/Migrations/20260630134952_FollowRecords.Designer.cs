@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace server.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20260628023447_AddedSharedProfileRecords")]
-    partial class AddedSharedProfileRecords
+    [Migration("20260630134952_FollowRecords")]
+    partial class FollowRecords
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,6 +25,27 @@ namespace server.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("FollowRecord", b =>
+                {
+                    b.Property<string>("FollowerId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("FollowingId")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("EditedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("FollowerId", "FollowingId");
+
+                    b.HasIndex("FollowingId");
+
+                    b.ToTable("FollowRecords");
+                });
+
             modelBuilder.Entity("SharedProfileRecords", b =>
                 {
                     b.Property<long>("Id")
@@ -32,6 +53,12 @@ namespace server.Migrations
                         .HasColumnType("bigint");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("EditedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<JsonElement>("SharedProfile")
                         .HasColumnType("jsonb");
@@ -97,6 +124,25 @@ namespace server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("UserEvents");
+                });
+
+            modelBuilder.Entity("FollowRecord", b =>
+                {
+                    b.HasOne("User", "FollowerUser")
+                        .WithMany()
+                        .HasForeignKey("FollowerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("User", "FollowingUser")
+                        .WithMany()
+                        .HasForeignKey("FollowingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FollowerUser");
+
+                    b.Navigation("FollowingUser");
                 });
 
             modelBuilder.Entity("SharedProfileRecords", b =>

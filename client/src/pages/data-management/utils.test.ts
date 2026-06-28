@@ -46,3 +46,19 @@ test("processImportedFile | error, non json", async () => {
 	await expect(processImportedFile(mockFile)).rejects.toThrow("Invalid JSON");
 	expect(LocalDB.clearAndInsertData).not.toHaveBeenCalled();
 });
+
+test("processImportedFile | rejects a structurally-invalid node", async () => {
+	const badNodeBackup = {
+		...validJSON,
+		data: [{ type: "game", id: "abc", name: "Elden Ring" }],
+	};
+	const mockFile = new File(
+		[JSON.stringify(badNodeBackup)],
+		"bad-node.json",
+		{
+			type: "application/json",
+		},
+	);
+	await expect(processImportedFile(mockFile)).rejects.toThrow("Invalid JSON");
+	expect(LocalDB.clearAndInsertData).not.toHaveBeenCalled();
+});

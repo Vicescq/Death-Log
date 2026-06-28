@@ -1,15 +1,12 @@
-using System.Data.Common;
-using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+
+DotNetEnv.Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
 var allowedOrigin =
     builder.Configuration.GetValue<string>("EnvData:Domain")
     ?? throw new InvalidOperationException("Configuration is not setup correctly");
-
-DotNetEnv.Env.Load();
 
 builder.Services.AddCors(options =>
 {
@@ -19,7 +16,7 @@ builder.Services.AddCors(options =>
         {
             policyBuilder
                 .WithOrigins(allowedOrigin)
-                .WithHeaders("Authorization", "Content-Type", "X-Requested-With")
+                .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials();
         }
@@ -43,95 +40,18 @@ var app = builder.Build();
 
 app.UseCors("frontend");
 
+app.UseDatabaseErrorHandler();
+
 app.UseAuthMiddleware(allowedOrigin);
 
-app.MapPost(
-    "/users",
-    async (
-        HttpRequest request,
-        ILogger<Program> logger,
-        DatabaseContext dbContext,
-        CancellationToken ct
-    ) =>
-    {
-        var result = await UserEventsAuthentication.ValidateAsync(request);
-        if (result)
-        {
-            try
-            {
-                var userEvent = await JsonSerializer.DeserializeAsync<UserEvent>(
-                    request.Body,
-                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true },
-                    ct
-                );
+app.MapGet("/users", BrowseUsers.Browse);
 
-                if (userEvent != null)
-                {
-                    userEvent.Trim();
-                    try
-                    {
-                        dbContext.UserEvents.Add(userEvent);
-                        await dbContext.SaveChangesAsync(ct);
-                        return Results.Ok();
-                    }
-                    catch (DbException e)
-                    {
-                        logger.LogError(
-                            "Valid webhook, but Database error occured! {E}. Responded with 200 to stop retries.",
-                            e.ToString()
-                        );
-                        return Results.Ok(); // stop webhook retries
-                    }
-                }
+app.MapPost("/users", UserEventsQueue.Push);
 
-                logger.LogError(
-                    "Valid webhook, but null userEvent! Responded with 200 to stop retries."
-                );
-                return Results.Ok(); // stop webhook retries
-            }
-            catch (JsonException e)
-            {
-                logger.LogError(
-                    "Valid webhook, but incorrect shape! {E}. Responded with 200 to stop retries.",
-                    e.ToString()
-                );
-                return Results.Ok(); // stop webhook retries
-            }
-        }
-        else
-        {
-            return Results.Unauthorized();
-        }
-    }
-);
-
-app.MapPost(
-        "/profiles/{username}",
-        async (
-            string username,
-            SharedProfile sharedProfile,
-            HttpRequest request,
-            ILogger<Program> logger,
-            DatabaseContext dbContext,
-            CancellationToken ct
-        ) =>
-        {
-            var user = await dbContext.Users.FirstOrDefaultAsync(
-                user => user.Username == username,
-                ct
-            );
-            if (user != null)
-            {
-                return Results.Ok();
-            }
-            else
-            {
-                logger.LogError("Username not found!");
-                return Results.NotFound();
-            }
-        }
-    )
+app.MapPost("/profiles/{username}", ProfileSharing.PostProfile)
     .Accepts<SharedProfile>("application/json")
     .WithMetadata(new RequestSizeLimitAttribute(10485760));
+
+app.MapGet("/profiles/{username}", ProfileSharing.GetProfile);
 
 app.Run();

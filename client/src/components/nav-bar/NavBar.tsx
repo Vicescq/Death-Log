@@ -4,7 +4,6 @@ import save from "../../assets/save.svg";
 import dl from "../../assets/death-log.svg";
 import faq from "../../assets/faq.svg";
 import graph from "../../assets/graph.svg";
-import { SignedIn } from "@clerk/clerk-react";
 import NavBarDrawer from "./NavBarDrawer";
 import ProfileButton from "./ProfileButton";
 import { useActiveNavBarCSS } from "./useActiveNavBarCSS";
@@ -73,11 +72,9 @@ export default function NavBar({
 						</Link>
 					</li>
 
-					<SignedIn>
-						<li>
-							<ProfileButton className={activeUserSettingsCSS} />
-						</li>
-					</SignedIn>
+					<li>
+						<ProfileButton className={activeUserSettingsCSS} />
+					</li>
 				</ul>
 			</div>
 

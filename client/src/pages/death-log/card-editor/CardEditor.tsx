@@ -11,7 +11,10 @@ import { delay } from "../../../utils/general";
 import { assertIsNonNull } from "../../../utils/asserts";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createNodeFormEditSchema, type NodeFormEdit } from "../../../model/formSchemas";
+import {
+	createNodeFormEditSchema,
+	type NodeFormEdit,
+} from "../../../model/formSchemas";
 import NavBar from "../../../components/nav-bar/NavBar";
 import type { DistinctTreeNode } from "../../../model/tree-node-model/TreeNodeSchema";
 import useNotifyDateReset from "../hooks/useNotifyDateReset";
@@ -147,7 +150,7 @@ export default function CardEditor({ node }: { node: DistinctTreeNode }) {
 				startNavContentCSS="w-[30%]"
 			/>
 			<Container css="mb-8">
-				<h1 className="my-6 text-center text-4xl font-bold break-words">
+				<h1 className="my-6 text-center text-4xl font-bold wrap-break-word">
 					Editing: {node.name}
 				</h1>
 				<form onSubmit={form.handleSubmit(onSubmit)}>

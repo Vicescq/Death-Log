@@ -160,7 +160,7 @@ export default function Counter({ subject }: Props) {
 			/>
 			<Container>
 				<h1
-					className={`my-6 text-center text-4xl font-bold break-words ${subject.completed ? "text-neutral line-through" : ""}`}
+					className={`my-6 text-center text-4xl font-bold wrap-break-word ${subject.completed ? "text-neutral line-through" : ""}`}
 				>
 					{subject.name}
 				</h1>

@@ -3,7 +3,7 @@ import type {
 	Tree,
 	DistinctTreeNode,
 } from "../../../model/tree-node-model/TreeNodeSchema";
-import { flattenTree } from "../FlattenStage";
+import { StatsPipeline } from "../StatsPipeline";
 
 function node(fields: Record<string, unknown>): DistinctTreeNode {
 	return fields as unknown as DistinctTreeNode;
@@ -40,7 +40,6 @@ function makeTree() {
 			name: "Malenia",
 			context: "Boss",
 			parentID: "p1",
-			// Noon UTC avoids day-boundary shift in any ±12h timezone
 			dateStart: "2024-01-15T18:00:00.000Z",
 			dateStartRel: true,
 			dateEnd: "2024-06-01T18:00:00.000Z",
@@ -70,7 +69,7 @@ function makeTree() {
 }
 
 test("empty tree → empty tables", () => {
-	const tables = flattenTree(new Map() as Tree);
+	const tables = StatsPipeline.Flatten(new Map() as Tree);
 	expect(tables.deaths).toHaveLength(0);
 	expect(tables.subjects).toHaveLength(0);
 });
@@ -87,13 +86,13 @@ test("tree with no subject nodes → empty tables", () => {
 			childIDS: [],
 		}),
 	);
-	const tables = flattenTree(tree);
+	const tables = StatsPipeline.Flatten(tree);
 	expect(tables.deaths).toHaveLength(0);
 	expect(tables.subjects).toHaveLength(0);
 });
 
 test("subjects are flattened with correct ancestor fields", () => {
-	const tables = flattenTree(makeTree());
+	const tables = StatsPipeline.Flatten(makeTree());
 	expect(tables.subjects).toHaveLength(1);
 	const row = tables.subjects[0];
 	expect(row.id).toBe("s1");
@@ -106,7 +105,7 @@ test("subjects are flattened with correct ancestor fields", () => {
 });
 
 test("subject reliability flags are baked in", () => {
-	const tables = flattenTree(makeTree());
+	const tables = StatsPipeline.Flatten(makeTree());
 	const row = tables.subjects[0];
 	expect(row.dateStartRel).toBe(true);
 	expect(row.dateEndRel).toBe(false);
@@ -153,17 +152,17 @@ test("subject dateEndLocal is null when dateEnd is null", () => {
 			log: [],
 		}),
 	);
-	const tables = flattenTree(tree);
+	const tables = StatsPipeline.Flatten(tree);
 	expect(tables.subjects[0].dateEndLocal).toBeNull();
 });
 
 test("deaths count matches log length", () => {
-	const tables = flattenTree(makeTree());
+	const tables = StatsPipeline.Flatten(makeTree());
 	expect(tables.subjects[0].deaths).toBe(2);
 });
 
 test("deaths are flattened with ancestor fields", () => {
-	const tables = flattenTree(makeTree());
+	const tables = StatsPipeline.Flatten(makeTree());
 	expect(tables.deaths).toHaveLength(2);
 
 	const d1 = tables.deaths.find((d) => d.id === "d1");
@@ -184,7 +183,7 @@ test("deaths are flattened with ancestor fields", () => {
 });
 
 test("death timestampLocal uses local time (not UTC)", () => {
-	const tables = flattenTree(makeTree());
+	const tables = StatsPipeline.Flatten(makeTree());
 	const d1 = tables.deaths.find((d) => d.id === "d1")!;
 	// "2024-03-15T18:00:00.000Z" → local date is still 2024-03-15 in Edmonton
 	expect(d1.timestampLocal).toMatch(/^2024-03-15/);
@@ -193,7 +192,7 @@ test("death timestampLocal uses local time (not UTC)", () => {
 });
 
 test("timeSpentMins - HH:MM:SS string is converted correctly", () => {
-	const tables = flattenTree(makeTree());
+	const tables = StatsPipeline.Flatten(makeTree());
 	// "01:30:00" = 1*60 + 30 + 0/60 = 90 mins
 	expect(tables.subjects[0].timeSpentMins).toBe(90);
 });
@@ -239,7 +238,7 @@ test("timeSpentMins - null timeSpent becomes 0", () => {
 			log: [],
 		}),
 	);
-	const tables = flattenTree(tree);
+	const tables = StatsPipeline.Flatten(tree);
 	expect(tables.subjects[0].timeSpentMins).toBe(0);
 });
 
@@ -323,7 +322,7 @@ test("multiple subjects in same profile are all flattened", () => {
 			],
 		}),
 	);
-	const tables = flattenTree(tree);
+	const tables = StatsPipeline.Flatten(tree);
 	expect(tables.subjects).toHaveLength(2);
 	expect(tables.deaths).toHaveLength(3);
 	expect(tables.subjects.find((s) => s.name === "Boss A")?.deaths).toBe(1);

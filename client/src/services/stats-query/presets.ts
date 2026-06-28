@@ -1,9 +1,9 @@
-import type { ChartSlot } from "../../model/stats-query-model/chart-slot";
+import type { ChartSlot } from "../../model/stats-query-model/chart";
 
 export const PRESET_CHARTS: ChartSlot[] = [
 	{
 		id: "death-calendar",
-		tab: "overview",
+		tab: "Overview",
 		spec: {
 			type: "calendar",
 			title: "Death Calendar",
@@ -13,11 +13,12 @@ export const PRESET_CHARTS: ChartSlot[] = [
 			      WHERE {{REL}}
 			      GROUP BY SUBSTRING(timestampLocal, 1, 10)`,
 			whenReliable: "timestampRel = TRUE",
+			temporal: true,
 		},
 	},
 	{
 		id: "top-10-bosses-by-deaths",
-		tab: "overview",
+		tab: "Overview",
 		spec: {
 			type: "bar",
 			title: "Top 10 Bosses (Deaths)",
@@ -34,7 +35,7 @@ export const PRESET_CHARTS: ChartSlot[] = [
 	},
 	{
 		id: "total-deaths-over-time",
-		tab: "overview",
+		tab: "Overview",
 		spec: {
 			type: "time-line",
 			title: "Total Deaths Over Time",
@@ -46,11 +47,12 @@ export const PRESET_CHARTS: ChartSlot[] = [
 			      ORDER BY x ASC`,
 			cumulative: true,
 			whenReliable: "timestampRel = TRUE",
+			temporal: true,
 		},
 	},
 	{
 		id: "hierarchy-of-deaths",
-		tab: "overview",
+		tab: "Overview",
 		spec: {
 			type: "sunburst",
 			title: "Hierarchy of Deaths",
@@ -83,7 +85,7 @@ export const PRESET_CHARTS: ChartSlot[] = [
 	},
 	{
 		id: "30-recent-Subjects",
-		tab: "overview",
+		tab: "Overview",
 		spec: {
 			type: "line",
 			title: "30 Most Recent Subjects (Deaths)",
@@ -102,7 +104,7 @@ export const PRESET_CHARTS: ChartSlot[] = [
 	},
 	{
 		id: "top-5-games-by-deaths",
-		tab: "overview",
+		tab: "Overview",
 		spec: {
 			type: "pie",
 			title: "Top 5 Games by Deaths",
@@ -117,7 +119,7 @@ export const PRESET_CHARTS: ChartSlot[] = [
 	},
 	{
 		id: "deaths-by-context",
-		tab: "overview",
+		tab: "Overview",
 		spec: {
 			type: "bar",
 			title: "Deaths by Context",

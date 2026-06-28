@@ -10,7 +10,7 @@ import type { FeedbackToastState } from "../../components/FeedbackToast";
 import FeedbackToast from "../../components/FeedbackToast";
 import { createDeathLogBackup, processImportedFile } from "./utils";
 
-export type DataManagementAction = "import" | "delete" | "migrate" | "reset";
+export type DataManagementAction = "import" | "delete";
 
 export default function DataManagement() {
 	const refreshTree = useDeathLogStore((state) => state.refreshTree);
@@ -90,8 +90,10 @@ export default function DataManagement() {
 
 	async function handleDelete() {
 		try {
-			await LocalDB.clearData();
-			LocalDB.clearLocalPrefsForUser();
+			// Full teardown: drop & recreate the DB (repairs corruption /
+			// version mismatch, and nukes every table) + clear all prefs.
+			await LocalDB.resetDatabase();
+			LocalDB.clearAllLocalPrefs();
 
 			await refreshTree();
 			modalRef.current?.close();
@@ -114,43 +116,12 @@ export default function DataManagement() {
 		}
 	}
 
-	async function handleReset() {
-		try {
-			await LocalDB.resetDatabase();
-			LocalDB.clearAllLocalPrefs();
-
-			await refreshTree();
-			modalRef.current?.close();
-
-			setFeedbackToast({
-				displayed: true,
-				css: "success",
-				msg: "The application has been reset!",
-			});
-		} catch (e) {
-			if (e instanceof Error) {
-				modalRef.current?.close();
-				setFeedbackToast({
-					displayed: true,
-					css: "error",
-					msg: "Something unexpected happened during the reset process. Please try again.",
-				});
-			}
-		}
-	}
-
-	async function handleMigration() {}
-
 	let templateHeader = "Confirm";
 	let header = "";
 	if (action == "delete") {
 		header = `${templateHeader} Deletion`;
 	} else if (action == "import") {
 		header = `${templateHeader} Import`;
-	} else if (action == "migrate") {
-		header = `${templateHeader} Migration`;
-	} else if (action == "reset") {
-		header = `${templateHeader} Reset`;
 	} else {
 		header = "__DEV_ERROR__";
 	}
@@ -176,8 +147,6 @@ export default function DataManagement() {
 							modalRef.current?.close();
 						}}
 						onDelete={handleDelete}
-						onMigrate={handleMigration}
-						onReset={handleReset}
 					/>
 				}
 				header={header}
@@ -206,16 +175,6 @@ export default function DataManagement() {
 						>
 							EXPORT
 						</button>
-						<button
-							onClick={() => {
-								setAction("migrate");
-								modalRef.current?.showModal();
-							}}
-							className="btn btn-success text-xl"
-						>
-							MIGRATE TO ACCOUNT
-						</button>
-
 						<div className="divider">
 							<img src={skull} alt="" />
 						</div>
@@ -228,15 +187,6 @@ export default function DataManagement() {
 							}}
 						>
 							DELETE LOCAL DATA
-						</button>
-						<button
-							className="btn btn-error text-xl"
-							onClick={() => {
-								setAction("reset");
-								modalRef.current?.showModal();
-							}}
-						>
-							RESET APP
 						</button>
 					</div>
 
