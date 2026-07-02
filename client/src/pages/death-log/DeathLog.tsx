@@ -13,6 +13,8 @@ import type { Filters, SortSettings } from "../../model/formSchemas";
 import { filter, getDeathlogViewType, sort } from "./utils";
 import { defaultFilters, defaultSortSettings } from "../../../shared/defaults";
 import { CONSTANTS } from "../../../shared/constants";
+import EmptyLogDemo from "./EmptyLogDemo";
+import FAQSuggest from "./FAQSuggest";
 
 export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 	const tree = useDeathLogStore((state) => state.tree);
@@ -83,30 +85,37 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 				startNavContentCSS="w-[30%]"
 			/>
 
-			<Virtuoso
-				ref={virtuosoRef}
-				data={ids}
-				itemContent={(i, id) => {
-					const node = tree.get(id);
-					assertIsNonNull(node);
-					return (
-						<Card
-							node={node}
-							tree={tree}
-							entryNum={i + 1}
-							onOpenCompletionModal={() => {
-								setFocusedNode(node);
-								modalRef.current?.showModal();
-							}}
-						/>
-					);
-				}}
-				components={{ List: DeathLogCardListWrapper }}
-				computeItemKey={(_, id) => {
-					return id;
-				}}
-				useWindowScroll
-			/>
+			{tree.size === 1 ? (
+				<div className="flex min-h-[75vh] flex-col items-center justify-center gap-12">
+					<FAQSuggest />
+					<EmptyLogDemo />
+				</div>
+			) : (
+				<Virtuoso
+					ref={virtuosoRef}
+					data={ids}
+					itemContent={(i, id) => {
+						const node = tree.get(id);
+						assertIsNonNull(node);
+						return (
+							<Card
+								node={node}
+								tree={tree}
+								entryNum={i + 1}
+								onOpenCompletionModal={() => {
+									setFocusedNode(node);
+									modalRef.current?.showModal();
+								}}
+							/>
+						);
+					}}
+					components={{ List: DeathLogCardListWrapper }}
+					computeItemKey={(_, id) => {
+						return id;
+					}}
+					useWindowScroll
+				/>
+			)}
 
 			<Toolbar
 				parent={parent}

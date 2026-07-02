@@ -71,6 +71,9 @@ export const useDeathLogStore = create<DeathLogState>((set, get) => ({
 
 	addNode: (type, inputText, parentID, subjectCharacteristics) => {
 		set((state) => {
+			const parentNode = state.tree.get(parentID);
+			assertIsNonNull(parentNode);
+
 			let node: DistinctTreeNode;
 			switch (type) {
 				case "game":
@@ -85,11 +88,13 @@ export const useDeathLogStore = create<DeathLogState>((set, get) => ({
 					break;
 			}
 
+			if (parentNode.isFake) {
+				node = { ...node, isFake: true };
+			}
+
 			const updatedTree = new Map(state.tree);
 			updatedTree.set(node.id, node);
 
-			const parentNode = updatedTree.get(parentID);
-			assertIsNonNull(parentNode);
 			const parentNodeCopy: DistinctTreeNode = {
 				...parentNode,
 				childIDS: [...parentNode.childIDS, node.id],

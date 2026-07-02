@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useUser } from "@clerk/clerk-react";
+import { useUser } from "@clerk/react";
 import { useDeathLogStore } from "../stores/useDeathLogStore";
 import useOnlineStatus from "./useOnlineStatus";
 

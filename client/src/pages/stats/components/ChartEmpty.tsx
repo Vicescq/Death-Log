@@ -1,7 +1,10 @@
 import { Link } from "react-router";
 import { defaultEchartStyling } from "../../../../shared/defaults";
+import { useStatsContext } from "../hooks/useStatsContext";
 
 export default function ChartEmpty() {
+	const { isSharedPage } = useStatsContext();
+
 	return (
 		<div
 			className="flex flex-col items-center justify-center gap-3"
@@ -22,13 +25,17 @@ export default function ChartEmpty() {
 			</svg>
 			<div className="text-center">
 				<p className="font-semibold">Nothing logged yet</p>
-				<p className="mt-1 text-sm">
-					Start logging deaths to see this chart.
-				</p>
+				{!isSharedPage && (
+					<p className="mt-1 text-sm">
+						Start logging deaths to see this chart.
+					</p>
+				)}
 			</div>
-			<Link to="/log" className="btn btn-sm btn-info mt-1">
-				Go to log →
-			</Link>
+			{!isSharedPage && (
+				<Link to="/log" className="btn btn-sm btn-info mt-1">
+					Go to log →
+				</Link>
+			)}
 		</div>
 	);
 }

@@ -34,6 +34,6 @@ export type ChartSpec = {
 	cumulative?: boolean; // time line
 	levels?: SunburstLevel[]; // sunburst
 	whenReliable?: WhenReliable; // enables the {{REL}} swap + settings toggle
-	calendarRange?: string; // calendar — "YYYY-MM" initial month; undefined = current month
+	calendarRange?: string; // calendar: "YYYY-MM" initial month undefined = current month
 	temporal?: boolean; // dates involved (calendar/time-line) → SharingStage appends the owner's tz to the title
 };

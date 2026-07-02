@@ -4,12 +4,18 @@ type Props = {
 	action: DataManagementAction;
 	onImport: () => void;
 	onDelete: () => void;
+	onSeed: () => void;
+	onUndoFakeData: () => void;
+	onKeepFakeData: () => void;
 };
 
 export default function DataManagementModalBody({
 	action,
 	onImport,
 	onDelete,
+	onSeed,
+	onUndoFakeData,
+	onKeepFakeData,
 }: Props) {
 	if (action == "import") {
 		return (
@@ -34,6 +40,53 @@ export default function DataManagementModalBody({
 				</div>
 				<button onClick={onDelete} className="btn btn-error w-full">
 					DELETE
+				</button>
+			</>
+		);
+	} else if (action == "seed") {
+		return (
+			<>
+				<div className="my-2">
+					This overwrites any existing Death Log data on this device
+					with generated sample data, so you can preview stats and
+					charts. Use KEEP FAKE DATA afterward if you want to turn the
+					sample data into permanent data instead of undoing it.
+				</div>
+				<button onClick={onSeed} className="btn btn-info w-full">
+					PROCEED
+				</button>
+			</>
+		);
+	} else if (action == "undo") {
+		return (
+			<>
+				<div className="my-2">
+					This removes every generated sample game/profile/subject
+					still marked as fake data (and anything added underneath
+					it), leaving your real data untouched. This cannot be
+					undone.
+				</div>
+				<button
+					onClick={onUndoFakeData}
+					className="btn btn-info w-full"
+				>
+					PROCEED
+				</button>
+			</>
+		);
+	} else if (action == "keep") {
+		return (
+			<>
+				<div className="my-2">
+					This turns any remaining sample data into permanent real
+					data. Afterward, UNDO FAKE DATA will no longer be able to
+					remove it.
+				</div>
+				<button
+					onClick={onKeepFakeData}
+					className="btn btn-info w-full"
+				>
+					PROCEED
 				</button>
 			</>
 		);

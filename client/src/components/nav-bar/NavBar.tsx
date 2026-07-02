@@ -3,10 +3,12 @@ import home from "../../assets/home.svg";
 import save from "../../assets/save.svg";
 import dl from "../../assets/death-log.svg";
 import faq from "../../assets/faq.svg";
+import about from "../../assets/about.svg";
 import graph from "../../assets/graph.svg";
 import NavBarDrawer from "./NavBarDrawer";
 import ProfileButton from "./ProfileButton";
 import { useActiveNavBarCSS } from "./useActiveNavBarCSS";
+import { Z_INDICES } from "../../../shared/z-indices";
 
 type Props = {
 	midNavContent?: React.JSX.Element;
@@ -26,10 +28,13 @@ export default function NavBar({
 		activeStatsCSS,
 		activeDMCSS,
 		activeFAQCSS,
+		activeAboutCSS,
 		activeUserSettingsCSS,
 	} = useActiveNavBarCSS("bg");
 	return (
-		<div className="navbar bg-base-100 sticky top-0 z-10">
+		<div
+			className={`navbar bg-base-100 sticky top-0 ${Z_INDICES.STICKY_NAVBAR}`}
+		>
 			<div className={`navbar-start ${startNavContentCSS}`}>
 				<NavBarDrawer />
 
@@ -49,7 +54,10 @@ export default function NavBar({
 					</li>
 
 					<li>
-						<Link className={activeStatsCSS} to={{ pathname: "/stats" }}>
+						<Link
+							className={activeStatsCSS}
+							to={{ pathname: "/stats" }}
+						>
 							<img src={graph} alt="" className="h-5 w-5" />
 						</Link>
 					</li>
@@ -66,9 +74,18 @@ export default function NavBar({
 					<li>
 						<Link
 							className={activeFAQCSS}
-							to={{ pathname: "/FAQ" }}
+							to={{ pathname: "/faq" }}
 						>
 							<img src={faq} alt="" className="h-5 w-5" />
+						</Link>
+					</li>
+
+					<li>
+						<Link
+							className={activeAboutCSS}
+							to={{ pathname: "/about" }}
+						>
+							<img src={about} alt="" className="h-5 w-5" />
 						</Link>
 					</li>
 

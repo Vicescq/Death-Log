@@ -64,7 +64,7 @@ test("temporal chart appends the owner's timezone to the title", () => {
 		slot({ type: "calendar", title: "Death Calendar", temporal: true }),
 		{ kind: "category", points: [] },
 	);
-	expect(shared.spec.title).toBe(`Death Calendar (${TZ})`);
+	expect(shared.spec.title).toBe(`Death Calendar [${TZ}]`);
 });
 
 test("calendarRange is carried through when present", () => {

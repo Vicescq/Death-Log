@@ -8,7 +8,7 @@ vi.mock("../../services/LocalDB", () => {
 	return {
 		default: {
 			clearAndInsertData: vi.fn().mockResolvedValue(undefined),
-			dbVersion: vi.fn(() => 1),
+			dbVersion: vi.fn(() => 2),
 		},
 	};
 });
@@ -17,7 +17,7 @@ beforeEach(() => {
 	vi.clearAllMocks();
 });
 
-test("processImportedFile | happy path", async () => {
+test("processImportedFile | happy path migrates a v1 node (no isFake) to current schema", async () => {
 	const mockFile = new File(
 		[JSON.stringify(validJSON)],
 		"valid-backup.json",
@@ -25,6 +25,14 @@ test("processImportedFile | happy path", async () => {
 	);
 	await expect(processImportedFile(mockFile)).resolves.not.toThrow();
 	expect(LocalDB.clearAndInsertData).toHaveBeenCalledOnce();
+
+	const insertedNodes = vi.mocked(LocalDB.clearAndInsertData).mock
+		.calls[0][0];
+	expect(insertedNodes).toHaveLength(1);
+	expect(insertedNodes[0]).toMatchObject({
+		id: "v1gameid",
+		isFake: false,
+	});
 });
 
 test("processImportedFile | error", async () => {

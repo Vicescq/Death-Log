@@ -1,3 +1,4 @@
+import z from "zod";
 import type { ChartSpec } from "./chart-spec";
 import type { ChartTab } from "./tabs";
 
@@ -7,22 +8,49 @@ export type ChartSlot = {
 	spec: ChartSpec;
 };
 
-export type CategoryPoint = {
-	x: string;
-	y: number;
-};
+export const CategoryPointSchema = z.object({ x: z.string(), y: z.number() });
+export type CategoryPoint = z.infer<typeof CategoryPointSchema>;
 
 export type SunburstNode = {
 	name: string;
 	value: number;
 	children: SunburstNode[];
 };
+export const SunburstNodeSchema: z.ZodType<SunburstNode> = z.lazy(() =>
+	z.object({
+		name: z.string(),
+		value: z.number(),
+		children: z.array(SunburstNodeSchema),
+	}),
+);
 
-export type ScatterPoint = {
-	name: string;
-	x: number;
-	y: number;
-};
+export const ScatterPointSchema = z.object({
+	name: z.string(),
+	x: z.number(),
+	y: z.number(),
+});
+export type ScatterPoint = z.infer<typeof ScatterPointSchema>;
+
+export const GraphNodeSchema = z.object({
+	id: z.string(),
+	name: z.string(),
+	value: z.number(),
+	symbolSize: z.number(),
+	category: z.number().min(0),
+});
+
+export const GraphEdgeSchema = z.object({
+	id: z.string(),
+	source: z.string(),
+	target: z.string(),
+});
+
+export const GraphSchema = z.object({
+	nodes: z.array(GraphNodeSchema),
+	edges: z.array(GraphEdgeSchema),
+	categories: z.array(z.object({ name: z.string() })),
+});
+export type Graph = z.infer<typeof GraphSchema>;
 
 export type ChartData =
 	| { kind: "category"; points: CategoryPoint[] }

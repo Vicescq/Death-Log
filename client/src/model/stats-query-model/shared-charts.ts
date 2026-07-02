@@ -1,27 +1,37 @@
-import type { CategoryPoint, SunburstNode, ScatterPoint } from "./chart";
-import type { ChartType } from "./chart-spec";
-import type { ChartTab } from "./tabs";
+import z from "zod";
+import {
+	CategoryPointSchema,
+	SunburstNodeSchema,
+	ScatterPointSchema,
+} from "./chart";
+import { CHART_TYPES } from "./chart-spec";
 
-// all listed due to C# typing system
-export type SharedChartSpec = {
-	type: ChartType;
-	title: string; // owner's timezone is baked in for temporal charts
-	calendarRange?: string;
-	data: {
-		category?: CategoryPoint[];
-		sunburst?: SunburstNode[];
-		scatter?: ScatterPoint[];
-	};
-};
+const SharedChartSpecSchema = z.object({
+	type: z.enum(CHART_TYPES),
+	title: z.string(), // owner's timezone is baked in for temporal charts
+	calendarRange: z.string().optional(),
+	data: z.object({
+		category: z.array(CategoryPointSchema).nullish(),
+		sunburst: z.array(SunburstNodeSchema).nullish(),
+		scatter: z.array(ScatterPointSchema).nullish(),
+	}),
+});
+export type SharedChartSpec = z.infer<typeof SharedChartSpecSchema>;
 
-export type SharedChartSlot = {
-	id: string;
-	tab: ChartTab;
-	spec: SharedChartSpec;
-};
+const SharedChartSlotSchema = z.object({
+	id: z.string(),
+	tab: z.enum(["Overview", "Specialized"]),
+	spec: SharedChartSpecSchema,
+});
+export type SharedChartSlot = z.infer<typeof SharedChartSlotSchema>;
 
 export type SharedProfile = {
 	chartSlots: SharedChartSlot[];
-	// treemap: null;
-	// nodemap: null;
 };
+
+export const SharedProfileViewSchema = z.object({
+	followerCount: z.number(),
+	followingCount: z.number(),
+	chartSlots: z.array(SharedChartSlotSchema),
+});
+export type SharedProfileView = z.infer<typeof SharedProfileViewSchema>;

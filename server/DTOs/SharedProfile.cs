@@ -70,6 +70,12 @@ public record SharedChartSlot(
     [Required] SharedChartSpec Spec
 );
 
+public record SharedProfileView(
+    int FollowerCount,
+    int FollowingCount,
+    List<SharedChartSlot> ChartSlots
+);
+
 public record SharedProfile
 {
     [Required]
@@ -84,19 +90,16 @@ public record SharedProfile
 
             bool isValidCategoryPoint =
                 spec.Data.Category != null
-                && spec.Data.Category.Count >= 1
                 && spec.Data.Scatter == null
                 && spec.Data.Sunburst == null;
 
             bool isValidSunburstNode =
                 spec.Data.Sunburst != null
-                && spec.Data.Sunburst.Count >= 1
                 && spec.Data.Scatter == null
                 && spec.Data.Category == null;
 
             bool isValidScatterPoint =
                 spec.Data.Scatter != null
-                && spec.Data.Scatter.Count >= 1
                 && spec.Data.Category == null
                 && spec.Data.Sunburst == null;
 

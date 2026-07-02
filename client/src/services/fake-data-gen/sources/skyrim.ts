@@ -1,0 +1,52 @@
+import type { GameSource } from "../types";
+
+export const skyrim: GameSource = {
+	gameName: "Skyrim",
+	remarkPool: [
+		"Fus Ro Dah'd me",
+		"Frost breath got me",
+		"Draugr shout stun",
+		"Fall damage again",
+		"Poison dart trap",
+		"Vampire drain",
+		"Bandit ambush",
+		"Underleveled again",
+	],
+	groupTitlePool: [
+		"Main Quest Line",
+		"Civil War Questline",
+		"Dragonborn DLC",
+	],
+	profilePool: [
+		{ name: "Dragonborn Playthrough" },
+		{ name: "Stealth Archer Build" },
+		{ name: "Legendary Difficulty Run" },
+		{ name: "Requiem Modded Save" },
+		{ name: "Vampire Lord Run" },
+	],
+	subjectPool: [
+		{ name: "Diplomatic Immunity", context: "Other" },
+		{ name: "The World-Eater's Eyrie", context: "Other" },
+		{ name: "A Cornered Rat", context: "Other" },
+		{ name: "Blood on the Ice", context: "Other" },
+		{ name: "The Man Who Cried Wolf", context: "Other" },
+		{ name: "Repairing the Phial", context: "Other" },
+		{ name: "Under Saarthal", context: "Other" },
+		{ name: "The Fallen", context: "Other" },
+		{ name: "With Friends Like These...", context: "Other" },
+		{ name: "Boethiah's Calling", context: "Other" },
+		{ name: "Alduin", context: "Boss" },
+		{ name: "Miraak", context: "Boss" },
+		{ name: "Karstaag", context: "Boss" },
+		{ name: "Ebony Warrior", context: "Boss" },
+		{ name: "Draugr Deathlord", context: "Mini Boss", reoccurring: true },
+		{
+			name: "Forsworn Raiders",
+			context: "Generic Enemy",
+			reoccurring: true,
+		},
+		{ name: "Falmer", context: "Generic Enemy", reoccurring: true },
+		{ name: "Blackreach", context: "Location" },
+		{ name: "Labyrinthian", context: "Location" },
+	],
+};

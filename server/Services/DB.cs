@@ -63,6 +63,10 @@ public class GeneralExceptionHandler
         {
             await action();
         }
+        catch (OperationCanceledException)
+        {
+            // swallows error to avoid logging spam
+        }
         catch (DbUpdateException e)
         {
             logger.LogCritical(e, "Database update failed");

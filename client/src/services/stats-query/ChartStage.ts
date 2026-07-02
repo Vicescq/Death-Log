@@ -3,8 +3,10 @@ import type { ChartSpec } from "../../model/stats-query-model/chart-spec";
 import type {
 	CategoryPoint,
 	ChartData,
+	Graph,
 	SunburstNode,
 } from "../../model/stats-query-model/chart";
+import type { SharedChartSpec } from "../../model/stats-query-model/shared-charts";
 
 export class ChartStage {
 	static render(
@@ -38,6 +40,30 @@ export class ChartStage {
 		return data.kind === "sunburst"
 			? data.nodes.length === 0
 			: data.points.length === 0;
+	}
+
+	static renderShared(
+		spec: SharedChartSpec,
+		range: string,
+	): EChartsOption | null {
+		const data = ChartStage.toChartData(spec);
+		return ChartStage.render(
+			{
+				type: spec.type,
+				title: spec.title,
+				table: "deaths",
+				sql: "",
+				calendarRange: spec.calendarRange,
+			},
+			data,
+			range,
+		);
+	}
+
+	private static toChartData(spec: SharedChartSpec): ChartData {
+		if (spec.data.sunburst)
+			return { kind: "sunburst", nodes: spec.data.sunburst };
+		return { kind: "category", points: spec.data.category ?? [] };
 	}
 
 	private static barChart(data: CategoryPoint[]): EChartsOption {
@@ -193,6 +219,59 @@ export class ChartStage {
 				},
 			],
 			tooltip: { trigger: "item", renderMode: "richText" },
+		};
+	}
+
+	static renderGraph(graph: Graph): EChartsOption {
+		return ChartStage.graphChart(graph);
+	}
+
+	private static graphChart(
+		graph: Graph,
+		labelIsDisplayedOverride = false,
+	): EChartsOption {
+		const labelIsDisplayed =
+			graph.nodes.length <= 100 || labelIsDisplayedOverride;
+
+		return {
+			tooltip: { renderMode: "richText" },
+			legend: [{ data: graph.categories.map((c) => c.name) }],
+			series: [
+				{
+					type: "graph",
+					layout: "force",
+					roam: true,
+					draggable: true,
+					label: {
+						show: labelIsDisplayed,
+						position: "right",
+						color: "#00FFF2",
+						fontSize: 19,
+					},
+					force: {
+						repulsion: 500,
+						edgeLength: [60, 160],
+						gravity: 0.1,
+					},
+					emphasis: { focus: "adjacency" },
+					lineStyle: { color: "source", curveness: 0.1 },
+					data: graph.nodes.map((n) => ({
+						id: n.id,
+						name: n.name,
+						value: n.value,
+						symbolSize: n.symbolSize,
+						category: n.category,
+					})),
+					links: graph.edges.map((e) => ({
+						source: e.source,
+						target: e.target,
+					})),
+					categories: graph.categories,
+					itemStyle: {
+						// color: "#00FFBA"
+					},
+				},
+			],
 		};
 	}
 }

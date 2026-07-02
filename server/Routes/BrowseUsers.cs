@@ -2,20 +2,28 @@ using Microsoft.EntityFrameworkCore;
 
 public class BrowseUsers
 {
-    public static async Task<IResult> Browse(DatabaseContext dbContext, CancellationToken ct)
-    {
-        return Results.Ok(new DiscoveredUsers(await BrowseRandomly(dbContext, ct), []));
-    }
-
-    private static async Task<List<DiscoveredUser>> BrowseRandomly(
+    public static async Task<IResult> Browse(
+        string? exclude,
         DatabaseContext dbContext,
         CancellationToken ct
     )
     {
-        var users = await dbContext
-            .Users.OrderBy(user => EF.Functions.Random())
-            .Take(50)
-            .ToListAsync(ct);
+        return Results.Ok(new DiscoveredUsers(await BrowseRandomly(dbContext, exclude, ct), []));
+    }
+
+    private static async Task<List<DiscoveredUser>> BrowseRandomly(
+        DatabaseContext dbContext,
+        string? exclude,
+        CancellationToken ct
+    )
+    {
+        var query = dbContext.Users.AsQueryable();
+        if (exclude != null)
+        {
+            query = query.Where(user => user.Username != exclude);
+        }
+
+        var users = await query.OrderBy(user => EF.Functions.Random()).Take(50).ToListAsync(ct);
 
         var ids = users.Select(user => user.Id).ToList();
 

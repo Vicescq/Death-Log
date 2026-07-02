@@ -1,18 +1,19 @@
 import z from "zod";
 import type { DistinctTreeNode } from "../../model/tree-node-model/TreeNodeSchema";
 import { DistinctTreeNodeShapeSchema } from "../../model/tree-node-model/DistinctTreeNodeShapeSchema";
+import { migrateBackupNodes } from "./backupMigrations";
 import LocalDB from "../../services/LocalDB";
 import { addLeadingZeroes } from "../../utils/date";
 
 const BACKUP_DETAILS =
 	"Please do not edit this JSON in a significant way. Doing so might corrupt the data and importing this file in the site will no longer work.";
 
-const DeathLogBackupSchema = z.strictObject({
+const DeathLogBackupEnvelopeSchema = z.strictObject({
 	type: z.literal("DEATH-LOG Backup"),
 	version: z.number(),
 	details: z.literal(BACKUP_DETAILS),
 	date: z.string(),
-	data: z.array(DistinctTreeNodeShapeSchema),
+	data: z.array(z.record(z.string(), z.unknown())),
 });
 
 type DeathLogBackup = {
@@ -29,20 +30,32 @@ type DeathLogBackupWrapper = {
 };
 
 export async function processImportedFile(importedFile: File) {
-	const parsed = DeathLogBackupSchema.safeParse(
+	const envelope = DeathLogBackupEnvelopeSchema.safeParse(
 		JSON.parse(await importedFile.text()),
 	);
-	if (!parsed.success) {
+	if (!envelope.success) {
 		throw new Error("Invalid JSON");
 	}
 
-	if (parsed.data.version !== LocalDB.dbVersion()) {
-		// TODO: run indexedb or any other migrations here
-
+	const currentVersion = LocalDB.dbVersion();
+	if (envelope.data.version > currentVersion) {
 		throw new Error("Invalid JSON");
 	}
 
-	await LocalDB.clearAndInsertData(parsed.data.data);
+	const migratedNodes = migrateBackupNodes(
+		envelope.data.data,
+		envelope.data.version,
+		currentVersion,
+	);
+
+	const nodesResult = z
+		.array(DistinctTreeNodeShapeSchema)
+		.safeParse(migratedNodes);
+	if (!nodesResult.success) {
+		throw new Error("Invalid JSON");
+	}
+
+	await LocalDB.clearAndInsertData(nodesResult.data);
 }
 
 export async function createDeathLogBackup(): Promise<DeathLogBackupWrapper> {
@@ -64,4 +77,15 @@ export async function createDeathLogBackup(): Promise<DeathLogBackupWrapper> {
 
 	const fileName = `Death Log ${year}_${addLeadingZeroes(month)}_${addLeadingZeroes(day)} ${date.toTimeString()}`;
 	return { name: fileName, json: finalJSON };
+}
+
+export function formatBytes(bytes: number): string {
+	const mb = bytes / 1024 ** 2;
+	return `${mb.toFixed(1)} MB`;
+}
+
+export function barColor(percentage: number): string {
+	if (percentage >= 90) return "progress-error";
+	if (percentage >= 70) return "progress-warning";
+	return "progress-primary";
 }

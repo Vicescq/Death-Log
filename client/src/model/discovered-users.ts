@@ -12,5 +12,7 @@ export const DiscoveredUsersSchema = z.object({
 	familiarUsers: z.array(DiscoveredUserSchema),
 });
 
+export const DiscoveredUserListSchema = z.array(DiscoveredUserSchema);
+
 export type DiscoveredUser = z.infer<typeof DiscoveredUserSchema>;
 export type DiscoveredUsers = z.infer<typeof DiscoveredUsersSchema>;

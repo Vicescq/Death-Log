@@ -6,13 +6,21 @@ import { useDeathLogStore } from "../../stores/useDeathLogStore";
 import skull from "../../assets/skull.svg";
 import NavBar from "../../components/nav-bar/NavBar";
 import DataManagementModalBody from "./DataManagementModalBody";
+import StorageUsage from "./StorageUsage";
 import type { FeedbackToastState } from "../../components/FeedbackToast";
 import FeedbackToast from "../../components/FeedbackToast";
 import { createDeathLogBackup, processImportedFile } from "./utils";
+import FakeData from "../../services/fake-data-gen/FakeData";
 
-export type DataManagementAction = "import" | "delete";
+export type DataManagementAction =
+	| "import"
+	| "delete"
+	| "seed"
+	| "undo"
+	| "keep";
 
 export default function DataManagement() {
+	const tree = useDeathLogStore((state) => state.tree);
 	const refreshTree = useDeathLogStore((state) => state.refreshTree);
 	const importRef = useRef<HTMLInputElement>(null);
 	const modalRef = useRef<HTMLDialogElement>(null);
@@ -116,12 +124,98 @@ export default function DataManagement() {
 		}
 	}
 
+	async function handleSeed() {
+		try {
+			await LocalDB.clearAndInsertData(FakeData.generate());
+			await refreshTree();
+			modalRef.current?.close();
+
+			setFeedbackToast({
+				displayed: true,
+				css: "success",
+				msg: "Sample data generated! Check out the stats page.",
+			});
+		} catch (e) {
+			if (e instanceof Error) {
+				modalRef.current?.close();
+
+				setFeedbackToast({
+					displayed: true,
+					css: "error",
+					msg: "Something unexpected happened while generating sample data. Please try again.",
+				});
+			}
+		}
+	}
+
+	async function handleUndoFakeData() {
+		try {
+			const currentNodes = Array.from(tree.values()).filter(
+				(node) => node.id !== "ROOT_NODE",
+			);
+			await LocalDB.clearAndInsertData(
+				FakeData.removeFakeNodes(currentNodes),
+			);
+			await refreshTree();
+			modalRef.current?.close();
+
+			setFeedbackToast({
+				displayed: true,
+				css: "success",
+				msg: "Fake data removed!",
+			});
+		} catch (e) {
+			if (e instanceof Error) {
+				modalRef.current?.close();
+
+				setFeedbackToast({
+					displayed: true,
+					css: "error",
+					msg: "Something unexpected happened while removing fake data. Please try again.",
+				});
+			}
+		}
+	}
+
+	async function handleKeepFakeData() {
+		try {
+			const currentNodes = Array.from(tree.values()).filter(
+				(node) => node.id !== "ROOT_NODE",
+			);
+			await LocalDB.clearAndInsertData(FakeData.keepFakeNodes(currentNodes));
+			await refreshTree();
+			modalRef.current?.close();
+
+			setFeedbackToast({
+				displayed: true,
+				css: "success",
+				msg: "Fake data is now permanent!",
+			});
+		} catch (e) {
+			if (e instanceof Error) {
+				modalRef.current?.close();
+
+				setFeedbackToast({
+					displayed: true,
+					css: "error",
+					msg: "Something unexpected happened. Please try again.",
+				});
+			}
+		}
+	}
+
 	let templateHeader = "Confirm";
 	let header = "";
 	if (action == "delete") {
 		header = `${templateHeader} Deletion`;
 	} else if (action == "import") {
 		header = `${templateHeader} Import`;
+	} else if (action == "seed") {
+		header = `${templateHeader} Sample Data`;
+	} else if (action == "undo") {
+		header = `${templateHeader} Undo`;
+	} else if (action == "keep") {
+		header = `${templateHeader} Keep`;
 	} else {
 		header = "__DEV_ERROR__";
 	}
@@ -147,6 +241,9 @@ export default function DataManagement() {
 							modalRef.current?.close();
 						}}
 						onDelete={handleDelete}
+						onSeed={handleSeed}
+						onUndoFakeData={handleUndoFakeData}
+						onKeepFakeData={handleKeepFakeData}
 					/>
 				}
 				header={header}
@@ -175,6 +272,41 @@ export default function DataManagement() {
 						>
 							EXPORT
 						</button>
+
+						<StorageUsage />
+
+						<div className="divider" />
+
+						<button
+							className="btn btn-info text-xl"
+							onClick={() => {
+								setAction("seed");
+								modalRef.current?.showModal();
+							}}
+						>
+							SEED FAKE DATA
+						</button>
+
+						<button
+							className="btn btn-info text-xl"
+							onClick={() => {
+								setAction("undo");
+								modalRef.current?.showModal();
+							}}
+						>
+							UNDO FAKE DATA
+						</button>
+
+						<button
+							className="btn btn-info text-xl"
+							onClick={() => {
+								setAction("keep");
+								modalRef.current?.showModal();
+							}}
+						>
+							KEEP FAKE DATA
+						</button>
+
 						<div className="divider">
 							<img src={skull} alt="" />
 						</div>
@@ -201,6 +333,15 @@ export default function DataManagement() {
 					>
 						GO TO USER SETTINGS
 					</Link>
+
+					<div className="divider"></div>
+					<p className="mb-3 text-sm opacity-70 sm:text-center">
+						Not sure what any of these buttons do? Check the{" "}
+						<Link to="/faq" className="link link-primary">
+							FAQ
+						</Link>
+						.
+					</p>
 				</div>
 			</div>
 

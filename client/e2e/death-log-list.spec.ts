@@ -32,7 +32,7 @@ test("Simple Add | Persistence | Completion | Tree Navigation", async ({
 				.filter({ hasText: addedGame }),
 		).toBeVisible();
 		await page.goBack();
-		await startPOM.goto(CONSTANTS.START.GUEST_BTN);
+		await startPOM.goto(CONSTANTS.START.CONTINUE);
 		await expect(
 			page
 				.getByTestId("virtuoso-item-list")
@@ -271,9 +271,8 @@ test("Search Function", async ({ page, guestSetup }) => {
 
 test("Filter", async ({ page, guestSetup, browserName, isMobile }) => {
 	// the following are particularly very slow in this test
-	if (browserName === "webkit") test.setTimeout(200_000); 
-	if (browserName === "webkit" && isMobile) test.setTimeout(100_000); 
-
+	if (browserName === "webkit") test.setTimeout(200_000);
+	if (browserName === "webkit" && isMobile) test.setTimeout(100_000);
 
 	const toolbarPOM = new ToolbarPageObject(page);
 	const cardPOM = new CardPageObject(page);

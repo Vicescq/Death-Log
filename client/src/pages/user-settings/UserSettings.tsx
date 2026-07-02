@@ -1,9 +1,10 @@
 import { Link } from "react-router";
-import { useUser } from "@clerk/clerk-react";
+import { ClerkLoaded, useUser } from "@clerk/react";
 import NavBar from "../../components/nav-bar/NavBar";
+import Spinner from "../../components/Spinner";
 import useOnlineStatus from "../../hooks/useOnlineStatus";
 import AccountSettings from "./AccountSettings";
-import SignInCard from "./SignInCard";
+import AuthCard from "./AuthCard";
 
 export default function UserSettings() {
 	const { isLoaded, isSignedIn } = useUser();
@@ -12,20 +13,25 @@ export default function UserSettings() {
 	return (
 		<>
 			<NavBar />
-			<div className="bg-base-100 mt-14 flex items-center justify-center">
-				<div className="w-76 sm:w-md">
+			<div className="bg-base-100 mt-14 flex flex-col items-center justify-center">
+				<div className="mb-12">
 					<h1 className="mb-10 text-5xl font-bold underline sm:text-center">
 						{isSignedIn ? "User Settings" : "Account"}
 					</h1>
 
-					{isSignedIn ? (
-						<AccountSettings />
-					) : !isLoaded && online ? (
-						<div className="flex justify-center py-8">
-							<span className="loading loading-spinner loading-lg" />
+					{!online ? (
+						<div className="btn-warning btn w-full text-sm">
+							You're offline, reconnect in order to access these
+							settings.
 						</div>
+					) : isSignedIn ? (
+						<ClerkLoaded>
+							<AccountSettings />
+						</ClerkLoaded>
+					) : !isLoaded ? (
+						<Spinner className="flex justify-center py-8" />
 					) : (
-						<SignInCard />
+						<AuthCard />
 					)}
 
 					<div className="divider"></div>

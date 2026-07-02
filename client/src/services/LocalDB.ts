@@ -16,6 +16,12 @@ import {
 
 export type DeathLogViewPrefs<T> = Record<DeathLogViewType, T>;
 
+export type StorageEstimateInfo = {
+	usageBytes: number;
+	quotaBytes: number;
+	percentage: number;
+};
+
 const ChartOverrideSchema = z.object({
 	showUnreliable: z.boolean().optional(),
 });
@@ -244,6 +250,34 @@ export default class LocalDB {
 			if (prefixes.some((prefix) => key.startsWith(prefix))) {
 				localStorage.removeItem(key);
 			}
+		}
+	}
+
+	static async showEstimatedQuota(): Promise<StorageEstimateInfo | null> {
+		if (navigator.storage && navigator.storage.estimate) {
+			const estimation = await navigator.storage.estimate();
+
+			if (
+				estimation.quota != undefined &&
+				estimation.usage != undefined
+			) {
+				return {
+					usageBytes: estimation.usage,
+					quotaBytes: estimation.quota,
+					percentage:
+						estimation.quota === 0
+							? 0
+							: (estimation.usage / estimation.quota) * 100,
+				};
+			} else {
+				console.error(
+					"StorageManager found but estimation.quota and estimation.usage not found",
+				);
+				return null;
+			}
+		} else {
+			console.error("StorageManager not found");
+			return null;
 		}
 	}
 }

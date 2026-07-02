@@ -39,7 +39,7 @@ const base: ChartSpec = {
 	sql: "SELECT subjectName AS x, COUNT(*) AS y FROM ? GROUP BY subjectName",
 };
 
-describe("OverrideStage.resolve — no token", () => {
+describe("OverrideStage.resolve: no token", () => {
 	test("no {{REL}} token → spec unchanged", () => {
 		mockGet.mockReturnValue({});
 		expect(OverrideStage.resolve("id", base)).toEqual(base);
@@ -54,7 +54,7 @@ const relSpec: ChartSpec = {
 	whenReliable: "timestampRel = TRUE",
 };
 
-describe("OverrideStage.resolve — {{REL}} token", () => {
+describe("OverrideStage.resolve: {{REL}} token", () => {
 	test("whenReliable + showUnreliable:false → predicate injected", () => {
 		mockGet.mockReturnValue({ showUnreliable: false });
 		const resolved = OverrideStage.resolve("id", relSpec);

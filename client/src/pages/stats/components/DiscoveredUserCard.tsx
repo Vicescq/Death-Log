@@ -3,8 +3,8 @@ import type { DiscoveredUser } from "../../../model/discovered-users";
 
 export default function DiscoveredUserCard({ user }: { user: DiscoveredUser }) {
 	return (
-		<Link to={"/"}>
-			<div className="border-base-300 bg-base-300 hover:bg-primary rounded-2xl border p-5 shadow-sm hover:border-2 hover:text-black">
+		<Link to={`/profiles/${user.username}/stats`}>
+			<div className="border-base-300 bg-base-300 hover:bg-primary rounded-2xl border p-5 shadow-sm hover:text-black">
 				<div className="flex items-start justify-between gap-3">
 					<h3 className="truncate text-lg font-bold">
 						{user.username}

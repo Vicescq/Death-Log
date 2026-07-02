@@ -24,6 +24,7 @@ import ToolbarSort from "./ToolbarSort";
 import { getDeathlogViewType } from "../utils";
 import useMediaQuery from "../../../hooks/useMediaQuery";
 import { CONSTANTS } from "../../../../shared/constants";
+import { Z_INDICES } from "../../../../shared/z-indices";
 
 type Props = {
 	parent: DistinctTreeNode;
@@ -160,7 +161,9 @@ export default function Toolbar({
 
 	return (
 		<>
-			<div className="fixed bottom-4 left-1/2 z-5 w-max -translate-x-1/2">
+			<div
+				className={`fixed bottom-4 left-1/2 w-max -translate-x-1/2 ${Z_INDICES.TOOLBAR_FAB}`}
+			>
 				<ul className="menu menu-xs menu-horizontal bg-neutral rounded-box gap-1">
 					<li>
 						<button

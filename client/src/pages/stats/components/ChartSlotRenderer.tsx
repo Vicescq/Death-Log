@@ -1,26 +1,25 @@
 import { useMemo, useRef, useState } from "react";
-import EChartsReact from "react-echarts-library";
-import darkerChalk from "../../../../shared/darker_chalk.json";
-import { defaultEchartStyling } from "../../../../shared/defaults";
 import { StatsPipeline } from "../../../services/stats-query/StatsPipeline";
 import { OverrideStage } from "../../../services/stats-query/OverrideStage";
-import useChartAnimation from "../hooks/useChartAnimation";
 import { useCalendarDate } from "../hooks/useCalendarDate";
-import ChartCard from "./ChartCard";
-import ChartEmpty from "./ChartEmpty";
-import CalendarHeader from "./CalendarHeader";
+import ChartCanvas from "./ChartCanvas";
 import ChartSettingsForm from "./ChartSettingsForm";
 import Modal from "../../../components/Modal";
 import { useStatsContext } from "../hooks/useStatsContext";
 import type { ChartSlot } from "../../../model/stats-query-model/chart";
+import type { Tables } from "../../../model/stats-query-model/chart";
+
+// used only for TS type narrowing, not used in runtime
+const EMPTY_TABLES: Tables = { deaths: [], subjects: [] };
 
 export default function ChartSlotRenderer({ slot }: { slot: ChartSlot }) {
-	const { tables, isSharedPage } = useStatsContext();
+	const ctx = useStatsContext();
+	const tables = ctx.isSharedPage ? EMPTY_TABLES : ctx.tables;
+
 	const { currentDate, setCurrentDate, year, month } = useCalendarDate(
 		slot.spec.calendarRange,
 	);
 	const settingsModalRef = useRef<HTMLDialogElement>(null);
-
 	const [overrideVersion, setOverrideVersion] = useState(0);
 
 	const spec = useMemo(
@@ -37,41 +36,26 @@ export default function ChartSlotRenderer({ slot }: { slot: ChartSlot }) {
 	);
 
 	const option = useMemo(
-		() => StatsPipeline.Chart(spec, data, `${year}-${month}`),
+		() => StatsPipeline.Chart({ spec, data, range: `${year}-${month}` }),
 		[spec, data, year, month],
 	);
 
-	const animatedOption = useChartAnimation(option);
-
 	return (
 		<>
-			<ChartCard
+			<ChartCanvas
 				title={spec.title}
+				option={option}
+				isCalendar={isCalendar}
+				currentDate={currentDate}
+				onDateChange={setCurrentDate}
 				onSettings={
-					hasReliability && !isSharedPage
+					hasReliability
 						? () => settingsModalRef.current?.showModal()
 						: undefined
 				}
-			>
-				{isCalendar && (
-					<CalendarHeader
-						currentDate={currentDate}
-						onChange={setCurrentDate}
-					/>
-				)}
-				{animatedOption === null ? (
-					<ChartEmpty />
-				) : (
-					<EChartsReact
-						option={animatedOption}
-						theme={darkerChalk}
-						style={defaultEchartStyling}
-						notMerge
-					/>
-				)}
-			</ChartCard>
+			/>
 
-			{hasReliability && !isSharedPage && (
+			{hasReliability && (
 				<Modal
 					ref={settingsModalRef}
 					header={`${spec.title} Settings`}

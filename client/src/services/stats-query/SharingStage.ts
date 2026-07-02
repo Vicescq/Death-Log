@@ -11,7 +11,7 @@ export class SharingStage {
 		const spec_: SharedChartSpec = {
 			type: spec.type,
 			title: spec.temporal
-				? `${spec.title} (${SharingStage.timezone()})`
+				? `${spec.title} [${SharingStage.timezone()}]`
 				: spec.title,
 			data:
 				data.kind === "category"

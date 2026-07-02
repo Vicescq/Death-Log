@@ -31,7 +31,11 @@ export default function CalendarHeader({ currentDate, onChange }: Props) {
 			<button
 				onClick={() =>
 					onChange(
-						new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1),
+						new Date(
+							currentDate.getFullYear(),
+							currentDate.getMonth() - 1,
+							1,
+						),
 					)
 				}
 				className="btn btn-sm gap-2"
@@ -45,7 +49,11 @@ export default function CalendarHeader({ currentDate, onChange }: Props) {
 				value={currentDate.getMonth()}
 				onChange={(e) =>
 					onChange(
-						new Date(currentDate.getFullYear(), parseInt(e.target.value), 1),
+						new Date(
+							currentDate.getFullYear(),
+							parseInt(e.target.value),
+							1,
+						),
 					)
 				}
 				className="select select-sm select-bordered max-w-xs flex-1"
@@ -61,7 +69,11 @@ export default function CalendarHeader({ currentDate, onChange }: Props) {
 				value={currentDate.getFullYear()}
 				onChange={(e) =>
 					onChange(
-						new Date(parseInt(e.target.value), currentDate.getMonth(), 1),
+						new Date(
+							parseInt(e.target.value),
+							currentDate.getMonth(),
+							1,
+						),
 					)
 				}
 				className="select select-sm select-bordered max-w-xs flex-1"
@@ -76,7 +88,11 @@ export default function CalendarHeader({ currentDate, onChange }: Props) {
 			<button
 				onClick={() =>
 					onChange(
-						new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1),
+						new Date(
+							currentDate.getFullYear(),
+							currentDate.getMonth() + 1,
+							1,
+						),
 					)
 				}
 				className="btn btn-sm gap-2"
@@ -89,7 +105,9 @@ export default function CalendarHeader({ currentDate, onChange }: Props) {
 			<button
 				onClick={() => {
 					const today = new Date();
-					onChange(new Date(today.getFullYear(), today.getMonth(), 1));
+					onChange(
+						new Date(today.getFullYear(), today.getMonth(), 1),
+					);
 				}}
 				className="btn btn-sm btn-ghost gap-1"
 				aria-label="Reset to current month"

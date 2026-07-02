@@ -8,7 +8,7 @@ import type { Subject } from "./SubjectSchema";
 
 export const TreeNodeShapeSchema = z.object({
 	type: z.literal(["game", "profile", "subject", "ROOT_NODE"]),
-	id: z.string().length(8), // add validation?
+	id: z.string().length(8),
 	parentID: z.string(),
 	childIDS: z.array(z.string()),
 	name: z
@@ -27,6 +27,7 @@ export const TreeNodeShapeSchema = z.object({
 	dateEnd: z.iso.datetime({ error: CONSTANTS.ERROR.DATE }).nullable(),
 	dateStartRel: z.boolean(),
 	dateEndRel: z.boolean(),
+	isFake: z.boolean(),
 });
 
 export const createTreeNodeSchema = (

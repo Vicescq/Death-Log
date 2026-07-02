@@ -5,7 +5,6 @@ import { CONSTANTS } from "../../shared/constants";
 export default function ErrorPage({ error }: { error: unknown }) {
 	const navigate = useNavigate();
 
-	// picked once per mount — a 50/50 coin flip, stable across re-renders
 	const ICONS = ["(ಠ_ಠ)", "(˃̣̣̥﹏˂̣̣̥)"];
 	const [icon] = useState(
 		() => ICONS[Math.floor(Math.random() * ICONS.length)],

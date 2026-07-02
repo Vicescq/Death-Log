@@ -16,7 +16,8 @@ export default function useChartAnimation(optionToSet: EChartsOption | null) {
 			setOption(null);
 			return;
 		}
-		delay(25).then(() => setOption(optionToSet));
+		const id = setTimeout(() => setOption(optionToSet), 25);
+		return () => clearTimeout(id);
 	}, [optionToSet]);
 
 	return option;

@@ -1,11 +1,16 @@
 using System.Net;
+using System.Security.Claims;
 using System.Text;
 using Clerk.BackendAPI.Helpers.Jwks;
 using Svix;
 
 public class UserAuthentication
 {
-    public static async Task<bool> IsSignedInAsync(HttpRequest request, string allowedOrigin)
+    public static async Task<bool> IsSignedInAsync(
+        HttpRequest request,
+        string allowedOrigin,
+        bool extractCaller = false
+    )
     {
         var options = new AuthenticateRequestOptions(
             secretKey: System.Environment.GetEnvironmentVariable("CLERK_SECRET_KEY"),
@@ -13,6 +18,11 @@ public class UserAuthentication
         );
 
         var requestState = await AuthenticateRequest.AuthenticateRequestAsync(request, options);
+
+        if (extractCaller && requestState.IsAuthenticated)
+            request.HttpContext.Items["clerkUserId"] = requestState.Claims?.FindFirstValue(
+                ClaimTypes.NameIdentifier
+            );
 
         return requestState.IsAuthenticated;
     }
@@ -37,7 +47,11 @@ public class AuthMiddleware
             return;
         }
 
-        var isSignedIn = await UserAuthentication.IsSignedInAsync(ctx.Request, _allowedOrigin);
+        var isSignedIn = await UserAuthentication.IsSignedInAsync(
+            ctx.Request,
+            _allowedOrigin,
+            RequiresCallerIdentity(ctx.Request)
+        );
         if (isSignedIn)
             await _next(ctx);
         else
@@ -48,12 +62,27 @@ public class AuthMiddleware
         return;
     }
 
+    private static bool RequiresCallerIdentity(HttpRequest request) =>
+        request.Path.StartsWithSegments("/follows") || request.Path.StartsWithSegments("/profiles");
+
     private static bool IsPublicRoute(HttpRequest request)
     {
+        if (request.Path == "/health")
+            return true;
+
         if (request.Path == "/users")
             return true;
 
         if (HttpMethods.IsGet(request.Method) && request.Path.StartsWithSegments("/profiles"))
+            return true;
+
+        if (
+            HttpMethods.IsGet(request.Method)
+            && (
+                request.Path.StartsWithSegments("/followers")
+                || request.Path.StartsWithSegments("/following")
+            )
+        )
             return true;
 
         return false;

@@ -1,10 +1,25 @@
 import { createContext, useContext } from "react";
 import type { Tables } from "../../../model/stats-query-model/chart";
+import type { SharedProfileView } from "../../../model/stats-query-model/shared-charts";
 
-export type StatsContextState = {
-	tables: Tables;
-	isSharedPage?: boolean;
+export type VisitorStatus = "loading" | "ready" | "notfound" | "error";
+
+type BaseView = {
+	username: string;
+	status: VisitorStatus;
+	profile: SharedProfileView | null;
 };
+
+type LocalView = BaseView & {
+	isSharedPage: false;
+	tables: Tables;
+};
+
+type SharedView = BaseView & {
+	isSharedPage: true;
+};
+
+export type StatsContextState = LocalView | SharedView;
 
 export const StatsContext = createContext<StatsContextState | null>(null);
 

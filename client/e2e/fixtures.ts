@@ -16,10 +16,8 @@ export const test = base.extend<MyFixtures>({
 			}),
 		).toBeVisible();
 
-		await expect(page.getByRole("button")).toHaveText("Login with Google");
-
 		const startPOM = new StartPageObject(page);
-		await startPOM.goto(CONSTANTS.START.GUEST_BTN);
+		await startPOM.goto(CONSTANTS.START.CONTINUE);
 		await use();
 	},
 });

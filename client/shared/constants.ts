@@ -48,7 +48,7 @@ export const CONSTANTS = {
 		COMPLETION_CANCEL: "Cancel",
 	},
 	START: {
-		GUEST_BTN: "Continue as guest",
+		CONTINUE: "Continue",
 	},
 	PAGINATION_NAV: {
 		TURN_RIGHT_ARIA: "Turn Right Page",

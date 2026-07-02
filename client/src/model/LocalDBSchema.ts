@@ -15,3 +15,16 @@ export const db = new Dexie("DeathLogDB") as Dexie & {
 db.version(1).stores({
 	nodes: "&node_id, created_at, edited_at",
 });
+
+db.version(2)
+	.stores({ nodes: "&node_id, created_at, edited_at" })
+	.upgrade((tx) =>
+		tx
+			.table("nodes")
+			.toCollection()
+			.modify((entry: NodeEntry) => {
+				if (entry.node.isFake === undefined) {
+					entry.node.isFake = false;
+				}
+			}),
+	);

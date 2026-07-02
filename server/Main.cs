@@ -44,6 +44,8 @@ app.UseDatabaseErrorHandler();
 
 app.UseAuthMiddleware(allowedOrigin);
 
+app.MapGet("/health", () => Results.Ok());
+
 app.MapGet("/users", BrowseUsers.Browse);
 
 app.MapPost("/users", UserEventsQueue.Push);
@@ -53,5 +55,17 @@ app.MapPost("/profiles/{username}", ProfileSharing.PostProfile)
     .WithMetadata(new RequestSizeLimitAttribute(10485760));
 
 app.MapGet("/profiles/{username}", ProfileSharing.GetProfile);
+
+app.MapDelete("/profiles/{username}", ProfileSharing.DeleteProfile);
+
+app.MapGet("/followers/{username}", Follows.GetFollowers);
+
+app.MapGet("/following/{username}", Follows.GetFollowing);
+
+app.MapGet("/follows/{username}", Follows.GetFollowStatus);
+
+app.MapPost("/follows/{username}", Follows.Follow);
+
+app.MapDelete("/follows/{username}", Follows.Unfollow);
 
 app.Run();

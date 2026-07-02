@@ -1,0 +1,46 @@
+import type { GameSource } from "../types";
+
+export const rimworld: GameSource = {
+	gameName: "Rim World",
+	remarkPool: [
+		"Manhunter pack",
+		"Toxic fallout",
+		"Raid overwhelmed us",
+		"Infection spread",
+		"Solar flare chaos",
+		"Berserk colonist",
+		"Ate without a table",
+		"Bad armor roll",
+	],
+	groupTitlePool: ["Tribal Start", "Losing Colony", "Permadeath Run"],
+	profilePool: [
+		{ name: "Tribal Playthrough" },
+		{ name: "Ice Sheet Challenge" },
+		{ name: "Randy Random Save" },
+		{ name: "Losing is Fun Run" },
+		{ name: "Rich Explorer Start" },
+	],
+	subjectPool: [
+		{ name: "Pirate Raid", context: "Generic Enemy", reoccurring: true },
+		{ name: "Tribal Raid", context: "Generic Enemy", reoccurring: true },
+		{
+			name: "Manhunter Pack",
+			context: "Generic Enemy",
+			reoccurring: true,
+		},
+		{ name: "Infestation", context: "Generic Enemy", reoccurring: true },
+		{ name: "Sappers", context: "Generic Enemy", reoccurring: true },
+		{ name: "Siege", context: "Generic Enemy", reoccurring: true },
+		{ name: "Centipede Squad", context: "Mini Boss" },
+		{ name: "Scyther Squad", context: "Mini Boss" },
+		{ name: "Lancer Squad", context: "Mini Boss" },
+		{ name: "Mechanoid Cluster", context: "Boss" },
+		{ name: "Toxic Fallout", context: "Other" },
+		{ name: "Volcanic Winter", context: "Other" },
+		{ name: "Zzzt Malfunction", context: "Other" },
+		{ name: "Cold Snap", context: "Other" },
+		{ name: "Heat Wave", context: "Other" },
+		{ name: "Ancient Danger Vault", context: "Location" },
+		{ name: "Insect Hive", context: "Location" },
+	],
+};

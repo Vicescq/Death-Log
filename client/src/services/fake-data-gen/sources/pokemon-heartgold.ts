@@ -1,0 +1,55 @@
+import type { GameSource } from "../types";
+
+export const pokemonHeartGold: GameSource = {
+	gameName: "Pokemon HeartGold",
+	remarkPool: [
+		"Crit killed it",
+		"Bad type matchup",
+		"Confusion self-hit",
+		"Full para struggle",
+		"OHKO'd early",
+		"Bad switch-in",
+	],
+	groupTitlePool: ["Johto Gyms", "Elite Four Run", "Kanto Gyms"],
+	profilePool: [
+		{ name: "Nuzlocke Run" },
+		{ name: "Randomizer Nuzlocke" },
+		{ name: "Soul Link Nuzlocke" },
+		{ name: "Wedlocke Challenge" },
+		{ name: "Monotype Run" },
+		{ name: "Kaizo Nuzlocke" },
+		{ name: "Casual Playthrough" },
+	],
+	subjectPool: [
+		{ name: "Whitney's Miltank", context: "Boss" },
+		{ name: "Falkner", context: "Mini Boss" },
+		{ name: "Bugsy", context: "Mini Boss" },
+		{ name: "Morty", context: "Boss" },
+		{ name: "Chuck", context: "Boss" },
+		{ name: "Jasmine", context: "Boss" },
+		{ name: "Pryce", context: "Boss" },
+		{ name: "Clair", context: "Boss" },
+		{ name: "Lance", context: "Boss" },
+		{ name: "Sabrina", context: "Boss" },
+		{ name: "Blue", context: "Boss" },
+		{ name: "Red", context: "Boss" },
+		{
+			name: "Rival Battle",
+			context: "Generic Enemy",
+			reoccurring: true,
+		},
+		{
+			name: "Team Rocket Grunt",
+			context: "Generic Enemy",
+			reoccurring: true,
+		},
+		{
+			name: "Wild Encounter",
+			context: "Generic Enemy",
+			reoccurring: true,
+		},
+		{ name: "Mt. Silver", context: "Location" },
+		{ name: "Victory Road", context: "Location" },
+		{ name: "Union Cave", context: "Location" },
+	],
+};

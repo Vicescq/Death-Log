@@ -16,6 +16,11 @@ export const STATS_TABS = [
 		sharedPath: "/profiles/:username/stats/specialized",
 	},
 	{
+		label: "Graph",
+		localPath: "/stats/graph",
+		sharedPath: "/profiles/:username/stats/graph",
+	},
+	{
 		label: "Browse Profiles",
 		localPath: "/stats/browse-profiles",
 		sharedPath: "/profiles/:username/stats/browse-profiles",
@@ -24,4 +29,4 @@ export const STATS_TABS = [
 
 export type StatsTab = (typeof STATS_TABS)[number]["label"];
 
-export type ChartTab = Exclude<StatsTab, "Browse Profiles">;
+export type ChartTab = Exclude<StatsTab, "Browse Profiles" | "Graph">;

@@ -1,12 +1,16 @@
 import { Link, useLocation, useParams } from "react-router";
+import { useUser } from "@clerk/react";
 import { useStatsContext } from "../hooks/useStatsContext";
 import { STATS_TABS } from "../../../model/stats-query-model/tabs";
 
 export default function StatsNav() {
 	const { isSharedPage } = useStatsContext();
 	const { username } = useParams();
+	const { user } = useUser();
 	const location = useLocation();
 	const path = location.pathname.replace(/\/+$/, "");
+
+	const isOwnSharedPage = isSharedPage && user?.username === username;
 
 	const tabs = STATS_TABS.map((tab) => ({
 		to: isSharedPage
@@ -29,6 +33,16 @@ export default function StatsNav() {
 					</Link>
 				))}
 			</div>
+
+			{isSharedPage && !isOwnSharedPage && (
+				<Link
+					to="/stats"
+					className="btn btn-sm btn-accent hover:bg-accent hover:border-accent mb-2 sm:mb-0 sm:ml-auto"
+					role="tab"
+				>
+					← Back to my profile
+				</Link>
+			)}
 		</div>
 	);
 }

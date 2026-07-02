@@ -53,6 +53,7 @@ export function createRootNode() {
 		dateEnd: "",
 		dateStartRel: true,
 		dateEndRel: true,
+		isFake: false,
 	};
 	return rootNode;
 }
@@ -71,6 +72,7 @@ export function createGame(inputText: string, tree: Tree) {
 		dateEnd: null,
 		dateStartRel: true,
 		dateEndRel: true, // maybe should be null?
+		isFake: false,
 	};
 	return defaultGame;
 }
@@ -90,6 +92,7 @@ export function createProfile(inputText: string, parentID: string, tree: Tree) {
 		groupings: [],
 		dateStartRel: true,
 		dateEndRel: true,
+		isFake: false,
 	};
 	return defaultProfile;
 }
@@ -112,6 +115,7 @@ export function createSubject(inputText: string, parentID: string, tree: Tree) {
 		timeSpent: null,
 		dateStartRel: true,
 		dateEndRel: true,
+		isFake: false,
 	};
 	return defaultSubject;
 }
