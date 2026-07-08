@@ -3,6 +3,14 @@
 	themes: forest --default;
 }
 
+@font-face {
+	font-family: "Urbanist";
+	font-style: normal;
+	font-weight: 100 900;
+	src: url("/fonts/Urbanist-VariableFont_wght.woff2");
+	font-display: swap;
+}
+
 :root {
 	font-family: "Urbanist";
 	font-weight: 500;

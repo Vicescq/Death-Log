@@ -17,7 +17,8 @@ export type DataManagementAction =
 	| "delete"
 	| "seed"
 	| "undo"
-	| "keep";
+	| "keep"
+	| "cache";
 
 export default function DataManagement() {
 	const tree = useDeathLogStore((state) => state.tree);
@@ -98,10 +99,7 @@ export default function DataManagement() {
 
 	async function handleDelete() {
 		try {
-			// Full teardown: drop & recreate the DB (repairs corruption /
-			// version mismatch, and nukes every table) + clear all prefs.
-			await LocalDB.resetDatabase();
-			LocalDB.clearAllLocalPrefs();
+			await LocalDB.clearLocalData();
 
 			await refreshTree();
 			modalRef.current?.close();
@@ -206,6 +204,18 @@ export default function DataManagement() {
 		}
 	}
 
+	async function handleCacheClear() {
+		try {
+			await LocalDB.clearCache();
+		} catch (e) {
+			setFeedbackToast({
+				displayed: true,
+				css: "error",
+				msg: "Something unexpected happened. Please try again.",
+			});
+		}
+	}
+
 	let templateHeader = "Confirm";
 	let header = "";
 	if (action == "delete") {
@@ -218,6 +228,8 @@ export default function DataManagement() {
 		header = `${templateHeader} Undo`;
 	} else if (action == "keep") {
 		header = `${templateHeader} Keep`;
+	} else if (action == "cache") {
+		header = `${templateHeader} Cache Clear`;
 	} else {
 		header = "__DEV_ERROR__";
 	}
@@ -246,6 +258,7 @@ export default function DataManagement() {
 						onSeed={handleSeed}
 						onUndoFakeData={handleUndoFakeData}
 						onKeepFakeData={handleKeepFakeData}
+						onCacheClear={handleCacheClear}
 					/>
 				}
 				header={header}
@@ -273,6 +286,16 @@ export default function DataManagement() {
 							onClick={handleExport}
 						>
 							EXPORT
+						</button>
+
+						<button
+							className="btn btn-success text-xl"
+							onClick={() => {
+								setAction("cache");
+								modalRef.current?.showModal();
+							}}
+						>
+							CLEAR CACHE
 						</button>
 
 						<StorageUsage />

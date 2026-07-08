@@ -28,6 +28,7 @@ import PopularProfiles from "./pages/stats/layout/PopularProfiles.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { HEALTH_QUERY_KEY, healthQueryFn } from "./services/healthQuery.ts";
 import FakeDataBanner from "./components/FakeDataBanner.tsx";
+import ReloadPrompt from "./components/ReloadPrompt.tsx";
 
 function ThrowError(): never {
 	throw new Error("Deliberate test error from /throw route");
@@ -78,6 +79,7 @@ function AppRoot() {
 				FallbackComponent={ErrorPage}
 				resetKeys={[location.pathname]}
 			>
+				<ReloadPrompt />
 				<Routes>
 					<Route path="/" element={<Start />} />
 					<Route
@@ -112,6 +114,7 @@ function AppRoot() {
 			resetKeys={[location.pathname]}
 		>
 			<FakeDataBanner />
+			<ReloadPrompt />
 			<Routes>
 				<Route path="/" element={<Start />} />
 

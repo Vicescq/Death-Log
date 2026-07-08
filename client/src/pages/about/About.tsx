@@ -1,4 +1,3 @@
-import { useClerk } from "@clerk/react";
 import NavBar from "../../components/nav-bar/NavBar";
 import Availability from "./Availability";
 import ChangelogContainer from "./ChangelogContainer";
@@ -6,7 +5,6 @@ import ChangelogContainer from "./ChangelogContainer";
 const REPO_URL = "https://github.com/Vicescq/Death-Log";
 
 export default function About() {
-	const { status } = useClerk();
 	return (
 		<>
 			<NavBar midNavContent={<></>} />
@@ -14,7 +12,7 @@ export default function About() {
 				<h1 className="mb-6 text-3xl font-bold">About Death Log</h1>
 
 				<div className="flex flex-col gap-8">
-					<Availability status={status} />
+					<Availability />
 
 					<ChangelogContainer />
 

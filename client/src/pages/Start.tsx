@@ -4,8 +4,8 @@ import { CONSTANTS } from "../../shared/constants";
 
 export default function Start() {
 	return (
-        <div className="hero bg-base-200 min-h-screen">
-            <div className="hero-content text-center">
+		<div className="hero bg-base-200 min-h-screen">
+			<div className="hero-content text-center">
 				<div className="max-w-md">
 					<h1 className="text-6xl font-bold underline sm:text-8xl">
 						Death Log
@@ -44,6 +44,6 @@ export default function Start() {
 					</div>
 				</div>
 			</div>
-        </div>
-    );
+		</div>
+	);
 }

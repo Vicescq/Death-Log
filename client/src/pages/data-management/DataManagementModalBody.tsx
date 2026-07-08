@@ -7,6 +7,7 @@ type Props = {
 	onSeed: () => void;
 	onUndoFakeData: () => void;
 	onKeepFakeData: () => void;
+	onCacheClear: () => void;
 };
 
 export default function DataManagementModalBody({
@@ -16,6 +17,7 @@ export default function DataManagementModalBody({
 	onSeed,
 	onUndoFakeData,
 	onKeepFakeData,
+	onCacheClear,
 }: Props) {
 	if (action == "import") {
 		return (
@@ -34,9 +36,9 @@ export default function DataManagementModalBody({
 			<>
 				<div className="my-2">
 					This deletes ALL Death Log data stored on this device and
-					resets the app to a clean state, including any account that
-					logged in here. Use this to remove your data or as a factory
-					reset if the app isn't working. This cannot be undone.
+					resets the app to a clean state. Use this to remove your
+					data or as a factory reset if the app isn't working. This
+					cannot be undone. This also clears the cache.
 				</div>
 				<button onClick={onDelete} className="btn btn-error w-full">
 					DELETE
@@ -86,6 +88,21 @@ export default function DataManagementModalBody({
 					onClick={onKeepFakeData}
 					className="btn btn-info w-full"
 				>
+					PROCEED
+				</button>
+			</>
+		);
+	} else if (action == "cache") {
+		return (
+			<>
+				<div className="my-2">
+					Clears all cache data this device has for this app, do this
+					if something does not work correctly. You can treat this as
+					a soft reset for the app. Warning, do not clear the cache if
+					you are offline! You will not be able to access the app
+					again until you are online.
+				</div>
+				<button onClick={onCacheClear} className="btn btn-info w-full">
 					PROCEED
 				</button>
 			</>

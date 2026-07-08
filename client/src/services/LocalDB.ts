@@ -237,22 +237,6 @@ export default class LocalDB {
 		return db.verno;
 	}
 
-	static async resetDatabase() {
-		await db.delete();
-		await db.open();
-	}
-
-	static clearAllLocalPrefs() {
-		// TODO: decide whether to also clear crud-counter keys
-
-		const prefixes = [FILTER_PREF_KEY, SORT_PREF_KEY, CHART_OVERRIDES_KEY];
-		for (const key of Object.keys(localStorage)) {
-			if (prefixes.some((prefix) => key.startsWith(prefix))) {
-				localStorage.removeItem(key);
-			}
-		}
-	}
-
 	static async showEstimatedQuota(): Promise<StorageEstimateInfo | null> {
 		if (navigator.storage && navigator.storage.estimate) {
 			const estimation = await navigator.storage.estimate();
@@ -279,5 +263,49 @@ export default class LocalDB {
 			console.error("StorageManager not found");
 			return null;
 		}
+	}
+
+	static async clearLocalData() {
+		// TODO: decide whether to also clear crud-counter keys
+
+		const prefixes = [FILTER_PREF_KEY, SORT_PREF_KEY, CHART_OVERRIDES_KEY];
+		for (const key of Object.keys(localStorage)) {
+			if (prefixes.some((prefix) => key.startsWith(prefix))) {
+				localStorage.removeItem(key);
+			}
+		}
+		await db.delete();
+		await db.open();
+
+		await LocalDB.clearCache(); // hides the successful toast that pops due to force reload
+	}
+
+	static async clearCache() {
+		if (navigator.serviceWorker) {
+			const registrations =
+				await navigator.serviceWorker.getRegistrations();
+			for (let i = 0; i < registrations.length; i++) {
+				const didUnregister = await registrations[i].unregister();
+				if (didUnregister) {
+					console.log("Unregistered Service Worker!");
+				} else {
+					console.error("Service Worker failed to unregister!");
+				}
+			}
+		} else {
+			console.error("Cannot find a ServiceWorker!");
+		}
+
+		const cacheKeys = await caches.keys();
+		for (let i = 0; i < cacheKeys.length; i++) {
+			const didDelete = await caches.delete(cacheKeys[i]);
+			if (didDelete) {
+				console.log(`Deleted cache store: ${cacheKeys[i]}`);
+			} else {
+				console.error(`Could not delete cache store: ${cacheKeys[i]}`);
+			}
+		}
+
+		location.reload();
 	}
 }

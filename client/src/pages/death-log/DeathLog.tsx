@@ -90,7 +90,7 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 				endNavContentCSS="w-[70%]"
 				startNavContentCSS="w-[30%]"
 			/>
-
+			
 			{tree.size === 1 ? (
 				<div className="flex min-h-[75vh] flex-col items-center justify-center gap-12">
 					<FAQSuggest />

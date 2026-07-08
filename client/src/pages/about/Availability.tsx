@@ -1,11 +1,11 @@
-import { ClerkFailed, ClerkLoading } from "@clerk/react";
-import type { ClerkStatus } from "@clerk/shared/types";
+import { ClerkFailed, ClerkLoading, useClerk } from "@clerk/react";
 import StatusBadge from "./StatusBadge";
 import ServerStatus from "./ServerStatus";
 import useOnlineStatus from "../../hooks/useOnlineStatus";
 
-export default function Availability({ status }: { status: ClerkStatus }) {
+export default function Availability() {
 	const isOnline = useOnlineStatus();
+	const { status } = useClerk();
 	return (
 		<div>
 			<h2 className="mb-3 text-xl font-semibold">Availability</h2>

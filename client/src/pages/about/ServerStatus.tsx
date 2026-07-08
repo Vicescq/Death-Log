@@ -8,7 +8,7 @@ export default function ServerStatus({ isOnline }: { isOnline: boolean }) {
 		enabled: isOnline,
 		retry: false,
 		queryFn: healthQueryFn,
-		refetchInterval: 5000,
+		refetchInterval: 30000,
 	});
 
 	if (!isOnline)
