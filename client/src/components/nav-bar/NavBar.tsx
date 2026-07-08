@@ -1,7 +1,6 @@
 import { Link } from "react-router";
 import home from "../../assets/home.svg";
 import save from "../../assets/save.svg";
-import dl from "../../assets/death-log.svg";
 import faq from "../../assets/faq.svg";
 import about from "../../assets/about.svg";
 import graph from "../../assets/graph.svg";
@@ -49,7 +48,7 @@ export default function NavBar({
 
 					<li>
 						<Link className={activeDLCSS} to={{ pathname: "/log" }}>
-							<img src={dl} alt="" className="h-5 w-5" />
+							<img src="death-log.svg" alt="" className="h-5 w-5" />
 						</Link>
 					</li>
 

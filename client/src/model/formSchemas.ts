@@ -178,6 +178,7 @@ export const FiltersSchema = z.object({
 	other: z.boolean(),
 	genericEnemy: z.boolean(),
 	miniBoss: z.boolean(),
+	groupIDs: z.array(z.string()),
 });
 
 export type Filters = z.infer<typeof FiltersSchema>;

@@ -6,6 +6,7 @@ import {
 } from "react-hook-form";
 import { CONSTANTS } from "../../../../shared/constants";
 import type { DistinctTreeNode } from "../../../model/tree-node-model/TreeNodeSchema";
+import type { ProfileGroup } from "../../../model/tree-node-model/ProfileSchema";
 import { isoToDateSTD } from "../../../utils/date";
 import { type Filters } from "../../../model/formSchemas";
 import { useState } from "react";
@@ -13,6 +14,7 @@ import { useState } from "react";
 type Props = {
 	form: UseFormReturn<Filters>;
 	nodeType: Exclude<DistinctTreeNode["type"], "ROOT_NODE">;
+	groupings: ProfileGroup[];
 	onFilter: SubmitHandler<Filters>;
 	onReset: () => void;
 };
@@ -20,6 +22,7 @@ type Props = {
 export default function ToolbarFilter({
 	form,
 	nodeType,
+	groupings,
 	onFilter,
 	onReset,
 }: Props) {
@@ -369,6 +372,36 @@ export default function ToolbarFilter({
 								</li>
 							</ul>
 						</div>
+
+						{groupings.length > 0 ? (
+							<div className="my-1">
+								<div className="text-info mb-3">
+									Profile Groups
+								</div>
+								<ul className="flex flex-col gap-2">
+									{groupings.map((group) => (
+										<li key={group.id}>
+											<label>
+												<div className="flex gap-4">
+													<input
+														type="checkbox"
+														className="checkbox checkbox-info"
+														value={group.id}
+														{...form.register(
+															"groupIDs",
+														)}
+													/>
+													{group.title}
+												</div>
+											</label>
+										</li>
+									))}
+								</ul>
+								<div className="text-accent mt-4 text-sm">
+									{CONSTANTS.INFO.GROUP_FILTER}
+								</div>
+							</div>
+						) : null}
 					</>
 				) : null}
 

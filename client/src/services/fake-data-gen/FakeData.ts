@@ -58,7 +58,10 @@ export default class FakeData {
 		const tree: Tree = new Map();
 		const nodes: DistinctTreeNode[] = [];
 
-		for (const gameSource of GAME_SOURCES) {
+		for (const gameSource of FakeData.sample(
+			GAME_SOURCES,
+			FakeData.randomInt(4, 9),
+		)) {
 			const game: Game = {
 				...createGame(gameSource.gameName, tree),
 				isFake: true,
@@ -155,7 +158,7 @@ export default class FakeData {
 			base.log.push(death);
 		}
 
-		const completed = Math.random() < 0.4;
+		const completed = Math.random() < 0.5;
 		const firstDeath = timestamps[0];
 		const lastDeath = timestamps[timestamps.length - 1];
 

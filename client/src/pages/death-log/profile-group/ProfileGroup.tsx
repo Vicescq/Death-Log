@@ -132,7 +132,7 @@ export default function ProfileGroup({ profile }: Props) {
 		<>
 			<NavBar endNavContent={<Breadcrumb />} />
 			<Container css="mb-8">
-				<h1 className="my-6 text-center text-4xl font-bold break-words">
+				<h1 className="my-6 text-center text-4xl font-bold wrap-break-word">
 					Editing: {profile.name}
 				</h1>
 

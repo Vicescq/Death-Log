@@ -33,6 +33,8 @@ export const CONSTANTS = {
 			"Format has to be X-Y where X and Y can be any integer. Or in another format: ~X, where ~ represents an operator (=, >=, >, <, <=) and X is an integer.",
 		DATE_RANGE:
 			"Will filter based on completion time if completed, otherwise it filters on creation time.",
+		GROUP_FILTER:
+			"Selecting one or more groups shows only subjects belonging to at least one of them. Selecting none shows subjects regardless of group.",
 	},
 	DEATH_LOG_EDITOR: {
 		DEL_PH: "Type DEL to delete",

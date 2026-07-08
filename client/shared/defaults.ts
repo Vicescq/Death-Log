@@ -23,6 +23,7 @@ export const defaultFilters: Filters = {
 	other: true,
 	genericEnemy: true,
 	miniBoss: true,
+	groupIDs: [],
 };
 
 export const defaultSortSettings: SortSettings = {

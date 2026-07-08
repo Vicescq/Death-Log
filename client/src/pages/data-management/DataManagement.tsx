@@ -182,7 +182,9 @@ export default function DataManagement() {
 			const currentNodes = Array.from(tree.values()).filter(
 				(node) => node.id !== "ROOT_NODE",
 			);
-			await LocalDB.clearAndInsertData(FakeData.keepFakeNodes(currentNodes));
+			await LocalDB.clearAndInsertData(
+				FakeData.keepFakeNodes(currentNodes),
+			);
 			await refreshTree();
 			modalRef.current?.close();
 

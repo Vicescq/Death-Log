@@ -63,6 +63,7 @@ export default function Toolbar({
 	});
 
 	const type = getDeathlogViewType(parent);
+	const groupings = parent.type === "profile" ? parent.groupings : [];
 
 	const nodeFormAddSchema = createNodeFormAddSchema(siblingNames, null);
 
@@ -126,17 +127,16 @@ export default function Toolbar({
 				: "Sort options";
 
 	const nonCustomFilters = Object.keys(defaultFilters).every((key) => {
+		const filterKey = key as keyof Filters;
 		if (
-			((key as keyof Filters) == "dateFrom" ||
-				(key as keyof Filters) == "dateTo") &&
+			(filterKey == "dateFrom" || filterKey == "dateTo") &&
 			!filters["dateRangeEnabled"]
 		) {
 			return true;
+		} else if (filterKey == "groupIDs") {
+			return filters.groupIDs.length === 0;
 		} else {
-			return (
-				filters[key as keyof Filters] ===
-				defaultFilters[key as keyof Filters]
-			);
+			return filters[filterKey] === defaultFilters[filterKey];
 		}
 	});
 
@@ -265,6 +265,7 @@ export default function Toolbar({
 						<ToolbarFilter
 							form={filterForm}
 							nodeType={type}
+							groupings={groupings}
 							onFilter={onFilter}
 							onReset={() => {
 								onFilterChange(defaultFilters);

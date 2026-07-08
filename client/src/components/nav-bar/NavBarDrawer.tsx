@@ -1,6 +1,5 @@
 import home from "../../assets/home.svg";
 import save from "../../assets/save.svg";
-import dl from "../../assets/death-log.svg";
 import navPanel from "../../assets/nav_panel.svg";
 import faq from "../../assets/faq.svg";
 import about from "../../assets/about.svg";
@@ -49,7 +48,11 @@ export default function NavBarDrawer() {
 							className={`btn ${activeDLCSS}`}
 							to={{ pathname: "/log" }}
 						>
-							<img src={dl} alt="" className="h-5 w-5" />
+							<img
+								src="death-log.svg"
+								alt=""
+								className="h-5 w-5"
+							/>
 						</Link>
 					</li>
 					<li>

@@ -71,7 +71,13 @@ export default function DeathLog({ parent }: { parent: DistinctTreeNode }) {
 	const [searchQuery, setSearchQuery] = useState("");
 
 	const ids = sort(
-		filter(parent.childIDS, filters, tree, searchQuery),
+		filter(
+			parent.childIDS,
+			filters,
+			tree,
+			searchQuery,
+			parent.type === "profile" ? parent.groupings : [],
+		),
 		tree,
 		sortSettings,
 	);

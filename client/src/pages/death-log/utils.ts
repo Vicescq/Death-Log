@@ -6,6 +6,7 @@ import type {
 	DistinctTreeNode,
 	Tree,
 } from "../../model/tree-node-model/TreeNodeSchema";
+import type { ProfileGroup } from "../../model/tree-node-model/ProfileSchema";
 import type { DeathLogViewPrefs } from "../../services/LocalDB";
 import { createDeath } from "../../stores/utils";
 import { assertIsNonNull, assertIsSubject } from "../../utils/asserts";
@@ -52,6 +53,7 @@ export function filter(
 	filters: Filters,
 	tree: Tree,
 	searchQuery: string,
+	groupings: ProfileGroup[] = [],
 ): string[] {
 	return ids.filter((id) => {
 		const node = tree.get(id);
@@ -65,6 +67,7 @@ export function filter(
 		const subjectContextBoolVals: boolean[] = [];
 		let passedDeathRange = false;
 		let passedAzRange = false;
+		let passedGroupFilter = true;
 
 		const nodeDatetime =
 			node.completed && node.dateEnd ? node.dateEnd : node.dateStart;
@@ -252,6 +255,24 @@ export function filter(
 						subjectContextBoolVals.push(true);
 					}
 					break;
+				case "groupIDs": {
+					const properlyMigratedGroupIDs = filters[filterKey].filter(
+						// drops deleted profile groups that got persisted in local storage
+						(groupID) => groupings.some((g) => g.id == groupID),
+					);
+					if (
+						node.type == "subject" &&
+						properlyMigratedGroupIDs.length > 0
+					) {
+						passedGroupFilter = properlyMigratedGroupIDs.some(
+							(groupID) =>
+								groupings
+									.find((g) => g.id == groupID)
+									?.members.includes(node.id),
+						);
+					}
+					break;
+				}
 			}
 		}
 
@@ -264,7 +285,8 @@ export function filter(
 			timeSpentBoolVals.some((bool) => bool) &&
 			subjectContextBoolVals.some((bool) => bool) &&
 			passedAzRange &&
-			passedDeathRange
+			passedDeathRange &&
+			passedGroupFilter
 		);
 	});
 }

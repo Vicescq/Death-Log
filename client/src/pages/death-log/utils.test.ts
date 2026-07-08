@@ -1,10 +1,15 @@
 import { expect, test, vi } from "vitest";
 import { calcDeaths, filter } from "./utils";
 import type { Game } from "../../model/tree-node-model/GameSchema";
+import type { ProfileGroup } from "../../model/tree-node-model/ProfileSchema";
 import { createDeath, createGame, createRootNode } from "../../stores/utils";
 import type { Tree } from "../../model/tree-node-model/TreeNodeSchema";
 import { useDeathLogStore } from "../../stores/useDeathLogStore";
-import { assertIsNonNull, assertIsSubject } from "../../utils/asserts";
+import {
+	assertIsNonNull,
+	assertIsProfile,
+	assertIsSubject,
+} from "../../utils/asserts";
 import { setUpFullTreeLineage } from "../../utils/test-helpers";
 import type { Filters } from "../../model/formSchemas";
 import { defaultFilters } from "../../../shared/defaults";
@@ -384,6 +389,64 @@ test("filter | subject context - multiple enabled filters (OR logic)", () => {
 	};
 
 	expect(filter(idsToTest, filterPrefs, tree, "")).toHaveLength(0);
+});
+
+test("filter | profile groups", () => {
+	const ids = setUpFullTreeLineage(useDeathLogStore);
+	const idsToTest = [ids.subjectID];
+
+	useDeathLogStore.getState().addNode("subject", "Malenia", ids.profileID);
+	const subjectID2 = useDeathLogStore.getState().tree.get(ids.profileID)
+		?.childIDS[1];
+	assertIsNonNull(subjectID2);
+	idsToTest.push(subjectID2);
+
+	const group: ProfileGroup = {
+		id: "12345678",
+		title: "Boss Rush",
+		members: [ids.subjectID],
+		description: "",
+		dateStart: new Date().toISOString(),
+		dateEnd: null,
+		dateStartRel: true,
+		dateEndRel: true,
+		completed: false,
+	};
+
+	const profile = useDeathLogStore.getState().tree.get(ids.profileID);
+	assertIsNonNull(profile);
+	assertIsProfile(profile);
+	useDeathLogStore
+		.getState()
+		.updateNode({ ...profile, groupings: [group] });
+
+	const tree = useDeathLogStore.getState().tree;
+
+	expect(
+		filter(
+			idsToTest,
+			{ ...defaultFilters, groupIDs: [group.id] },
+			tree,
+			"",
+			[group],
+		),
+	).toStrictEqual([ids.subjectID]);
+
+	expect(filter(idsToTest, defaultFilters, tree, "", [group])).toHaveLength(
+		2,
+	);
+
+	// a group id no longer present in this profile's groupings (e.g. carried
+	// over from a previously-viewed profile) must not hide every subject
+	expect(
+		filter(
+			idsToTest,
+			{ ...defaultFilters, groupIDs: ["stalegrp1"] },
+			tree,
+			"",
+			[group],
+		),
+	).toHaveLength(2);
 });
 
 test("filter | search query", () => {
