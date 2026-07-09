@@ -1,25 +1,42 @@
 import type { EChartsOption } from "echarts";
-import type { ChartSpec } from "../../model/stats-query-model/chart-spec";
 import type {
 	CategoryPoint,
 	ChartData,
+	ChartType,
 	Graph,
+	ScatterPoint,
 	SunburstNode,
 } from "../../model/stats-query-model/chart";
-import type { SharedChartSpec } from "../../model/stats-query-model/shared-charts";
+import { isoToDateSTD } from "../../utils/date";
+
+const MIN_SYMBOL_SIZE = 10;
+const MAX_SYMBOL_SIZE = 60;
+const SYMBOL_SIZE_SCALE = 2;
+const ROOT_SYMBOL_SIZE = 100;
+
+export type CalendarConfig = { range: string; cellSize?: number };
+
+const GRAPH_ROOT_ID = "graph-root";
+const GRAPH_ROOT_NAME = "Root";
+const GAMES_CATEGORY_NAME = "Games";
 
 export class ChartStage {
 	static render(
-		spec: ChartSpec,
+		type: ChartType,
 		data: ChartData,
-		range: string,
+		calendarConfig?: CalendarConfig,
 	): EChartsOption | null {
-		if (ChartStage.isEmpty(spec, data)) return null;
+		if (ChartStage.isEmpty(type, data)) return null;
 
+		if (data.kind === "graph") {
+			return ChartStage.graphChart(ChartStage.withRootNode(data.graph));
+		}
 		if (data.kind === "sunburst")
 			return ChartStage.sunburstChart(data.nodes);
+		if (data.kind === "scatter")
+			return ChartStage.scatterChart(data.points);
 
-		switch (spec.type) {
+		switch (type) {
 			case "bar":
 				return ChartStage.barChart(data.points);
 			case "line":
@@ -29,41 +46,19 @@ export class ChartStage {
 			case "time-line":
 				return ChartStage.timeLineChart(data.points);
 			case "calendar":
-				return ChartStage.calendarChart(data.points, range);
-			case "sunburst":
-				throw new Error("[DEV] sunburst type expects sunburst data");
+				return ChartStage.calendarChart(data.points, calendarConfig);
+			default:
+				throw new Error(
+					`[DEV] chartType "${type}" doesn't match data.kind "${data.kind}"`,
+				);
 		}
 	}
 
-	private static isEmpty(spec: ChartSpec, data: ChartData): boolean {
-		if (spec.type === "calendar") return false;
-		return data.kind === "sunburst"
-			? data.nodes.length === 0
-			: data.points.length === 0;
-	}
-
-	static renderShared(
-		spec: SharedChartSpec,
-		range: string,
-	): EChartsOption | null {
-		const data = ChartStage.toChartData(spec);
-		return ChartStage.render(
-			{
-				type: spec.type,
-				title: spec.title,
-				table: "deaths",
-				sql: "",
-				calendarRange: spec.calendarRange,
-			},
-			data,
-			range,
-		);
-	}
-
-	private static toChartData(spec: SharedChartSpec): ChartData {
-		if (spec.data.sunburst)
-			return { kind: "sunburst", nodes: spec.data.sunburst };
-		return { kind: "category", points: spec.data.category ?? [] };
+	private static isEmpty(type: ChartType, data: ChartData): boolean {
+		if (type === "calendar") return false;
+		if (data.kind === "sunburst") return data.nodes.length === 0;
+		if (data.kind === "graph") return data.graph.nodes.length === 0;
+		return data.points.length === 0;
 	}
 
 	private static barChart(data: CategoryPoint[]): EChartsOption {
@@ -118,7 +113,6 @@ export class ChartStage {
 				{
 					type: "line",
 					data: data.map((p) => [p.x, p.y]),
-					areaStyle: {},
 					smooth: true,
 				},
 			],
@@ -158,9 +152,17 @@ export class ChartStage {
 
 	private static calendarChart(
 		data: CategoryPoint[],
-		range: string,
+		config: CalendarConfig = { range: "" },
 	): EChartsOption {
-		const values = data.map((p) => p.y);
+		const { range, cellSize = 75 } = config;
+		// Incoming points carry raw UTC timestamps
+		const byDay = new Map<string, number>();
+		for (const p of data) {
+			const day = isoToDateSTD(p.x);
+			byDay.set(day, (byDay.get(day) ?? 0) + p.y);
+		}
+		const dayPoints = [...byDay.entries()];
+		const values = dayPoints.map(([, count]) => count);
 		const dataMin = values.length > 0 ? Math.min(...values) : 0;
 		const dataMax = values.length > 0 ? Math.max(...values) : 1;
 		return {
@@ -169,7 +171,7 @@ export class ChartStage {
 				yearLabel: { show: false },
 				dayLabel: { nameMap: ["S", "M", "T", "W", "T", "F", "S"] },
 				monthLabel: { show: false },
-				cellSize: 40,
+				cellSize,
 				range: range,
 				itemStyle: { color: "#202030", borderWidth: 0.02 },
 				left: "center",
@@ -178,7 +180,9 @@ export class ChartStage {
 			series: {
 				type: "heatmap",
 				coordinateSystem: "calendar",
-				data: data.map((p) => ({ value: [p.x, p.y] })),
+				data: dayPoints.map(([day, count]) => ({
+					value: [day, count],
+				})),
 			},
 			visualMap: {
 				min: dataMin,
@@ -198,6 +202,23 @@ export class ChartStage {
 				handleStyle: { borderColor: "#000000" },
 				left: "center",
 			},
+			tooltip: { trigger: "item", renderMode: "richText" },
+		};
+	}
+
+	private static scatterChart(data: ScatterPoint[]): EChartsOption {
+		return {
+			xAxis: { type: "value" },
+			yAxis: { type: "value" },
+			series: [
+				{
+					type: "scatter",
+					data: data.map((p) => ({
+						name: p.name,
+						value: [p.x, p.y],
+					})),
+				},
+			],
 			tooltip: { trigger: "item", renderMode: "richText" },
 		};
 	}
@@ -222,16 +243,34 @@ export class ChartStage {
 		};
 	}
 
-	static renderGraph(graph: Graph): EChartsOption {
-		return ChartStage.graphChart(graph);
+	private static withRootNode(graph: Graph): Graph {
+		const gamesCategory = graph.categories.findIndex(
+			(c) => c.name === GAMES_CATEGORY_NAME,
+		);
+		const games = graph.nodes.filter((n) => n.category === gamesCategory);
+		const rootValue = games.reduce((sum, g) => sum + g.value, 0);
+
+		const root = {
+			id: GRAPH_ROOT_ID,
+			name: GRAPH_ROOT_NAME,
+			value: rootValue,
+			category: graph.categories.length,
+		};
+		const rootEdges = games.map((g) => ({
+			id: `${GRAPH_ROOT_ID}-${g.id}`,
+			source: GRAPH_ROOT_ID,
+			target: g.id,
+		}));
+
+		return {
+			categories: [...graph.categories, { name: GRAPH_ROOT_NAME }],
+			nodes: [root, ...graph.nodes],
+			edges: [...rootEdges, ...graph.edges],
+		};
 	}
 
-	private static graphChart(
-		graph: Graph,
-		labelIsDisplayedOverride = false,
-	): EChartsOption {
-		const labelIsDisplayed =
-			graph.nodes.length <= 100 || labelIsDisplayedOverride;
+	private static graphChart(graph: Graph): EChartsOption {
+		const labelIsDisplayed = graph.nodes.length <= 50;
 
 		return {
 			tooltip: { renderMode: "richText" },
@@ -241,6 +280,7 @@ export class ChartStage {
 					type: "graph",
 					layout: "force",
 					roam: true,
+					roamTrigger: "global",
 					draggable: true,
 					label: {
 						show: labelIsDisplayed,
@@ -249,17 +289,24 @@ export class ChartStage {
 						fontSize: 19,
 					},
 					force: {
-						repulsion: 500,
+						repulsion: 2000,
 						edgeLength: [60, 160],
 						gravity: 0.1,
 					},
 					emphasis: { focus: "adjacency" },
-					lineStyle: { color: "source", curveness: 0.1 },
+					lineStyle: { color: "source", curveness: 0 },
 					data: graph.nodes.map((n) => ({
 						id: n.id,
 						name: n.name,
 						value: n.value,
-						symbolSize: n.symbolSize,
+						symbolSize:
+							n.id === GRAPH_ROOT_ID
+								? ROOT_SYMBOL_SIZE
+								: Math.min(
+										MAX_SYMBOL_SIZE,
+										MIN_SYMBOL_SIZE +
+											n.value * SYMBOL_SIZE_SCALE,
+									),
 						category: n.category,
 					})),
 					links: graph.edges.map((e) => ({
@@ -267,9 +314,6 @@ export class ChartStage {
 						target: e.target,
 					})),
 					categories: graph.categories,
-					itemStyle: {
-						// color: "#00FFBA"
-					},
 				},
 			],
 		};

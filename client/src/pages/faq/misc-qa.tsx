@@ -4,7 +4,7 @@ import type { QA } from "./FAQ";
 export const MISC_QA: QA = [
 	{
 		question: "Do I have to choose between the website and a mobile app?",
-		answer: "No, Death Log isn't locked to one platform. If you've been using the website, a mobile app is available too, and if you started on mobile, the full website is available as well. Your local data stays tied to whichever device and browser you're using though, so the two aren't automatically synced unless you export or share.",
+		answer: "No, Death Log isn't locked to one platform. If you've been using the website, a mobile app is available too, and if you started on mobile, the full website is available as well. Your local data stays tied to whichever device and browser you're using though, so the two aren't automatically synced unless you export your data or set up cloud auto backup.",
 	},
 	{
 		question: "Is Death Log free to use?",

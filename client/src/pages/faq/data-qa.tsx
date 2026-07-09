@@ -57,7 +57,7 @@ export const DATA_QA: QA = [
 				<Link to="/data-management" className="link link-primary">
 					Data Management
 				</Link>
-				, OR seting up auto backup with an account helps.
+				, OR setting up auto backup with an account helps.
 			</>
 		),
 	},
@@ -70,8 +70,8 @@ export const DATA_QA: QA = [
 					Data Management
 				</Link>{" "}
 				and delete your local data to start a fresh slate. You should be
-				backing up your death log proactively. Or you may setup auto
-				backup but that requires in account.
+				backing up your death log proactively. Or you may set up auto
+				backup but that requires an account.
 			</>
 		),
 	},

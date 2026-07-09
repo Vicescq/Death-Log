@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Mvc;
-
 DotNetEnv.Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,8 +21,6 @@ builder.Services.AddCors(options =>
     );
 });
 
-builder.Services.AddValidation();
-
 var connectionString =
     Environment.GetEnvironmentVariable("CONNECTION_STRING")
     ?? throw new InvalidOperationException("Configuration is not setup correctly");
@@ -46,26 +42,6 @@ app.UseAuthMiddleware(allowedOrigin);
 
 app.MapGet("/health", () => Results.Ok());
 
-app.MapGet("/users", BrowseUsers.Browse);
-
 app.MapPost("/users", UserEventsQueue.Push);
-
-app.MapPost("/profiles/{username}", ProfileSharing.PostProfile)
-    .Accepts<SharedProfile>("application/json")
-    .WithMetadata(new RequestSizeLimitAttribute(EndpointLimits.TenMb));
-
-app.MapGet("/profiles/{username}", ProfileSharing.GetProfile);
-
-app.MapDelete("/profiles/{username}", ProfileSharing.DeleteProfile);
-
-app.MapGet("/followers/{username}", Follows.GetFollowers);
-
-app.MapGet("/following/{username}", Follows.GetFollowing);
-
-app.MapGet("/follows/{username}", Follows.GetFollowStatus);
-
-app.MapPost("/follows/{username}", Follows.Follow);
-
-app.MapDelete("/follows/{username}", Follows.Unfollow);
 
 app.Run();

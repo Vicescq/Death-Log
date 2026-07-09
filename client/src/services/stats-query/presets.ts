@@ -1,134 +1,136 @@
-import type { ChartSlot } from "../../model/stats-query-model/chart";
+import type { CalendarQuery, Query } from "../../model/stats-query-model/query";
 
-export const PRESET_CHARTS: ChartSlot[] = [
+export const PRESET_CHARTS: Query[] = [
 	{
-		id: "death-calendar",
+		id: "deaths-by-game-profile-subject",
 		tab: "Overview",
-		spec: {
-			type: "calendar",
-			title: "Death Calendar",
-			table: "deaths",
-			sql: `SELECT SUBSTRING(timestampLocal, 1, 10) AS x, COUNT(*) AS y
-			      FROM ?
-			      WHERE {{REL}}
-			      GROUP BY SUBSTRING(timestampLocal, 1, 10)`,
-			whenReliable: "timestampRel = TRUE",
-			temporal: true,
-		},
+		title: "Deaths by Game / Profile / Subject",
+		description:
+			"Deaths broken down by game, then profile, then subject. Only the top 5 games and the biggest contributors within each are shown; the rest are rolled up into an Other slice.",
+		method: "deathsBySunburst",
+		chartType: "sunburst",
+		scope: [],
+		reliability: { isTemporal: false },
+	},
+
+	{
+		id: "top-5-bosses-by-deaths",
+		tab: "Overview",
+		title: "Top 5 Bosses (Deaths)",
+		description: "Your five deadliest bosses, ranked by death count.",
+		method: "bossDeathsBySubject",
+		chartType: "pie",
+		scope: [],
+		reliability: { isTemporal: false },
 	},
 	{
-		id: "top-10-bosses-by-deaths",
+		id: "top-10-games-by-deaths",
 		tab: "Overview",
-		spec: {
-			type: "bar",
-			title: "Top 10 Bosses (Deaths)",
-			table: "deaths",
-			sql: `SELECT x, y FROM (
-			        SELECT subjectName AS x, COUNT(*) AS y
-			        FROM ?
-			        WHERE subjectContext = 'Boss' AND {{REL}}
-			        GROUP BY subjectName
-			        ORDER BY y DESC
-			        LIMIT 10
-			      ) ORDER BY y ASC`,
-		},
-	},
-	{
-		id: "total-deaths-over-time",
-		tab: "Overview",
-		spec: {
-			type: "time-line",
-			title: "Total Deaths Over Time",
-			table: "deaths",
-			sql: `SELECT SUBSTRING(timestampLocal, 1, 10) AS x, COUNT(*) AS y
-			      FROM ?
-			      WHERE {{REL}}
-			      GROUP BY SUBSTRING(timestampLocal, 1, 10)
-			      ORDER BY x ASC`,
-			cumulative: true,
-			whenReliable: "timestampRel = TRUE",
-			temporal: true,
-		},
-	},
-	{
-		id: "hierarchy-of-deaths",
-		tab: "Overview",
-		spec: {
-			type: "sunburst",
-			title: "Hierarchy of Deaths",
-			table: "deaths",
-			sql: `SELECT gameName AS l0, profileName AS l1, subjectName AS l2,
-			             COUNT(*) AS y
-			      FROM ?
-			      WHERE {{REL}}
-			      GROUP BY gameName, profileName, subjectName`,
-			levels: [
-				{ prune: { mode: "topN", topN: 5, threshold: 1 } },
-				{
-					prune: {
-						mode: "topN",
-						topN: 1,
-						threshold: 0.5,
-						showOther: true,
-					},
-				},
-				{
-					prune: {
-						mode: "threshold",
-						topN: 1,
-						threshold: 0.5,
-						showOther: false,
-					},
-				},
-			],
-		},
-	},
-	{
-		id: "30-recent-Subjects",
-		tab: "Overview",
-		spec: {
-			type: "line",
-			title: "30 Most Recent Subjects (Deaths)",
-			table: "subjects",
-			sql: `
-					SELECT x, y FROM (
-						SELECT name AS x, deaths AS y, dateStartLocal
-						FROM ?
-						WHERE {{REL}}
-						ORDER BY dateStartLocal DESC
-						LIMIT 30
-					) ORDER BY dateStartLocal ASC
-		  			`,
-			whenReliable: "dateStartRel = TRUE",
-		},
-	},
-	{
-		id: "top-5-games-by-deaths",
-		tab: "Overview",
-		spec: {
-			type: "pie",
-			title: "Top 5 Games by Deaths",
-			table: "deaths",
-			sql: `SELECT gameName AS x, COUNT(*) AS y
-			      FROM ?
-			      WHERE {{REL}}
-			      GROUP BY gameName
-			      ORDER BY y DESC
-			      LIMIT 5`,
-		},
+		title: "Top 10 Games (Deaths)",
+		description: "Your ten deadliest games, ranked by total death count.",
+		method: "deathsByGame",
+		chartType: "bar",
+		scope: [],
+		reliability: { isTemporal: false },
 	},
 	{
 		id: "deaths-by-context",
 		tab: "Overview",
-		spec: {
-			type: "bar",
-			title: "Deaths by Context",
-			table: "deaths",
-			sql: `SELECT subjectContext AS x, COUNT(*) AS y
-			      FROM ?
-			      WHERE {{REL}}
-			      GROUP BY subjectContext
-			      ORDER BY y DESC`,
-		},
+		title: "Deaths by Context",
+		description:
+			"Total deaths grouped by subject context (Boss, Location, etc.), sorted alphabetically.",
+		method: "deathsByContext",
+		chartType: "bar",
+		scope: [],
+		reliability: { isTemporal: false },
 	},
+	{
+		id: "cumulative-deaths-over-time",
+		tab: "Overview",
+		title: "Cumulative Deaths Over Time",
+		description: "Your running total of deaths, one step per death.",
+		method: "deathsCumulative",
+		chartType: "time-line",
+		scope: [],
+		reliability: { isTemporal: true, field: "timestamp" },
+	},
+	{
+		id: "top-30-recent-completed-subjects",
+		tab: "Overview",
+		title: "Top 30 Most Recently Completed",
+		description:
+			"Your thirty most recently completed subjects, ranked by deaths.",
+		method: "deathsByRecentCompleted",
+		chartType: "line",
+		scope: [],
+		reliability: { isTemporal: true, field: "dateEnd" },
+	},
+	{
+		id: "top-10-games-by-subject-count",
+		tab: "Overview",
+		title: "Top 10 Games (Subject Count)",
+		description: "Your ten games with the most tracked subjects.",
+		method: "subjectCountByGame",
+		chartType: "pie",
+		scope: [],
+		reliability: { isTemporal: false },
+	},
+	{
+		id: "deaths-vs-time-spent",
+		tab: "Overview",
+		title: "Deaths vs. Time Spent",
+		description: "Each subject plotted by death count against time spent.",
+		method: "deathsVsTimeSpent",
+		chartType: "scatter",
+		scope: [],
+		reliability: { isTemporal: false },
+	},
+	{
+		id: "top-5-profiles-by-deaths",
+		tab: "Overview",
+		title: "Top 5 Profiles (Deaths)",
+		description: "Your five deadliest profiles, ranked by death count.",
+		method: "deathsByProfile",
+		chartType: "bar",
+		scope: [],
+		reliability: { isTemporal: false },
+	},
+	{
+		id: "deaths-by-profile-group-subject",
+		tab: "Overview",
+		title: "Deaths by Profile Group / Subject",
+		description:
+			"Deaths broken down by profile group, then subject. Only the top 5 groups and the biggest contributors within each are shown; the rest are rolled up into an Other slice.",
+		method: "deathsByProfileGroup",
+		chartType: "sunburst",
+		scope: [],
+		reliability: { isTemporal: false },
+	},
+];
+
+export const GRAPH_QUERY: Query = {
+	id: "graph",
+	title: "Graph",
+	description: "",
+	method: "graph",
+	chartType: "graph",
+	scope: [],
+	reliability: { isTemporal: false },
+};
+
+export const CALENDAR_QUERY: CalendarQuery = {
+	id: "deaths-by-day",
+	title: "Deaths by Day",
+	description:
+		"Total deaths per day, shown as a calendar heatmap. Darker cells mean more deaths that day; use the month picker to navigate.",
+	method: "deathsByDay",
+	chartType: "calendar",
+	scope: [],
+	reliability: { isTemporal: true, field: "timestamp" },
+};
+
+export const SHAREABLE_QUERIES: Query[] = [
+	...PRESET_CHARTS,
+	GRAPH_QUERY,
+	CALENDAR_QUERY,
 ];

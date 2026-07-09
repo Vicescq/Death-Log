@@ -1,12 +1,17 @@
 import z from "zod";
-import type { ChartSpec } from "./chart-spec";
-import type { ChartTab } from "./tabs";
 
-export type ChartSlot = {
-	id: string;
-	tab: ChartTab;
-	spec: ChartSpec;
-};
+export const CHART_TYPES = [
+	"bar",
+	"pie",
+	"line",
+	"time-line",
+	"calendar",
+	"sunburst",
+	"graph",
+	"scatter",
+] as const;
+
+export type ChartType = (typeof CHART_TYPES)[number];
 
 export const CategoryPointSchema = z.object({ x: z.string(), y: z.number() });
 export type CategoryPoint = z.infer<typeof CategoryPointSchema>;
@@ -35,7 +40,6 @@ export const GraphNodeSchema = z.object({
 	id: z.string(),
 	name: z.string(),
 	value: z.number(),
-	symbolSize: z.number(),
 	category: z.number().min(0),
 });
 
@@ -52,44 +56,20 @@ export const GraphSchema = z.object({
 });
 export type Graph = z.infer<typeof GraphSchema>;
 
-export type ChartData =
-	| { kind: "category"; points: CategoryPoint[] }
-	| { kind: "sunburst"; nodes: SunburstNode[] };
+export const ChartDataSchema = z.discriminatedUnion("kind", [
+	z.object({
+		kind: z.literal("category"),
+		points: z.array(CategoryPointSchema),
+	}),
+	z.object({
+		kind: z.literal("scatter"),
+		points: z.array(ScatterPointSchema),
+	}),
+	z.object({ kind: z.literal("graph"), graph: GraphSchema }),
+	z.object({
+		kind: z.literal("sunburst"),
+		nodes: z.array(SunburstNodeSchema),
+	}),
+]);
 
-export type DeathRow = {
-	id: string;
-	timestampLocal: string;
-	timestampRel: boolean;
-	remark: string | null;
-	subjectID: string;
-	subjectName: string;
-	subjectContext: string;
-	profileID: string;
-	profileName: string;
-	gameID: string;
-	gameName: string;
-};
-
-export type SubjectRow = {
-	id: string;
-	name: string;
-	context: string;
-	dateStartLocal: string;
-	dateStartRel: boolean;
-	dateEndLocal: string | null;
-	dateEndRel: boolean;
-	timeSpent: string | null;
-	completed: boolean;
-	reoccurring: boolean;
-	profileID: string;
-	profileName: string;
-	gameID: string;
-	gameName: string;
-	deaths: number;
-	timeSpentMins: number;
-};
-
-export type Tables = {
-	deaths: DeathRow[];
-	subjects: SubjectRow[];
-};
+export type ChartData = z.infer<typeof ChartDataSchema>;

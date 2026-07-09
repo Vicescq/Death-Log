@@ -23,8 +23,8 @@ const MONTHS = [
 ];
 
 export default function CalendarHeader({ currentDate, onChange }: Props) {
-	const baseYear = new Date().getFullYear();
-	const years = Array.from({ length: 5 }, (_, i) => baseYear - 2 + i);
+	const centerYear = currentDate.getFullYear();
+	const years = Array.from({ length: 5 }, (_, i) => centerYear - 2 + i);
 
 	return (
 		<div className="mb-4 flex gap-2">

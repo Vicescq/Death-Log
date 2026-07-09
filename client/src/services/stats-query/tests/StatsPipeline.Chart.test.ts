@@ -4,74 +4,69 @@ import { StatsPipeline } from "../StatsPipeline";
 import type {
 	CategoryPoint,
 	ChartData,
-	SunburstNode,
+	ChartType,
+	Graph,
 } from "../../../model/stats-query-model/chart";
-import type { ChartSpec, ChartType } from "../../../model/stats-query-model/chart-spec";
+import type { Query } from "../../../model/stats-query-model/query";
 
-function spec(type: ChartType): ChartSpec {
-	return { type, title: "T", table: "deaths", sql: "" };
+function query(chartType: ChartType): Query {
+	return {
+		id: "q",
+		title: "T",
+		description: "",
+		method: "bossDeathsBySubject",
+		chartType,
+		scope: [],
+		reliability: { isTemporal: false },
+	} as Query;
 }
 
 function category(points: CategoryPoint[]): ChartData {
 	return { kind: "category", points };
 }
 
+function local(chartType: ChartType, data: ChartData) {
+	return StatsPipeline.Chart(query(chartType), data);
+}
+
 test("empty category data - returns null (no-data signal)", () => {
-	expect(
-		StatsPipeline.Chart({ spec: spec("bar"), data: category([]), range: "" }),
-	).toBeNull();
-	expect(
-		StatsPipeline.Chart({ spec: spec("line"), data: category([]), range: "" }),
-	).toBeNull();
-	expect(
-		StatsPipeline.Chart({ spec: spec("pie"), data: category([]), range: "" }),
-	).toBeNull();
-	expect(
-		StatsPipeline.Chart({
-			spec: spec("time-line"),
-			data: category([]),
-			range: "",
-		}),
-	).toBeNull();
+	expect(local("bar", category([]))).toBeNull();
+	expect(local("line", category([]))).toBeNull();
+	expect(local("pie", category([]))).toBeNull();
+	expect(local("time-line", category([]))).toBeNull();
 });
 
-test("empty sunburst data - returns null (no-data signal)", () => {
-	const empty: ChartData = { kind: "sunburst", nodes: [] };
-	expect(
-		StatsPipeline.Chart({ spec: spec("sunburst"), data: empty, range: "" }),
-	).toBeNull();
+test("empty calendar data - never null (renders the empty grid)", () => {
+	expect(local("calendar", category([]))).not.toBeNull();
 });
 
-test("calendar is exempt - empty month still renders a chart", () => {
-	const option = StatsPipeline.Chart({
-		spec: spec("calendar"),
-		data: category([]),
-		range: "2024-06",
-	});
-	expect(option).not.toBeNull();
+test("empty graph data - returns null (no-data signal)", () => {
+	const empty: ChartData = {
+		kind: "graph",
+		graph: { nodes: [], edges: [], categories: [] },
+	};
+	expect(local("graph", empty)).toBeNull();
 });
 
 test("all-zero values are data, not empty - renders a chart", () => {
-	const option = StatsPipeline.Chart({
-		spec: spec("bar"),
-		data: category([
+	const option = local(
+		"bar",
+		category([
 			{ x: "A", y: 0 },
 			{ x: "B", y: 0 },
 		]),
-		range: "",
-	});
+	);
 	expect(option).not.toBeNull();
 });
 
 test("bar - xAxis categories and series values match input", () => {
-	const option = StatsPipeline.Chart({
-		spec: spec("bar"),
-		data: category([
+	const option = local(
+		"bar",
+		category([
 			{ x: "Boss A", y: 3 },
 			{ x: "Boss B", y: 1 },
 		]),
-		range: "",
-	}) as {
+	) as {
 		xAxis: { data: string[] };
 		yAxis: { type: string };
 		series: [{ type: string; data: number[] }];
@@ -83,14 +78,13 @@ test("bar - xAxis categories and series values match input", () => {
 });
 
 test("line - series data matches input values", () => {
-	const option = StatsPipeline.Chart({
-		spec: spec("line"),
-		data: category([
+	const option = local(
+		"line",
+		category([
 			{ x: "Jan", y: 5 },
 			{ x: "Feb", y: 8 },
 		]),
-		range: "",
-	}) as {
+	) as {
 		xAxis: { data: string[] };
 		series: [{ type: string; data: number[] }];
 	};
@@ -100,14 +94,13 @@ test("line - series data matches input values", () => {
 });
 
 test("time-line - series data is [x, y] pairs", () => {
-	const option = StatsPipeline.Chart({
-		spec: spec("time-line"),
-		data: category([
+	const option = local(
+		"time-line",
+		category([
 			{ x: "2024-01-01", y: 3 },
 			{ x: "2024-01-02", y: 7 },
 		]),
-		range: "",
-	}) as {
+	) as {
 		xAxis: { type: string };
 		series: [{ data: [string, number][] }];
 	};
@@ -119,15 +112,16 @@ test("time-line - series data is [x, y] pairs", () => {
 });
 
 test("pie - series data is {name, value} pairs", () => {
-	const option = StatsPipeline.Chart({
-		spec: spec("pie"),
-		data: category([
+	const option = local(
+		"pie",
+		category([
 			{ x: "Game A", y: 20 },
 			{ x: "Game B", y: 5 },
 		]),
-		range: "",
-	}) as {
-		series: [{ type: string; data: Array<{ name: string; value: number }> }];
+	) as {
+		series: [
+			{ type: string; data: Array<{ name: string; value: number }> },
+		];
 	};
 	expect(option.series[0].type).toBe("pie");
 	expect(option.series[0].data).toEqual([
@@ -136,79 +130,109 @@ test("pie - series data is {name, value} pairs", () => {
 	]);
 });
 
-test("calendar - range is passed through to calendar config", () => {
-	const option = StatsPipeline.Chart({
-		spec: spec("calendar"),
-		data: category([]),
-		range: "2024-06",
-	}) as {
-		calendar: { range: string };
-	};
-	expect(option.calendar.range).toBe("2024-06");
-});
-
-test("calendar - visualMap min/max derived from data values", () => {
-	const option = StatsPipeline.Chart({
-		spec: spec("calendar"),
-		data: category([
-			{ x: "2024-06-01", y: 2 },
-			{ x: "2024-06-10", y: 9 },
-			{ x: "2024-06-20", y: 5 },
+test("calendar - buckets raw UTC timestamps into local-day heatmap cells", () => {
+	const option = local(
+		"calendar",
+		category([
+			{ x: "2024-01-01T10:00:00.000Z", y: 1 },
+			{ x: "2024-01-01T20:00:00.000Z", y: 1 },
+			{ x: "2024-01-02T18:00:00.000Z", y: 1 },
 		]),
-		range: "2024-06",
-	}) as { visualMap: { min: number; max: number } };
-	expect(option.visualMap.min).toBe(2);
-	expect(option.visualMap.max).toBe(9);
-});
-
-test("calendar - empty data defaults min:0 max:1", () => {
-	const option = StatsPipeline.Chart({
-		spec: spec("calendar"),
-		data: category([]),
-		range: "2024-06",
-	}) as {
-		visualMap: { min: number; max: number };
+	) as {
+		series: { type: string; data: Array<{ value: [string, number] }> };
 	};
-	expect(option.visualMap.min).toBe(0);
-	expect(option.visualMap.max).toBe(1);
+	expect(option.series.type).toBe("heatmap");
+	expect(option.series.data).toEqual([
+		{ value: ["2024-01-01", 2] },
+		{ value: ["2024-01-02", 1] },
+	]);
 });
 
-test("sunburst - sunburst data passed through to series", () => {
-	const nodes: SunburstNode[] = [
-		{
-			name: "Game A",
-			value: 5,
-			children: [{ name: "Profile", value: 5, children: [] }],
-		},
-	];
-	const option = StatsPipeline.Chart({
-		spec: spec("sunburst"),
-		data: { kind: "sunburst", nodes },
-		range: "",
-	}) as { series: [{ type: string; data: SunburstNode[] }] };
-	expect(option.series[0].type).toBe("sunburst");
-	expect(option.series[0].data).toBe(nodes);
+test("graph - nodes and edges map into the graph series", () => {
+	const graph: Graph = {
+		categories: [{ name: "Games" }, { name: "Subjects" }],
+		nodes: [
+			{ id: "g1", name: "Game", value: 5, category: 0 },
+			{ id: "s1", name: "Boss", value: 2, category: 1 },
+		],
+		edges: [{ id: "g1-s1", source: "g1", target: "s1" }],
+	};
+
+	const option = local("graph", { kind: "graph", graph }) as {
+		series: [{ type: string; data: unknown[]; links: unknown[] }];
+	};
+	expect(option.series[0].type).toBe("graph");
+	expect(option.series[0].data).toHaveLength(3);
+	expect(option.series[0].links).toEqual(
+		expect.arrayContaining([{ source: "g1", target: "s1" }]),
+	);
+});
+
+test("graph - synthesizes a root node wired to every game", () => {
+	const graph: Graph = {
+		categories: [{ name: "Games" }, { name: "Subjects" }],
+		nodes: [
+			{ id: "g1", name: "Game A", value: 5, category: 0 },
+			{ id: "g2", name: "Game B", value: 3, category: 0 },
+			{ id: "s1", name: "Boss", value: 2, category: 1 },
+		],
+		edges: [{ id: "g1-s1", source: "g1", target: "s1" }],
+	};
+	const option = local("graph", { kind: "graph", graph }) as {
+		series: [
+			{
+				data: Array<{ id: string; value: number }>;
+				links: Array<{ source: string; target: string }>;
+			},
+		];
+	};
+	expect(option.series[0].data).toHaveLength(4);
+	const root = option.series[0].data.find(
+		(n) => n.id !== "g1" && n.id !== "g2" && n.id !== "s1",
+	);
+	expect(root?.value).toBe(8); // sum of g1 (5) + g2 (3)
+	expect(option.series[0].links).toEqual(
+		expect.arrayContaining([
+			{ source: root?.id, target: "g1" },
+			{ source: root?.id, target: "g2" },
+			{ source: "g1", target: "s1" },
+		]),
+	);
+});
+
+test("graph - the root node renders much bigger than every other node", () => {
+	const graph: Graph = {
+		categories: [{ name: "Games" }],
+		nodes: [{ id: "g1", name: "Game A", value: 1000, category: 0 }],
+		edges: [],
+	};
+	const option = local("graph", { kind: "graph", graph }) as {
+		series: [{ data: Array<{ id: string; symbolSize: number }> }];
+	};
+	const root = option.series[0].data.find((n) => n.id !== "g1");
+	const game = option.series[0].data.find((n) => n.id === "g1");
+	expect(root?.symbolSize).toBeGreaterThan(game!.symbolSize);
 });
 
 // default render mode == HTML == XSS: every terminal must opt into richText
 test("all chart terminals set tooltip renderMode: richText", () => {
 	const cat = category([{ x: "A", y: 1 }]);
-	const sun: ChartData = {
-		kind: "sunburst",
-		nodes: [{ name: "A", value: 1, children: [] }],
+	const graph: ChartData = {
+		kind: "graph",
+		graph: {
+			nodes: [{ id: "a", name: "A", value: 1, category: 0 }],
+			edges: [],
+			categories: [{ name: "C" }],
+		},
 	};
 
 	const options: (EChartsOption | null)[] = [
-		StatsPipeline.Chart({ spec: spec("bar"), data: cat, range: "" }),
-		StatsPipeline.Chart({ spec: spec("line"), data: cat, range: "" }),
-		StatsPipeline.Chart({ spec: spec("time-line"), data: cat, range: "" }),
-		StatsPipeline.Chart({ spec: spec("pie"), data: cat, range: "" }),
-		StatsPipeline.Chart({
-			spec: spec("calendar"),
-			data: cat,
-			range: "2024-06",
-		}),
-		StatsPipeline.Chart({ spec: spec("sunburst"), data: sun, range: "" }),
+		local("bar", cat),
+		local("line", cat),
+		local("time-line", cat),
+		local("pie", cat),
+		local("graph", graph),
+		local("calendar", cat),
 	];
 
 	for (const option of options) {

@@ -1,4 +1,4 @@
-import { StrictMode, useEffect } from "react";
+import { StrictMode, lazy, Suspense } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router";
 import "./index.css";
@@ -14,21 +14,23 @@ import About from "./pages/about/About.tsx";
 import UserSettings from "./pages/user-settings/UserSettings.tsx";
 import { useDeathLogStore } from "./stores/useDeathLogStore.ts";
 import useInitApp from "./hooks/useInitApp.ts";
-import useConsoleLogOnStateChange from "./hooks/useConsoleLogOnStateChange.ts";
 import useMultipleTabsWarning from "./hooks/useMultipleTabsWarning.ts";
 import { CONSTANTS } from "../shared/constants.ts";
 import DeathLogRouter from "./pages/death-log/DeathLogRouter.tsx";
-import StatsDashboard from "./pages/stats/layout/StatsDashboard.tsx";
-import ChartGrid from "./pages/stats/components/ChartGrid.tsx";
-import SharedChartGrid from "./pages/stats/components/SharedChartGrid.tsx";
-import BrowseProfiles from "./pages/stats/layout/BrowseProfiles.tsx";
-import FollowList from "./pages/stats/layout/FollowList.tsx";
-import StatsGraph from "./pages/stats/layout/StatsGraph.tsx";
-import PopularProfiles from "./pages/stats/layout/PopularProfiles.tsx";
+import Spinner from "./components/Spinner.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { HEALTH_QUERY_KEY, healthQueryFn } from "./services/healthQuery.ts";
 import FakeDataBanner from "./components/FakeDataBanner.tsx";
 import ReloadPrompt from "./components/ReloadPrompt.tsx";
+
+const StatsDashboard = lazy(
+	() => import("./pages/stats/layout/dashboard/StatsDashboard.tsx"),
+);
+const ChartGrid = lazy(() => import("./pages/stats/components/ChartGrid.tsx"));
+const StatsGraph = lazy(() => import("./pages/stats/layout/StatsGraph.tsx"));
+const StatsCalendar = lazy(
+	() => import("./pages/stats/layout/StatsCalendar.tsx"),
+);
 
 function ThrowError(): never {
 	throw new Error("Deliberate test error from /throw route");
@@ -115,76 +117,51 @@ function AppRoot() {
 		>
 			<FakeDataBanner />
 			<ReloadPrompt />
-			<Routes>
-				<Route path="/" element={<Start />} />
+			<Suspense fallback={<Spinner />}>
+				<Routes>
+					<Route path="/" element={<Start />} />
 
-				<Route path="log">
-					<Route index element={<DeathLog parent={root} />} />
-					<Route path=":id" element={<DeathLogRouter />} />
-				</Route>
+					<Route path="log">
+						<Route index element={<DeathLog parent={root} />} />
+						<Route path=":id" element={<DeathLogRouter />} />
+					</Route>
 
-				<Route path="stats" element={<StatsDashboard />}>
-					<Route index element={<ChartGrid tab="Overview" />} />
+					<Route path="stats" element={<StatsDashboard />}>
+						<Route index element={<ChartGrid tab="Overview" />} />
+						<Route
+							path="specialized"
+							element={<ChartGrid tab="Specialized" />}
+						/>
+						<Route path="graph" element={<StatsGraph />} />
+						<Route path="calendar" element={<StatsCalendar />} />
+					</Route>
+
 					<Route
-						path="specialized"
-						element={<ChartGrid tab="Specialized" />}
+						path="data-management"
+						element={<DataManagement />}
 					/>
-					<Route path="graph" element={<StatsGraph />} />
+
+					<Route path="user-settings" element={<UserSettings />} />
+
+					<Route path="throw" element={<ThrowError />} />
+
+					<Route path="faq" element={<FAQ />} />
+
+					<Route path="about" element={<About />} />
+
 					<Route
-						path="browse-profiles"
-						element={<BrowseProfiles />}
+						path="*"
+						element={
+							<ErrorPage error={new Error(CONSTANTS.ERROR.URL)} />
+						}
 					/>
-				</Route>
 
-				<Route
-					path="stats/popular-profiles"
-					element={<PopularProfiles />}
-				/>
-
-				<Route
-					path="profiles/:username/stats"
-					element={<StatsDashboard isSharedPage />}
-				>
-					<Route index element={<SharedChartGrid tab="Overview" />} />
 					<Route
-						path="specialized"
-						element={<SharedChartGrid tab="Specialized" />}
+						path="/__MULTIPLE_TABS__"
+						element={<MultipleTabs />}
 					/>
-					<Route path="graph" element={<StatsGraph />} />
-					<Route
-						path="browse-profiles"
-						element={<BrowseProfiles />}
-					/>
-				</Route>
-
-				<Route
-					path="profiles/:username/followers"
-					element={<FollowList mode="followers" />}
-				/>
-				<Route
-					path="profiles/:username/following"
-					element={<FollowList mode="following" />}
-				/>
-
-				<Route path="data-management" element={<DataManagement />} />
-
-				<Route path="user-settings" element={<UserSettings />} />
-
-				<Route path="throw" element={<ThrowError />} />
-
-				<Route path="faq" element={<FAQ />} />
-
-				<Route path="about" element={<About />} />
-
-				<Route
-					path="*"
-					element={
-						<ErrorPage error={new Error(CONSTANTS.ERROR.URL)} />
-					}
-				/>
-
-				<Route path="/__MULTIPLE_TABS__" element={<MultipleTabs />} />
-			</Routes>
+				</Routes>
+			</Suspense>
 		</ErrorBoundary>
 	);
 }

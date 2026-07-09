@@ -28,7 +28,7 @@ export const VISUALIZATION_QA: QA = [
 	},
 	{
 		question: "Can other people see my charts?",
-		answer: "Only if you hit Share on your profile. That publishes a snapshot of your preset charts to a public page. Your Specialized tab and underlying raw data are never shared.",
+		answer: "No. Your stats are generated and viewed entirely on your own device, they are never uploaded or visible to anyone else.",
 	},
 	{
 		question:

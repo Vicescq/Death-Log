@@ -1,12 +1,9 @@
-using System.Data.Common;
 using Microsoft.EntityFrameworkCore;
 
 public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbContext(options)
 {
     public DbSet<UserEvent> UserEvents => Set<UserEvent>();
     public DbSet<User> Users => Set<User>();
-    public DbSet<SharedProfileRecord> SharedProfileRecords => Set<SharedProfileRecord>();
-    public DbSet<FollowRecord> FollowRecords => Set<FollowRecord>();
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {

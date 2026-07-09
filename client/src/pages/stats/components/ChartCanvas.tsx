@@ -10,26 +10,30 @@ import CalendarHeader from "./CalendarHeader";
 type Props = {
 	title: string;
 	option: EChartsOption | null;
+	description?: string;
 	isCalendar?: boolean;
 	currentDate?: Date;
 	onDateChange?: (date: Date) => void;
 	onSettings?: () => void;
-	hideMenu?: boolean;
 };
 
 export default function ChartCanvas({
 	title,
 	option,
+	description,
 	isCalendar,
 	currentDate,
 	onDateChange,
 	onSettings,
-	hideMenu,
 }: Props) {
 	const animatedOption = useChartAnimation(option);
 
 	return (
-		<ChartCard title={title} onSettings={onSettings} hideMenu={hideMenu}>
+		<ChartCard
+			title={title}
+			description={description}
+			onSettings={onSettings}
+		>
 			{isCalendar && currentDate && onDateChange && (
 				<CalendarHeader
 					currentDate={currentDate}

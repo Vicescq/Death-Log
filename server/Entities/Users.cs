@@ -5,16 +5,6 @@ public class User : IAuditable
 {
     public required string Id { get; set; }
     public required string Username { get; set; }
-    public int Reputation { get; set; } = 0;
     public DateTime CreatedAt { get; set; }
     public DateTime EditedAt { get; set; }
-    public required UserRole Role { get; set; }
-}
-
-public enum UserRole
-{
-    User,
-    Moderator,
-    Admin,
-    Owner,
 }

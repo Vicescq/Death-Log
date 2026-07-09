@@ -58,7 +58,6 @@ public class UserEventsProcessorService : BackgroundService
                                         {
                                             Id = userEventData.Id,
                                             Username = userEventData.Username!,
-                                            Role = UserRole.User,
                                         }
                                     );
                                 }

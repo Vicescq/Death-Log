@@ -4,7 +4,7 @@ import type { QA } from "./FAQ";
 export const ACCOUNT_QA: QA = [
 	{
 		question: "Do I need an account to use Death Log?",
-		answer: "No. You can log deaths and view your own stats fully offline without ever signing in. An account is only needed if you want to share your stats publicly or follow other users.",
+		answer: "No. You can log deaths and view your own stats fully offline without ever signing in. An account is only needed if you want to set up auto backup of your death log to the cloud.",
 	},
 	{
 		question: "How do I sign in?",
@@ -32,29 +32,7 @@ export const ACCOUNT_QA: QA = [
 		),
 	},
 	{
-		question: "What does sharing my profile do?",
-		answer: (
-			<>
-				Hitting Share on your{" "}
-				<Link to="/stats" className="link link-primary">
-					stats page
-				</Link>{" "}
-				snapshots your current stats and publishes them to a public
-				profile page. Anyone who navigates to your profile can view that
-				snapshot, even if they're signed out.
-				<br />
-				<br />
-				Use the public preview toggle to see exactly what visitors will
-				see.
-			</>
-		),
-	},
-	{
-		question: "What does following someone do?",
-		answer: "Following is purely social, it lets you keep track of other users you're interested in and shows up in their follower count. It doesn't affect what data you can see beyond what they've chosen to share.",
-	},
-	{
 		question: "What happens if I delete my account?",
-		answer: "Deleting your account permanently removes your server side data (username, shared profile, follows). It does not touch the death log data stored locally on your device, that stays put.",
+		answer: "Deleting your account permanently removes your server side data (your username and any cloud backup). It does not touch the death log data stored locally on your device, that stays put.",
 	},
 ];

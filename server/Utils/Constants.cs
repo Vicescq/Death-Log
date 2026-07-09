@@ -1,8 +1,3 @@
-public static class DTOConstants
-{
-    public const int MaxLen = 60;
-}
-
 public static class EndpointLimits
 {
     public const int OneMb = 1024 * 1024;

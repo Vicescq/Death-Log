@@ -47,11 +47,7 @@ public class AuthMiddleware
             return;
         }
 
-        var isSignedIn = await UserAuthentication.IsSignedInAsync(
-            ctx.Request,
-            _allowedOrigin,
-            RequiresCallerIdentity(ctx.Request)
-        );
+        var isSignedIn = await UserAuthentication.IsSignedInAsync(ctx.Request, _allowedOrigin);
         if (isSignedIn)
             await _next(ctx);
         else
@@ -62,27 +58,12 @@ public class AuthMiddleware
         return;
     }
 
-    private static bool RequiresCallerIdentity(HttpRequest request) =>
-        request.Path.StartsWithSegments("/follows") || request.Path.StartsWithSegments("/profiles");
-
     private static bool IsPublicRoute(HttpRequest request)
     {
         if (request.Path == "/health")
             return true;
 
         if (request.Path == "/users")
-            return true;
-
-        if (HttpMethods.IsGet(request.Method) && request.Path.StartsWithSegments("/profiles"))
-            return true;
-
-        if (
-            HttpMethods.IsGet(request.Method)
-            && (
-                request.Path.StartsWithSegments("/followers")
-                || request.Path.StartsWithSegments("/following")
-            )
-        )
             return true;
 
         return false;
