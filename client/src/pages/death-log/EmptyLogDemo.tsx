@@ -31,7 +31,7 @@ export default function EmptyLogDemo() {
 	}
 
 	return (
-		<div className="mx-auto flex max-w-md flex-col items-center gap-4 text-center">
+		<div className="mx-auto flex w-[75%] flex-col items-center gap-4 text-center sm:max-w-sm">
 			<FeedbackToast
 				msg={feedbackToast.msg}
 				bgCSS={feedbackToast.css}

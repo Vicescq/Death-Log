@@ -10,14 +10,12 @@ import { useActiveNavBarCSS } from "./useActiveNavBarCSS";
 import { Z_INDICES } from "../../../shared/z-indices";
 
 type Props = {
-	midNavContent?: React.JSX.Element;
 	endNavContent?: React.JSX.Element;
 	endNavContentCSS?: string;
 	startNavContentCSS?: string;
 };
 
 export default function NavBar({
-	midNavContent,
 	endNavContent,
 	endNavContentCSS,
 	startNavContentCSS,
@@ -48,7 +46,11 @@ export default function NavBar({
 
 					<li>
 						<Link className={activeDLCSS} to={{ pathname: "/log" }}>
-							<img src="death-log.svg" alt="" className="h-5 w-5" />
+							<img
+								src="death-log.svg"
+								alt=""
+								className="h-5 w-5"
+							/>
 						</Link>
 					</li>
 
@@ -93,8 +95,6 @@ export default function NavBar({
 					</li>
 				</ul>
 			</div>
-
-			<div className="navbar-center">{midNavContent}</div>
 
 			<div className={`navbar-end ${endNavContentCSS}`}>
 				{endNavContent}

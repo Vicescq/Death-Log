@@ -153,7 +153,6 @@ export default function Counter({ subject }: Props) {
 	return (
 		<>
 			<NavBar
-				midNavContent={<></>}
 				endNavContent={<Breadcrumb />}
 				endNavContentCSS="w-[70%]"
 				startNavContentCSS="w-[30%]"

@@ -18,14 +18,13 @@ export default function Start() {
 							</button>
 						</Link>
 
-						<Show when="signed-in">
-							<Link
-								to="user-settings"
-								className="btn btn-neutral w-full"
-							>
-								User Settings
-							</Link>
-						</Show>
+						<Link
+							to="user-settings"
+							className="btn btn-neutral w-full"
+						>
+							User Settings | Sign In / Register
+						</Link>
+
 						<Link to="stats" className="btn btn-neutral w-full">
 							Statistics
 						</Link>

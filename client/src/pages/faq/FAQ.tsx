@@ -16,7 +16,7 @@ export type QA = {
 export default function FAQ() {
 	return (
 		<>
-			<NavBar midNavContent={<></>} />
+			<NavBar />
 			<div className="mx-auto max-w-2xl px-4 py-10">
 				<h1 className="mb-6 text-3xl font-bold">
 					Frequently Asked Questions
