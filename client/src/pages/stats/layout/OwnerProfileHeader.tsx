@@ -49,14 +49,14 @@ export default function OwnerProfileHeader({ tables, profile }: Props) {
 				user.username,
 				profile,
 			);
-			if (res.status >= 200 && res.status < 300) {
+			if (res.ok) {
 				setToast({ msg: "Sharing was successful!", css: "success" });
-			} else if (res.status >= 400 && res.status < 500) {
+			} else if (res.status == 422) {
 				setToast({
 					msg: "Corrupted data detected, please go to Data Management page",
 					css: "error",
 				});
-			} else if (res.status >= 500) {
+			} else if (!res.ok) {
 				setToast({ msg: "Cannot share at this time", css: "error" });
 			}
 		} catch {

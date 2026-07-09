@@ -15,8 +15,8 @@ export default function UserSettings() {
 			<NavBar />
 			<div className="bg-base-100 mt-14 flex flex-col items-center justify-center">
 				<div className="mb-12">
-					<h1 className="mb-10 text-5xl font-bold underline sm:text-center">
-						{isSignedIn ? "User Settings" : "Account"}
+					<h1 className="mb-10 text-center text-5xl font-bold underline">
+						User Settings
 					</h1>
 
 					{!online ? (

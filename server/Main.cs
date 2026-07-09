@@ -40,7 +40,7 @@ var app = builder.Build();
 
 app.UseCors("frontend");
 
-app.UseDatabaseErrorHandler();
+app.UseErrorHandler();
 
 app.UseAuthMiddleware(allowedOrigin);
 
@@ -52,7 +52,7 @@ app.MapPost("/users", UserEventsQueue.Push);
 
 app.MapPost("/profiles/{username}", ProfileSharing.PostProfile)
     .Accepts<SharedProfile>("application/json")
-    .WithMetadata(new RequestSizeLimitAttribute(10485760));
+    .WithMetadata(new RequestSizeLimitAttribute(EndpointLimits.TenMb));
 
 app.MapGet("/profiles/{username}", ProfileSharing.GetProfile);
 

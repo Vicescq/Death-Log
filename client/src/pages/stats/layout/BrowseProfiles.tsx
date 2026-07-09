@@ -48,9 +48,7 @@ export default function BrowseProfiles() {
 					</div>
 
 					{users.length === 0 ? (
-						<div className="border-base-300 rounded-lg py-16 text-center">
-							No users to discover yet.
-						</div>
+						<StatsErrorMessage message="No users to discover yet." />
 					) : (
 						<div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-6">
 							{users.map((discoveredUser) => (

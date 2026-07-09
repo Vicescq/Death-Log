@@ -3,10 +3,19 @@ import SharedChartSlotRenderer from "./SharedChartSlotRenderer";
 import Spinner from "../../../components/Spinner";
 import StatsErrorMessage from "../../../components/StatsErrorMessage";
 import type { ChartTab } from "../../../model/stats-query-model/tabs";
+import useOnlineStatus from "../../../hooks/useOnlineStatus";
 
 export default function SharedChartGrid({ tab }: { tab: ChartTab }) {
 	const ctx = useStatsContext();
+	const isOnline = useOnlineStatus();
+
 	if (!ctx.isSharedPage) return null;
+
+	if (!isOnline) {
+		return (
+			<StatsErrorMessage message="You have to be online to view shared profiles!" />
+		);
+	}
 
 	if (ctx.status === "loading") {
 		return <Spinner />;
@@ -20,9 +29,7 @@ export default function SharedChartGrid({ tab }: { tab: ChartTab }) {
 
 	if (slots.length === 0) {
 		return (
-			<div className="border-base-300 rounded-lg py-16 text-center">
-				No charts on this tab.
-			</div>
+			<StatsErrorMessage message="This profile has no charts in this tab!" />
 		);
 	}
 

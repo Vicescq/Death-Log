@@ -23,7 +23,7 @@ public class BrowseUsers
             query = query.Where(user => user.Username != exclude);
         }
 
-        var users = await query.OrderBy(user => EF.Functions.Random()).Take(50).ToListAsync(ct);
+        var users = await query.OrderBy(user => EF.Functions.Random()).Take(10).ToListAsync(ct);
 
         var ids = users.Select(user => user.Id).ToList();
 

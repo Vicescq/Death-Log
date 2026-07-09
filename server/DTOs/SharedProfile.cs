@@ -1,11 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-public class DTOConstants
-{
-    public const int MaxLen = 60;
-}
-
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum ChartType
 {

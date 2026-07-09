@@ -56,8 +56,9 @@ public class Follows
                 new FollowRecord { FollowerId = callerId, FollowingId = target.Id }
             );
             await dbContext.SaveChangesAsync(ct);
+            return Results.Ok();
         }
-        return Results.Ok();
+        return Results.BadRequest();
     }
 
     public static async Task<IResult> Unfollow(
@@ -84,6 +85,9 @@ public class Follows
             dbContext.FollowRecords.Remove(record);
             await dbContext.SaveChangesAsync(ct);
         }
+
+        // Follow() already enforces that the user cannot follow themselves, did not put the cond in the logic
+
         return Results.Ok();
     }
 

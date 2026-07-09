@@ -49,7 +49,7 @@ export default function NavBarDrawer() {
 							to={{ pathname: "/log" }}
 						>
 							<img
-								src="death-log.svg"
+								src="/death-log.svg"
 								alt=""
 								className="h-5 w-5"
 							/>

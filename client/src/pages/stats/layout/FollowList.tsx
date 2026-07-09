@@ -75,20 +75,14 @@ export default function FollowList({
 					)}
 
 					{isOnline && isSuccess && users === null && (
-						<div className="border-base-300 rounded-lg py-16 text-center">
-							This user doesn't exist.
-						</div>
+						<StatsErrorMessage message="This user doesn't exist." />
 					)}
 
 					{isOnline &&
 						isSuccess &&
 						users !== null &&
 						(sorted.length === 0 ? (
-							<div className="border-base-300 rounded-lg py-16 text-center">
-								{mode === "followers"
-									? "No followers yet."
-									: "Not following anyone yet."}
-							</div>
+							<NoFollowersOrFollowing mode={mode} />
 						) : (
 							<div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-6">
 								{sorted.map((u) => (
@@ -103,4 +97,12 @@ export default function FollowList({
 			</div>
 		</>
 	);
+}
+
+function NoFollowersOrFollowing({ mode }: { mode: "followers" | "following" }) {
+	if (mode === "followers") {
+		return <StatsErrorMessage message="No followers yet." />;
+	} else {
+		return <StatsErrorMessage message="Not following anyone yet." />;
+	}
 }

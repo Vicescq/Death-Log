@@ -47,7 +47,7 @@ export default function NavBar({
 					<li>
 						<Link className={activeDLCSS} to={{ pathname: "/log" }}>
 							<img
-								src="death-log.svg"
+								src="/death-log.svg"
 								alt=""
 								className="h-5 w-5"
 							/>

@@ -12,6 +12,7 @@ export default defineConfig({
 			workbox: {
 				maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
 				globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
+				navigateFallback: "index.html",
 			},
 			manifest: {
 				name: "Death Log",
@@ -21,7 +22,7 @@ export default defineConfig({
 				theme_color: "#172133",
 				icons: [
 					{
-						src: "death-log.svg",
+						src: "/death-log.svg",
 						sizes: "any",
 						type: "image/svg+xml",
 					},

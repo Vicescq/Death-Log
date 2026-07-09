@@ -56,8 +56,8 @@ public class AuthMiddleware
             await _next(ctx);
         else
         {
-            ctx.Response.StatusCode = StatusCodes.Status400BadRequest;
-            await ctx.Response.WriteAsync("Bad request");
+            ctx.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            await ctx.Response.CompleteAsync();
         }
         return;
     }

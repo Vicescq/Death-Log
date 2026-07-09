@@ -36,7 +36,7 @@ export default function ReloadPrompt() {
 				</svg>
 				<span>
 					An update is available please click update. A manual refresh
-					might not make this alert dissappear! If the button is not
+					might not make this alert disappear! If the button is not
 					working, clear your cache in
 					<Link to="/data-management" className="link">
 						{" "}

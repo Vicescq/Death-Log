@@ -18,8 +18,7 @@ export default function DashboardShell({
 					{value.status === "notfound" ? (
 						<div className="border-base-300 bg-base-300 flex flex-col items-center gap-4 rounded-2xl border p-10 text-center">
 							<p className="text-lg font-semibold">
-								This profile doesn't exist or hasn't shared any
-								stats.
+								This profile doesn't exist!
 							</p>
 							<Link to="/stats" className="btn btn-accent">
 								Go to my profile
