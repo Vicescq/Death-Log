@@ -2,6 +2,11 @@ export async function delay(ms: number) {
 	await new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+export function formatBytes(bytes: number): string {
+	const mb = bytes / 1024 ** 2;
+	return `${mb.toFixed(1)} MB`;
+}
+
 /**
  * Trims leading, trailing, and intermediate whitespace
  * @param str

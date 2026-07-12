@@ -4,6 +4,8 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
 {
     public DbSet<UserEvent> UserEvents => Set<UserEvent>();
     public DbSet<User> Users => Set<User>();
+    public DbSet<Backup> Backups => Set<Backup>();
+    public DbSet<AutoBackup> AutoBackups => Set<AutoBackup>();
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {

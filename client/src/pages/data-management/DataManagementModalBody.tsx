@@ -53,6 +53,11 @@ export default function DataManagementModalBody({
 					with generated sample data, so you can preview stats and
 					charts. Use KEEP FAKE DATA afterward if you want to turn the
 					sample data into permanent data instead of undoing it.
+					<div className="text-warning mt-2">
+						Auto backup pauses while sample data is on this device,
+						so it can never reach your cloud backups. It resumes
+						once you undo or keep the sample data.
+					</div>
 				</div>
 				<button onClick={onSeed} className="btn btn-info w-full">
 					PROCEED

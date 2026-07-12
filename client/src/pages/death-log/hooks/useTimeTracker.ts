@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { addLeadingZeroes } from "../../../utils/date";
 import type { Subject } from "../../../model/tree-node-model/SubjectSchema";
 import { useDeathLogStore } from "../../../stores/useDeathLogStore";
-import LocalDB from "../../../services/LocalDB";
 
 export default function useTimeTracker(subject: Subject) {
 	const updateNode = useDeathLogStore((state) => state.updateNode);
@@ -31,17 +30,19 @@ export default function useTimeTracker(subject: Subject) {
 		if (isTracking) {
 			setIsTracking(false);
 			const time = formatTime();
-			updateNode({
-				...subject,
-				timeSpent: time == "N / A" ? null : time,
-			});
+			const timeSpent = time == "N / A" ? null : time;
+			if (timeSpent !== subject.timeSpent) {
+				updateNode({ ...subject, timeSpent });
+			}
 		}
 	}
 
 	function reset() {
 		setElapsedTime(0);
 		setIsTracking(false);
-		updateNode({ ...subject, timeSpent: null });
+		if (subject.timeSpent !== null) {
+			updateNode({ ...subject, timeSpent: null });
+		}
 	}
 
 	function formatTime(fromRef = false) {
@@ -73,14 +74,13 @@ export default function useTimeTracker(subject: Subject) {
 		}
 	}, [isTracking]);
 
-	// save time upon navigating away
 	useEffect(() => {
 		return () => {
 			const time = formatTime(true);
-			updateNode({
-				...subjectRef.current,
-				timeSpent: time == "N / A" ? null : time,
-			});
+			const timeSpent = time == "N / A" ? null : time;
+			if (timeSpent !== subjectRef.current.timeSpent) {
+				updateNode({ ...subjectRef.current, timeSpent });
+			}
 		};
 	}, []);
 

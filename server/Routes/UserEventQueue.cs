@@ -28,18 +28,13 @@ public class UserEventsQueue
                     return Results.Ok();
                 }
 
-                logger.LogError(
-                    "Valid webhook, but null userEvent! Responded with 200 to stop retries."
-                );
-                return Results.Ok(); // stop webhook retries
+                logger.LogError("Valid webhook, but null userEvent!");
+                return Results.InternalServerError();
             }
             catch (JsonException e)
             {
-                logger.LogError(
-                    "Valid webhook, but incorrect shape! {E}. Responded with 200 to stop retries.",
-                    e.ToString()
-                );
-                return Results.Ok(); // stop webhook retries
+                logger.LogError("Valid webhook, but incorrect shape! {E}", e.ToString());
+                return Results.InternalServerError();
             }
         }
         else

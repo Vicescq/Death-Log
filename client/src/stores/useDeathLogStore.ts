@@ -14,6 +14,7 @@ import type {
 	Tree,
 	DistinctTreeNode,
 } from "../model/tree-node-model/TreeNodeSchema";
+import { DEFAULT_CRUD_STATE, type CrudState } from "../model/CrudStateSchema";
 
 export type HydrationStatus = "loading" | "ready" | "error";
 
@@ -21,6 +22,7 @@ export type DeathLogState = {
 	tree: Tree;
 	status: HydrationStatus;
 	loadError: Error | null;
+	crudState: CrudState;
 
 	refreshTree: () => Promise<void>;
 	initTree: (nodes: DistinctTreeNode[]) => void;
@@ -32,19 +34,27 @@ export type DeathLogState = {
 	) => void;
 	deleteNode: (node: DistinctTreeNode) => void;
 	updateNode: (node: DistinctTreeNode) => void;
+	dismissCRUDBanner: () => void;
+	resetCRUDCount: () => void;
+	setAutoBackup: (autoBackup: boolean) => void;
 };
 
 export const useDeathLogStore = create<DeathLogState>((set, get) => ({
 	tree: new Map(),
 	status: "loading",
 	loadError: null,
+	crudState: DEFAULT_CRUD_STATE,
 
 	refreshTree: async () => {
 		set({ status: "loading" });
 		try {
 			const nodes = await LocalDB.getNodes();
 			get().initTree(nodes);
-			set({ status: "ready", loadError: null });
+			set({
+				status: "ready",
+				loadError: null,
+				crudState: LocalDB.getCrudState(),
+			});
 		} catch (e) {
 			set({
 				status: "error",
@@ -108,7 +118,13 @@ export const useDeathLogStore = create<DeathLogState>((set, get) => ({
 			}
 			LocalDB.incrementCRUDCounter();
 
-			return { tree: updatedTree };
+			return {
+				tree: updatedTree,
+				crudState: {
+					...state.crudState,
+					count: state.crudState.count + 1,
+				},
+			};
 		});
 	},
 
@@ -140,7 +156,13 @@ export const useDeathLogStore = create<DeathLogState>((set, get) => ({
 			}
 
 			LocalDB.incrementCRUDCounter();
-			return { tree: updatedTree };
+			return {
+				tree: updatedTree,
+				crudState: {
+					...state.crudState,
+					count: state.crudState.count + 1,
+				},
+			};
 		});
 	},
 
@@ -153,7 +175,32 @@ export const useDeathLogStore = create<DeathLogState>((set, get) => ({
 			LocalDB.updateNode(updatedNode);
 			LocalDB.incrementCRUDCounter();
 
-			return { tree: updatedTree };
+			return {
+				tree: updatedTree,
+				crudState: {
+					...state.crudState,
+					count: state.crudState.count + 1,
+				},
+			};
 		});
 	},
+
+	dismissCRUDBanner: () => {
+		LocalDB.resetCRUDCounter();
+		set((state) => ({ crudState: { ...state.crudState, count: 0 } }));
+	},
+
+	resetCRUDCount: () => {
+		const lastBackup = Date.now();
+		LocalDB.resetCrudState(lastBackup);
+		set((state) => ({
+			crudState: { ...state.crudState, count: 0, lastBackup },
+		}));
+	},
+
+	setAutoBackup: (autoBackup) => {
+		LocalDB.setAutoBackup(autoBackup);
+		set((state) => ({ crudState: { ...state.crudState, autoBackup } }));
+	},
+
 }));

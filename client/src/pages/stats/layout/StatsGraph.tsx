@@ -22,6 +22,11 @@ export default function StatsGraph() {
 			<p className="mb-3 text-sm opacity-70">
 				Tip: scroll or pinch to zoom out if the graph looks cut off.
 			</p>
+			<p className="mb-3 text-sm opacity-70">
+				Note: pinch to zoom is very sensitive on phones and other
+				touchscreens. A laptop or desktop is preferred for exploring the
+				graph.
+			</p>
 			<ChartCanvas title="Graph" option={option} />
 		</div>
 	);

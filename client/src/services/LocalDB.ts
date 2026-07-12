@@ -13,6 +13,11 @@ import {
 	constructInitPref,
 	type DeathLogViewType,
 } from "../pages/death-log/utils";
+import {
+	CrudStateSchema,
+	DEFAULT_CRUD_STATE,
+	type CrudState,
+} from "../model/CrudStateSchema";
 
 export type DeathLogViewPrefs<T> = Record<DeathLogViewType, T>;
 
@@ -35,7 +40,7 @@ type ChartOverrideMap = z.infer<typeof ChartOverrideMapSchema>;
 const FILTER_PREF_KEY = "filters";
 const SORT_PREF_KEY = "sort-settings";
 const CHART_OVERRIDES_KEY = "chart-overrides";
-const CRUD_COUNTER_KEY = "crud-counter";
+const CRUD_STATE_KEY = "crud-state";
 
 export default class LocalDB {
 	constructor() {}
@@ -100,15 +105,41 @@ export default class LocalDB {
 		});
 	}
 
-	static incrementCRUDCounter() {
-		const prev = localStorage.getItem(CRUD_COUNTER_KEY);
-		let current;
-		if (prev) {
-			current = Number(prev) + 1;
-		} else {
-			current = 1;
+	static getCrudState(): CrudState {
+		const raw = localStorage.getItem(CRUD_STATE_KEY);
+		if (!raw) return DEFAULT_CRUD_STATE;
+		try {
+			const result = CrudStateSchema.safeParse(JSON.parse(raw));
+			if (result.success) return result.data;
+		} catch {
+			// fall through to reset below
 		}
-		localStorage.setItem(CRUD_COUNTER_KEY, String(current));
+		localStorage.setItem(
+			CRUD_STATE_KEY,
+			JSON.stringify(DEFAULT_CRUD_STATE),
+		);
+		return DEFAULT_CRUD_STATE;
+	}
+
+	private static writeCrudState(patch: Partial<CrudState>) {
+		const merged = { ...LocalDB.getCrudState(), ...patch };
+		localStorage.setItem(CRUD_STATE_KEY, JSON.stringify(merged));
+	}
+
+	static incrementCRUDCounter() {
+		LocalDB.writeCrudState({ count: LocalDB.getCrudState().count + 1 });
+	}
+
+	static resetCRUDCounter() {
+		LocalDB.writeCrudState({ count: 0 });
+	}
+
+	static resetCrudState(lastBackup: number) {
+		LocalDB.writeCrudState({ count: 0, lastBackup });
+	}
+
+	static setAutoBackup(autoBackup: boolean) {
+		LocalDB.writeCrudState({ autoBackup });
 	}
 
 	static async clearAndInsertData(nodes: DistinctTreeNode[]) {
@@ -227,12 +258,6 @@ export default class LocalDB {
 		localStorage.setItem(CHART_OVERRIDES_KEY, JSON.stringify(map));
 	}
 
-	static clearChartOverride(id: string) {
-		const map = LocalDB.readChartOverrides();
-		delete map[id];
-		localStorage.setItem(CHART_OVERRIDES_KEY, JSON.stringify(map));
-	}
-
 	static dbVersion(): number {
 		return db.verno;
 	}
@@ -266,9 +291,12 @@ export default class LocalDB {
 	}
 
 	static async clearLocalData() {
-		// TODO: decide whether to also clear crud-counter keys
-
-		const prefixes = [FILTER_PREF_KEY, SORT_PREF_KEY, CHART_OVERRIDES_KEY];
+		const prefixes = [
+			FILTER_PREF_KEY,
+			SORT_PREF_KEY,
+			CHART_OVERRIDES_KEY,
+			CRUD_STATE_KEY,
+		];
 		for (const key of Object.keys(localStorage)) {
 			if (prefixes.some((prefix) => key.startsWith(prefix))) {
 				localStorage.removeItem(key);

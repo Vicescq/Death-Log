@@ -22,6 +22,14 @@ vi.mock("../../services/LocalDB", () => {
 			deleteNode: vi.fn().mockResolvedValue(undefined),
 			updateNode: vi.fn().mockResolvedValue(undefined),
 			incrementCRUDCounter: vi.fn(),
+			getCrudState: vi.fn(() => ({
+				count: 0,
+				lastBackup: 0,
+				autoBackup: false,
+			})),
+			resetCRUDCounter: vi.fn(),
+			resetCrudState: vi.fn(),
+			setAutoBackup: vi.fn(),
 		},
 	};
 });

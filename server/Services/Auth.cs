@@ -47,7 +47,11 @@ public class AuthMiddleware
             return;
         }
 
-        var isSignedIn = await UserAuthentication.IsSignedInAsync(ctx.Request, _allowedOrigin);
+        var isSignedIn = await UserAuthentication.IsSignedInAsync(
+            ctx.Request,
+            _allowedOrigin,
+            RequiresCallerIdentity(ctx.Request)
+        );
         if (isSignedIn)
             await _next(ctx);
         else
@@ -57,6 +61,11 @@ public class AuthMiddleware
         }
         return;
     }
+
+    private static bool RequiresCallerIdentity(HttpRequest request) =>
+        request.Path.StartsWithSegments("/backup")
+        || request.Path.StartsWithSegments("/backups")
+        || request.Path.StartsWithSegments("/auto-backup");
 
     private static bool IsPublicRoute(HttpRequest request)
     {

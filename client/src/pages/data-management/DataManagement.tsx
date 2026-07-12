@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { Link } from "react-router";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import LocalDB from "../../services/LocalDB";
 import Modal from "../../components/Modal";
 import { useDeathLogStore } from "../../stores/useDeathLogStore";
@@ -9,7 +10,7 @@ import DataManagementModalBody from "./DataManagementModalBody";
 import StorageUsage from "./StorageUsage";
 import type { FeedbackToastState } from "../../components/FeedbackToast";
 import FeedbackToast from "../../components/FeedbackToast";
-import { createDeathLogBackup, processImportedFile } from "./utils";
+import { BackupService } from "../../services/backup/BackupService";
 import FakeData from "../../services/fake-data-gen/FakeData";
 
 export type DataManagementAction =
@@ -20,9 +21,18 @@ export type DataManagementAction =
 	| "keep"
 	| "cache";
 
+type DataOp = {
+	run: () => Promise<void>;
+	successMsg: string;
+	errorMsg: string;
+	closesModal: boolean;
+};
+
 export default function DataManagement() {
 	const tree = useDeathLogStore((state) => state.tree);
 	const refreshTree = useDeathLogStore((state) => state.refreshTree);
+	const resetCRUDCount = useDeathLogStore((state) => state.resetCRUDCount);
+	const queryClient = useQueryClient();
 	const importRef = useRef<HTMLInputElement>(null);
 	const modalRef = useRef<HTMLDialogElement>(null);
 
@@ -33,40 +43,54 @@ export default function DataManagement() {
 		css: "success",
 	});
 
-	async function handleImport() {
+	const dataMutation = useMutation({
+		mutationFn: (op: DataOp) => op.run(),
+		onSuccess: (_data, op) => {
+			if (op.closesModal) modalRef.current?.close();
+			setFeedbackToast({
+				displayed: true,
+				css: "success",
+				msg: op.successMsg,
+			});
+			queryClient.invalidateQueries({ queryKey: ["storageEstimate"] });
+		},
+		onError: (_err, op) => {
+			if (op.closesModal) modalRef.current?.close();
+			setFeedbackToast({
+				displayed: true,
+				css: "error",
+				msg: op.errorMsg,
+			});
+		},
+	});
+
+	function handleImport() {
 		// cant condense into handleXYZ naming pattern because have to invoke click(), 2 steps
 		if (
 			importRef.current &&
 			importRef.current.files &&
 			importRef.current.files.length > 0
 		) {
-			try {
-				const importedFile = importRef.current.files[0];
-				importRef.current.value = ""; // refire input tag onChange, edge case: user imports same invalid file multiple times => import a.json -> closes err msg -> import a.json again -> err msg wont appear if this line is commented out
+			const importedFile = importRef.current.files[0];
+			importRef.current.value = ""; // refire input tag onChange, edge case: user imports same invalid file multiple times => import a.json -> closes err msg -> import a.json again -> err msg wont appear if this line is commented out
 
-				await processImportedFile(importedFile);
-				await refreshTree();
-
-				setFeedbackToast({
-					displayed: true,
-					msg: "Successful import!",
-					css: "success",
-				});
-			} catch (e) {
-				if (e instanceof Error) {
-					setFeedbackToast({
-						displayed: true,
-						msg: "The import could not be completed, please try again. Make sure to give a valid JSON file. For more info make sure to read the FAQ.",
-						css: "error",
-					});
-				}
-			}
+			dataMutation.mutate({
+				run: async () => {
+					await BackupService.restoreFromFile(importedFile);
+					await refreshTree();
+					resetCRUDCount();
+				},
+				successMsg: "Successful import!",
+				errorMsg:
+					"The import could not be completed, please try again. Make sure to give a valid JSON file. For more info make sure to read the FAQ.",
+				closesModal: false,
+			});
 		}
 	}
 
 	async function handleExport() {
 		try {
-			const deathLogBackup = await createDeathLogBackup();
+			const deathLogBackup = await BackupService.create();
 
 			const blob = new Blob([JSON.stringify(deathLogBackup.json)], {
 				type: "application/json",
@@ -80,6 +104,8 @@ export default function DataManagement() {
 			a.click();
 			document.body.removeChild(a);
 			URL.revokeObjectURL(url);
+
+			resetCRUDCount();
 
 			setFeedbackToast({
 				displayed: true,
@@ -97,126 +123,77 @@ export default function DataManagement() {
 		}
 	}
 
-	async function handleDelete() {
-		try {
-			await LocalDB.clearLocalData();
-
-			await refreshTree();
-			modalRef.current?.close();
-
-			setFeedbackToast({
-				displayed: true,
-				css: "success",
-				msg: "Deletion process was a success!",
-			});
-		} catch (e) {
-			if (e instanceof Error) {
-				modalRef.current?.close();
-
-				setFeedbackToast({
-					displayed: true,
-					css: "error",
-					msg: "Something unexpected happened during the deletion process. Please try again.",
-				});
-			}
-		}
+	function deleteData() {
+		dataMutation.mutate({
+			run: async () => {
+				await LocalDB.clearLocalData();
+				await refreshTree();
+			},
+			successMsg: "Deletion process was a success!",
+			errorMsg:
+				"Something unexpected happened during the deletion process. Please try again.",
+			closesModal: true,
+		});
 	}
 
-	async function handleSeed() {
-		try {
-			await LocalDB.clearAndInsertData(FakeData.generate());
-			await refreshTree();
-			modalRef.current?.close();
-
-			setFeedbackToast({
-				displayed: true,
-				css: "success",
-				msg: "Sample data generated! Check out the stats page.",
-			});
-		} catch (e) {
-			if (e instanceof Error) {
-				modalRef.current?.close();
-
-				setFeedbackToast({
-					displayed: true,
-					css: "error",
-					msg: "Something unexpected happened while generating sample data. Please try again.",
-				});
-			}
-		}
+	function seedData() {
+		dataMutation.mutate({
+			run: async () => {
+				await LocalDB.clearAndInsertData(FakeData.generate());
+				await refreshTree();
+			},
+			successMsg: "Sample data generated! Check out the stats page.",
+			errorMsg:
+				"Something unexpected happened while generating sample data. Please try again.",
+			closesModal: true,
+		});
 	}
 
-	async function handleUndoFakeData() {
-		try {
-			const currentNodes = Array.from(tree.values()).filter(
-				(node) => node.id !== "ROOT_NODE",
-			);
-			await LocalDB.clearAndInsertData(
-				FakeData.removeFakeNodes(currentNodes),
-			);
-			await refreshTree();
-			modalRef.current?.close();
-
-			setFeedbackToast({
-				displayed: true,
-				css: "success",
-				msg: "Fake data removed!",
-			});
-		} catch (e) {
-			if (e instanceof Error) {
-				modalRef.current?.close();
-
-				setFeedbackToast({
-					displayed: true,
-					css: "error",
-					msg: "Something unexpected happened while removing fake data. Please try again.",
-				});
-			}
-		}
+	function undoFakeData() {
+		dataMutation.mutate({
+			run: async () => {
+				const currentNodes = Array.from(tree.values()).filter(
+					(node) => node.id !== "ROOT_NODE",
+				);
+				await LocalDB.clearAndInsertData(
+					FakeData.removeFakeNodes(currentNodes),
+				);
+				await refreshTree();
+			},
+			successMsg: "Fake data removed!",
+			errorMsg:
+				"Something unexpected happened while removing fake data. Please try again.",
+			closesModal: true,
+		});
 	}
 
-	async function handleKeepFakeData() {
-		try {
-			const currentNodes = Array.from(tree.values()).filter(
-				(node) => node.id !== "ROOT_NODE",
-			);
-			await LocalDB.clearAndInsertData(
-				FakeData.keepFakeNodes(currentNodes),
-			);
-			await refreshTree();
-			modalRef.current?.close();
-
-			setFeedbackToast({
-				displayed: true,
-				css: "success",
-				msg: "Fake data is now permanent!",
-			});
-		} catch (e) {
-			if (e instanceof Error) {
-				modalRef.current?.close();
-
-				setFeedbackToast({
-					displayed: true,
-					css: "error",
-					msg: "Something unexpected happened. Please try again.",
-				});
-			}
-		}
+	function keepFakeData() {
+		dataMutation.mutate({
+			run: async () => {
+				const currentNodes = Array.from(tree.values()).filter(
+					(node) => node.id !== "ROOT_NODE",
+				);
+				await LocalDB.clearAndInsertData(
+					FakeData.keepFakeNodes(currentNodes),
+				);
+				await refreshTree();
+			},
+			successMsg: "Fake data is now permanent!",
+			errorMsg: "Something unexpected happened. Please try again.",
+			closesModal: true,
+		});
 	}
 
-	async function handleCacheClear() {
-		try {
-			await LocalDB.clearCache();
-		} catch (e) {
-			setFeedbackToast({
-				displayed: true,
-				css: "error",
-				msg: "Something unexpected happened. Please try again.",
-			});
-		}
+	function clearCache() {
+		dataMutation.mutate({
+			run: () => LocalDB.clearCache(),
+			successMsg: "Cache cleared!",
+			errorMsg: "Something unexpected happened. Please try again.",
+			closesModal: true,
+		});
 	}
 
-	let templateHeader = "Confirm";
+	const templateHeader = "Confirm";
 	let header = "";
 	if (action == "delete") {
 		header = `${templateHeader} Deletion`;
@@ -254,11 +231,11 @@ export default function DataManagement() {
 							importRef.current?.click();
 							modalRef.current?.close();
 						}}
-						onDelete={handleDelete}
-						onSeed={handleSeed}
-						onUndoFakeData={handleUndoFakeData}
-						onKeepFakeData={handleKeepFakeData}
-						onCacheClear={handleCacheClear}
+						onDelete={deleteData}
+						onSeed={seedData}
+						onUndoFakeData={undoFakeData}
+						onKeepFakeData={keepFakeData}
+						onCacheClear={clearCache}
 					/>
 				}
 				header={header}

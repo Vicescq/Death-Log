@@ -20,8 +20,9 @@ import DeathLogRouter from "./pages/death-log/DeathLogRouter.tsx";
 import Spinner from "./components/Spinner.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { HEALTH_QUERY_KEY, healthQueryFn } from "./services/healthQuery.ts";
-import FakeDataBanner from "./components/FakeDataBanner.tsx";
-import ReloadPrompt from "./components/ReloadPrompt.tsx";
+import Banners from "./components/Banners.tsx";
+import useDebug from "./hooks/useDebug.ts";
+import { DebugService } from "./services/DebugService.ts";
 
 const StatsDashboard = lazy(
 	() => import("./pages/stats/layout/dashboard/StatsDashboard.tsx"),
@@ -64,16 +65,20 @@ createRoot(document.getElementById("root")!).render(
 function AppRoot() {
 	const location = useLocation();
 	useMultipleTabsWarning();
-	// const tree = useDeathLogStore((state) => state.tree);
-	// useConsoleLogOnStateChange(tree, "TREE:", tree);
+
+	// controlled via DebugService
+	const tree = useDeathLogStore((state) => state.tree);
+	useDebug(tree, "[TREE]", tree);
+
 	let status = useDeathLogStore((state) => state.status);
 	let loadError = useDeathLogStore((state) => state.loadError);
 	const root = useDeathLogStore((state) => state.tree.get("ROOT_NODE"));
 	useInitApp();
 
-	// Debug vars
-	// status = "error";
-	// loadError = new Error("Debug error: forcing to see if view is correct");
+	if (DebugService.forceDebugCondition(false)) {
+		status = "error";
+		loadError = new Error("Debug error: forcing to see if view is correct");
+	}
 
 	if (status === "error") {
 		return (
@@ -81,7 +86,7 @@ function AppRoot() {
 				FallbackComponent={ErrorPage}
 				resetKeys={[location.pathname]}
 			>
-				<ReloadPrompt />
+				<Banners />
 				<Routes>
 					<Route path="/" element={<Start />} />
 					<Route
@@ -115,8 +120,7 @@ function AppRoot() {
 			FallbackComponent={ErrorPage}
 			resetKeys={[location.pathname]}
 		>
-			<FakeDataBanner />
-			<ReloadPrompt />
+			<Banners />
 			<Suspense fallback={<Spinner />}>
 				<Routes>
 					<Route path="/" element={<Start />} />

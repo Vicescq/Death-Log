@@ -1,27 +1,24 @@
-import { useEffect, useState } from "react";
-import LocalDB, { type StorageEstimateInfo } from "../../services/LocalDB";
-import { barColor, formatBytes } from "./utils";
+import { useQuery } from "@tanstack/react-query";
+import LocalDB from "../../services/LocalDB";
+import { formatBytes } from "../../utils/general";
+
+function barColor(percentage: number): string {
+	if (percentage >= 90) return "progress-error";
+	if (percentage >= 70) return "progress-warning";
+	return "progress-primary";
+}
 
 export default function StorageUsage() {
-	const [estimate, setEstimate] = useState<StorageEstimateInfo | null>(null);
-	const [loading, setLoading] = useState(true);
-
-	useEffect(() => {
-		const controller = new AbortController();
-		(async () => {
-			const result = await LocalDB.showEstimatedQuota();
-			if (controller.signal.aborted) return;
-			setEstimate(result);
-			setLoading(false);
-		})();
-		return () => controller.abort();
-	}, []);
+	const { data: estimate, isPending } = useQuery({
+		queryKey: ["storageEstimate"],
+		queryFn: () => LocalDB.showEstimatedQuota(),
+	});
 
 	return (
 		<div className="bg-base-200 rounded-box mt-1 flex flex-col gap-2 p-4">
 			<span className="text-lg font-semibold">Local data used</span>
 
-			{loading ? (
+			{isPending ? (
 				<progress className="progress w-full" />
 			) : estimate ? (
 				<>
