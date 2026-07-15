@@ -103,4 +103,12 @@ app.MapDelete("/backup/{id}", Backups.DeleteBackupById)
 app.MapDelete("/auto-backup/{id}", Backups.DeleteAutoBackupById)
     .RequireRateLimiting(RateLimits.StandardPolicy);
 
+app.MapPost("/global-stats", GlobalStats.PostGlobalStats)
+    .Accepts<GlobalStatsCounts>("application/json")
+    .WithMaxBodySize(EndpointLimits.SixtyFourKb)
+    .RequireRateLimiting(RateLimits.StandardPolicy);
+
+app.MapGet("/global-stats", GlobalStats.GetGlobalStats)
+    .RequireRateLimiting(RateLimits.StandardPolicy);
+
 app.Run();

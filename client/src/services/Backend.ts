@@ -19,7 +19,11 @@ export default class Backend {
 		});
 	}
 
-	static async autoBackup(token: string, json: unknown, signal?: AbortSignal) {
+	static async autoBackup(
+		token: string,
+		json: unknown,
+		signal?: AbortSignal,
+	) {
 		return await fetch(`${API}/auto-backup`, {
 			method: "POST",
 			headers: {
@@ -82,6 +86,30 @@ export default class Backend {
 	) {
 		return await fetch(`${API}/auto-backup/${id}`, {
 			method: "DELETE",
+			headers: { Authorization: `Bearer ${token}` },
+			signal,
+		});
+	}
+
+	static async postGlobalStats(
+		token: string,
+		slice: unknown,
+		signal?: AbortSignal,
+	) {
+		return await fetch(`${API}/global-stats`, {
+			method: "POST",
+			headers: {
+				Authorization: `Bearer ${token}`,
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(slice),
+			signal,
+		});
+	}
+
+	static async getGlobalStats(token: string, signal?: AbortSignal) {
+		return await fetch(`${API}/global-stats`, {
+			method: "GET",
 			headers: { Authorization: `Bearer ${token}` },
 			signal,
 		});

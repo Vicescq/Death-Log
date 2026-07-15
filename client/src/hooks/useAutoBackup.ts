@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@clerk/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useDeathLogStore } from "../stores/useDeathLogStore";
@@ -27,6 +27,8 @@ export function useAutoBackup() {
 		Array.from(state.tree.values()).some((node) => node.isFake),
 	);
 
+	const [failureCooldownUntil, setFailureCooldownUntil] = useState(0);
+
 	const { mutate: createAutoBackup, isPending } = useMutation({
 		mutationFn: async () => {
 			const token = await getToken();
@@ -44,7 +46,12 @@ export function useAutoBackup() {
 		onError: (error) => {
 			if (error instanceof Error && error.message === "TOO_LARGE") {
 				setAutoBackup(false);
+				return;
 			}
+			// retryable: wait a longer cooldown before the next attempt
+			setFailureCooldownUntil(
+				Date.now() + BackupPolicy.FAILURE_COOLDOWN_MS,
+			);
 		},
 	});
 
@@ -69,11 +76,19 @@ export function useAutoBackup() {
 	useDebug(eligible, "[autoBackup] ELIGIBLE:", eligible);
 	useDebug(isOnline, "[autoBackup] isOnline:", isOnline);
 	useDebug(lastBackupMs, "[autoBackup] lastBackupMs:", lastBackupMs);
+	useDebug(
+		failureCooldownUntil,
+		"[autoBackup] failureCooldownUntil:",
+		failureCooldownUntil,
+	);
 
 	useEffect(() => {
 		if (!eligible) return;
 
-		const delay = BackupPolicy.resolveDelay(lastBackupMs);
+		const delay = BackupPolicy.resolveDelay(
+			lastBackupMs,
+			failureCooldownUntil,
+		);
 
 		// controlled via DebugService
 		let countdown: ReturnType<typeof setInterval> | undefined;
@@ -91,5 +106,5 @@ export function useAutoBackup() {
 			clearTimeout(timer);
 			clearInterval(countdown);
 		};
-	}, [eligible, count, createAutoBackup, lastBackupMs]);
+	}, [eligible, count, createAutoBackup, lastBackupMs, failureCooldownUntil]);
 }

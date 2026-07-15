@@ -6,7 +6,6 @@ import { ErrorBoundary } from "react-error-boundary";
 import ErrorPage from "./pages/ErrorPage.tsx";
 import Start from "./pages/Start.tsx";
 import DataManagement from "./pages/data-management/DataManagement.tsx";
-import MultipleTabs from "./pages/MultipleTabs.tsx";
 import { ClerkProvider } from "@clerk/react";
 import DeathLog from "./pages/death-log/DeathLog.tsx";
 import FAQ from "./pages/faq/FAQ.tsx";
@@ -14,7 +13,7 @@ import About from "./pages/about/About.tsx";
 import UserSettings from "./pages/user-settings/UserSettings.tsx";
 import { useDeathLogStore } from "./stores/useDeathLogStore.ts";
 import useInitApp from "./hooks/useInitApp.ts";
-import useMultipleTabsWarning from "./hooks/useMultipleTabsWarning.ts";
+import useMultitabSync from "./hooks/useMultitabSync.ts";
 import { CONSTANTS } from "../shared/constants.ts";
 import DeathLogRouter from "./pages/death-log/DeathLogRouter.tsx";
 import Spinner from "./components/Spinner.tsx";
@@ -31,6 +30,9 @@ const ChartGrid = lazy(() => import("./pages/stats/components/ChartGrid.tsx"));
 const StatsGraph = lazy(() => import("./pages/stats/layout/StatsGraph.tsx"));
 const StatsCalendar = lazy(
 	() => import("./pages/stats/layout/StatsCalendar.tsx"),
+);
+const StatsGlobal = lazy(
+	() => import("./pages/stats/layout/global/StatsGlobal.tsx"),
 );
 
 function ThrowError(): never {
@@ -64,7 +66,7 @@ createRoot(document.getElementById("root")!).render(
 
 function AppRoot() {
 	const location = useLocation();
-	useMultipleTabsWarning();
+	useMultitabSync();
 
 	// controlled via DebugService
 	const tree = useDeathLogStore((state) => state.tree);
@@ -132,6 +134,7 @@ function AppRoot() {
 
 					<Route path="stats" element={<StatsDashboard />}>
 						<Route index element={<ChartGrid tab="Overview" />} />
+						<Route path="global" element={<StatsGlobal />} />
 						<Route
 							path="specialized"
 							element={<ChartGrid tab="Specialized" />}
@@ -158,11 +161,6 @@ function AppRoot() {
 						element={
 							<ErrorPage error={new Error(CONSTANTS.ERROR.URL)} />
 						}
-					/>
-
-					<Route
-						path="/__MULTIPLE_TABS__"
-						element={<MultipleTabs />}
 					/>
 				</Routes>
 			</Suspense>

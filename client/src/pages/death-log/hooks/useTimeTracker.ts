@@ -75,6 +75,16 @@ export default function useTimeTracker(subject: Subject) {
 	}, [isTracking]);
 
 	useEffect(() => {
+		if (!isTracking) {
+			setElapsedTime(
+				subject.timeSpent != null
+					? parseFormattedTime(subject.timeSpent)
+					: 0,
+			);
+		}
+	}, [subject.timeSpent, isTracking]);
+
+	useEffect(() => {
 		return () => {
 			const time = formatTime(true);
 			const timeSpent = time == "N / A" ? null : time;

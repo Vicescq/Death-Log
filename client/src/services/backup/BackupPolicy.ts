@@ -1,7 +1,7 @@
 import { DebugService } from "../DebugService";
 import type { CrudState } from "../../model/CrudStateSchema";
 
-const DEV = DebugService.USE_DEV_BACKUP_CONSTANTS;
+const DEV = DebugService.USE_DEV_CONSTANTS;
 
 export type BackupNotify = "never" | "stale" | "extreme";
 
@@ -14,6 +14,7 @@ export class BackupPolicy {
 
 	static readonly DEBOUNCE_MS = DEV ? 5_000 : 2 * 60_000;
 	static readonly LAST_BACKUP_DEBOUNCE_WINDOW_MS = DEV ? 20_000 : 30 * 60_000;
+	static readonly FAILURE_COOLDOWN_MS = DEV ? 15_000 : 10 * 60_000;
 
 	static readonly CLOUD_BACKUP_LIMIT_BYTES_DISPLAY = 10 * 1024 * 1024;
 
@@ -44,13 +45,15 @@ export class BackupPolicy {
 		return extremeActivity ? "extreme" : "stale";
 	}
 
-	static resolveDelay(lastBackupMs: number) {
+	static resolveDelay(lastBackupMs: number, failureCooldownUntil = 0) {
 		const now = Date.now();
 		const computedLastBackupDebounceWindowMs =
 			lastBackupMs + BackupPolicy.LAST_BACKUP_DEBOUNCE_WINDOW_MS - now;
+		const computedFailureCooldownMs = failureCooldownUntil - now;
 		return Math.max(
 			BackupPolicy.DEBOUNCE_MS,
 			computedLastBackupDebounceWindowMs,
+			computedFailureCooldownMs,
 		);
 	}
 }

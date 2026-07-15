@@ -65,7 +65,8 @@ public class AuthMiddleware
     private static bool RequiresCallerIdentity(HttpRequest request) =>
         request.Path.StartsWithSegments("/backup")
         || request.Path.StartsWithSegments("/backups")
-        || request.Path.StartsWithSegments("/auto-backup");
+        || request.Path.StartsWithSegments("/auto-backup")
+        || request.Path.StartsWithSegments("/global-stats");
 
     private static bool IsPublicRoute(HttpRequest request)
     {

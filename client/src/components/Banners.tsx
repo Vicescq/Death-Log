@@ -7,6 +7,7 @@ import ReloadPrompt from "./ReloadPrompt";
 import FakeDataBanner from "./FakeDataBanner";
 import CRUDCounterBanner from "./CRUDCounterBanner";
 import { useAutoBackup } from "../hooks/useAutoBackup";
+import { useGlobalStatsSync } from "../hooks/useGlobalStatsSync";
 
 export default function Banners() {
 	// 1st priority
@@ -34,6 +35,7 @@ export default function Banners() {
 	const { isLoaded, isSignedIn } = useAuth();
 
 	useAutoBackup();
+	useGlobalStatsSync();
 
 	const notify = BackupPolicy.notify(
 		crudState,

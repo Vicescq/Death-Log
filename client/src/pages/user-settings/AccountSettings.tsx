@@ -36,6 +36,12 @@ export default function AccountSettings() {
 	const resetCRUDCount = useDeathLogStore((state) => state.resetCRUDCount);
 	const autoBackup = useDeathLogStore((state) => state.crudState.autoBackup);
 	const setAutoBackup = useDeathLogStore((state) => state.setAutoBackup);
+	const contributeStats = useDeathLogStore(
+		(state) => state.crudState.contributeStats,
+	);
+	const setContributeStats = useDeathLogStore(
+		(state) => state.setContributeStats,
+	);
 
 	const [toast, setToast] = useState<FeedbackToastState>({
 		displayed: false,
@@ -334,6 +340,28 @@ export default function AccountSettings() {
 					checked={autoBackup}
 					onChange={(e) => setAutoBackup(e.target.checked)}
 					aria-label="Toggle auto backup"
+				/>
+			</div>
+
+			<div className="bg-base-200 mb-4 flex items-center justify-between rounded-2xl p-4">
+				<div>
+					<p className="font-semibold">Contribute to Global Stats</p>
+					<p className="pr-4 text-sm opacity-70">
+						Adds your totals to the community numbers on the Global
+						Stats page. Only your counts are shared, never your
+						names or remarks. See the{" "}
+						<Link to="/FAQ" className="link link-primary">
+							FAQ
+						</Link>{" "}
+						for details.
+					</p>
+				</div>
+				<input
+					type="checkbox"
+					className="toggle toggle-info"
+					checked={contributeStats}
+					onChange={(e) => setContributeStats(e.target.checked)}
+					aria-label="Toggle global stats contribution"
 				/>
 			</div>
 

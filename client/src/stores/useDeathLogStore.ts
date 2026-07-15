@@ -37,6 +37,7 @@ export type DeathLogState = {
 	dismissCRUDBanner: () => void;
 	resetCRUDCount: () => void;
 	setAutoBackup: (autoBackup: boolean) => void;
+	setContributeStats: (contributeStats: boolean) => void;
 };
 
 export const useDeathLogStore = create<DeathLogState>((set, get) => ({
@@ -80,9 +81,10 @@ export const useDeathLogStore = create<DeathLogState>((set, get) => ({
 	},
 
 	addNode: (type, inputText, parentID, subjectCharacteristics) => {
+		if (get().status !== "ready") return;
 		set((state) => {
 			const parentNode = state.tree.get(parentID);
-			assertIsNonNull(parentNode);
+			if (parentNode == null) return state;
 
 			let node: DistinctTreeNode;
 			switch (type) {
@@ -129,7 +131,11 @@ export const useDeathLogStore = create<DeathLogState>((set, get) => ({
 	},
 
 	deleteNode: (node) => {
+		if (get().status !== "ready") return;
 		set((state) => {
+			// already deleted by another tab
+			if (!state.tree.has(node.id)) return state;
+
 			const updatedTree = new Map(state.tree);
 			const nodeIDSToBeDeleted = identifyDeletedSelfAndChildrenIDS(
 				node,
@@ -167,7 +173,10 @@ export const useDeathLogStore = create<DeathLogState>((set, get) => ({
 	},
 
 	updateNode: (node) => {
+		if (get().status !== "ready") return;
 		set((state) => {
+			if (!state.tree.has(node.id)) return state;
+
 			const updatedTree = new Map(state.tree);
 			const updatedNode: DistinctTreeNode = { ...node };
 			updatedTree.set(updatedNode.id, updatedNode);
@@ -203,4 +212,10 @@ export const useDeathLogStore = create<DeathLogState>((set, get) => ({
 		set((state) => ({ crudState: { ...state.crudState, autoBackup } }));
 	},
 
+	setContributeStats: (contributeStats) => {
+		LocalDB.setContributeStats(contributeStats);
+		set((state) => ({
+			crudState: { ...state.crudState, contributeStats },
+		}));
+	},
 }));

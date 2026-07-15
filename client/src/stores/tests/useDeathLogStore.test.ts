@@ -57,6 +57,7 @@ test("initTree | inject existing nodes", () => {
 test.describe("Tests that need node inits", () => {
 	test.beforeEach(() => {
 		useDeathLogStore.getState().initTree([createRootNode()]);
+		useDeathLogStore.setState({ status: "ready" });
 		vi.clearAllMocks();
 	});
 
@@ -222,5 +223,67 @@ test.describe("Tests that need node inits", () => {
 		);
 
 		expect(LocalDB.updateNode).toHaveBeenCalled();
+	});
+
+	test("write actions | no-op while hydrating (multi-tab write gate)", () => {
+		useDeathLogStore.setState({ status: "loading" });
+
+		useDeathLogStore.getState().addNode("game", "abc", "ROOT_NODE");
+		expect(useDeathLogStore.getState().tree).toHaveLength(1);
+		expect(LocalDB.addNode).not.toHaveBeenCalled();
+
+		const root = useDeathLogStore.getState().tree.get("ROOT_NODE");
+		assertIsNonNull(root);
+		useDeathLogStore.getState().updateNode({ ...root, name: "ghost" });
+		expect(LocalDB.updateNode).not.toHaveBeenCalled();
+	});
+
+	test("updateNode | node deleted elsewhere is not resurrected", () => {
+		useDeathLogStore.getState().addNode("game", "abc", "ROOT_NODE");
+		const gameID = useDeathLogStore.getState().tree.get("ROOT_NODE")
+			?.childIDS[0];
+		assertIsNonNull(gameID);
+		const game = useDeathLogStore.getState().tree.get(gameID);
+		assertIsNonNull(game);
+
+		// simulate another tab deleting it before our stale write lands
+		useDeathLogStore.getState().deleteNode(game);
+		vi.clearAllMocks();
+
+		useDeathLogStore.getState().updateNode({ ...game, name: "ghost" });
+		expect(useDeathLogStore.getState().tree.has(game.id)).toBe(false);
+		expect(LocalDB.updateNode).not.toHaveBeenCalled();
+	});
+
+	test("deleteNode | node deleted elsewhere is a no-op", () => {
+		useDeathLogStore.getState().addNode("game", "abc", "ROOT_NODE");
+		const gameID = useDeathLogStore.getState().tree.get("ROOT_NODE")
+			?.childIDS[0];
+		assertIsNonNull(gameID);
+		const game = useDeathLogStore.getState().tree.get(gameID);
+		assertIsNonNull(game);
+
+		useDeathLogStore.getState().deleteNode(game);
+		vi.clearAllMocks();
+
+		useDeathLogStore.getState().deleteNode(game);
+		expect(useDeathLogStore.getState().tree).toHaveLength(1);
+		expect(LocalDB.deleteNode).not.toHaveBeenCalled();
+	});
+
+	test("addNode | parent deleted elsewhere is a no-op", () => {
+		useDeathLogStore.getState().addNode("game", "abc", "ROOT_NODE");
+		const gameID = useDeathLogStore.getState().tree.get("ROOT_NODE")
+			?.childIDS[0];
+		assertIsNonNull(gameID);
+		const game = useDeathLogStore.getState().tree.get(gameID);
+		assertIsNonNull(game);
+
+		useDeathLogStore.getState().deleteNode(game);
+		vi.clearAllMocks();
+
+		useDeathLogStore.getState().addNode("profile", "orphan", gameID);
+		expect(useDeathLogStore.getState().tree).toHaveLength(1);
+		expect(LocalDB.addNode).not.toHaveBeenCalled();
 	});
 });

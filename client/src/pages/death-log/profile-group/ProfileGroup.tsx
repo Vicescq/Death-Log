@@ -8,9 +8,12 @@ import { assertIsNonNull, assertIsSubject } from "../../../utils/asserts";
 import Breadcrumb from "../breadcrumb/Breadcrumb";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createProfileGroup } from "../../../stores/utils";
-import { createPGFormAddSchema, type PGFormAdd } from "../../../model/formSchemas";
+import {
+	createPGFormAddSchema,
+	type PGFormAdd,
+} from "../../../model/formSchemas";
 import Modal from "../../../components/Modal";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ProfileGroupModalBody from "./ProfileGroupModalBody";
 import ProfileGroupBaseModifyLayout from "./ProfileGroupBaseModifyLayout";
 import ProfileGroupEdit from "./ProfileGroupEdit";
@@ -32,6 +35,19 @@ export default function ProfileGroup({ profile }: Props) {
 	);
 	const [isEditing, setIsEditing] = useState(false);
 	const [searchQuery, setSearchQuery] = useState("");
+
+	const focusedGroup =
+		focusedGroupIndex != null
+			? profile.groupings.at(focusedGroupIndex)
+			: undefined;
+
+	useEffect(() => {
+		if (focusedGroupIndex != null && focusedGroup == null) {
+			modalRef.current?.close();
+			setFocusedGroupIndex(null);
+			setIsEditing(false);
+		}
+	}, [focusedGroupIndex, focusedGroup]);
 
 	const PGFormAddSchema = createPGFormAddSchema(
 		profile.groupings.map((group) => group.title),
@@ -72,6 +88,10 @@ export default function ProfileGroup({ profile }: Props) {
 	};
 
 	function handleProfileGroupDelete() {
+		if (focusedGroup == null) {
+			modalRef.current?.close();
+			return;
+		}
 		updateNode({
 			...profile,
 			groupings: profile.groupings.filter(
@@ -84,6 +104,10 @@ export default function ProfileGroup({ profile }: Props) {
 	}
 
 	function handleProfileGroupComplete() {
+		if (focusedGroup == null) {
+			modalRef.current?.close();
+			return;
+		}
 		updateNode({
 			...profile,
 			groupings: profile.groupings.map((group, i) => {
@@ -190,7 +214,9 @@ export default function ProfileGroup({ profile }: Props) {
 					</fieldset>
 				</form>
 
-				{focusedGroupIndex != null && isEditing ? (
+				{focusedGroupIndex != null &&
+				focusedGroup != null &&
+				isEditing ? (
 					<ProfileGroupEdit
 						profile={profile}
 						subjects={subjects}
@@ -201,10 +227,10 @@ export default function ProfileGroup({ profile }: Props) {
 
 			<Modal
 				header={
-					focusedGroupIndex != null && modalType == "completion"
-						? `Confirm Completion Status: ${profile.groupings[focusedGroupIndex].title}`
-						: focusedGroupIndex != null
-							? `Confirm Deletion: ${profile.groupings[focusedGroupIndex].title}`
+					focusedGroup != null && modalType == "completion"
+						? `Confirm Completion Status: ${focusedGroup.title}`
+						: focusedGroup != null
+							? `Confirm Deletion: ${focusedGroup.title}`
 							: "ERROR with rendering, pelase reload this page!"
 				}
 				closeBtnName="Cancel"

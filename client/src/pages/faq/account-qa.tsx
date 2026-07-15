@@ -10,7 +10,52 @@ export const ACCOUNT_QA: QA = [
 	},
 	{
 		question: "What is the global stats tracker?",
-		answer: "A community wide view that tallies everyone's logged activity into a set of counters.",
+		answer: (
+			<>
+				A community wide view that tallies everyone's logged activity
+				into a set of counters: total deaths, games, profiles and
+				subjects logged across all contributing players, plus a
+				breakdown of deaths by category. Open it from the Global Stats
+				tab on the{" "}
+				<Link to="/stats" className="link link-primary">
+					stats page
+				</Link>
+				.
+			</>
+		),
+	},
+	{
+		question: "What of mine is shared with global stats?",
+		answer: (
+			<>
+				<p>
+					Only counts, never content. Your device sends totals like how
+					many deaths, games, profiles and subjects you have logged.
+					Names, remarks, timestamps and everything else stay on your
+					device.
+				</p>
+				<p className="mt-2">
+					Contribution is on by default once you have an account. You
+					can switch it off any time from your{" "}
+					<Link to="/user-settings" className="link link-primary">
+						account settings
+					</Link>
+					. The page then shows everyone else's totals without yours.
+				</p>
+			</>
+		),
+	},
+	{
+		question: "When are my stats NOT contributed?",
+		answer: (
+			<>
+				Like auto backup, contribution stays idle while you are signed
+				out, while you are offline, while generated sample data is on
+				this device (so fake numbers never reach the community totals),
+				and for a short pause while you are still making changes. It
+				sends a fresh snapshot shortly after you stop editing.
+			</>
+		),
 	},
 	{
 		question: "How does auto backup work?",

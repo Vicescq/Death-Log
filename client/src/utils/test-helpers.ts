@@ -6,6 +6,8 @@ import { assertIsNonNull } from "./asserts";
 export function setUpFullTreeLineage(store: UseBoundStore<StoreApi<DeathLogState>>) {
 	store.getState().initTree([createRootNode()]);
 
+	store.setState({ status: "ready" });
+
 	store.getState().addNode("game", "Elden Ring", "ROOT_NODE");
 	const gameID = store.getState().tree.get("ROOT_NODE")?.childIDS[0];
 	assertIsNonNull(gameID);

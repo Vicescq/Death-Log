@@ -18,6 +18,7 @@ import {
 	DEFAULT_CRUD_STATE,
 	type CrudState,
 } from "../model/CrudStateSchema";
+import { MultitabSync } from "./MultitabSync";
 
 export type DeathLogViewPrefs<T> = Record<DeathLogViewType, T>;
 
@@ -49,7 +50,7 @@ export default class LocalDB {
 		node: DistinctTreeNode,
 		parentNode?: DistinctTreeNode,
 	) {
-		return db.transaction("rw", db.nodes, async () => {
+		await db.transaction("rw", db.nodes, async () => {
 			await db.nodes.add({
 				node_id: node.id,
 				node: node,
@@ -64,10 +65,11 @@ export default class LocalDB {
 				});
 			}
 		});
+		MultitabSync.post();
 	}
 
 	static async deleteNode(ids: string[], parentNode?: DistinctTreeNode) {
-		return db.transaction("rw", db.nodes, async () => {
+		await db.transaction("rw", db.nodes, async () => {
 			await db.nodes.bulkDelete(ids);
 			if (parentNode) {
 				await db.nodes.update(parentNode.id, {
@@ -77,6 +79,7 @@ export default class LocalDB {
 				});
 			}
 		});
+		MultitabSync.post();
 	}
 
 	static async updateNode(node: DistinctTreeNode) {
@@ -85,6 +88,7 @@ export default class LocalDB {
 			node: node,
 			edited_at: new Date().toISOString(),
 		});
+		MultitabSync.post();
 	}
 
 	static async getNodes() {
@@ -132,14 +136,22 @@ export default class LocalDB {
 
 	static resetCRUDCounter() {
 		LocalDB.writeCrudState({ count: 0 });
+		MultitabSync.post();
 	}
 
 	static resetCrudState(lastBackup: number) {
 		LocalDB.writeCrudState({ count: 0, lastBackup });
+		MultitabSync.post();
 	}
 
 	static setAutoBackup(autoBackup: boolean) {
 		LocalDB.writeCrudState({ autoBackup });
+		MultitabSync.post();
+	}
+
+	static setContributeStats(contributeStats: boolean) {
+		LocalDB.writeCrudState({ contributeStats });
+		MultitabSync.post();
 	}
 
 	static async clearAndInsertData(nodes: DistinctTreeNode[]) {
@@ -154,6 +166,7 @@ export default class LocalDB {
 				});
 			}
 		});
+		MultitabSync.post();
 	}
 
 	static getDLFilterPrefs(
@@ -304,6 +317,7 @@ export default class LocalDB {
 		}
 		await db.delete();
 		await db.open();
+		MultitabSync.postReload();
 
 		await LocalDB.clearCache(); // hides the successful toast that pops due to force reload
 	}

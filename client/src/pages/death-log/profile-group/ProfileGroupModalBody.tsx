@@ -15,7 +15,11 @@ export default function ProfileGroupModalBody({
 	onProfileGroupComplete,
 	onProfileGroupDelete,
 }: Props) {
-	if (focusedGroupIndex == null) return <></>;
+	const focusedGroup =
+		focusedGroupIndex != null
+			? profile.groupings.at(focusedGroupIndex)
+			: undefined;
+	if (focusedGroup == null) return <></>;
 
 	if (modalType == "completion") {
 		return (
@@ -23,10 +27,7 @@ export default function ProfileGroupModalBody({
 				<div className="my-4">
 					<span>
 						Do you want to mark this as{" "}
-						{profile.groupings[focusedGroupIndex].completed
-							? "incomplete"
-							: "complete"}
-						?
+						{focusedGroup.completed ? "incomplete" : "complete"}?
 					</span>
 				</div>
 				<button

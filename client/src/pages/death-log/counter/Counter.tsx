@@ -102,7 +102,11 @@ export default function Counter({ subject }: Props) {
 		const focusedDeath = subject.log.find(
 			(death) => death.id == focusedDeathID,
 		);
-		assertIsNonNull(focusedDeath);
+		// death was deleted (possibly in another tab) while the modal was open
+		if (focusedDeath == null) {
+			modalRef.current?.close();
+			return;
+		}
 		const isoStr = dateTimeSTDToISO(formData.date, formData.time);
 
 		updateNode({
@@ -123,10 +127,11 @@ export default function Counter({ subject }: Props) {
 	};
 
 	function handleFocusDeath(id: string) {
+		const death = subject.log.find((death) => death.id == id);
+		// death was deleted (possibly in another tab) before the click landed
+		if (death == null) return;
 		setModalBodyType("edit");
 		setfocusedDeathID(id);
-		const death = subject.log.find((death) => death.id == id);
-		assertIsNonNull(death);
 		modalForm.reset({
 			remark: death.remark == null ? "" : death.remark,
 			timestampRel: death.timestampRel ? "T" : "F",
@@ -137,10 +142,14 @@ export default function Counter({ subject }: Props) {
 	}
 
 	function handleDeleteDeath() {
-		updateNode({
-			...subject,
-			log: subject.log.filter((death) => death.id != focusedDeathID),
-		});
+		const exists = subject.log.some((death) => death.id == focusedDeathID);
+		// already deleted elsewhere
+		if (exists) {
+			updateNode({
+				...subject,
+				log: subject.log.filter((death) => death.id != focusedDeathID),
+			});
+		}
 		modalRef.current?.close();
 	}
 

@@ -11,6 +11,12 @@ public static class EndpointLimits
     public const int FiftyMb = 50 * 1024 * 1024;
 }
 
+public static class GlobalStatsLimits
+{
+    public const int MaxDeaths = 1_000_000;
+    public const int MaxNodes = 200_000;
+}
+
 public static class RateLimits
 {
     public const string BackupWritesPolicy = "backup-writes";
