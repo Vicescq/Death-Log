@@ -7,14 +7,20 @@ import type {
 	ScatterPoint,
 	SunburstNode,
 } from "../../model/stats-query-model/chart";
-import { isoToDateSTD } from "../../utils/date";
+import { assertIsNonNull } from "../../utils/asserts";
 
 const MIN_SYMBOL_SIZE = 10;
 const MAX_SYMBOL_SIZE = 60;
 const SYMBOL_SIZE_SCALE = 2;
 const ROOT_SYMBOL_SIZE = 100;
 
-export type CalendarConfig = { range: string; cellSize?: number };
+export type CalendarConfig = { range: string; cellSize: number };
+
+export type GraphConfig = {
+	draggable: boolean;
+	zoom: number;
+	showLabels: boolean;
+};
 
 const GRAPH_ROOT_ID = "graph-root";
 const GRAPH_ROOT_NAME = "Root";
@@ -25,11 +31,16 @@ export class ChartStage {
 		type: ChartType,
 		data: ChartData,
 		calendarConfig?: CalendarConfig,
+		graphConfig?: GraphConfig,
 	): EChartsOption | null {
 		if (ChartStage.isEmpty(type, data)) return null;
 
 		if (data.kind === "graph") {
-			return ChartStage.graphChart(ChartStage.withRootNode(data.graph));
+			assertIsNonNull(graphConfig);
+			return ChartStage.graphChart(
+				ChartStage.withRootNode(data.graph),
+				graphConfig,
+			);
 		}
 		if (data.kind === "sunburst")
 			return ChartStage.sunburstChart(data.nodes);
@@ -46,6 +57,7 @@ export class ChartStage {
 			case "time-line":
 				return ChartStage.timeLineChart(data.points);
 			case "calendar":
+				assertIsNonNull(calendarConfig);
 				return ChartStage.calendarChart(data.points, calendarConfig);
 			default:
 				throw new Error(
@@ -152,17 +164,10 @@ export class ChartStage {
 
 	private static calendarChart(
 		data: CategoryPoint[],
-		config: CalendarConfig = { range: "" },
+		config: CalendarConfig,
 	): EChartsOption {
-		const { range, cellSize = 75 } = config;
-		// Incoming points carry raw UTC timestamps
-		const byDay = new Map<string, number>();
-		for (const p of data) {
-			const day = isoToDateSTD(p.x);
-			byDay.set(day, (byDay.get(day) ?? 0) + p.y);
-		}
-		const dayPoints = [...byDay.entries()];
-		const values = dayPoints.map(([, count]) => count);
+		const { range, cellSize } = config;
+		const values = data.map((p) => p.y);
 		const dataMin = values.length > 0 ? Math.min(...values) : 0;
 		const dataMax = values.length > 0 ? Math.max(...values) : 1;
 		return {
@@ -180,9 +185,7 @@ export class ChartStage {
 			series: {
 				type: "heatmap",
 				coordinateSystem: "calendar",
-				data: dayPoints.map(([day, count]) => ({
-					value: [day, count],
-				})),
+				data: data.map((p) => ({ value: [p.x, p.y] })),
 			},
 			visualMap: {
 				min: dataMin,
@@ -269,8 +272,12 @@ export class ChartStage {
 		};
 	}
 
-	private static graphChart(graph: Graph): EChartsOption {
-		const labelIsDisplayed = graph.nodes.length <= 50;
+	private static graphChart(
+		graph: Graph,
+		config: GraphConfig,
+	): EChartsOption {
+		const { draggable, zoom, showLabels } = config;
+		const labelIsDisplayed = showLabels;
 
 		return {
 			tooltip: { renderMode: "richText" },
@@ -280,8 +287,9 @@ export class ChartStage {
 					type: "graph",
 					layout: "force",
 					roam: true,
+					zoom,
+					draggable,
 					roamTrigger: "global",
-					draggable: true,
 					label: {
 						show: labelIsDisplayed,
 						position: "right",

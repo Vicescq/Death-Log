@@ -26,12 +26,19 @@ type QueryBase = {
 
 export type CalendarQuery = QueryBase & {
 	chartType: "calendar";
-	range?: string;
-	cellSize?: number;
+	range: string;
+	cellSize: number;
+};
+
+export type GraphQuery = QueryBase & {
+	chartType: "graph";
+	draggable: boolean;
+	zoom: number;
+	showLabels: boolean;
 };
 
 export type StandardQuery = QueryBase & {
-	chartType: Exclude<ChartType, "calendar">;
+	chartType: Exclude<ChartType, "calendar" | "graph">;
 };
 
-export type Query = CalendarQuery | StandardQuery;
+export type Query = CalendarQuery | GraphQuery | StandardQuery;

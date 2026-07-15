@@ -1,6 +1,5 @@
 import NavBar from "../../components/nav-bar/NavBar";
 import Availability from "./Availability";
-import ChangelogContainer from "./ChangelogContainer";
 
 const REPO_URL = "https://github.com/Vicescq/Death-Log";
 
@@ -13,8 +12,6 @@ export default function About() {
 
 				<div className="flex flex-col gap-8">
 					<Availability />
-
-					<ChangelogContainer />
 
 					<div>
 						<h2 className="mb-3 text-xl font-semibold">

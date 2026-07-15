@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import type { EChartsOption } from "echarts";
 import EChartsReact from "react-echarts-library";
 import darkerChalk from "../../../../shared/darker_chalk.json";
@@ -15,6 +16,7 @@ type Props = {
 	currentDate?: Date;
 	onDateChange?: (date: Date) => void;
 	onSettings?: () => void;
+	fullscreenControls?: ReactNode;
 };
 
 export default function ChartCanvas({
@@ -25,6 +27,7 @@ export default function ChartCanvas({
 	currentDate,
 	onDateChange,
 	onSettings,
+	fullscreenControls,
 }: Props) {
 	const animatedOption = useChartAnimation(option);
 
@@ -33,6 +36,7 @@ export default function ChartCanvas({
 			title={title}
 			description={description}
 			onSettings={onSettings}
+			fullscreenControls={fullscreenControls}
 		>
 			{isCalendar && currentDate && onDateChange && (
 				<CalendarHeader

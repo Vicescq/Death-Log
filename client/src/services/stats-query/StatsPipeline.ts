@@ -16,8 +16,15 @@ export class StatsPipeline {
 	static Chart(query: Query, data: ChartData): EChartsOption | null {
 		if (query.chartType === "calendar") {
 			return ChartStage.render(query.chartType, data, {
-				range: query.range ?? "",
+				range: query.range,
 				cellSize: query.cellSize,
+			});
+		}
+		if (query.chartType === "graph") {
+			return ChartStage.render(query.chartType, data, undefined, {
+				draggable: query.draggable,
+				zoom: query.zoom,
+				showLabels: query.showLabels,
 			});
 		}
 		return ChartStage.render(query.chartType, data);

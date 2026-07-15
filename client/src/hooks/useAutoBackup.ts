@@ -23,9 +23,7 @@ export function useAutoBackup() {
 	const setAutoBackup = useDeathLogStore((state) => state.setAutoBackup);
 	const resetCRUDCount = useDeathLogStore((state) => state.resetCRUDCount);
 
-	const hasFakeData = useDeathLogStore((state) =>
-		Array.from(state.tree.values()).some((node) => node.isFake),
-	);
+	const hasFakeData = useDeathLogStore((state) => state.hasFakeData);
 
 	const [failureCooldownUntil, setFailureCooldownUntil] = useState(0);
 

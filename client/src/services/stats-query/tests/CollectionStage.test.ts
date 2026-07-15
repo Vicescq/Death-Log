@@ -10,6 +10,7 @@ import type {
 import type { Profile } from "../../../model/tree-node-model/ProfileSchema";
 import type { Game } from "../../../model/tree-node-model/GameSchema";
 import type { Query } from "../../../model/stats-query-model/query";
+import { isoToDateSTD } from "../../../utils/date";
 
 vi.mock("../../LocalDB", () => ({
 	default: { getChartOverride: vi.fn() },
@@ -227,7 +228,7 @@ test("unknown method throws", () => {
 	).toThrow();
 });
 
-test("deathsByDay emits one raw-timestamp point per death (bucketing is deferred to render)", () => {
+test("deathsByDay groups deaths into per-local-day totals", () => {
 	const subject = mkSubject("s1", "Boss", "Boss", 0);
 	subject.log = [
 		{
@@ -261,15 +262,24 @@ test("deathsByDay emits one raw-timestamp point per death (bucketing is deferred
 		chartType: "calendar",
 		scope: [],
 		reliability: { isTemporal: false },
+		range: "",
+		cellSize: 0,
 	};
 	const result = CollectionStage.collect(calendarQuery, tree);
 	if (result.kind !== "category") throw new Error("expected category");
 
-	expect(result.points).toEqual([
-		{ x: "2024-01-01T10:00:00.000Z", y: 1 },
-		{ x: "2024-01-01T22:00:00.000Z", y: 1 },
-		{ x: "2024-01-02T20:00:00.000Z", y: 1 },
-	]);
+	const expected = new Map<string, number>();
+	for (const iso of [
+		"2024-01-01T10:00:00.000Z",
+		"2024-01-01T22:00:00.000Z",
+		"2024-01-02T20:00:00.000Z",
+	]) {
+		const day = isoToDateSTD(iso);
+		expected.set(day, (expected.get(day) ?? 0) + 1);
+	}
+	expect(result.points).toEqual(
+		[...expected.entries()].map(([x, y]) => ({ x, y })),
+	);
 });
 
 test("deathsByDay excludes unreliable deaths when isTemporal and toggle is off", () => {
@@ -299,10 +309,14 @@ test("deathsByDay excludes unreliable deaths when isTemporal and toggle is off",
 		chartType: "calendar",
 		scope: [],
 		reliability: { isTemporal: true, field: "timestamp" },
+		range: "",
+		cellSize: 0,
 	};
 	const result = CollectionStage.collect(calendarQuery, tree);
 	if (result.kind !== "category") throw new Error("expected category");
-	expect(result.points).toEqual([{ x: "2024-01-01T10:00:00.000Z", y: 1 }]);
+	expect(result.points).toEqual([
+		{ x: isoToDateSTD("2024-01-01T10:00:00.000Z"), y: 1 },
+	]);
 });
 
 test("deathsCumulative steps once per death, in chronological order", () => {
@@ -430,6 +444,9 @@ test("graph method builds nodes + edges from the tree", () => {
 		chartType: "graph",
 		scope: [],
 		reliability: { isTemporal: false },
+		draggable: true,
+		zoom: 0.5,
+		showLabels: true,
 	};
 	const result = CollectionStage.collect(graphQuery, tree);
 	if (result.kind !== "graph") throw new Error("expected graph");

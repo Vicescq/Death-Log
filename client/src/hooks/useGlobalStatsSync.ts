@@ -15,9 +15,7 @@ export function useGlobalStatsSync() {
 	const contributeStats = useDeathLogStore(
 		(state) => state.crudState.contributeStats,
 	);
-	const hasFakeData = useDeathLogStore((state) =>
-		Array.from(state.tree.values()).some((node) => node.isFake),
-	);
+	const hasFakeData = useDeathLogStore((state) => state.hasFakeData);
 
 	const { mutate: syncStats } = useMutation({
 		mutationFn: async () => {

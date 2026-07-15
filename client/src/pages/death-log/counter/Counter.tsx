@@ -28,10 +28,13 @@ import Container from "../../../components/Container";
 import CounterSettings from "./CounterSettings";
 import CounterHistory from "./CounterHistory";
 import CounterTimeTracker from "./CounterTimeTracker";
+import usePagination from "../../../hooks/usePagination";
 
 type Props = {
 	subject: Subject;
 };
+
+const DEATH_HISTORY_PAGE_SIZE = 15;
 
 export default function Counter({ subject }: Props) {
 	const updateNode = useDeathLogStore((state) => state.updateNode);
@@ -44,6 +47,17 @@ export default function Counter({ subject }: Props) {
 
 	const sortedDeaths = subject.log.toSorted(
 		(a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp),
+	);
+
+	const maxPage = Math.max(
+		1,
+		Math.ceil(sortedDeaths.length / DEATH_HISTORY_PAGE_SIZE),
+	);
+	const { page, setPage } = usePagination(maxPage);
+	const currentPage = Math.min(page, maxPage);
+	const pagedDeaths = sortedDeaths.slice(
+		(currentPage - 1) * DEATH_HISTORY_PAGE_SIZE,
+		currentPage * DEATH_HISTORY_PAGE_SIZE,
 	);
 
 	const { timeNotice, onResetNotice, onTimeNoticeChange } =
@@ -66,6 +80,7 @@ export default function Counter({ subject }: Props) {
 			log: [...subject.log, createDeath(subject, remark, timestampRel)],
 		});
 		counterForm.reset();
+		setPage(1);
 		deathHistoryRef.current?.scrollTo({
 			top: 0,
 			left: 0,
@@ -222,7 +237,10 @@ export default function Counter({ subject }: Props) {
 							handleDeleteDeathConfirm(id)
 						}
 						onFocusDeath={(id) => handleFocusDeath(id)}
-						sortedDeaths={sortedDeaths}
+						sortedDeaths={pagedDeaths}
+						page={currentPage}
+						maxPage={maxPage}
+						onPageChange={setPage}
 					/>
 				</div>
 			</Container>

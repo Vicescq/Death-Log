@@ -12,7 +12,6 @@ type Props = {
 
 const breakpointLg = "(width >= 1024px)";
 const breakpointMd = "(width >= 768px)";
-const breakpointSm = "(width >= 480px)";
 
 export default function Pagination({
 	currentPage,
@@ -21,7 +20,6 @@ export default function Pagination({
 }: Props) {
 	const { vpMatched: vpLg } = useMediaQuery(breakpointLg);
 	const { vpMatched: vpMd } = useMediaQuery(breakpointMd);
-	const { vpMatched: vpSm } = useMediaQuery(breakpointSm);
 
 	function getPageRange(
 		currentPage: number,
@@ -66,14 +64,14 @@ export default function Pagination({
 		return Array.from({ length: end - start + 1 }, (_, i) => start + i);
 	}
 
-	const siblingCount = vpLg ? 3 : vpMd ? 2 : vpSm ? 1 : 0;
+	const siblingCount = vpLg ? 3 : vpMd ? 2 : 1;
 
 	if (totalPages <= 1) return null;
 
 	const pages = getPageRange(currentPage, totalPages, siblingCount);
 
 	return (
-		<div className="join">
+		<div className="join flex-wrap justify-center">
 			{pages.map((page, i) =>
 				page === ELLIPSIS ? (
 					<button

@@ -1,4 +1,8 @@
-import type { CalendarQuery, Query } from "../../model/stats-query-model/query";
+import type {
+	CalendarQuery,
+	GraphQuery,
+	Query,
+} from "../../model/stats-query-model/query";
 
 export const PRESET_CHARTS: Query[] = [
 	{
@@ -108,7 +112,7 @@ export const PRESET_CHARTS: Query[] = [
 	},
 ];
 
-export const GRAPH_QUERY: Query = {
+export const GRAPH_QUERY = {
 	id: "graph",
 	title: "Graph",
 	description: "",
@@ -116,9 +120,9 @@ export const GRAPH_QUERY: Query = {
 	chartType: "graph",
 	scope: [],
 	reliability: { isTemporal: false },
-};
+} satisfies Omit<GraphQuery, "draggable" | "zoom" | "showLabels">;
 
-export const CALENDAR_QUERY: CalendarQuery = {
+export const CALENDAR_QUERY = {
 	id: "deaths-by-day",
 	title: "Deaths by Day",
 	description:
@@ -127,10 +131,4 @@ export const CALENDAR_QUERY: CalendarQuery = {
 	chartType: "calendar",
 	scope: [],
 	reliability: { isTemporal: true, field: "timestamp" },
-};
-
-export const SHAREABLE_QUERIES: Query[] = [
-	...PRESET_CHARTS,
-	GRAPH_QUERY,
-	CALENDAR_QUERY,
-];
+} satisfies Omit<CalendarQuery, "range" | "cellSize">;

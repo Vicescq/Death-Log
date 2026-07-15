@@ -3,8 +3,8 @@ import type { QA } from "./FAQ";
 
 export const MISC_QA: QA = [
 	{
-		question: "Do I have to choose between the website and a mobile app?",
-		answer: "No, Death Log isn't locked to one platform. If you've been using the website, a mobile app is available too, and if you started on mobile, the full website is available as well. Your local data stays tied to whichever device and browser you're using though, so the two aren't automatically synced unless you export your data or set up cloud auto backup.",
+		question: "Can I install Death Log as an app on my phone?",
+		answer: "Yes, Death Log is an installable Progressive Web App (PWA), there's no separate mobile app or app store download. Open the site in your mobile browser and use its \"Add to Home Screen\" or \"Install app\" option, and it'll behave like a native app from your home screen. Your local data stays tied to whichever device and browser you're using though, so installing it fresh on a new device doesn't automatically bring over your existing log, unless you export your data or set up cloud auto backup.",
 	},
 	{
 		question: "Is Death Log free to use?",

@@ -40,16 +40,20 @@ export default function CloudBackups({
 				relevent to the state of the appilication.
 			</p>
 
-			<div className="mb-3 flex items-center justify-between">
-				<span className="text-sm font-semibold">Delete Mode</span>
-				<input
-					type="checkbox"
-					className="toggle toggle-error"
-					checked={deleteMode}
-					onChange={(e) => setDeleteMode(e.target.checked)}
-					aria-label="Toggle delete mode"
-				/>
-			</div>
+			{backups.length > 0 && (
+				<div className="mb-3 flex items-center justify-between">
+					<span className="text-error font-semibold">
+						Delete Mode
+					</span>
+					<input
+						type="checkbox"
+						className="toggle toggle-error"
+						checked={deleteMode}
+						onChange={(e) => setDeleteMode(e.target.checked)}
+						aria-label="Toggle delete mode"
+					/>
+				</div>
+			)}
 
 			{backups.length === 0 ? (
 				<p className="text-sm opacity-70">
@@ -65,8 +69,8 @@ export default function CloudBackups({
 								key={key}
 								className="bg-base-100 flex items-center justify-between gap-3 rounded-lg p-3"
 							>
-								<div className="flex flex-col gap-1">
-									<span className="text-sm">
+								<div className="flex min-w-0 flex-col gap-1">
+									<span className="text-sm opacity-80">
 										{formatBackupDate(backup.date)}
 									</span>
 									<div className="flex gap-2">

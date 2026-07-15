@@ -130,13 +130,12 @@ test("pie - series data is {name, value} pairs", () => {
 	]);
 });
 
-test("calendar - buckets raw UTC timestamps into local-day heatmap cells", () => {
+test("calendar - maps already-grouped day points into heatmap cells", () => {
 	const option = local(
 		"calendar",
 		category([
-			{ x: "2024-01-01T10:00:00.000Z", y: 1 },
-			{ x: "2024-01-01T20:00:00.000Z", y: 1 },
-			{ x: "2024-01-02T18:00:00.000Z", y: 1 },
+			{ x: "2024-01-01", y: 2 },
+			{ x: "2024-01-02", y: 1 },
 		]),
 	) as {
 		series: { type: string; data: Array<{ value: [string, number] }> };

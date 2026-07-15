@@ -21,10 +21,7 @@ export default function StatsGlobal() {
 	const { data, isPending, isError } = useQuery({
 		queryKey: ["global-stats"],
 		enabled: isSignedIn && isOnline,
-
-		// once per session
-		staleTime: Infinity,
-		gcTime: Infinity,
+		staleTime: 20 * 60_000,
 		queryFn: async ({ signal }) => {
 			const token = await getToken();
 			if (!token) throw new Error();

@@ -22,9 +22,16 @@ export default defineConfig({
 				theme_color: "#172133",
 				icons: [
 					{
-						src: "/death-log.svg",
+						src: "/pwa-icon.svg",
 						sizes: "any",
 						type: "image/svg+xml",
+						purpose: "any",
+					},
+					{
+						src: "/pwa-icon-maskable.svg",
+						sizes: "any",
+						type: "image/svg+xml",
+						purpose: "maskable",
 					},
 				],
 			},

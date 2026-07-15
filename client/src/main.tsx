@@ -27,7 +27,9 @@ const StatsDashboard = lazy(
 	() => import("./pages/stats/layout/dashboard/StatsDashboard.tsx"),
 );
 const ChartGrid = lazy(() => import("./pages/stats/components/ChartGrid.tsx"));
-const StatsGraph = lazy(() => import("./pages/stats/layout/StatsGraph.tsx"));
+const StatsGraph = lazy(
+	() => import("./pages/stats/layout/graph/StatsGraph.tsx"),
+);
 const StatsCalendar = lazy(
 	() => import("./pages/stats/layout/StatsCalendar.tsx"),
 );

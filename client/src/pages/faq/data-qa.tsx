@@ -46,10 +46,10 @@ export const DATA_QA: QA = [
 			"My data just disappeared and I didnt do anything, what happened?",
 		answer: (
 			<>
-				Whether you are using the website or the mobile app, there is a
-				possiblity the browser (website) or the device (mobile app)
-				evicted the data on their own. They do these on cases where the
-				device is on low storage.
+				Whether you are using it in the browser or installed as a PWA,
+				there is a possiblity the browser or device evicted the data on
+				its own. This can happen on cases where the device is on low
+				storage.
 				<br />
 				<br />
 				Good suggestions to avoid this: proactively exporting your own

@@ -4,6 +4,7 @@ import type {
 } from "../../../model/tree-node-model/SubjectSchema";
 import { isoToDateSTD, isoToTimeSTD } from "../../../utils/date";
 import edit from "../../../assets/edit_single.svg";
+import Pagination from "../../../components/Pagination";
 
 type Props = {
 	subject: Subject;
@@ -12,6 +13,9 @@ type Props = {
 	focusedDeathID: string | null;
 	onFocusDeath: (id: string) => void;
 	onDeleteDeathConfirm: (id: string) => void;
+	page: number;
+	maxPage: number;
+	onPageChange: (page: number) => void;
 };
 
 export default function CounterHistory({
@@ -21,6 +25,9 @@ export default function CounterHistory({
 	focusedDeathID,
 	onFocusDeath,
 	onDeleteDeathConfirm,
+	page,
+	maxPage,
+	onPageChange,
 }: Props) {
 	return (
 		<fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-full rounded-2xl border p-4">
@@ -80,6 +87,14 @@ export default function CounterHistory({
 					<li className="list-row m-auto">No Deaths!</li>
 				) : null}
 			</ul>
+
+			<div className="mt-2 flex justify-center">
+				<Pagination
+					currentPage={page}
+					totalPages={maxPage}
+					onPageChange={onPageChange}
+				/>
+			</div>
 		</fieldset>
 	);
 }

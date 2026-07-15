@@ -23,6 +23,7 @@ export type DeathLogState = {
 	status: HydrationStatus;
 	loadError: Error | null;
 	crudState: CrudState;
+	hasFakeData: boolean;
 
 	refreshTree: () => Promise<void>;
 	initTree: (nodes: DistinctTreeNode[]) => void;
@@ -45,6 +46,7 @@ export const useDeathLogStore = create<DeathLogState>((set, get) => ({
 	status: "loading",
 	loadError: null,
 	crudState: DEFAULT_CRUD_STATE,
+	hasFakeData: false,
 
 	refreshTree: async () => {
 		set({ status: "loading" });
@@ -69,14 +71,18 @@ export const useDeathLogStore = create<DeathLogState>((set, get) => ({
 			const rootNode: RootNode = createRootNode();
 			const tree: Tree = new Map();
 			tree.set("ROOT_NODE", rootNode);
+			let hasFakeData = false;
 			nodes.forEach((node) => {
 				tree.set(node.id, node);
 				if (node.type == "game") {
 					rootNode.childIDS.push(node.id);
 				}
+				if (node.isFake) {
+					hasFakeData = true;
+				}
 			});
 
-			return { tree };
+			return { tree, hasFakeData };
 		});
 	},
 
@@ -122,6 +128,7 @@ export const useDeathLogStore = create<DeathLogState>((set, get) => ({
 
 			return {
 				tree: updatedTree,
+				hasFakeData: state.hasFakeData || node.isFake,
 				crudState: {
 					...state.crudState,
 					count: state.crudState.count + 1,
@@ -140,6 +147,9 @@ export const useDeathLogStore = create<DeathLogState>((set, get) => ({
 			const nodeIDSToBeDeleted = identifyDeletedSelfAndChildrenIDS(
 				node,
 				updatedTree,
+			);
+			const deletedAFakeNode = nodeIDSToBeDeleted.some(
+				(id) => updatedTree.get(id)?.isFake,
 			);
 			nodeIDSToBeDeleted.forEach((id) => updatedTree.delete(id));
 
@@ -164,6 +174,9 @@ export const useDeathLogStore = create<DeathLogState>((set, get) => ({
 			LocalDB.incrementCRUDCounter();
 			return {
 				tree: updatedTree,
+				hasFakeData: deletedAFakeNode
+					? Array.from(updatedTree.values()).some((n) => n.isFake)
+					: state.hasFakeData,
 				crudState: {
 					...state.crudState,
 					count: state.crudState.count + 1,

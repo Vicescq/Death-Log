@@ -51,8 +51,11 @@ export class BackupService {
 		const year = date.getFullYear();
 		const month = date.getMonth() + 1;
 		const day = date.getDate();
+		const hours = date.getHours();
+		const minutes = date.getMinutes();
+		const seconds = date.getSeconds();
 
-		const fileName = `Death Log ${year}_${addLeadingZeroes(month)}_${addLeadingZeroes(day)} ${date.toTimeString()}`;
+		const fileName = `Death Log ${year}_${addLeadingZeroes(month)}_${addLeadingZeroes(day)} ${addLeadingZeroes(hours)}-${addLeadingZeroes(minutes)}-${addLeadingZeroes(seconds)}`;
 		return { name: fileName, json: finalJSON };
 	}
 

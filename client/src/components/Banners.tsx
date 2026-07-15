@@ -6,8 +6,6 @@ import { BackupPolicy } from "../services/backup/BackupPolicy";
 import ReloadPrompt from "./ReloadPrompt";
 import FakeDataBanner from "./FakeDataBanner";
 import CRUDCounterBanner from "./CRUDCounterBanner";
-import { useAutoBackup } from "../hooks/useAutoBackup";
-import { useGlobalStatsSync } from "../hooks/useGlobalStatsSync";
 
 export default function Banners() {
 	// 1st priority
@@ -24,8 +22,7 @@ export default function Banners() {
 	});
 
 	// 2nd priority
-	const tree = useDeathLogStore((state) => state.tree);
-	const hasFakeData = Array.from(tree.values()).some((node) => node.isFake);
+	const hasFakeData = useDeathLogStore((state) => state.hasFakeData);
 
 	// 3rd priority
 	const crudState = useDeathLogStore((state) => state.crudState);
@@ -33,9 +30,6 @@ export default function Banners() {
 		(state) => state.dismissCRUDBanner,
 	);
 	const { isLoaded, isSignedIn } = useAuth();
-
-	useAutoBackup();
-	useGlobalStatsSync();
 
 	const notify = BackupPolicy.notify(
 		crudState,

@@ -13,6 +13,7 @@ type Props = {
 	description?: string;
 	settings?: ReactNode;
 	onSettings?: () => void;
+	fullscreenControls?: ReactNode;
 };
 
 export default function ChartCard({
@@ -21,6 +22,7 @@ export default function ChartCard({
 	description,
 	settings,
 	onSettings,
+	fullscreenControls,
 }: Props) {
 	const [isFullscreen, setIsFullscreen] = useState(false);
 	const dialogFullscreenRef = useRef<HTMLDialogElement>(null);
@@ -104,7 +106,7 @@ export default function ChartCard({
 				className="modal"
 				onClose={() => setIsFullscreen(false)}
 			>
-				<div className="modal-box flex h-[95vh] w-[95vw] max-w-none flex-col p-4">
+				<div className="modal-box flex h-[97vh] w-[97vw] max-w-none flex-col p-2">
 					<div className="mb-3 flex items-center justify-between">
 						<h2 className="truncate text-lg font-semibold">
 							{title}
@@ -119,6 +121,9 @@ export default function ChartCard({
 						</button>
 					</div>
 					<div className="flex-1">{isFullscreen && children}</div>
+					{fullscreenControls && (
+						<div className="mt-3">{fullscreenControls}</div>
+					)}
 					{description && (
 						<p className="mt-3 text-sm whitespace-pre-line opacity-70">
 							{description}
