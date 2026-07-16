@@ -19,10 +19,6 @@ export const VISUALIZATION_QA: QA = [
 		answer: "Every chart is built directly from your logged deaths and subjects, there's no separate data entry for stats. Log your deaths in the Death Log and the charts update from that same data.",
 	},
 	{
-		question: "What's the difference between Overview and Specialized?",
-		answer: "Overview is a curated set of preset charts meant to give a quick snapshot of your progress. Specialized holds more niche or detailed breakdowns for deeper digging.",
-	},
-	{
 		question: "What is the reliability toggle on a chart?",
 		answer: "Some entries can have an unreliable timestamp or date, for example if you logged a death well after it happened and aren't sure exactly when. The reliability toggle lets you include or exclude those uncertain entries from a chart.\n\nSee 'What is Reliability?' question at the top of this page for more info.",
 	},

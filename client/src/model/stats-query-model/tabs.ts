@@ -20,10 +20,6 @@ export const STATS_TABS = [
 		label: "Graph",
 		localPath: "/stats/graph",
 	},
-	{
-		label: "Specialized",
-		localPath: "/stats/specialized",
-	},
 ] as const satisfies readonly StatsTabContext[];
 
 export type StatsTab = (typeof STATS_TABS)[number]["label"];

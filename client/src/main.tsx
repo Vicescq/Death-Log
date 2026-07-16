@@ -137,10 +137,6 @@ function AppRoot() {
 					<Route path="stats" element={<StatsDashboard />}>
 						<Route index element={<ChartGrid tab="Overview" />} />
 						<Route path="global" element={<StatsGlobal />} />
-						<Route
-							path="specialized"
-							element={<ChartGrid tab="Specialized" />}
-						/>
 						<Route path="graph" element={<StatsGraph />} />
 						<Route path="calendar" element={<StatsCalendar />} />
 					</Route>
