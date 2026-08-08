@@ -146,6 +146,23 @@ test("filter | azRange", () => {
 	expect(filter(idsToTest, filterPrefs, tree, "")).toHaveLength(1);
 });
 
+test("filter | azRange does not hide names starting outside a-z", () => {
+	const filterPrefs: Filters = { ...defaultFilters };
+	const ids = setUpFullTreeLineage(useDeathLogStore);
+
+	useDeathLogStore
+		.getState()
+		.addNode("subject", "2nd Intro Battle", ids.profileID);
+	const tree = useDeathLogStore.getState().tree;
+	const profile = tree.get(ids.profileID);
+	assertIsNonNull(profile);
+	assertIsProfile(profile);
+	const newSubjectID = profile.childIDS.find((id) => id != ids.subjectID);
+	assertIsNonNull(newSubjectID);
+
+	expect(filter([newSubjectID], filterPrefs, tree, "")).toHaveLength(1);
+});
+
 test("filter | completed & uncompleted", () => {
 	let filterPrefs: Filters = { ...defaultFilters, completed: true };
 	const ids = setUpFullTreeLineage(useDeathLogStore);

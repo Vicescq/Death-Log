@@ -82,8 +82,10 @@ export function filter(
 						.toLowerCase()
 						.split("-");
 					passedAzRange =
-						nodeFirstChar >= filterAZ[0] &&
-						nodeFirstChar <= filterAZ[1];
+						nodeFirstChar < "a" || nodeFirstChar > "z"
+							? true
+							: nodeFirstChar >= filterAZ[0] &&
+								nodeFirstChar <= filterAZ[1];
 					break;
 				case "completed":
 					statusBoolVals.push(filters[filterKey] && node.completed);
